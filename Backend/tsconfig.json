@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "ES6",                        // Transpila para ES6
+    "module": "CommonJS",                   // Usa o sistema de módulos do Node.js
+    "outDir": "./dist",                     // Saída dos arquivos transpilados
+    "rootDir": "./src",                     // Diretório principal dos arquivos TypeScript
+    "strict": true,                         // Ativa verificações rigorosas
+    "esModuleInterop": true,                // Habilita importação de módulos ES
+    "skipLibCheck": true                    // Ignora verificação de tipos em arquivos de bibliotecas
+  },
+  "include": ["src/**/*"],                  // Inclui todos os arquivos na pasta src
+  "exclude": ["node_modules"]               // Exclui a pasta node_modules
+}

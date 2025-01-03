@@ -1,0 +1,41 @@
+.NovaRegulacao{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+}
+
+.Form-NovaRegulacao{
+    display: flex;
+    flex-direction: column;
+    width: 50dvw;
+    border: 2px solid red;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.Form-Div-NovaRegulacao{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+input[name="prontuario_paciente"]{
+    width: 80px;
+}
+
+input[name="nome_paciente"], input[name="nome_medico_regulador"]{
+    width: 500px;
+}
+
+select[name="un_solicitante"]{
+    width: 400px;
+}
+
+input[name="idade"], input[name="prioridade"]{
+    width: 40px;
+}

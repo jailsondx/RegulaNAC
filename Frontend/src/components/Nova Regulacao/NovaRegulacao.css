@@ -1,0 +1,124 @@
+/* NovaRegulacao.css */
+
+.NovaRegulacao {
+    width: 35dvw;
+    min-width: 300px;
+    height: 45dvh;
+    min-height: 320px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    background-color: #333;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Steps Navigation */
+  .Steps {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 2px solid #ddd;
+    margin-bottom: 30px;
+    padding-bottom: 10px;
+  }
+  
+  .Step {
+    flex: 1;
+    text-align: center;
+    color: #999;
+    text-transform: uppercase;
+    position: relative;
+  }
+  
+  .Step::before {
+    content: attr(data-step);
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    line-height: 30px;
+    border: 2px solid #999;
+    border-radius: 50%;
+    background: #fff;
+    color: #999;
+    margin-right: 5px;
+  }
+  
+  .Step.active {
+    color: #007bff;
+  }
+  
+  .Step.active::before {
+    border-color: #007bff;
+    color: #fff;
+    background: #007bff;
+  }
+  
+  /* Form Section */
+  .Form-NovaRegulacao {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .Form-NovaRegulacao-Inputs{
+    height: 30dvh;
+    min-height: 220px;
+  }
+
+  .Form-NovaRegulacao-Buttons{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+
+  
+  input, select {
+    width: 95%;
+    border: 1px solid #ccc;
+  }
+
+  input[type="number"]{
+    width: 30%;
+  }
+
+  .line-StepContent,  .line-StepContent-sub{
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+  }
+
+  .line-StepContent-sub{
+    width: 100%;
+  }
+
+  .line-StepContent-sub input{
+    width: 70%;
+  }
+
+  .line-StepContent input[type='datetime-local']{
+    width: 50%;
+  }
+
+  .line-StepContent-2{
+    display: flex;
+    width: 100%;
+    justify-content: left;
+  }
+  
+  input:focus, select:focus {
+    border-color: #007bff;
+    outline: none;
+  }
+  
+  input.valid {
+    border-color: #28a745;
+  }
+  
+  input.invalid {
+    border-color: #dc3545;
+  }
+  
+  /* Validation Messages */
+  .validation-message {
+    color: #dc3545;
+    margin-top: 5px;
+  }
+  

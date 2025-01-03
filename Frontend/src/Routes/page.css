@@ -1,0 +1,37 @@
+/* Estilos principais */
+.app-container {
+    display: flex;
+    flex-direction: row;
+    min-height: 100vh; /* Garante que ocupa toda a altura da janela */
+  }
+  
+  .sidebar {
+    width: 200px;
+    background-color: #333;
+    color: #fff;
+    position: fixed; /* Fixa a sidebar na lateral esquerda */
+    height: 100vh;
+    z-index: 10; /* Garante que fique acima do conteúdo */
+  }
+  
+  .content {
+    flex-grow: 1; /* Permite que o conteúdo ocupe o espaço restante */
+    margin-left: 200px; /* Compensa a largura da sidebar */
+    padding: 20px;
+    overflow: auto;
+  }
+  
+  /* Responsividade */
+  @media (max-width: 768px) {
+    .sidebar {
+      position: fixed;
+      width: 100%; /* A sidebar ocupa toda a largura */
+      height: auto;
+    }
+  
+    .content {
+      margin-left: 0; /* Remove a margem lateral */
+      padding-top: 60px; /* Adiciona espaço para o topo da sidebar */
+    }
+  }
+  

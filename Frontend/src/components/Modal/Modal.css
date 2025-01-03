@@ -1,0 +1,64 @@
+/* Modal Container */
+.modal {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Cor de fundo semi-transparente */
+    z-index: 1050;
+}
+
+.modal-Form{
+    display: flex;
+    flex-direction: row;
+    width: 80%; /* Ajuste conforme necessário */
+    max-width: 650px;
+}
+
+/* Modal Content */
+.modal-content {
+    background-color: #202020;
+    border-radius: 0px 8px 8px 8px; /* Cantos: superior-esquerdo, superior-direito, inferior-direito, inferior-esquerdo */
+    border: whitesmoke 5px solid;
+    width: 80%; /* Ajuste conforme necessário */
+    max-width: 600px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    text-align: center;
+    position: relative; /* Para colocar o close button sobre o conteúdo */
+}
+
+/* Modal Header */
+.modal-header {
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+}
+
+/* Modal Body */
+.modal-body {
+    margin-bottom: 20px;
+}
+
+/* Close Button */
+.modal-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 24px;
+    color: whitesmoke;
+}
+
+/* Close Button Hover */
+.modal-close:hover {
+    color: red;
+    background-color: whitesmoke;
+}
