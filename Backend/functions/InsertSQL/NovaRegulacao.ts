@@ -25,9 +25,13 @@ async function NovaRegulacao(FormData) {
     } catch (error) {
         // Tratamento de erro
         console.error('Erro no cadastro:', error);
-        if (error.code === 'ER_DUP_ENTRY') {
-            return { success: false, message: "Nome de usuário já está em uso, por favor escolha outro." };
-        }
+        
+        /*
+            if (error.code === 'ER_DUP_ENTRY') {
+                return { success: false, message: "Nome de usuário já está em uso, por favor escolha outro." };
+            }
+        */
+       
         return { success: false, message: "Erro ao cadastrar regulação.", error };
     }
 }

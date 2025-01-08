@@ -1,9 +1,11 @@
 /// <reference types="node" />
 const express = require('express');
 const { DBconnection } = require("../../connection.ts"); // Importa apenas o objeto DBconnection
+const { getCurrentTimestamp } = require("../Time/Timestamp.ts");
 
 async function ListaRegulacoesPendentes() {
     const DBtable = 'regulacao';
+    const Agora = getCurrentTimestamp();
 
     try {
         // Inicie a conexão com o banco de dados
@@ -13,12 +15,13 @@ async function ListaRegulacoesPendentes() {
         //const [rows] = await connection.query(`SELECT * FROM ${DBtable} WHERE`);
         const [rows] = await connection.query(`
             SELECT * 
-            FROM regulacao 
+            FROM ${DBtable}
             WHERE id_regulacao NOT IN (
               SELECT id_regulacao 
               FROM regulacao_medico
             )
-          `);
+            AND TIMESTAMPDIFF(HOUR, data_hora_solicitacao_02, ?) <= 24
+          `, [Agora]);
           
 
         connection.release(); // Libera a conexão

@@ -10,9 +10,15 @@ router.post('/NovaRegulacao', async (req, res) => {
   try {
     const formData = req.body;
     //console.log('Dados recebidos:', formData);
-    const CadastroNovaRegulacao = await NovaRegulacao(formData);
+    const { success, message, error } = await NovaRegulacao(formData);
 
-    res.status(200).json({ message: 'Regulação criada com sucesso!' });
+    if(success){
+      res.status(200).json({ message });
+    } else {
+      res.status(500).json({ message: 'Erro ao inserir Nova Regulação, verifique os campos.', error });
+    }
+
+
   } catch (error) {
     console.error('Erro no processamento:', error);
     res.status(500).json({ message: 'Erro interno do servidor.' });

@@ -115,6 +115,10 @@
   input.invalid {
     border-color: #dc3545;
   }
+
+  .div-VerificarProntuario{
+    display: flex;
+  }
   
   /* Validation Messages */
   .validation-message {

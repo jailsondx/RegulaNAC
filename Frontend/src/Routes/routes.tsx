@@ -7,6 +7,7 @@ import Home from '../components/home/home';
 import NovaRegulacao from '../components/Nova Regulacao/NovaRegulacao';
 import Regulacao from '../components/Regulacoes/Regulacoes';
 import RegulacaMedica from '../components/Regulacao Medica/RegulacaoMedica';
+import AtualizaRegulacao from '../components/Atualiza Regulacao/AtualizaRegulacao';
 
 const Rotas: React.FC = () => {
   return (
@@ -27,6 +28,7 @@ const Rotas: React.FC = () => {
                   <Route path="/" element={<Home title="Pagina Inicial" />} />
                   <Route path="/Regulacoes" element={<Regulacao />} />
                   <Route path="/NovaRegulacao" element={<NovaRegulacao />} />
+                  <Route path="/AtualizaRegulacao" element={<AtualizaRegulacao />} />
                   <Route path="/RegulacaoMedica" element={<RegulacaMedica />} />
                 </Routes>
               </div>
