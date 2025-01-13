@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Modal from '../Modal/Modal.tsx';
 import NovaRegulacaoMedicoAprovada from './RegulacaoMedicaAprovada.tsx';
+import NovaRegulacaoMedicoNegada from './RegulacaoMedicaNegada.tsx';
 import { FcApproval, FcBadDecision } from "react-icons/fc";
 
 import './RegulacaoMedica.css';
@@ -28,7 +29,8 @@ const RegulacaoMedica: React.FC = () => {
     const [regulacoes, setRegulacoes] = useState<Regulacao[]>([]);
     const [message, setMessage] = useState<string>('');
     const [error, setError] = useState<string>('');
-    const [showModal, setShowModal] = useState(false);
+    const [showModalApproved, setShowModalApproved] = useState(false);
+    const [showModalDeny, setShowModalDeny] = useState(false);
     const [currentRegulacao, setCurrentRegulacao] = useState<Regulacao | null>(null);
 
     useEffect(() => {
@@ -66,14 +68,20 @@ const RegulacaoMedica: React.FC = () => {
         return now.toISOString(); // Retorna a data e hora atual no formato ISO
     };
 
-    const handleOpenModal = (regulacao: Regulacao) => {
+    const handleOpenModalApproved = (regulacao: Regulacao) => {
         setCurrentRegulacao(regulacao);
-        setShowModal(true);
+        setShowModalApproved(true);
+    };
+
+    const handleOpenModalDeny = (regulacao: Regulacao) => {
+        setCurrentRegulacao(regulacao);
+        setShowModalDeny(true);
     };
 
     const handleCloseModal = () => {
-        setShowModal(false);
-        window.location.reload(); // Recarregar a página ao fechar o modal
+        setShowModalApproved(false);
+        setShowModalDeny(false);
+        //window.location.reload(); // Recarregar a página ao fechar o modal
     };
 
     return (
@@ -113,8 +121,8 @@ const RegulacaoMedica: React.FC = () => {
                                 <td>{new Date(regulacao.data_hora_solicitacao_02).toLocaleString()}</td>
                                 <td>{calcularTempoDeEspera(regulacao.data_hora_solicitacao_01, obterDataHoraAtual())}</td>
                                 <td className='td-Icons'>
-                                    <FcApproval className='Icons-Regulacao' onClick={() => handleOpenModal(regulacao)} />
-                                    <FcBadDecision className='Icons-Regulacao' />
+                                    <FcApproval className='Icons-Regulacao' onClick={() => handleOpenModalApproved(regulacao)} />
+                                    <FcBadDecision className='Icons-Regulacao' onClick={() => handleOpenModalDeny(regulacao)} />
                                 </td>
                             </tr>
                         ))}
@@ -122,14 +130,28 @@ const RegulacaoMedica: React.FC = () => {
                 </table>
             </div>
 
-            {showModal && currentRegulacao && (
-                <Modal show={showModal} onClose={handleCloseModal} title='Regulação Médica'>
+            {showModalApproved && currentRegulacao && (
+                <Modal show={showModalApproved} onClose={handleCloseModal} title='Regulação Médica: Aprovação'>
                     <NovaRegulacaoMedicoAprovada
                         id_regulacao={currentRegulacao.id_regulacao} 
                         nome_paciente={currentRegulacao.nome_paciente} 
                         num_regulacao={currentRegulacao.num_regulacao} 
                         un_origem={currentRegulacao.un_origem} 
                         un_destino={currentRegulacao.un_destino} 
+                        nome_regulador_medico={currentRegulacao.nome_regulador_medico} 
+                    />
+                </Modal>
+            )}
+
+            {showModalDeny && currentRegulacao && (
+                <Modal show={showModalDeny} onClose={handleCloseModal} title='Regulação Médica: Negação'>
+                    <NovaRegulacaoMedicoNegada
+                        id_regulacao={currentRegulacao.id_regulacao} 
+                        nome_paciente={currentRegulacao.nome_paciente} 
+                        num_regulacao={currentRegulacao.num_regulacao} 
+                        un_origem={currentRegulacao.un_origem} 
+                        un_destino={currentRegulacao.un_destino} 
+                        nome_regulador_medico={currentRegulacao.nome_regulador_medico} 
                     />
                 </Modal>
             )}

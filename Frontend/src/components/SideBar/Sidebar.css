@@ -1,49 +1,139 @@
 .sidebar {
-    width: 15dvw;
-    height: 100vh;
-    background-color: #2c3e50;
-    color: white;
-    position: fixed;
-    top: 0;
-    left: 0;
-    padding: 20px;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-  }
-  
-  .sidebar h2 {
-    font-size: 20px;
-    margin-bottom: 20px;
-    text-align: center;
-    color: #ecf0f1;
-  }
-  
-  .sidebar ul {
-    list-style: none;
-    padding: 0;
-  }
-  
-  .sidebar ul li {
-    margin: 15px 0;
-  }
-  
-  .sidebar ul li a {
-    color: white;
-    text-decoration: none;
-    font-size: 16px;
-    transition: color 0.3s ease;
-  }
-  
-  .sidebar ul li a:hover {
-    color: #1abc9c;
-  }
-  
-  .app-container {
-    display: flex;
-  }
-  
-  .content {
-    margin-left: 200px;
-    padding: 20px;
-    width: 100%;
-  }
-  
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 15dvw;
+  height: 100%;
+  background-color: #2c3e50;
+  color: white;
+  position: fixed;
+  top: 0;
+  left: 0;
+  padding: 0px 20px 0px 20px; /* Topo, direita, inferior, esquerda */
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar h2 {
+  font-size: 20px;
+  margin-bottom: 20px;
+  text-align: center;
+  color: #ecf0f1;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar ul li {
+  margin: 15px 0;
+}
+
+.sidebar ul li a {
+  color: white;
+  text-decoration: none;
+  font-size: 16px;
+  transition: color 0.3s ease;
+}
+
+.sidebar ul li a:hover {
+  color: #1abc9c;
+}
+
+.app-container {
+  display: flex;
+}
+
+.content {
+  margin-left: 200px;
+  padding: 20px;
+  width: 100%;
+}
+
+
+.IconUser {
+  width: 100%;
+  height: auto;
+}
+
+.sidebar-Username {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+}
+
+
+.sidebar-inf{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+/* Submenu */
+.submenu {
+  margin-left: 20px;
+  list-style: none;
+  padding-left: 10px;
+}
+
+.submenu li {
+  margin: 5px 0;
+}
+
+.submenu-toggle {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  font-size: 16px;
+  text-align: left;
+}
+
+.submenu-toggle:hover {
+  color: #007bff;
+}
+
+
+
+/*MUDANÇA DE TEMA*/
+.slider {
+  width: 60px;
+  height: 30px;
+  background-color: #ccc;
+  border-radius: 30px;
+  position: relative;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.slider.light {
+  background-color: #f0f0f0;
+}
+
+.slider.dark {
+  background-color: #333;
+}
+
+.slider__ball {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 4px;
+  transform: translateY(-50%);
+  transition: left 0.3s ease, background-color 0.3s ease; /* Suaviza a troca de cor */
+}
+
+.slider.light .slider__ball {
+  left: 4px;
+  background-color: #333333; /* Bolinha preta no tema claro */
+}
+
+.slider.dark .slider__ball {
+  left: 34px; /* Move a bolinha para a direita no tema escuro */
+  background-color: white; /* Bolinha branca no tema escuro */
+}

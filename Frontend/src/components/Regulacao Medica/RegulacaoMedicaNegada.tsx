@@ -1,11 +1,9 @@
-import React, { useState, ChangeEvent, FormEvent, Suspense, useEffect } from 'react';
+import React, { useState, ChangeEvent, FormEvent, Suspense } from 'react';
 import axios from 'axios';
-import { getUserData } from '../../functions/storageUtils';
 
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
 
 interface Props {
-  id_user: string;
   nome_paciente: number;
   num_regulacao: number;
   un_origem: string;
@@ -16,38 +14,27 @@ interface Props {
 
 
 interface FormDataRegulacaoMedico {
-  id_user: string;
   vaga_autorizada: boolean;
   num_leito: number | null;
   justificativa_neg: string;
   nome_regulador_medico: string;
   data_hora_regulacao_medico: string;
-  justificativa_tempo30: string;
+  justificativa_tempo30: string | null;
 }
 
 const initialFormData: FormDataRegulacaoMedico = {
-  id_user: '',
-  vaga_autorizada: true,
+  vaga_autorizada: false,
   num_leito: null,
   justificativa_neg: '',
   nome_regulador_medico: '',
   data_hora_regulacao_medico: '',
-  justificativa_tempo30: '',
+  justificativa_tempo30: null,
 };
 
-const NovaRegulacaoMedicoAprovada: React.FC<Props> = ({ id_regulacao, nome_paciente, num_regulacao, un_origem, un_destino, nome_regulador_medico }) => {
-  const [userData, setUserData] = useState<UserData | null>(null);
+const NovaRegulacaoMedicoNegada: React.FC<Props> = ({ id_regulacao, nome_paciente, num_regulacao, un_origem, un_destino, nome_regulador_medico }) => {
   const [formData, setFormData] = useState<FormDataRegulacaoMedico>(initialFormData);
   const [message, setMessage] = useState<string>('');
   const [error, setError] = useState<string>('');
-
-
-    //Pega dados do SeassonStorage User
-    useEffect(() => {
-      const data = getUserData();
-      setUserData(data);
-    }, []);
-
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>): void => {
     const { name, value, type } = e.target;
@@ -59,25 +46,12 @@ const NovaRegulacaoMedicoAprovada: React.FC<Props> = ({ id_regulacao, nome_pacie
     }));
   };
 
-  const validateForm = (): boolean => {
-    if (!formData.num_leito.trim()) {
-      setError('Leito é obrigatório.');
-      return false;
-    }
-    setError('');
-    return true;
-  };
-
   const handleSubmit = async (e: FormEvent): Promise<void> => {
     e.preventDefault();
-    if (!validateForm()) return;
-
     try {
       const dataToSubmit = {
         ...formData,
-        id_user: userData?.id_user, // Use o operador de encadeamento opcional para evitar erros se `userData` for `null`
         id_regulacao,
-        nome_regulador_medico: userData?.nome
       };
       console.log(dataToSubmit);
       await axios.post(`${NODE_URL}/api/internal/post/RegulacaoMedico`, dataToSubmit);
@@ -108,42 +82,16 @@ const NovaRegulacaoMedicoAprovada: React.FC<Props> = ({ id_regulacao, nome_pacie
       </div>
       
 
-      
-
       <form onSubmit={handleSubmit}>
-        <div className='Div-RegulacaoMedica-Aprovada'>
-          <div className='num_leito'>
-            <label>Número do Leito:</label>
-            <input
-              type="number"
-              name="num_leito"
-              className='num_leito'
-              value={formData.num_leito ?? ''}
-              onChange={handleChange}
-            />
-          </div>
-          <div className='nome_regulador_medico'>
-            <label>Médico Aprovador:</label>
-            <input
-              type="text"
-              name="nome_regulador_medico"
-              value={userData?.nome}
-              onChange={handleChange}
-              required
-              disabled
-            />
-          </div>
-        </div>
-       
         <div className='justificativa'>
-          <label>Justificativa de Tempo 30:</label>
+          <label>Justificativa de Negação:</label>
           <textarea
-            name="justificativa_tempo30"
-            value={formData.justificativa_tempo30}
+            name="justificativa_neg"
+            value={formData.justificativa_neg}
             onChange={handleChange}
           />
         </div>
-        <button type="submit">Autorizar</button>
+        <button type="submit">Negar</button>
       </form>
       {message && <p className="success">{message}</p>}
       {error && <p className="error">{error}</p>}
@@ -151,4 +99,4 @@ const NovaRegulacaoMedicoAprovada: React.FC<Props> = ({ id_regulacao, nome_pacie
   );
 };
 
-export default NovaRegulacaoMedicoAprovada;
+export default NovaRegulacaoMedicoNegada;

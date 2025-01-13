@@ -9,8 +9,6 @@ async function NovaRegulacao(FormData) {
         // Defina a data_hora_solicitacao_02 como o mesmo valor que a data_hora_solicitacao_01
         FormData.data_hora_solicitacao_02 = FormData.data_hora_solicitacao_01;
 
-        console.log('\n\n'+FormData+'\n\n');
-
         // Inicie a conexão com o banco de dados
         const connection = await DBconnection.getConnection();
 
@@ -19,7 +17,7 @@ async function NovaRegulacao(FormData) {
 
         connection.release(); // Libera a conexão
 
-        console.log('Registro inserido com sucesso:', result);
+        console.log('Registro regulacao inserida com sucesso! ID: ' +FormData.id_regulacao );
         return { success: true, message: "Regulação cadastrada com sucesso." };
 
     } catch (error) {

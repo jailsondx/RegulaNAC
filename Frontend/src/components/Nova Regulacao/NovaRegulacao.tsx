@@ -1,13 +1,16 @@
-import React, { useState, ChangeEvent, FormEvent } from 'react';
+import React, { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { FcCheckmark, FcDislike, FcHighPriority } from "react-icons/fc";
+import { Snackbar, Alert } from '@mui/material';
+import { FcCheckmark, FcLeave } from "react-icons/fc";
 import { formatDateToPtBr } from '../../functions/DateTimes';
+import { getUserData } from '../../functions/storageUtils';
 import './NovaRegulacao.css';
 
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
 
 interface FormDataNovaRegulacao {
+  id_user: string;
   num_prontuario: number | null;
   nome_paciente: string;
   num_idade: number | null;
@@ -24,6 +27,7 @@ interface FormDataNovaRegulacao {
 }
 
 const initialFormData: FormDataNovaRegulacao = {
+  id_user: '',
   num_prontuario: null,
   nome_paciente: '',
   num_idade: null,
@@ -32,7 +36,7 @@ const initialFormData: FormDataNovaRegulacao = {
   num_prioridade: null,
   data_hora_solicitacao_01: '',
   data_hora_solicitacao_02: '',
-  nome_regulador_nac: 'Teste Regulador',
+  nome_regulador_nac: '',
   num_regulacao: null,
   nome_regulador_medico: '',
   data_hora_acionamento_medico: '',
@@ -44,9 +48,10 @@ const initialFormData: FormDataNovaRegulacao = {
 
 
 const NovaRegulacao: React.FC = () => {
+  const [userData, setUserData] = useState<UserData | null>(null);
   const [formData, setFormData] = useState<FormDataNovaRegulacao>(initialFormData);
+  const [medicos, setMedicos] = useState<string[]>([]); // Lista de médicos da API
   const navigate = useNavigate();
-  const [message, setMessage] = useState<string>('');
   const [iconStatusProntOk, setIconStatusProntOk] = useState<boolean>(false);
   const [iconStatusProntDeny, setIconStatusProntDeny] = useState<boolean>(false);
   const [iconStatusRegOk, setIconStatusRegOk] = useState<boolean>(false);
@@ -54,6 +59,32 @@ const NovaRegulacao: React.FC = () => {
   const [error, setError] = useState<string>('');
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [showAtualizarButton, setShowAtualizarButton] = useState<boolean>(false);
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'info' as 'success' | 'error' | 'info' | 'warning' });
+
+  
+  useEffect(() => {
+    // Carrega a lista de médicos ao montar o componente
+    const fetchMedicos = async () => {
+      try {
+        const response = await axios.get(`${NODE_URL}/api/internal/get/ListaMedicos`);
+        const nomes_medicos_list = response.data.data;
+        setMedicos(nomes_medicos_list || []); // Supondo que o retorno é { medicos: [] }
+      } catch (err: any) {
+        setError(err.response?.data?.message || 'Erro ao carregar lista de médicos.');
+      }
+    };
+
+    fetchMedicos();
+  }, []);
+
+
+  //Pega dados do SeassonStorage User
+  useEffect(() => {
+    const data = getUserData();
+    setUserData(data);
+  }, []);
+
+  const handleSnackbarClose = () => setSnackbar({ ...snackbar, open: false });
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>): void => {
     const { name, value, type } = e.target;
@@ -71,41 +102,51 @@ const NovaRegulacao: React.FC = () => {
     }
   };
 
-
   const validateForm = (): boolean => {
-    if (!formData.num_prontuario) {
-      setError('Prontuário é obrigatório.');
+    let invalidField: string | null = null;
+  
+    // Identificar o campo inválido
+    switch (true) {
+      case !formData.nome_paciente.trim():
+        invalidField = 'O nome do paciente é obrigatório.';
+        break;
+      case !formData.num_prontuario:
+        invalidField = 'Prontuário é obrigatório.';
+        break;
+      case formData.num_idade === null:
+        invalidField = 'Idade é obrigatória.';
+        break;
+      case !formData.un_origem.trim():
+        invalidField = 'A unidade de origem é obrigatória.';
+        break;
+      case !formData.un_destino.trim():
+        invalidField = 'A unidade de destino é obrigatória.';
+        break;
+      case !formData.data_hora_solicitacao_01.trim():
+        invalidField = 'Date e Hora da solicitação é obrigatória.';
+        break;
+      case formData.num_prioridade === null:
+        invalidField = 'A prioridade é obrigatória.';
+        break;
+      case !formData.num_regulacao:
+        invalidField = 'O número da regulação é obrigatório.';
+        break;
+      case !formData.nome_regulador_medico.trim():
+        invalidField = 'O nome do médico regulador é obrigatório.';
+        break;
+      case !formData.data_hora_acionamento_medico.trim():
+        invalidField = 'Date e Hora do Acionamendo Médico é obrigatória.';
+        break;
+      default:
+        break;
+    }
+  
+    // Exibir erro ou retornar sucesso
+    if (invalidField) {
+      setSnackbar({ open: true, message: invalidField, severity: 'warning' });
       return false;
     }
-    if (!formData.nome_paciente.trim()) {
-      setError('O nome do paciente é obrigatório.');
-      return false;
-    }
-    if (formData.num_idade === null || formData.num_idade <= 0) {
-      setError('num_idade deve ser maior que zero.');
-      return false;
-    }
-    if (!formData.un_origem.trim()) {
-      setError('A unidade solicitante é obrigatória.');
-      return false;
-    }
-    if (!formData.un_destino.trim()) {
-      setError('A unidade solicitante é obrigatória.');
-      return false;
-    }
-    if (formData.num_prioridade === null || formData.num_prioridade <= 0) {
-      setError('A num_prioridade deve ser maior que zero.');
-      return false;
-    }
-    if (!formData.num_regulacao) {
-      setError('O número da regulação é obrigatório.');
-      return false;
-    }
-    if (!formData.nome_regulador_medico.trim()) {
-      setError('O nome do médico regulador é obrigatório.');
-      return false;
-    }
-    setError('');
+  
     return true;
   };
 
@@ -114,26 +155,30 @@ const NovaRegulacao: React.FC = () => {
     if (!validateForm()) return;
 
     try {
-      const NovaRegulacao = await axios.post(`${NODE_URL}/api/internal/post/NovaRegulacao`, formData);
+      const dataToSubmit = {
+        ...formData,
+        id_user: userData?.id_user, // Use o operador de encadeamento opcional para evitar erros se `userData` for `null`
+        nome_regulador_nac: userData?.nome
+      };      
+
+      const NovaRegulacao = await axios.post(`${NODE_URL}/api/internal/post/NovaRegulacao`, dataToSubmit);
 
       const response = NovaRegulacao.data;
       console.log(response.message);
 
-      setMessage('Regulação cadastrada com sucesso!');
-      setError('');
+      setSnackbar({ open: true, message: 'Regulação cadastrada com sucesso', severity: 'success' });
       setFormData(initialFormData); // Resetar o formulário
       setCurrentStep(1); // Voltar ao início
     } catch (error: any) {
-      setError(error.response?.data?.message || 'Erro ao cadastrar regulação. Por favor, tente novamente.');
-      setMessage('');
+      setSnackbar({ open: true, message: 'Erro ao cadastrar Nova Regulação, verifique os campos', severity: 'error' });
+      
     }
   };
 
   const handleVerificaProntuario = async (numProntuario: number): Promise<void> => {
     if (!numProntuario) {
-      setError('Prontuário é obrigatório.');
+      //setSnackbar({ open: true, message: 'Prontuário é obrigatório', severity: 'info' });
       setShowAtualizarButton(false);
-      setMessage('');
       return;
     }
 
@@ -147,28 +192,23 @@ const NovaRegulacao: React.FC = () => {
       if (message === 'Regulação pendente em aberto') {
         setIconStatusProntOk(false);
         setIconStatusProntDeny(true);
-        setError('');
         setShowAtualizarButton(message === 'Regulação pendente em aberto');
       } else {
         setIconStatusProntOk(true);
         setIconStatusProntDeny(false);
-        setError('');
         setShowAtualizarButton(false);
       }
-      //setMessage(message);
 
     } catch (err: any) {
       setError(err.response?.data?.message || 'Erro ao verificar prontuário.');
-      setMessage('');
       setShowAtualizarButton(false);
     }
   };
 
   const handleVerificaRegulacao = async (numRegulacao: number): Promise<void> => {
     if (!numRegulacao) {
-      setError('Prontuário é obrigatório.');
+      //setSnackbar({ open: true, message: 'Nº de Regulação é obrigatório', severity: 'info' });
       setShowAtualizarButton(false);
-      setMessage('');
       return;
     }
 
@@ -182,26 +222,21 @@ const NovaRegulacao: React.FC = () => {
       if (message === 'Regulação pendente em aberto') {
         setIconStatusRegOk(false);
         setIconStatusRegDeny(true);
-        setError('');
       } else {
         setIconStatusRegOk(true);
         setIconStatusRegDeny(false);
-        setError('');
         setShowAtualizarButton(false);
       }
-      //setMessage(message);
 
     } catch (err: any) {
       setError(err.response?.data?.message || 'Erro ao verificar prontuário.');
-      setMessage('');
       setShowAtualizarButton(false);
     }
   };
 
-
   const handleAtualizarRegulacao = (): void => {
     if (!formData.num_prontuario) {
-      setError('Prontuário é obrigatório para atualizar a regulação.');
+      setSnackbar({ open: true, message: 'Prontuário é obrigatório para atualizar a regulação', severity: 'warning' });
       return;
     }
     // Enviando dados de forma oculta
@@ -210,16 +245,36 @@ const NovaRegulacao: React.FC = () => {
     });
   };
 
+  const handleSelectChange_medico = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = event.target.value;
+    setFormData((prevData) => ({
+      ...prevData,
+      nome_regulador_medico: value,
+    }));
+  };
+
   const nextStep = (): void => {
     if (showAtualizarButton) {
-      setError('Não é possível criar uma nova regulação para um prontuário com regulação pendente.');
+      setSnackbar({ open: true, message: 'Não é possivel abrir uma nova regulação para paciente com regulação pendente em aberto, revise o Nº PRONTUARIO', severity: 'warning' });
+      return;
+    }
+
+    if (iconStatusRegDeny) {
+      setSnackbar({ open: true, message: 'Não é possivel abrir uma nova regulação para paciente com regulação pendente em aberto, revise o Nº REGULAÇÃO', severity: 'warning' });
       return;
     }
 
     setCurrentStep((prev) => Math.min(prev + 1, 4));
   };
 
-  const previousStep = (): void => setCurrentStep((prev) => Math.max(prev - 1, 1));
+  const previousStep = (): void => {
+    if (iconStatusRegDeny) {
+      setSnackbar({ open: true, message: 'Não é possivel abrir uma nova regulação para paciente com regulação pendente em aberto, revise o Nº REGULAÇÃO', severity: 'warning' });
+      return;
+    }
+
+    setCurrentStep((prev) => Math.max(prev - 1, 1));
+  }
 
   return (
     <>
@@ -250,20 +305,23 @@ const NovaRegulacao: React.FC = () => {
                 </div>
 
                 <div className="line-StepContent">
-                  <label>Prontuário: {iconStatusProntOk && (<FcCheckmark />)} {iconStatusProntDeny && (<FcHighPriority />)} </label>
+                  <label>Prontuário:</label>
                   <div className='div-AtualizarRegulacao'>
-                    <input
-                      type="number"
-                      name="num_prontuario"
-                      value={formData.num_prontuario ?? ''}
-                      onChange={handleChange}
-                      required
-                    />
-                    {showAtualizarButton && (
-                      <button type="submit" className='button-prioridade-red' onClick={handleAtualizarRegulacao}>
-                        Atualizar Regulação
-                      </button>
-                    )}
+                    <span className='spanInput-line-StepContent'>
+                      <input
+                        type="number"
+                        name="num_prontuario"
+                        value={formData.num_prontuario ?? ''}
+                        onChange={handleChange}
+                        required
+                      />
+                      {iconStatusProntOk && (<FcCheckmark className='Icon-Status-NovaRegulacao' title='Prontuário OK'/>)} {iconStatusProntDeny && (<FcLeave className='Icon-Status-NovaRegulacao' title='Prontuário com Pendência'/>)} 
+                      {showAtualizarButton && (
+                        <button type="button" className='btn button-warning' onClick={handleAtualizarRegulacao}>
+                          Atualizar Regulação
+                        </button>
+                      )}
+                    </span>
                   </div>
                 </div>
 
@@ -370,25 +428,36 @@ const NovaRegulacao: React.FC = () => {
               <div className="StepContent">
                 <div className="line-StepContent">
                   <label>Nome do Médico Regulador:</label>
-                  <input
-                    type="text"
-                    name="nome_regulador_medico"
-                    value={formData.nome_regulador_medico}
-                    onChange={handleChange}
-                    required
-                  />
+                    <select
+                      name="nome_regulador_medico"
+                      value={formData.nome_regulador_medico}
+                      onChange={handleSelectChange_medico}
+                      required
+                    >
+                      <option value="" disabled> Selecione um médico </option>
+                      {medicos.map((medico, index) => (
+                        <option key={index} value={medico}>
+                          {medico}
+                        </option>
+                      ))}
+                    </select>
                 </div>
 
                 <div className="line-StepContent-2">
                   <div className="line-StepContent-sub">
-                    <label>Nº Regulação: {iconStatusRegOk && (<FcCheckmark />)} {iconStatusRegDeny && (<FcHighPriority />)} </label>
-                    <input
-                      type="number"
-                      name="num_regulacao"
-                      value={formData.num_regulacao ?? ''}
-                      onChange={handleChange}
-                      required
-                    />
+                    <label>Nº Regulação:</label>
+                    <span className='spanInput-line-StepContent'>
+                      <input
+                        type="number"
+                        name="num_regulacao"
+                        value={formData.num_regulacao ?? ''}
+                        onChange={handleChange}
+                        required
+                        
+                      />{iconStatusRegOk && (<FcCheckmark className='Icon-Status-NovaRegulacao' />)} {iconStatusRegDeny && (<FcLeave className='Icon-Status-NovaRegulacao' />)}
+                    </span>
+                    
+                    
                   </div>
 
                   <div className="line-StepContent-sub">
@@ -422,8 +491,8 @@ const NovaRegulacao: React.FC = () => {
               <div className="StepContent">
                 <label>Confira as informações antes de finalizar:</label>
                 <ul>
-                  <li><strong>Prontuário:</strong> {formData.num_prontuario}</li>
                   <li><strong>Nome do Paciente:</strong> {formData.nome_paciente}</li>
+                  <li><strong>Prontuário:</strong> {formData.num_prontuario}</li>
                   <li><strong>Idade:</strong> {formData.num_idade} Anos</li>
                   <li><strong>Unidade Origem:</strong> {formData.un_origem}</li>
                   <li><strong>Unidade Destino:</strong> {formData.un_destino}</li>
@@ -446,8 +515,14 @@ const NovaRegulacao: React.FC = () => {
         </form>
 
       </div>
-    </>
 
+      <Snackbar open={snackbar.open} autoHideDuration={6000} onClose={handleSnackbarClose}>
+        <Alert onClose={handleSnackbarClose} severity={snackbar.severity}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
+
+    </>
   );
 };
 

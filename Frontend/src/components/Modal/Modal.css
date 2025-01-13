@@ -22,9 +22,9 @@
 
 /* Modal Content */
 .modal-content {
-    background-color: #202020;
+    background-color: var(--modal-bg);
     border-radius: 0px 8px 8px 8px; /* Cantos: superior-esquerdo, superior-direito, inferior-direito, inferior-esquerdo */
-    border: whitesmoke 5px solid;
+    border: 5px solid var(--modal-border);
     width: 80%; /* Ajuste conforme necessário */
     max-width: 600px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -34,11 +34,6 @@
 }
 
 /* Modal Header */
-.modal-header {
-    border-bottom: 1px solid #ccc;
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-}
 
 /* Modal Body */
 .modal-body {
@@ -54,11 +49,12 @@
     border: none;
     cursor: pointer;
     font-size: 24px;
-    color: whitesmoke;
+    color: var(--text-color);
+    background-color: var(--modal-close-bg);
 }
 
 /* Close Button Hover */
 .modal-close:hover {
     color: red;
-    background-color: whitesmoke;
+    background-color: var(--modal-close-bg-hover);
 }

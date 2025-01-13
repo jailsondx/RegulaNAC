@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { FcFullTrash, FcInspection  } from "react-icons/fc";
-import data from '../../data.json'; // Importa o arquivo JSON
 import './Regulacoes.css'
 
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
@@ -22,7 +21,8 @@ interface Regulacao {
   nome_regulador_medico: string;
   data_hora_acionamento_medico: string;
 }
-const Regulacao: React.FC = () => {
+
+const RegulacoesAprovadas: React.FC= () => {
   const [regulacoes, setRegulacoes] = useState<Regulacao[]>([]); // Tipo do estado
   const [message, setMessage] = useState<string>('');
   const [error, setError] = useState<string>('');
@@ -31,7 +31,7 @@ const Regulacao: React.FC = () => {
   useEffect(() => {
     const fetchRegulacoes = async () => {
       try {
-        const response = await axios.get(`${NODE_URL}/api/internal/get/ListaRegulacoesPendentes`);
+        const response = await axios.get(`${NODE_URL}/api/internal/get/ListaRegulacoesAprovadas`);
 
         if (response.data && Array.isArray(response.data.data)) {
           setRegulacoes(response.data.data);
@@ -73,7 +73,7 @@ const Regulacao: React.FC = () => {
   return (
     <>
       <div className='Header-ListaRegulaçoes'>
-        <label className='Title-Tabela'>Lista de Regulações</label>
+        <label className='Title-Tabela'>Regulações Aprovadas: Esperando Transporte</label>
         <button type="button" onClick={NovaRegulacao}>+ Nova Regulação</button>
       </div>
 
@@ -83,15 +83,11 @@ const Regulacao: React.FC = () => {
             <tr>
               <th>Pront.</th>
               <th>Nome Paciente</th>
-              <th>Id.</th>
               <th>Num. Regulação</th>
               <th>Un. Origem</th>
               <th>Un. Destino</th>
-              <th>Prio.</th>
-              <th>Solicitação Recente</th>
-              <th>Data/Hora Acionamento Médico</th>
-              <th>Tempo de Espera</th>
-              <th>Ajustes</th>
+              <th>Médico Regulador</th>
+              <th>Transporte</th>
             </tr>
           </thead>
           <tbody>
@@ -99,14 +95,11 @@ const Regulacao: React.FC = () => {
               <tr key={regulacao.id_regulacao}>
                 <td>{regulacao.num_prontuario}</td>
                 <td>{regulacao.nome_paciente}</td>
-                <td>{regulacao.num_idade} Anos</td>
                 <td>{regulacao.num_regulacao}</td>
                 <td>{regulacao.un_origem}</td>
                 <td>{regulacao.un_destino}</td>
-                <td>{regulacao.num_prioridade}</td>
-                <td>{new Date(regulacao.data_hora_solicitacao_02).toLocaleString()}</td>
-                <td>{new Date(regulacao.data_hora_acionamento_medico).toLocaleString()}</td>
-                <td>{calcularTempoDeEspera(regulacao.data_hora_solicitacao_02, obterDataHoraAtual())}</td>
+                <td>{regulacao.nome_regulador_medico}</td>
+                
                 <td className='td-Icons'>
                   <FcInspection className='Icons-Regulacao' />
                   <FcFullTrash className='Icons-Regulacao' />
@@ -122,4 +115,4 @@ const Regulacao: React.FC = () => {
 };
 
 
-export default Regulacao;
+export default RegulacoesAprovadas;

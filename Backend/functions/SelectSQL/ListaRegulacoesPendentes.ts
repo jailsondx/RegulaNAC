@@ -16,12 +16,9 @@ async function ListaRegulacoesPendentes() {
         const [rows] = await connection.query(`
             SELECT * 
             FROM ${DBtable}
-            WHERE id_regulacao NOT IN (
-              SELECT id_regulacao 
-              FROM regulacao_medico
-            )
+            WHERE status_regulacao = ?
             AND TIMESTAMPDIFF(HOUR, data_hora_solicitacao_02, ?) <= 24
-          `, [Agora]);
+          `, ['Aberto - Aguardando Regulacao Medica', Agora]);
           
 
         connection.release(); // Libera a conexão

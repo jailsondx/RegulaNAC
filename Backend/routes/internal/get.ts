@@ -1,8 +1,10 @@
 /// <reference types="node" />
 const express = require('express');
 const ListaRegulacoesPendentes = require("../../functions/SelectSQL/ListaRegulacoesPendentes.ts");
+const ListaRegulacoesAprovadas = require("../../functions/SelectSQL/ListaRegulacoesAprovadas.ts");
 const VerificaProntuario = require("../../functions/SelectSQL/VerificaProntuario.ts");
 const VerificaRegulacao = require("../../functions/SelectSQL/VerificaRegulacao.ts");
+const ListaMedicos = require("../../functions/SelectSQL/ListaMedicos.ts");
 
 const router = express.Router();
 
@@ -10,6 +12,22 @@ router.get('/ListaRegulacoesPendentes', async (req, res) => {
   try {
     // Chama a função para buscar as regulagens pendentes
     const { success, data, error } = await ListaRegulacoesPendentes();
+
+    if (success) {
+      res.status(200).json({ message: 'Lista de regulações carregada com sucesso.', data });
+    } else {
+      res.status(500).json({ message: 'Erro ao carregar lista de regulações.', error });
+    }
+  } catch (error) {
+    console.error('Erro no processamento:', error);
+    res.status(500).json({ message: 'Erro interno do servidor.' });
+  }
+});
+
+router.get('/ListaRegulacoesAprovadas', async (req, res) => {
+  try {
+    // Chama a função para buscar as regulagens pendentes
+    const { success, data, error } = await ListaRegulacoesAprovadas();
 
     if (success) {
       res.status(200).json({ message: 'Lista de regulações carregada com sucesso.', data });
@@ -58,5 +76,22 @@ router.get('/VerificaRegulacao', async (req, res) => {
   }
 });
 
+router.get('/ListaMedicos', async (req, res) => {
+  
+  try {
+    // Sua lógica para verificar prontuário
+
+    const { success, data, error } = await ListaMedicos();
+
+    if (success) {
+      res.status(200).json({ message: 'Lista Carregada', data});
+    } else {
+      res.status(500).json({ message: 'Erro na lista de médicos.', error });
+    }
+  } catch (error) {
+    console.error('Erro no processamento:', error);
+    res.status(500).json({ message: 'Erro interno do servidor.' });
+  }
+});
 
 module.exports = router;

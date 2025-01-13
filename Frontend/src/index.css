@@ -1,3 +1,53 @@
+/* Variáveis de Tema */
+.light-theme {
+  --bg-color: #dcdde1;
+  --text-color: #000000;
+  --table-bg: #ecf0f1;
+  --table-header-bg: #49798a;
+  --table-header-text-color: whitesmoke;
+  --table-hover-bg: #c7ecee;
+  --table-border: #333333;
+
+  --titleForm-bg: #49798a;
+  --titleForm-text: whitesmoke;
+  --form-border: #49798a;
+  --form-bg-color: #f5f6fa;
+
+  --button-bg: #49798a;
+  --button-text-color: white; 
+  --button-border: #333333;
+
+  --modal-border: #49798a;
+  --modal-bg: #f5f6fa;
+  --modal-close-bg: #f5f6fa;
+  --modal-close-bg-hover: #c7ecee;
+}
+
+.dark-theme {
+  --bg-color: #2d3436;
+  --text-color: whitesmoke;
+
+  --table-bg: #333333;
+  --table-header-bg: #024059;
+  --table-header-text-color: whitesmoke;
+  --table-hover-bg: #555555;
+  --table-border: snow;
+
+  --titleForm-bg: whitesmoke;
+  --titleForm-text: #333;
+  --form-border: whitesmoke;
+  --form-bg-color: #333;
+
+  --button-bg: whitesmoke;
+  --button-text-color: black; 
+
+  --modal-border: whitesmoke;
+  --modal-bg: #333;
+  --modal-close-bg: #333;
+  --modal-close-bg-hover: #555;
+}
+
+/* Estilos globais */
 body{
   display: flex;
   flex-direction: row;
@@ -9,8 +59,10 @@ body{
   place-items: center;
   font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
   font-size: 12px;
-  color: whitesmoke;
-  background-color: #2d3436;
+
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s, color 0.3s;
 }
 
 
@@ -21,7 +73,8 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: whitesmoke;
+  background-color: var(--button-bg);
+  color: var(--button-text-color);
   cursor: pointer;
   transition: border-color 0.25s;
 }
@@ -63,12 +116,25 @@ button:disabled {
   cursor: not-allowed;
 }
 
+.btn{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px;
+  height: 30px;
+  margin-left: 5%;
+}
+
+.button-warning{
+  text-shadow: 2px 2px 4px#000000;
+  background-color: #f39c12;
+}
+
 
 input, select{
   padding: 5px;
   margin: 3px;
   border-radius: 4px;
-  
 }
 
 input[type=number]::-webkit-inner-spin-button { 
@@ -78,7 +144,6 @@ input[type=number]::-webkit-inner-spin-button {
 input[type=number] { 
  -moz-appearance: textfield;
  appearance: textfield;
-
 }
 
 /* Tabela */
@@ -91,8 +156,8 @@ input[type=number] {
 .Title-Form{
   font-size: 18px;
   padding: 2px 5px 0px 5px; /* Topo, direita, inferior, esquerda */
-  color: #2d3436;
-  background-color: whitesmoke;
+  color: var(--titleForm-text);
+  background-color: var(--titleForm-bg);
   border-radius: 8px 8px 0px 0px; /* Cantos: superior-esquerdo, superior-direito, inferior-direito, inferior-esquerdo */
 }
 
@@ -101,25 +166,29 @@ input[type=number] {
 }
 
 
+
 /* Tabela de Regulações */
-.Table-Regulacoes{
-  border: 1px solid snow;
+.Table-Regulacoes {
+  border: 1px solid var(--table-border);
   max-width: 70dvw;
-  background-color: #333;
+  background-color: var(--table-bg);
+  color: var(--text-color);
 }
 
-.Table-Regulacoes th{
+.Table-Regulacoes th {
   padding: 10px;
-  background-color: #2C3E50;
+  background-color: var(--table-header-bg);
+  color: var(--table-header-text-color);
 }
 
-.Table-Regulacoes td{
+.Table-Regulacoes td {
   padding: 5px;
 }
 
-.Table-Regulacoes tr:hover{
-  background-color: #555;
+.Table-Regulacoes tr:hover {
+  background-color: var(--table-hover-bg);
 }
+
 
 .td-Icons{
   display: flex;

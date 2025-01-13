@@ -7,9 +7,9 @@
     min-height: 320px;
     margin: 0 auto;
     padding: 20px;
-    border: 1px solid #ccc;
-    background-color: #333;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border: 2px solid var(--form-border);
+    background-color: var(--form-bg-color);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
   }
   
   /* Steps Navigation */
@@ -125,4 +125,14 @@
     color: #dc3545;
     margin-top: 5px;
   }
-  
+
+  .Icon-Status-NovaRegulacao{
+    width: 30px;
+    height: auto;
+  }
+
+  .spanInput-line-StepContent{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+  }
