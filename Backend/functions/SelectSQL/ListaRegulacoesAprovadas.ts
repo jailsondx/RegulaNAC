@@ -16,7 +16,7 @@ async function ListaRegulacoesAprovadas() {
         const [rows] = await connection.query(`
             SELECT 
                 r.*, 
-                rm.nome_regulador_medico 
+                rm.nome_regulador_medico, data_hora_regulacao_medico
             FROM ${DBtable} r
             LEFT JOIN ${DBtable2} rm ON r.id_regulacao = rm.id_regulacao
             WHERE r.status_regulacao = ?`, 

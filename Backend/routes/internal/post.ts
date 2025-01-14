@@ -1,14 +1,14 @@
 /// <reference types="node" />
 const express = require('express');
-const { getCurrentTimestamp } = require('../../functions/Time/Timestamp.ts')
+const { getCurrentTimestamp } = require('../../functions/Time/Timestamp.ts');
 const NovaRegulacao = require("../../functions/InsertSQL/NovaRegulacao.ts");
 const RegulacaoMedica = require("../../functions/InsertSQL/RegulacaoMedica.ts");
 const LoginUser = require("../../functions/SelectSQL/LoginUser.ts");
 const CadastroUser = require("../../functions/InsertSQL/CadastroUser.ts");
 
-const router = express.Router();
+const routerPost = express.Router();
 
-router.post('/Login', async (req, res) => {
+routerPost.post('/Login', async (req, res) => {
   try {
     const { username, password } = req.body;
 
@@ -26,7 +26,7 @@ router.post('/Login', async (req, res) => {
   }
 });
 
-router.post('/Cadastro', async (req, res) => {
+routerPost.post('/Cadastro', async (req, res) => {
   try {
     const formData = req.body;
 
@@ -43,7 +43,7 @@ router.post('/Cadastro', async (req, res) => {
   }
 });
 
-router.post('/NovaRegulacao', async (req, res) => {
+routerPost.post('/NovaRegulacao', async (req, res) => {
   try {
     const formData = req.body;
     //console.log('Dados recebidos:', formData);
@@ -52,7 +52,7 @@ router.post('/NovaRegulacao', async (req, res) => {
     if(success){
       res.status(200).json({ message });
     } else {
-      res.status(500).json({ message: 'Erro ao inserir Nova Regulação, verifique os campos.', error });
+      res.status(500).json({ message, error });
     }
 
 
@@ -62,21 +62,29 @@ router.post('/NovaRegulacao', async (req, res) => {
   }
 });
 
-router.post('/RegulacaoMedico', async (req, res) => {
+routerPost.post('/RegulacaoMedico', async (req, res) => {
   try {
-    // Obtém os dados enviados no corpo da requisição
     const formData = req.body;
-
-    // Atualiza o campo data_hora_regulacao_medico
     formData.data_hora_regulacao_medico = getCurrentTimestamp();
 
-    const CadastroRegulacaoMedica = await RegulacaoMedica(formData);
+    // Envia a resposta logo após a chamada da função
+    const { success, message, error } = await RegulacaoMedica(formData);
 
-    res.status(200).json({ message: 'Regulação criada com sucesso!' });
+    if(success){
+      res.status(200).json({ message });
+    } else {
+      res.status(500).json({ message, error });
+    }
+
+
+    // Não é mais necessário, pois a resposta já foi enviada antes
+    // console.log(formData);
+
   } catch (error) {
     console.error('Erro no processamento:', error);
-    res.status(500).json({ message: 'Erro interno do servidor.' });
+    return res.status(500).json({ message: 'Erro interno do servidor.' });
   }
 });
 
-module.exports = router;
+
+module.exports = routerPost;

@@ -125,9 +125,6 @@ const NovaRegulacao: React.FC = () => {
       case !formData.data_hora_solicitacao_01.trim():
         invalidField = 'Date e Hora da solicitação é obrigatória.';
         break;
-      case formData.num_prioridade === null:
-        invalidField = 'A prioridade é obrigatória.';
-        break;
       case !formData.num_regulacao:
         invalidField = 'O número da regulação é obrigatório.';
         break;
@@ -155,25 +152,37 @@ const NovaRegulacao: React.FC = () => {
     if (!validateForm()) return;
 
     try {
-      const dataToSubmit = {
-        ...formData,
-        id_user: userData?.id_user, // Use o operador de encadeamento opcional para evitar erros se `userData` for `null`
-        nome_regulador_nac: userData?.nome
-      };      
+        const dataToSubmit = {
+            ...formData,
+            id_user: userData?.id_user, // Use o operador de encadeamento opcional para evitar erros se `userData` for `null`
+            nome_regulador_nac: userData?.nome,
+        };
 
-      const NovaRegulacao = await axios.post(`${NODE_URL}/api/internal/post/NovaRegulacao`, dataToSubmit);
+        const NovaRegulacao = await axios.post(`${NODE_URL}/api/internal/post/NovaRegulacao`, dataToSubmit);
 
-      const response = NovaRegulacao.data;
-      console.log(response.message);
+        const response = NovaRegulacao.data;
 
-      setSnackbar({ open: true, message: 'Regulação cadastrada com sucesso', severity: 'success' });
-      setFormData(initialFormData); // Resetar o formulário
-      setCurrentStep(1); // Voltar ao início
+        // Exibir mensagem de sucesso
+        setSnackbar({
+            open: true,
+            message: response.message || 'Regulação cadastrada com sucesso',
+            severity: 'success',
+        });
+
+        setFormData(initialFormData); // Resetar o formulário
+        setCurrentStep(1); // Voltar ao início
     } catch (error: any) {
-      setSnackbar({ open: true, message: 'Erro ao cadastrar Nova Regulação, verifique os campos', severity: 'error' });
-      
+        console.error('Erro ao cadastrar regulação:', error);
+
+        // Exibir mensagem de erro
+        setSnackbar({
+            open: true,
+            message: error.response?.data?.message || 'Erro ao cadastrar regulação. Por favor, tente novamente.',
+            severity: 'error',
+        });
     }
-  };
+};
+
 
   const handleVerificaProntuario = async (numProntuario: number): Promise<void> => {
     if (!numProntuario) {

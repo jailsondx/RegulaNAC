@@ -12,8 +12,9 @@ interface Props {
   un_destino: string;
   id_regulacao: number;
   nome_regulador_medico: string;
+  onClose: () => void; // Adicionado
+  showSnackbar: (message: string, severity: 'success' | 'error') => void; // Nova prop
 }
-
 
 interface FormDataRegulacaoMedico {
   id_user: string;
@@ -35,7 +36,7 @@ const initialFormData: FormDataRegulacaoMedico = {
   justificativa_tempo30: '',
 };
 
-const NovaRegulacaoMedicoAprovada: React.FC<Props> = ({ id_regulacao, nome_paciente, num_regulacao, un_origem, un_destino, nome_regulador_medico }) => {
+const NovaRegulacaoMedicoAprovada: React.FC<Props> = ({ id_regulacao, nome_paciente, num_regulacao, un_origem, un_destino, nome_regulador_medico, onClose, showSnackbar }) => {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [formData, setFormData] = useState<FormDataRegulacaoMedico>(initialFormData);
   const [message, setMessage] = useState<string>('');
@@ -73,23 +74,38 @@ const NovaRegulacaoMedicoAprovada: React.FC<Props> = ({ id_regulacao, nome_pacie
     if (!validateForm()) return;
 
     try {
-      const dataToSubmit = {
-        ...formData,
-        id_user: userData?.id_user, // Use o operador de encadeamento opcional para evitar erros se `userData` for `null`
-        id_regulacao,
-        nome_regulador_medico: userData?.nome
-      };
-      console.log(dataToSubmit);
-      await axios.post(`${NODE_URL}/api/internal/post/RegulacaoMedico`, dataToSubmit);
-      //setMessage('Regulação médica cadastrada com sucesso!');
-      //setError('');
-      window.location.reload();
-      //setFormData(initialFormData); // Resetar o formulário
+        const dataToSubmit = {
+            ...formData,
+            id_user: userData?.id_user,
+            id_regulacao,
+            nome_regulador_medico: userData?.nome,
+        };
+
+        const response = await axios.post(`${NODE_URL}/api/internal/post/RegulacaoMedico`, dataToSubmit);
+
+        // Mensagem de sucesso com base na resposta da API
+        showSnackbar(
+            response.data?.message || 'Regulação médica cadastrada com sucesso!',
+            'success'
+        );
+
+        if (onClose) {
+            onClose(); // Fecha o modal
+        }
     } catch (error: any) {
-      setError(error.response?.data?.message || 'Erro ao cadastrar regulação médica. Por favor, tente novamente.');
-      setMessage('');
+        console.error('Erro ao cadastrar regulação médica:', error);
+
+        // Mensagem de erro com base na resposta da API
+        showSnackbar(
+            error.response?.data?.message || 'Erro ao cadastrar regulação médica. Por favor, tente novamente.',
+            'error'
+        );
     }
-  };
+};
+
+  
+  
+  
 
   return (
     <div>
@@ -130,7 +146,7 @@ const NovaRegulacaoMedicoAprovada: React.FC<Props> = ({ id_regulacao, nome_pacie
               value={userData?.nome}
               onChange={handleChange}
               required
-              disabled
+              readOnly
             />
           </div>
         </div>

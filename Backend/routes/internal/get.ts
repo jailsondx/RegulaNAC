@@ -6,9 +6,9 @@ const VerificaProntuario = require("../../functions/SelectSQL/VerificaProntuario
 const VerificaRegulacao = require("../../functions/SelectSQL/VerificaRegulacao.ts");
 const ListaMedicos = require("../../functions/SelectSQL/ListaMedicos.ts");
 
-const router = express.Router();
+const routerGet = express.Router();
 
-router.get('/ListaRegulacoesPendentes', async (req, res) => {
+routerGet.get('/ListaRegulacoesPendentes', async (req, res) => {
   try {
     // Chama a função para buscar as regulagens pendentes
     const { success, data, error } = await ListaRegulacoesPendentes();
@@ -24,7 +24,7 @@ router.get('/ListaRegulacoesPendentes', async (req, res) => {
   }
 });
 
-router.get('/ListaRegulacoesAprovadas', async (req, res) => {
+routerGet.get('/ListaRegulacoesAprovadas', async (req, res) => {
   try {
     // Chama a função para buscar as regulagens pendentes
     const { success, data, error } = await ListaRegulacoesAprovadas();
@@ -40,7 +40,7 @@ router.get('/ListaRegulacoesAprovadas', async (req, res) => {
   }
 });
 
-router.get('/VerificaProntuario', async (req, res) => {
+routerGet.get('/VerificaProntuario', async (req, res) => {
   const { num_prontuario } = req.query; // Extrai o parâmetro da consulta
   try {
     // Sua lógica para verificar prontuário
@@ -58,7 +58,7 @@ router.get('/VerificaProntuario', async (req, res) => {
   }
 });
 
-router.get('/VerificaRegulacao', async (req, res) => {
+routerGet.get('/VerificaRegulacao', async (req, res) => {
   const { num_regulacao } = req.query; // Extrai o parâmetro da consulta
   try {
     // Sua lógica para verificar prontuário
@@ -76,7 +76,7 @@ router.get('/VerificaRegulacao', async (req, res) => {
   }
 });
 
-router.get('/ListaMedicos', async (req, res) => {
+routerGet.get('/ListaMedicos', async (req, res) => {
   
   try {
     // Sua lógica para verificar prontuário
@@ -94,4 +94,4 @@ router.get('/ListaMedicos', async (req, res) => {
   }
 });
 
-module.exports = router;
+module.exports = routerGet;
