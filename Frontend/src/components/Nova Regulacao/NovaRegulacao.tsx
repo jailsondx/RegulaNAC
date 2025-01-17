@@ -158,9 +158,9 @@ const NovaRegulacao: React.FC = () => {
             nome_regulador_nac: userData?.nome,
         };
 
-        const NovaRegulacao = await axios.post(`${NODE_URL}/api/internal/post/NovaRegulacao`, dataToSubmit);
+        const NovaRegulacaoAPI = await axios.post(`${NODE_URL}/api/internal/post/NovaRegulacao`, dataToSubmit);
 
-        const response = NovaRegulacao.data;
+        const response = NovaRegulacaoAPI.data;
 
         // Exibir mensagem de sucesso
         setSnackbar({
@@ -291,7 +291,7 @@ const NovaRegulacao: React.FC = () => {
         <label className='Title-Form'>Nova Regulação</label>
       </div>
 
-      <div className="ComponentForm NovaRegulacao">
+      <div className="ComponentForm">
         <div className="Steps">
           <div className={`Step ${currentStep === 1 ? 'active' : ''}`}>Paciente</div>
           <div className={`Step ${currentStep === 2 ? 'active' : ''}`}>Localidades</div>

@@ -6,6 +6,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const routePost = require('./routes/internal/post.ts');
 const routeGet = require('./routes/internal/get.ts');
+const routePut = require('./routes/internal/put.ts');
 
 require('dotenv').config();
 
@@ -25,6 +26,7 @@ http.globalAgent.maxSockets = Infinity;
 // Use as rotas no seu aplicativo
 app.use('/api/internal/post', routePost);
 app.use('/api/internal/get', routeGet);
+app.use('/api/internal/put', routePut);
 
 app.get('/', (req, res) => {
     res.send('Backend API funcionando!');

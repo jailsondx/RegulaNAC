@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import { FcFullTrash, FcInspection  } from "react-icons/fc";
-import data from '../../data.json'; // Importa o arquivo JSON
+import { useNavigate, useLocation } from 'react-router-dom';
+import { FcFullTrash, FcInspection } from "react-icons/fc";
+import { Snackbar, Alert } from '@mui/material';
 import './Regulacoes.css'
 
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
@@ -24,9 +24,10 @@ interface Regulacao {
 }
 const Regulacao: React.FC = () => {
   const [regulacoes, setRegulacoes] = useState<Regulacao[]>([]); // Tipo do estado
-  const [message, setMessage] = useState<string>('');
-  const [error, setError] = useState<string>('');
+  const location = useLocation();
   const navigate = useNavigate();
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'info' as 'success' | 'error' | 'info' | 'warning' });
+  const handleSnackbarClose = () => setSnackbar({ ...snackbar, open: false });
 
   useEffect(() => {
     const fetchRegulacoes = async () => {
@@ -46,6 +47,12 @@ const Regulacao: React.FC = () => {
 
     fetchRegulacoes();
   }, []);
+
+  useEffect(() => {
+    if (location.state?.snackbar) {
+      setSnackbar(location.state.snackbar);
+    }
+  }, [location]);
 
   const calcularTempoDeEspera = (dataHoraSolicitacao: string, dataHoraAtual: string) => {
     const dateSolicitacao = new Date(dataHoraSolicitacao);
@@ -116,8 +123,13 @@ const Regulacao: React.FC = () => {
           </tbody>
         </table>
       </div>
-    </>
 
+      <Snackbar open={snackbar.open} autoHideDuration={6000} onClose={handleSnackbarClose}>
+        <Alert onClose={handleSnackbarClose} severity={snackbar.severity}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
+    </>
   );
 };
 

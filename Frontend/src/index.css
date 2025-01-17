@@ -162,9 +162,17 @@ input[type=number] {
 }
 
 .ComponentForm{
+  width: 35dvw;
+  min-width: 300px;
+  height: auto;
+  min-height: 320px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 2px solid var(--form-border);
+  background-color: var(--form-bg-color);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
   border-radius: 0px 8px 8px 8px; /* Cantos: superior-esquerdo, superior-direito, inferior-direito, inferior-esquerdo */
 }
-
 
 
 /* Tabela de Regulações */
@@ -199,13 +207,12 @@ input[type=number] {
   min-width: 100px;
 
   height: 100%;
-  min-height: 20px;
+  min-height: 30px;
 }
 
 .Icons-Regulacao{
   height: auto;
   width: 25%;
-  min-width: 30px;
 
   cursor: pointer;
 }
@@ -214,6 +221,33 @@ input[type=number] {
   transform: scale(1.2);
 }
 
+
+
+/*DADOS PACIENTE*/
+.TitleDadosPaciente{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  border-bottom: 2px solid #49798a;
+}
+
+.DadosPaciente-Border{
+  width: 85%;
+  border-radius: 10px;
+  border: 2px solid #49798a;
+  padding: 10px;
+  margin: 0px 0px 20px 0px; /*top, direita, bottom, esquerda*/
+}
+
+.Div-DadosPaciente{
+  height: 40px;
+  margin: 10px 0px 10px 0px; /*top, direita, bottom, esquerda*/
+}
+
+.Div-DadosMedico{
+  margin: 0px 0px 0px 0px; /*top, direita, bottom, esquerda*/
+}
 /*
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;

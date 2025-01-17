@@ -13,30 +13,7 @@
     align-items: flex-start;
 }
 
-.TitleDadosPaciente{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    border-bottom: 2px solid #49798a;
-}
 
-.DadosPaciente-Border{
-    width: 85%;
-    border-radius: 10px;
-    border: 2px solid #49798a;
-    padding: 10px;
-    margin: 0px 0px 20px 0px; /*top, direita, bottom, esquerda*/
-}
-
-.Div-DadosPaciente{
-    height: 40px;
-    margin: 10px 0px 10px 0px; /*top, direita, bottom, esquerda*/
-}
-
-.Div-DadosMedico{
-    margin: 0px 0px 0px 0px; /*top, direita, bottom, esquerda*/
-}
 
 .num_leito, .nome_regulador_medico, .justificativa_tempo30{
     display: flex;

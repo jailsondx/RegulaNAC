@@ -1,6 +1,8 @@
 import React, { useState, ChangeEvent, FormEvent, Suspense, useEffect } from 'react';
 import axios from 'axios';
-import { getUserData } from '../functions/storageUtils';
+import { getUserData } from '../../functions/storageUtils';
+
+import './SetorOrigemDestino.css';
 
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
 
@@ -89,49 +91,71 @@ const SetorOrigem: React.FC<Props> = ({ id_regulacao, nome_paciente, num_regulac
     };
 
     return (
-        <div>
-            <div className='DadosPaciente-Border'>
-                <label className='TitleDadosPaciente'>Dados Paciente</label>
-                <div className='Div-DadosPaciente RegulacaoMedica-Aprovada'>
-                    <label>Paciente: {nome_paciente}</label>
-                    <label>Regulação: {num_regulacao}</label>
-                    <label>Un. Origem: {un_origem}</label>
-                    <label>Un. Destino: {un_destino}</label>
-                </div>
-                <div className='Div-DadosMedico RegulacaoMedica-Aprovada'>
-                    <label>Médico Aprovador: {nome_regulador_medico}</label>
-                </div>
-            </div>
+        <>
+      <div className='DadosPaciente-Border'>
+        <label className='TitleDadosPaciente'>Dados Paciente</label>
+        <div className='Div-DadosPaciente RegulacaoMedica-Aprovada'>
+          <label>Paciente: { nome_paciente }</label>
+          <label>Regulação: { num_regulacao }</label>
+          <label>Un. Origem: { un_origem }</label>
+          <label>Un. Destino: { un_destino }</label>
+          
+        </div>
+        <div className='Div-DadosMedico RegulacaoMedica-Aprovada'>
+          <label>Médico de Destino: { nome_regulador_medico }</label>
+        </div>
+      </div>
 
             <form onSubmit={handleSubmit}>
-                <div className='Div-SetorOrigem'>
-                    <div>
-                        <label>Nome do Colaborador que recebeu a informação:</label>
-                        <input
-                            type="number"
-                            name="nome_colaborador"
-                            className='nome_colaborador'
-                            value={formData.nome_colaborador ?? ''}
-                            onChange={handleChange}
-                        />
+                <div className='div-SetorOrigemDestino'>
+                    <div className='subdiv-SetorOrigemDestino'>
+                        <div className="SetorOrigemDestino-line">
+                            <label>Nome do Colaborador que recebeu a comunicação:</label>
+                            <input
+                                type="text"
+                                name="nome_colaborador"
+                                value={formData.nome_colaborador ?? ''}
+                                onChange={handleChange}
+                            />
+                        </div>
                     </div>
+                    
+                    <div className='subdiv-SetorOrigemDestino'>
+                        <div className="SetorOrigemDestino-line">
+                            <label>Data e Hora do Acionamento:</label>
+                            <input
+                                type="datetime-local"
+                                name="data_hora_comunicacao"
+                                className="SetorOrigemDestino-line-input"
+                                value={formData.data_hora_comunicacao}
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
 
-                    <div>
-                        <label>Data e Hora do Acionamento do Médico:</label>
-                        <input
-                            type="datetime-local"
-                            name="data_hora_comunicacao"
-                            value={formData.data_hora_comunicacao}
+                        <div className="SetorOrigemDestino-line">
+                            <label>Preparo do Leito:</label>
+                            <select
+                            name="preparo_leito"
+                            value={formData.preparo_leito}
                             onChange={handleChange}
                             required
-                        />
+                            >
+                            <option value="">Selecione...</option>
+                            <option value="limpo">Limpo</option>
+                            <option value="desinfetado">Desinfetado</option>
+                            <option value="não realizado">Não realizado</option>
+                        </select>
+                        </div>
                     </div>
+
+                   
                 </div>
                 <button type="submit">Autorizar</button>
             </form>
             {message && <p className="success">{message}</p>}
             {error && <p className="error">{error}</p>}
-        </div>
+        </>
     );
 };
 

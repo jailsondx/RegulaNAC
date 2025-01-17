@@ -1,16 +1,4 @@
 /* NovaRegulacao.css */
-
-.NovaRegulacao {
-    width: 35dvw;
-    min-width: 300px;
-    height: 45dvh;
-    min-height: 320px;
-    margin: 0 auto;
-    padding: 20px;
-    border: 2px solid var(--form-border);
-    background-color: var(--form-bg-color);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-  }
   
   /* Steps Navigation */
   .Steps {

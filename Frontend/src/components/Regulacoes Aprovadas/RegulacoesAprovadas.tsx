@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Modal from '../Modal/Modal.tsx';
 import { useNavigate } from 'react-router-dom';
-import { FcHome, FcGlobe , FcInTransit   } from "react-icons/fc";
+import { FcHome, FcGlobe, FcInTransit } from "react-icons/fc";
 import { formatDateToPtBr } from '../../functions/DateTimes';
-import SetorOrigem from '../../Setor Origem e Destino/SetorOrigem.tsx';
+import SetorOrigem from '../Setor Origem e Destino/SetorOrigem.tsx';
 
 import './Regulacoes.css'
 
@@ -21,13 +21,11 @@ interface Regulacao {
   data_hora_regulacao_medico: string;
 }
 
-const RegulacoesAprovadas: React.FC= () => {
+const RegulacoesAprovadas: React.FC = () => {
   const [regulacoes, setRegulacoes] = useState<Regulacao[]>([]); // Tipo do estado
-  const [message, setMessage] = useState<string>('');
-  const [error, setError] = useState<string>('');
-      const [showModalOrigem, setShowModalOrigem] = useState(false);
-      const [showModalDeny, setShowModalDeny] = useState(false);
-      const [currentRegulacao, setCurrentRegulacao] = useState<Regulacao | null>(null);
+  const [showModalOrigem, setShowModalOrigem] = useState(false);
+  const [showModalDeny, setShowModalDeny] = useState(false);
+  const [currentRegulacao, setCurrentRegulacao] = useState<Regulacao | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -67,28 +65,24 @@ const RegulacoesAprovadas: React.FC= () => {
     return now.toISOString(); // Retorna a data e hora atual no formato ISO (por exemplo: "2024-12-30T16:00:00Z")
   };
 
-  const NovaRegulacao = () => {
-    navigate('/NovaRegulacao');
-  }
 
   /*MODAIS*/
 
-const handleOpenModalOrigem = (regulacao: Regulacao) => {
+  const handleOpenModalOrigem = (regulacao: Regulacao) => {
     setCurrentRegulacao(regulacao);
     setShowModalOrigem(true);
-};
+  };
 
-const handleCloseModal = () => {
+  const handleCloseModal = () => {
     setShowModalOrigem(false);
     //window.location.reload(); // Recarregar a página ao fechar o modal
-};
+  };
 
 
   return (
     <>
       <div className='Header-ListaRegulaçoes'>
-        <label className='Title-Tabela'>Regulações Aprovadas: Esperando Transporte</label>
-        <button type="button" onClick={NovaRegulacao}>+ Nova Regulação</button>
+        <label className='Title-Tabela'>Regulações Aprovadas</label>
       </div>
 
       <div>
@@ -116,7 +110,7 @@ const handleCloseModal = () => {
                 <td>{regulacao.nome_regulador_medico}</td>
                 <td>{formatDateToPtBr(regulacao.data_hora_regulacao_medico)}</td>
                 <td className='td-Icons'>
-                  <FcHome className='Icons-Regulacao' onClick={() => handleOpenModalOrigem(regulacao)}/>
+                  <FcHome className='Icons-Regulacao' onClick={() => handleOpenModalOrigem(regulacao)} />
                   <FcGlobe className='Icons-Regulacao' />
                   <FcInTransit className='Icons-Regulacao' />
                 </td>
@@ -126,18 +120,18 @@ const handleCloseModal = () => {
         </table>
       </div>
       {showModalOrigem && currentRegulacao && (
-                <Modal show={showModalOrigem} onClose={handleCloseModal} title='Setor de Origem'>
-                    <SetorOrigem
-                        id_regulacao={currentRegulacao.id_regulacao} 
-                        nome_paciente={currentRegulacao.nome_paciente} 
-                        num_regulacao={currentRegulacao.num_regulacao} 
-                        un_origem={currentRegulacao.un_origem} 
-                        un_destino={currentRegulacao.un_destino} 
-                        nome_regulador_medico={currentRegulacao.nome_regulador_medico} 
-                    />
-                </Modal>
-            )}
-      
+        <Modal show={showModalOrigem} onClose={handleCloseModal} title='Setor de Origem'>
+          <SetorOrigem
+            id_regulacao={currentRegulacao.id_regulacao}
+            nome_paciente={currentRegulacao.nome_paciente}
+            num_regulacao={currentRegulacao.num_regulacao}
+            un_origem={currentRegulacao.un_origem}
+            un_destino={currentRegulacao.un_destino}
+            nome_regulador_medico={currentRegulacao.nome_regulador_medico}
+          />
+        </Modal>
+      )}
+
     </>
 
   );
