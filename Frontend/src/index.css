@@ -121,13 +121,15 @@ button:disabled {
   justify-content: center;
   align-items: center;
   font-size: 12px;
-  height: 30px;
   margin-left: 5%;
 }
 
 .button-warning{
-  text-shadow: 2px 2px 4px#000000;
   background-color: #f39c12;
+}
+
+.button-clear{
+  background-color: #ff6f61;
 }
 
 
@@ -212,13 +214,18 @@ input[type=number] {
 
 .Icons-Regulacao{
   height: auto;
-  width: 25%;
+  width: 20%;
 
   cursor: pointer;
 }
 
 .Icons-Regulacao:hover{
   transform: scale(1.2);
+}
+
+.Icon:hover{
+  transform: scale(1.2);
+  cursor: pointer;
 }
 
 

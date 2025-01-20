@@ -154,7 +154,7 @@ const AtualizaRegulacao: React.FC = () => {
 
             </div>
             <div className='Div-DadosMedico RegulacaoMedica-Aprovada'>
-              <label>Médico de Destino: {dadosPront.nome_regulador_medico}</label>
+              <label>Médico Regulador: {dadosPront.nome_regulador_medico}</label>
             </div>
           </div>
           

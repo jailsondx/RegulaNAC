@@ -102,7 +102,7 @@ const SetorOrigem: React.FC<Props> = ({ id_regulacao, nome_paciente, num_regulac
           
         </div>
         <div className='Div-DadosMedico RegulacaoMedica-Aprovada'>
-          <label>Médico de Destino: { nome_regulador_medico }</label>
+          <label>Médico Regulador: { nome_regulador_medico }</label>
         </div>
       </div>
 

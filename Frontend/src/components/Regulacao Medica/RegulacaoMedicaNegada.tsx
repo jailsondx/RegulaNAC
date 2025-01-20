@@ -105,7 +105,7 @@ const NovaRegulacaoMedicoNegada: React.FC<Props> = ({ id_regulacao, nome_pacient
 
         </div>
         <div className='Div-DadosMedico RegulacaoMedica-Aprovada'>
-          <label>Médico de Destino: {nome_regulador_medico}</label>
+          <label>Médico Regulador: {nome_regulador_medico}</label>
         </div>
       </div>
 

@@ -1,0 +1,15 @@
+.FiltroContainer {
+    display: flex;
+    gap: 16px;
+  }
+  
+  .FiltroItem {
+    display: flex;
+    flex-direction: row;
+    width: 200px;
+  }
+  
+  .FiltroItem label {
+    margin-bottom: 4px;
+  }
+  
