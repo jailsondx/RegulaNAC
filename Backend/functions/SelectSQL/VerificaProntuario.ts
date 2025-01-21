@@ -11,7 +11,7 @@ async function VerificaProntuario(num_prontuario) {
 
         // Execute a query para verificar o prontuário na tabela com LIMIT 1
         const [row] = await connection.query(
-            `SELECT * FROM ${DBtable} WHERE num_prontuario = ? AND status_regulacao LIKE 'Aberto%' LIMIT 1`,
+            `SELECT * FROM ${DBtable} WHERE num_prontuario = ? AND status_regulacao LIKE 'ABERTO%' LIMIT 1`,
             [num_prontuario]
         );
 

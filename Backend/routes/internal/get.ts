@@ -1,6 +1,6 @@
 /// <reference types="node" />
 const express = require('express');
-const ListaRegulacoesPendentes = require("../../functions/SelectSQL/ListaRegulacoesPendentes.ts");
+const { ListaRegulacoesPendentes, ListaRegulacoesPendentes24 } = require("../../functions/SelectSQL/ListaRegulacoesPendentes.ts");
 const ListaRegulacoesAprovadas = require("../../functions/SelectSQL/ListaRegulacoesAprovadas.ts");
 const VerificaProntuario = require("../../functions/SelectSQL/VerificaProntuario.ts");
 const VerificaRegulacao = require("../../functions/SelectSQL/VerificaRegulacao.ts");
@@ -12,9 +12,27 @@ routerGet.get('/ListaRegulacoesPendentes', async (req, res) => {
   try {
     // Chama a função para buscar as regulagens pendentes
     const { success, data, error } = await ListaRegulacoesPendentes();
+    const serverTime = new Date().toISOString(); // Hora atual do servidor em formato ISO
 
     if (success) {
-      res.status(200).json({ message: 'Lista de regulações carregada com sucesso.', data });
+      res.status(200).json({ message: 'Lista de regulações carregada com sucesso.', data, serverTime });
+    } else {
+      res.status(500).json({ message: 'Erro ao carregar lista de regulações.', error });
+    }
+  } catch (error) {
+    console.error('Erro no processamento:', error);
+    res.status(500).json({ message: 'Erro interno do servidor.' });
+  }
+});
+
+routerGet.get('/ListaRegulacoesPendentes24', async (req, res) => {
+  try {
+    // Chama a função para buscar as regulagens pendentes
+    const { success, data, error } = await ListaRegulacoesPendentes24();
+    const serverTime = new Date().toISOString(); // Hora atual do servidor em formato ISO
+
+    if (success) {
+      res.status(200).json({ message: 'Lista de regulações carregada com sucesso.', data, serverTime });
     } else {
       res.status(500).json({ message: 'Erro ao carregar lista de regulações.', error });
     }

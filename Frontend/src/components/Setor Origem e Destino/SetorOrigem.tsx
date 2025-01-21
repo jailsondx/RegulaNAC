@@ -18,25 +18,22 @@ interface Props {
 
 interface FormDataRegulacaoAprovada {
     id_user: string;
-    num_regulacao: number | null;
     setor_origem: string;
     nome_colaborador: string;
     data_hora_comunicacao: string;
     preparo_leito: string;
 }
 
-const initialFormData: FormDataRegulacaoAprovada = {
-    id_user: '',
-    num_regulacao: null,
-    setor_origem: '',
-    nome_colaborador: '',
-    data_hora_comunicacao: '',
-    preparo_leito: '',
-};
 
 const SetorOrigem: React.FC<Props> = ({ id_regulacao, nome_paciente, num_regulacao, un_origem, un_destino, nome_regulador_medico }) => {
     const [userData, setUserData] = useState<UserData | null>(null);
-    const [formData, setFormData] = useState<FormDataRegulacaoAprovada>(initialFormData);
+    const [formData, setFormData] = useState<FormDataRegulacaoAprovada>({
+        id_user: '',
+        setor_origem: un_origem, // Use o valor de un_origem recebido nas props
+        nome_colaborador: '',
+        data_hora_comunicacao: '',
+        preparo_leito: '',
+    });
     const [message, setMessage] = useState<string>('');
     const [error, setError] = useState<string>('');
 
@@ -59,8 +56,8 @@ const SetorOrigem: React.FC<Props> = ({ id_regulacao, nome_paciente, num_regulac
     };
 
     const validateForm = (): boolean => {
-        if (!formData.num_leito.trim()) {
-            setError('Leito é obrigatório.');
+        if (!formData.nome_colaborador.trim()) {
+            setError('Colaborador é obrigatório.');
             return false;
         }
         setError('');
@@ -76,10 +73,10 @@ const SetorOrigem: React.FC<Props> = ({ id_regulacao, nome_paciente, num_regulac
                 ...formData,
                 id_user: userData?.id_user, // Use o operador de encadeamento opcional para evitar erros se `userData` for `null`
                 id_regulacao,
-                nome_regulador_medico: userData?.nome
+                setor_origem: un_origem,
             };
-            console.log(dataToSubmit);
-            await axios.post(`${NODE_URL}/api/internal/post/RegulacaoMedico`, dataToSubmit);
+
+            const response = await axios.post(`${NODE_URL}/api/internal/post/RegulacaoOrigem`, dataToSubmit);
             //setMessage('Regulação médica cadastrada com sucesso!');
             //setError('');
             window.location.reload();

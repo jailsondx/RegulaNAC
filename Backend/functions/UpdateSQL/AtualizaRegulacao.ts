@@ -46,7 +46,7 @@ async function AtualizaRegulacao(FormData) {
 
         const currentStatus = rowsRegulacaoStatus[0].status_regulacao;
 
-        if (currentStatus !== 'Aberto - Aguardando Regulacao Medica') {
+        if (currentStatus !== 'ABERTO - NOVO') {
             console.error(`Regulação não pode ser atualizada: Status atual é '${currentStatus}'`);
             connection.release(); // Libera a conexão
             return {

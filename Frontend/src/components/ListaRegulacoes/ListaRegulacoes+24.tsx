@@ -5,8 +5,9 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { FcFullTrash, FcInspection } from "react-icons/fc";
 import { Snackbar, Alert } from '@mui/material';
 
+import TimeTracker from "../TimeTracker/TimeTracker.tsx";
 import Filtro from '../Filtro/Filtro';
-import './Regulacoes.css'
+import './ListaRegulacoes.css';
 
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
 
@@ -25,7 +26,9 @@ interface Regulacao {
   nome_regulador_medico: string;
   data_hora_acionamento_medico: string;
 }
-const Regulacao: React.FC = () => {
+
+const ListaRegulacoes24: React.FC = () => {
+  const [serverTime, setServerTime] = useState("");
   const [regulacoes, setRegulacoes] = useState<Regulacao[]>([]); // Tipo do estado
   const [filteredRegulacoes, setFilteredRegulacoes] = useState<Regulacao[]>([]);
   const [unidadeOrigem, setUnidadeOrigem] = useState('');
@@ -41,11 +44,12 @@ const Regulacao: React.FC = () => {
   useEffect(() => {
     const fetchRegulacoes = async () => {
       try {
-        const response = await axios.get(`${NODE_URL}/api/internal/get/ListaRegulacoesPendentes`);
+        const response = await axios.get(`${NODE_URL}/api/internal/get/ListaRegulacoesPendentes24`);
 
         if (response.data && Array.isArray(response.data.data)) {
           setRegulacoes(response.data.data);
-          setFilteredRegulacoes(response.data.data); // Corrigido aqui
+          setServerTime(response.data.serverTime); // Hora atual do servidor em formato ISO
+          setFilteredRegulacoes(response.data.data);
         } else {
           console.error('Dados inesperados:', response.data);
         }
@@ -89,36 +93,12 @@ const Regulacao: React.FC = () => {
     setFilteredRegulacoes(filtered);
   }, [unidadeOrigem, unidadeDestino, searchTerm, regulacoes]);
 
-  const calcularTempoDeEspera = (dataHoraSolicitacao: string, dataHoraAtual: string) => {
-    const dateSolicitacao = new Date(dataHoraSolicitacao);
-    const dateAtual = new Date(dataHoraAtual);
-
-    const diffInMilliseconds = dateAtual.getTime() - dateSolicitacao.getTime();
-
-    const diffInHours = Math.floor(diffInMilliseconds / (1000 * 60 * 60)); // Horas completas
-    const diffInMinutes = Math.floor((diffInMilliseconds % (1000 * 60 * 60)) / (1000 * 60)); // Minutos restantes
-
-    return `${diffInHours}h ${diffInMinutes}min`;
-  };
-
-
-  const obterDataHoraAtual = () => {
-    const now = new Date();
-    return now.toISOString(); // Retorna a data e hora atual no formato ISO (por exemplo: "2024-12-30T16:00:00Z")
-  };
-
-  const NovaRegulacao = () => {
-    navigate('/NovaRegulacao');
-  }
-
-
   return (
     <>
       <div className="Header-ListaRegulaçoes">
         <label className="Title-Tabela">
           Lista de Regulações <LuFilter className='Icon' onClick={() => setShowFilters(!showFilters)} />
         </label>
-        <button type="button" onClick={NovaRegulacao}>+ Nova Regulação</button>
       </div>
 
       {showFilters && (
@@ -178,7 +158,7 @@ const Regulacao: React.FC = () => {
             {filteredRegulacoes.map(regulacao => (
               <tr key={regulacao.id_regulacao}>
                 <td>{regulacao.num_prontuario}</td>
-                <td>{regulacao.nome_paciente}</td>
+                <td className="td-NomePaciente">{regulacao.nome_paciente}</td>
                 <td>{regulacao.num_idade} Anos</td>
                 <td>{regulacao.num_regulacao}</td>
                 <td>{regulacao.un_origem}</td>
@@ -186,10 +166,10 @@ const Regulacao: React.FC = () => {
                 <td>{regulacao.num_prioridade}</td>
                 <td>{new Date(regulacao.data_hora_solicitacao_02).toLocaleString()}</td>
                 <td>{new Date(regulacao.data_hora_acionamento_medico).toLocaleString()}</td>
-                <td>{calcularTempoDeEspera(regulacao.data_hora_solicitacao_02, obterDataHoraAtual())}</td>
+                <td className="td-TempoEspera"><TimeTracker startTime={regulacao.data_hora_solicitacao_02} serverTime={serverTime} /></td>
                 <td className='td-Icons'>
-                  <FcInspection className='Icons-Regulacao' />
-                  <FcFullTrash className='Icons-Regulacao' />
+                  <FcInspection className='Icon Icons-Regulacao' />
+                  <FcFullTrash className='Icon Icons-Regulacao' />
                 </td>
               </tr>
             ))}
@@ -207,4 +187,4 @@ const Regulacao: React.FC = () => {
 };
 
 
-export default Regulacao;
+export default ListaRegulacoes24;

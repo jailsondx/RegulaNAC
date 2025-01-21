@@ -30,9 +30,15 @@
 }
 
 .sidebar ul li a {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+  height: 30px;
+  width: 100%;
   color: white;
   text-decoration: none;
-  font-size: 16px;
+  font-size: 14px;
   transition: color 0.3s ease;
 }
 
@@ -85,7 +91,7 @@
   margin-bottom: 5dvh;
 }
 
-/* Submenu */
+/* Submenu 
 .submenu {
   margin-left: 20px;
   list-style: none;
@@ -108,7 +114,7 @@
 .submenu-toggle:hover {
   color: #007bff;
 }
-
+*/
 
 
 /*MUDANÇA DE TEMA*/
@@ -149,4 +155,16 @@
 .slider.dark .slider__ball {
   left: 52px; /* Move a bolinha para a direita no tema escuro */
   background-color: white; /* Bolinha branca no tema escuro */
+}
+
+
+.Icon-Menu-Item{
+  width: auto;
+  height: 25px;
+}
+
+.textMenu-Item{
+  display: flex;
+  width: 83%;
+  cursor: pointer;
 }

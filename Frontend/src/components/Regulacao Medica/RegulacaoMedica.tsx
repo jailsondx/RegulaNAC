@@ -4,7 +4,9 @@ import Modal from "../Modal/Modal.tsx";
 import { Snackbar, Alert } from "@mui/material";
 import NovaRegulacaoMedicoAprovada from "./RegulacaoMedicaAprovada.tsx";
 import NovaRegulacaoMedicoNegada from "./RegulacaoMedicaNegada.tsx";
+import TimeTracker from "../TimeTracker/TimeTracker.tsx";
 import { FcApproval, FcBadDecision } from "react-icons/fc";
+
 
 import "./RegulacaoMedica.css";
 
@@ -27,6 +29,7 @@ interface Regulacao {
 }
 
 const RegulacaoMedica: React.FC = () => {
+  const [serverTime, setServerTime] = useState("");
   const [regulacoes, setRegulacoes] = useState<Regulacao[]>([]);
   const [showModalApproved, setShowModalApproved] = useState(false);
   const [showModalDeny, setShowModalDeny] = useState(false);
@@ -39,12 +42,11 @@ const RegulacaoMedica: React.FC = () => {
   // Defina fetchRegulacoes fora do useEffect
   const fetchRegulacoes = async () => {
     try {
-      const response = await axios.get(
-        `${NODE_URL}/api/internal/get/ListaRegulacoesPendentes`
-      );
+      const response = await axios.get(`${NODE_URL}/api/internal/get/ListaRegulacoesPendentes`);
 
       if (response.data && Array.isArray(response.data.data)) {
         setRegulacoes(response.data.data);
+        setServerTime(response.data.serverTime); // Hora atual do servidor em formato ISO
       } else {
         console.error("Dados inesperados:", response.data);
       }
@@ -58,27 +60,6 @@ const RegulacaoMedica: React.FC = () => {
   useEffect(() => {
     fetchRegulacoes();
   }, []);
-
-  const calcularTempoDeEspera = (
-    dataHoraSolicitacao: string,
-    dataHoraAtual: string
-  ) => {
-    const dateSolicitacao = new Date(dataHoraSolicitacao); // Converte a string ISO para objeto Date
-    const dateAtual = new Date(dataHoraAtual); // Converte a data e hora atual
-
-    const diffInMilliseconds = dateAtual.getTime() - dateSolicitacao.getTime();
-    const diffInHours = Math.floor(diffInMilliseconds / (1000 * 60 * 60)); // Horas completas
-    const diffInMinutes = Math.floor(
-      (diffInMilliseconds % (1000 * 60 * 60)) / (1000 * 60)
-    ); // Minutos restantes
-
-    return `${diffInHours}h ${diffInMinutes}min`;
-  };
-
-  const obterDataHoraAtual = () => {
-    const now = new Date();
-    return now.toISOString(); // Retorna a data e hora atual no formato ISO
-  };
 
   const handleOpenModalApproved = (regulacao: Regulacao) => {
     setCurrentRegulacao(regulacao);
@@ -120,9 +101,9 @@ const RegulacaoMedica: React.FC = () => {
         <table className="Table-Regulacoes">
           <thead>
             <tr>
-              <th>Prontuário</th>
+              <th>Pront.</th>
               <th>Nome Paciente</th>
-              <th>Id</th>
+              <th>Id.</th>
               <th>Regulação</th>
               <th>Un. Origem</th>
               <th>Un. Destino</th>
@@ -136,32 +117,17 @@ const RegulacaoMedica: React.FC = () => {
             {regulacoes.map((regulacao) => (
               <tr key={regulacao.id_regulacao}>
                 <td>{regulacao.num_prontuario}</td>
-                <td>{regulacao.nome_paciente}</td>
+                <td className="td-NomePaciente">{regulacao.nome_paciente}</td>
                 <td>{regulacao.num_idade} Anos</td>
                 <td>{regulacao.num_regulacao}</td>
                 <td>{regulacao.un_origem}</td>
                 <td>{regulacao.un_destino}</td>
                 <td>{regulacao.num_prioridade}</td>
-                <td>
-                  {new Date(
-                    regulacao.data_hora_solicitacao_02
-                  ).toLocaleString()}
-                </td>
-                <td>
-                  {calcularTempoDeEspera(
-                    regulacao.data_hora_solicitacao_01,
-                    obterDataHoraAtual()
-                  )}
-                </td>
+                <td>{new Date(regulacao.data_hora_solicitacao_02).toLocaleString()}</td>
+                <td className="td-TempoEspera"><TimeTracker startTime={regulacao.data_hora_solicitacao_02} serverTime={serverTime} /></td>
                 <td className="td-Icons">
-                  <FcApproval
-                    className="Icons-Regulacao"
-                    onClick={() => handleOpenModalApproved(regulacao)}
-                  />
-                  <FcBadDecision
-                    className="Icons-Regulacao"
-                    onClick={() => handleOpenModalDeny(regulacao)}
-                  />
+                  <FcApproval className="Icon Icons-Regulacao" onClick={() => handleOpenModalApproved(regulacao)} />
+                  <FcBadDecision className="Icon Icons-Regulacao" onClick={() => handleOpenModalDeny(regulacao)} />
                 </td>
               </tr>
             ))}

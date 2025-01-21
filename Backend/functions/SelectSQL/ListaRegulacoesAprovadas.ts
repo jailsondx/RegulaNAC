@@ -6,7 +6,6 @@ const { getCurrentTimestamp } = require("../Time/Timestamp.ts");
 async function ListaRegulacoesAprovadas() {
     const DBtable = 'regulacao';
     const DBtable2 = 'regulacao_medico'; // Tabela de reguladores
-    const Agora = getCurrentTimestamp();
 
     try {
         // Inicie a conexão com o banco de dados
@@ -19,8 +18,8 @@ async function ListaRegulacoesAprovadas() {
                 rm.nome_regulador_medico, data_hora_regulacao_medico
             FROM ${DBtable} r
             LEFT JOIN ${DBtable2} rm ON r.id_regulacao = rm.id_regulacao
-            WHERE r.status_regulacao = ?`, 
-            ['Aberto - Pendente Transporte']
+            WHERE r.status_regulacao LIKE ?`, 
+            ['ABERTO - APROVADA%']
         );
 
         connection.release(); // Libera a conexão

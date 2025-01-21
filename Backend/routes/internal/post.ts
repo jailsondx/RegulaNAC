@@ -3,6 +3,7 @@ const express = require('express');
 const { getCurrentTimestamp } = require('../../functions/Time/Timestamp.ts');
 const NovaRegulacao = require("../../functions/InsertSQL/NovaRegulacao.ts");
 const RegulacaoMedica = require("../../functions/InsertSQL/RegulacaoMedica.ts");
+const RegulacaoOrigem = require("../../functions/InsertSQL/RegulacaoOrigem.ts");
 const LoginUser = require("../../functions/SelectSQL/LoginUser.ts");
 const CadastroUser = require("../../functions/InsertSQL/CadastroUser.ts");
 
@@ -86,6 +87,29 @@ routerPost.post('/RegulacaoMedico', async (req, res) => {
   }
 });
 
+routerPost.post('/RegulacaoOrigem', async (req, res) => {
+  try {
+    const formData = req.body;
+    //formData.data_hora_regulacao_medico = getCurrentTimestamp();
+
+    // Envia a resposta logo após a chamada da função
+    const { success, message, error } = await RegulacaoOrigem(formData);
+
+    
+    if(success){
+      res.status(200).json({ message });
+    } else {
+      res.status(500).json({ message, error });
+    }
+
+    // Não é mais necessário, pois a resposta já foi enviada antes
+    // console.log(formData);
+
+  } catch (error) {
+    console.error('Erro no processamento:', error);
+    return res.status(500).json({ message: 'Erro interno do servidor.' });
+  }
+});
 
 routerPost.post('/AtualizaRegulacao', async (req, res) => {
   try {

@@ -4,6 +4,7 @@ import Modal from '../Modal/Modal.tsx';
 import { useNavigate } from 'react-router-dom';
 import { FcHome, FcGlobe, FcInTransit } from "react-icons/fc";
 import { formatDateToPtBr } from '../../functions/DateTimes';
+import { getUserData } from '../../functions/storageUtils';
 import SetorOrigem from '../Setor Origem e Destino/SetorOrigem.tsx';
 
 import './Regulacoes.css'
@@ -22,12 +23,14 @@ interface Regulacao {
 }
 
 const RegulacoesAprovadas: React.FC = () => {
+  const [userData, setUserData] = useState<UserData | null>(null);
   const [regulacoes, setRegulacoes] = useState<Regulacao[]>([]); // Tipo do estado
   const [showModalOrigem, setShowModalOrigem] = useState(false);
   const [showModalDeny, setShowModalDeny] = useState(false);
   const [currentRegulacao, setCurrentRegulacao] = useState<Regulacao | null>(null);
   const navigate = useNavigate();
 
+  //FAZ A REQUISIÇÃO DA API PARA PREENCHER A TABELA
   useEffect(() => {
     const fetchRegulacoes = async () => {
       try {
@@ -47,24 +50,11 @@ const RegulacoesAprovadas: React.FC = () => {
     fetchRegulacoes();
   }, []);
 
-  const calcularTempoDeEspera = (dataHoraSolicitacao: string, dataHoraAtual: string) => {
-    const dateSolicitacao = new Date(dataHoraSolicitacao);
-    const dateAtual = new Date(dataHoraAtual);
-
-    const diffInMilliseconds = dateAtual.getTime() - dateSolicitacao.getTime();
-
-    const diffInHours = Math.floor(diffInMilliseconds / (1000 * 60 * 60)); // Horas completas
-    const diffInMinutes = Math.floor((diffInMilliseconds % (1000 * 60 * 60)) / (1000 * 60)); // Minutos restantes
-
-    return `${diffInHours}h ${diffInMinutes}min`;
-  };
-
-
-  const obterDataHoraAtual = () => {
-    const now = new Date();
-    return now.toISOString(); // Retorna a data e hora atual no formato ISO (por exemplo: "2024-12-30T16:00:00Z")
-  };
-
+    //Pega dados do SeassonStorage User
+    useEffect(() => {
+      const data = getUserData();
+      setUserData(data);
+    }, []);
 
   /*MODAIS*/
 
@@ -96,24 +86,32 @@ const RegulacoesAprovadas: React.FC = () => {
               <th>Un. Destino</th>
               <th>Médico Regulador</th>
               <th>Data/Hora da Autorização</th>
-              <th>Ações</th>
+              
+              {userData?.tipo !== "Medico" && (
+                <th>Ações</th>
+              )}
+              
             </tr>
           </thead>
           <tbody>
             {regulacoes.map(regulacao => (
               <tr key={regulacao.id_regulacao}>
                 <td>{regulacao.num_prontuario}</td>
-                <td>{regulacao.nome_paciente}</td>
+                <td className="td-NomePaciente">{regulacao.nome_paciente}</td>
                 <td>{regulacao.num_regulacao}</td>
                 <td>{regulacao.un_origem}</td>
                 <td>{regulacao.un_destino}</td>
                 <td>{regulacao.nome_regulador_medico}</td>
                 <td>{formatDateToPtBr(regulacao.data_hora_regulacao_medico)}</td>
-                <td className='td-Icons'>
-                  <FcHome className='Icons-Regulacao' onClick={() => handleOpenModalOrigem(regulacao)} />
-                  <FcGlobe className='Icons-Regulacao' />
-                  <FcInTransit className='Icons-Regulacao' />
+                
+                {userData?.tipo !== "Medico" && (
+                <td className="td-Icons">
+                  <FcHome className="Icon Icons-Regulacao" onClick={() => handleOpenModalOrigem(regulacao)} />
+                  <FcGlobe className="Icon Icons-Regulacao" />
+                  <FcInTransit className="Icon Icons-Regulacao" />
                 </td>
+              )}
+
               </tr>
             ))}
           </tbody>

@@ -1,18 +1,15 @@
 /// <reference types="node" />
 const express = require('express');
 const { DBconnection } = require("../../connection.ts"); // Importa apenas o objeto DBconnection
+const UpdateStatus = require("../UpdateSQL/UpdateStatus.ts");
 
-async function NovaRegulacao(FormData) {
-    const DBtable = 'regulacao';
+async function RegulacaoOrigem(FormData) {
+    const DBtable = 'setor_origem';
     const DBtableUsuarios = 'usuarios';
+    const NovoStatus = 'ABERTO - APROVADA - ESPERANDO DESTINO';
 
+    console.log(FormData);
     try {
-        // Defina a data_hora_solicitacao_02 como o mesmo valor que a data_hora_solicitacao_01
-        FormData.data_hora_solicitacao_02 = FormData.data_hora_solicitacao_01;
-
-        //Define o valor do status para essa operação
-        FormData.status_regulacao = 'ABERTO - NOVO';
-
         // Inicie a conexão com o banco de dados
         const connection = await DBconnection.getConnection();
 
@@ -34,7 +31,7 @@ async function NovaRegulacao(FormData) {
 
         if (userType === 'Medico') {
             // Usuário sem permissão
-            console.error('\nUsuário ID: ' + FormData.id_user + ' \nSem permissão: Nova Regulação\n');
+            console.error('\nUsuário ID: ' + FormData.id_user + ' \nSem permissão: Regulação Origem\n');
             return { success: false, message: "Usuário não tem permissão para realizar esta ação." };
         }
 
@@ -44,14 +41,15 @@ async function NovaRegulacao(FormData) {
             FormData
         );
 
-        console.log('Registro regulacao inserido com sucesso! Nº Regulacao:', FormData.num_regulacao);
-        return { success: true, message: "Regulação cadastrada com sucesso." };
+        const UpdateStatusRegulacao = UpdateStatus(FormData.id_regulacao, NovoStatus);
+
+        return { success: true, message: "Regulação Origem: sucesso." };
 
     } catch (error) {
         // Tratamento de erro
-        console.error('Erro no cadastro:', error);
-        return { success: false, message: "Erro ao cadastrar regulação.", error };
+        console.error('Erro no cadastro Regulação Origem:', error);
+        return { success: false, message: "Erro ao cadastrar Regulação Origem.", error };
     }
 }
 
-module.exports = NovaRegulacao;
+module.exports = RegulacaoOrigem;

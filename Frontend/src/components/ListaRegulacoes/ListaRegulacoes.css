@@ -11,3 +11,12 @@
     width: 800px;
     margin-bottom: 10px;
 }
+
+.td-TempoEspera{
+    text-transform: lowercase;
+}
+
+.Mais24{
+    font-weight: bold;
+    color: brown;
+}

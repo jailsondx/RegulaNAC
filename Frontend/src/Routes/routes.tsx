@@ -6,13 +6,14 @@ import PrivateRoute from './privateRoutes';
 import Sidebar from '../components/SideBar/Sidebar';
 import Home from '../components/home/home';
 import NovaRegulacao from '../components/Nova Regulacao/NovaRegulacao';
-import Regulacao from '../components/Regulacoes/Regulacoes';
+import ListaRegulacoes from '../components/ListaRegulacoes/ListaRegulacoes';
 import RegulacaMedica from '../components/Regulacao Medica/RegulacaoMedica';
 import AtualizaRegulacao from '../components/Atualiza Regulacao/AtualizaRegulacao';
 import Cadastro from '../components/Cadastro/Cadastro';
 import Login from '../components/Login/Login';
 import PageNotFound from './page404';
 import RegulacoesAprovadas from '../components/Regulacoes Aprovadas/RegulacoesAprovadas';
+import ListaRegulacoes24 from '../components/ListaRegulacoes/ListaRegulacoes+24';
 
 // Layout para rotas protegidas com o Sidebar
 const ProtectedLayout: React.FC = () => {
@@ -44,7 +45,8 @@ const Rotas: React.FC = () => {
           }
         >
           <Route path="home" element={<Home title="RegulaNAC Pagina Inicial" />} />
-          <Route path="Regulacoes" element={<Regulacao />} />
+          <Route path="ListaRegulacoes" element={<ListaRegulacoes />} />
+          <Route path="ListaRegulacoes24" element={<ListaRegulacoes24 />} />
           <Route path="NovaRegulacao" element={<NovaRegulacao />} />
           <Route path="AtualizaRegulacao" element={<AtualizaRegulacao />} />
           <Route path="RegulacaoMedica" element={<RegulacaMedica />} />

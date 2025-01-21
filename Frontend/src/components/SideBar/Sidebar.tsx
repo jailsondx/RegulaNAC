@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { TiBusinessCard, TiClipboard, TiThumbsUp, TiHeartHalfOutline  } from "react-icons/ti";
 import { getUserData, UserData } from '../../functions/storageUtils';
 import './Sidebar.css';
 
@@ -54,30 +55,21 @@ const Sidebar: React.FC = () => {
     if (tipo === 'Medico') {
       return (
         <ul>
-          <li><Link to="/RegulacoesAprovadas">Regulações Aprovadas</Link></li>
-          <li><Link to="/RegulacaoMedica">Regulação Médica</Link></li>
+          <li> <Link to="/RegulacaoMedica"><TiHeartHalfOutline className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulação Médica</label></Link> </li>
+          <li> <Link to="/RegulacoesAprovadas"><TiThumbsUp className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações Aprovadas</label></Link> </li>
         </ul>
-
-
       );
     }
 
     if (tipo === 'Regulador') {
       return (
         <>
-          <li>
-            <span className="submenu-toggle" onClick={toggleSubmenu}>
-              Regulações {submenuOpen ? '▲' : '▼'}
-            </span>
-            {submenuOpen && (
-              <ul className="submenu">
-                <li><Link to="/NovaRegulacao">Nova Regulação</Link></li>
-                <li><Link to="/Regulacoes">Lista Regulações</Link></li>
-                <li><Link to="/RegulacoesAprovadas">Regulações Aprovadas</Link></li>
-                <li><Link to="/Desfecho">Desfecho</Link></li>
-              </ul>
-            )}
-          </li>
+         <ul>
+            <li><Link to="/NovaRegulacao"><TiBusinessCard className='Icon-Menu-Item' /><label className='textMenu-Item'>Nova Regulação</label></Link></li>
+            <li><Link to="/ListaRegulacoes"><TiClipboard className='Icon-Menu-Item' /><label className='textMenu-Item'>Lista de Regulações</label></Link></li>
+            <li><Link to="/RegulacoesAprovadas"><TiThumbsUp className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações Aprovadas</label></Link></li>
+            <li><Link to="/Desfecho"><TiBusinessCard className='Icon-Menu-Item' /><label className='textMenu-Item'>Desfecho</label></Link></li>
+          </ul>
         </>
       );
     }
@@ -86,22 +78,15 @@ const Sidebar: React.FC = () => {
     if (tipo === 'Gerencia') {
       return (
         <>
-          <li>
-            <span className="submenu-toggle" onClick={toggleSubmenu}>
-              Regulações {submenuOpen ? '▲' : '▼'}
-            </span>
-            {submenuOpen && (
-              <ul className="submenu">
-                <li><Link to="/NovaRegulacao">Nova Regulação</Link></li>
-                <li><Link to="/Regulacoes">Lista Regulações</Link></li>
-                <li><Link to="/RegulacoesAprovadas">Regulações Aprovadas</Link></li>
-                <li><Link to="/Desfecho">Desfecho</Link></li>
-              </ul>
-            )}
-          </li>
-          <li>
-            <Link to="/RegulacaoMedica">Regulação Médica</Link>
-          </li>
+          <ul>
+            <li><Link to="/NovaRegulacao"><TiBusinessCard className='Icon-Menu-Item' /><label className='textMenu-Item'>Nova Regulação</label></Link></li>
+            <li><Link to="/ListaRegulacoes"><TiClipboard className='Icon-Menu-Item' /><label className='textMenu-Item'>Lista de Regulações</label></Link></li>
+            <li><Link to="/RegulacoesAprovadas"><TiThumbsUp className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações Aprovadas</label></Link></li>
+            <li><Link to="/Desfecho"><TiBusinessCard className='Icon-Menu-Item' /><label className='textMenu-Item'>Desfecho</label></Link></li>
+            <hr/>
+          </ul>
+          <li><Link to="/ListaRegulacoes24"><TiClipboard className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações +24hrs</label></Link></li>
+          <li> <Link to="/RegulacaoMedica"><TiHeartHalfOutline className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulação Médica</label></Link> </li>
         </>
       );
     }

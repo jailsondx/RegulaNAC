@@ -40,7 +40,7 @@ const initialFormData: FormDataNovaRegulacao = {
   num_regulacao: null,
   nome_regulador_medico: '',
   data_hora_acionamento_medico: '',
-  status_regulacao: 'Aberto - Aguardando Regulacao Medica'
+  status_regulacao: ''
 };
 
 
@@ -476,7 +476,6 @@ const NovaRegulacao: React.FC = () => {
                       name="num_prioridade"
                       value={formData.num_prioridade ?? ''}
                       onChange={handleChange}
-                      required
                     />
                   </div>
                 </div>
