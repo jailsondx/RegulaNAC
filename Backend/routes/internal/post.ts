@@ -97,7 +97,7 @@ routerPost.post('/RegulacaoOrigem', async (req, res) => {
 
     
     if(success){
-      res.status(200).json({ message });
+      res.status(200).json({ message});
     } else {
       res.status(500).json({ message, error });
     }

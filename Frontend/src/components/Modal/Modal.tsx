@@ -2,6 +2,7 @@ import React, { ReactNode } from 'react';
 import './Modal.css';
 
 interface ModalProps {
+    title: string;
     show: boolean;
     onClose: () => void;
     children: ReactNode;

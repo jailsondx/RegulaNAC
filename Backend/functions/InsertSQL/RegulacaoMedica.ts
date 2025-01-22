@@ -6,7 +6,7 @@ const { DBconnection } = require("../../connection.ts"); // Importa apenas o obj
 async function RegulacaoMedica(FormData) {
     const DBtable = 'regulacao_medico';
     const DBtableUsuarios = 'usuarios';
-    const NovoStatusApproved = 'ABERTO - APROVADA - ESPERANDO ORIGEM';
+    const NovoStatusApproved = 'ABERTO - APROVADA - AGUARDANDO ORIGEM';
     const NovoStatusDeny = 'ABERTO - NEGADA';
 
     try {

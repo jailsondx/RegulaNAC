@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Modal from '../Modal/Modal.tsx';
-import { useNavigate } from 'react-router-dom';
+import { Snackbar, Alert } from "@mui/material";
 import { FcHome, FcGlobe, FcInTransit } from "react-icons/fc";
 import { formatDateToPtBr } from '../../functions/DateTimes';
 import { getUserData } from '../../functions/storageUtils';
@@ -26,9 +26,11 @@ const RegulacoesAprovadas: React.FC = () => {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [regulacoes, setRegulacoes] = useState<Regulacao[]>([]); // Tipo do estado
   const [showModalOrigem, setShowModalOrigem] = useState(false);
-  const [showModalDeny, setShowModalDeny] = useState(false);
   const [currentRegulacao, setCurrentRegulacao] = useState<Regulacao | null>(null);
-  const navigate = useNavigate();
+
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error' | 'info' | 'warning'>("success");
 
   //FAZ A REQUISIÇÃO DA API PARA PREENCHER A TABELA
   useEffect(() => {
@@ -50,11 +52,11 @@ const RegulacoesAprovadas: React.FC = () => {
     fetchRegulacoes();
   }, []);
 
-    //Pega dados do SeassonStorage User
-    useEffect(() => {
-      const data = getUserData();
-      setUserData(data);
-    }, []);
+  //Pega dados do SeassonStorage User
+  useEffect(() => {
+    const data = getUserData();
+    setUserData(data);
+  }, []);
 
   /*MODAIS*/
 
@@ -66,6 +68,21 @@ const RegulacoesAprovadas: React.FC = () => {
   const handleCloseModal = () => {
     setShowModalOrigem(false);
     //window.location.reload(); // Recarregar a página ao fechar o modal
+  };
+
+
+  /*SNACKBARS*/
+  const handleSnackbarClose = (): void => {
+    setSnackbarOpen(false);
+  };
+
+  const showSnackbar = (
+    message: string,
+    severity: "success" | "error"
+  ): void => {
+    setSnackbarMessage(message);
+    setSnackbarSeverity(severity);
+    setSnackbarOpen(true);
   };
 
 
@@ -86,11 +103,11 @@ const RegulacoesAprovadas: React.FC = () => {
               <th>Un. Destino</th>
               <th>Médico Regulador</th>
               <th>Data/Hora da Autorização</th>
-              
+
               {userData?.tipo !== "Medico" && (
                 <th>Ações</th>
               )}
-              
+
             </tr>
           </thead>
           <tbody>
@@ -103,14 +120,14 @@ const RegulacoesAprovadas: React.FC = () => {
                 <td>{regulacao.un_destino}</td>
                 <td>{regulacao.nome_regulador_medico}</td>
                 <td>{formatDateToPtBr(regulacao.data_hora_regulacao_medico)}</td>
-                
+
                 {userData?.tipo !== "Medico" && (
-                <td className="td-Icons">
-                  <FcHome className="Icon Icons-Regulacao" onClick={() => handleOpenModalOrigem(regulacao)} />
-                  <FcGlobe className="Icon Icons-Regulacao" />
-                  <FcInTransit className="Icon Icons-Regulacao" />
-                </td>
-              )}
+                  <td className="td-Icons">
+                    <FcHome className="Icon Icons-Regulacao" onClick={() => handleOpenModalOrigem(regulacao)} />
+                    <FcGlobe className="Icon Icons-Regulacao" />
+                    <FcInTransit className="Icon Icons-Regulacao" />
+                  </td>
+                )}
 
               </tr>
             ))}
@@ -126,10 +143,25 @@ const RegulacoesAprovadas: React.FC = () => {
             un_origem={currentRegulacao.un_origem}
             un_destino={currentRegulacao.un_destino}
             nome_regulador_medico={currentRegulacao.nome_regulador_medico}
+            showSnackbar={showSnackbar} // Passa o controle do Snackbar
           />
         </Modal>
       )}
 
+
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity={snackbarSeverity}
+          sx={{ width: "100%" }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </>
 
   );

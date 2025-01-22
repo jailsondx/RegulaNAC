@@ -7,35 +7,34 @@ import './SetorOrigemDestino.css';
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
 
 interface Props {
-    nome_paciente: number;
-    num_regulacao: number;
+    nome_paciente: string;
+    num_regulacao: number | null;
     un_origem: string;
     un_destino: string;
     id_regulacao: number;
     nome_regulador_medico: string;
+    showSnackbar: (message: string, severity: 'success' | 'error' | 'info' | 'warning') => void; // Nova prop
 }
 
 
 interface FormDataRegulacaoAprovada {
     id_user: string;
-    setor_origem: string;
+    un_origem: string;
     nome_colaborador: string;
     data_hora_comunicacao: string;
     preparo_leito: string;
 }
 
 
-const SetorOrigem: React.FC<Props> = ({ id_regulacao, nome_paciente, num_regulacao, un_origem, un_destino, nome_regulador_medico }) => {
+const SetorOrigem: React.FC<Props> = ({ id_regulacao, nome_paciente, num_regulacao, un_origem, un_destino, nome_regulador_medico, showSnackbar }) => {
     const [userData, setUserData] = useState<UserData | null>(null);
     const [formData, setFormData] = useState<FormDataRegulacaoAprovada>({
         id_user: '',
-        setor_origem: un_origem, // Use o valor de un_origem recebido nas props
+        un_origem: un_origem, // Use o valor de un_origem recebido nas props
         nome_colaborador: '',
         data_hora_comunicacao: '',
         preparo_leito: '',
     });
-    const [message, setMessage] = useState<string>('');
-    const [error, setError] = useState<string>('');
 
 
     //Pega dados do SeassonStorage User
@@ -57,10 +56,13 @@ const SetorOrigem: React.FC<Props> = ({ id_regulacao, nome_paciente, num_regulac
 
     const validateForm = (): boolean => {
         if (!formData.nome_colaborador.trim()) {
-            setError('Colaborador é obrigatório.');
+            // Mensagem SNACKBAR
+            showSnackbar(
+                'Colaborador é obrigatório!',
+                'warning'
+            );
             return false;
         }
-        setError('');
         return true;
     };
 
@@ -73,17 +75,30 @@ const SetorOrigem: React.FC<Props> = ({ id_regulacao, nome_paciente, num_regulac
                 ...formData,
                 id_user: userData?.id_user, // Use o operador de encadeamento opcional para evitar erros se `userData` for `null`
                 id_regulacao,
-                setor_origem: un_origem,
+                un_origem: un_origem,
             };
 
             const response = await axios.post(`${NODE_URL}/api/internal/post/RegulacaoOrigem`, dataToSubmit);
-            //setMessage('Regulação médica cadastrada com sucesso!');
-            //setError('');
-            window.location.reload();
-            //setFormData(initialFormData); // Resetar o formulário
+            if(response.status == 200){
+                // Mensagem com base na resposta da API
+                showSnackbar(
+                    response.data?.message || 'Regulação Aprovada - Origem: Sucesso!',
+                    'success'
+                );
+            }else{
+                // Mensagem com base na resposta da API
+                showSnackbar(
+                    response.data?.message || 'Regulação Aprovada - Origem: Erro!',
+                    'error'
+                );
+            }
+
         } catch (error: any) {
-            setError(error.response?.data?.message || 'Erro ao cadastrar regulação médica. Por favor, tente novamente.');
-            setMessage('');
+                // Mensagem com base na resposta da API
+                showSnackbar(
+                   'ROUTER ERROR! CONTATE O NTI',
+                    'error'
+                );
         }
     };
 
@@ -113,6 +128,7 @@ const SetorOrigem: React.FC<Props> = ({ id_regulacao, nome_paciente, num_regulac
                                 name="nome_colaborador"
                                 value={formData.nome_colaborador ?? ''}
                                 onChange={handleChange}
+                                required
                             />
                         </div>
                     </div>
@@ -148,10 +164,8 @@ const SetorOrigem: React.FC<Props> = ({ id_regulacao, nome_paciente, num_regulac
 
                    
                 </div>
-                <button type="submit">Autorizar</button>
+                <button type="submit">Cadastrar Origem</button>
             </form>
-            {message && <p className="success">{message}</p>}
-            {error && <p className="error">{error}</p>}
         </>
     );
 };

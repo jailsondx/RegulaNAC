@@ -83,7 +83,7 @@ const NovaRegulacaoMedicoAprovada: React.FC<Props> = ({ id_regulacao, nome_pacie
 
         const response = await axios.post(`${NODE_URL}/api/internal/post/RegulacaoMedico`, dataToSubmit);
 
-        // Mensagem de sucesso com base na resposta da API
+        // Mensagem com base na resposta da API
         showSnackbar(
             response.data?.message || 'Regulação médica cadastrada com sucesso!',
             'success'

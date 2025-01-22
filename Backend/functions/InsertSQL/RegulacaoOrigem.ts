@@ -6,7 +6,7 @@ const UpdateStatus = require("../UpdateSQL/UpdateStatus.ts");
 async function RegulacaoOrigem(FormData) {
     const DBtable = 'setor_origem';
     const DBtableUsuarios = 'usuarios';
-    const NovoStatus = 'ABERTO - APROVADA - ESPERANDO DESTINO';
+    const NovoStatus = 'ABERTO - APROVADA - AGURDANDO DESTINO';
 
     console.log(FormData);
     try {
@@ -41,9 +41,9 @@ async function RegulacaoOrigem(FormData) {
             FormData
         );
 
-        const UpdateStatusRegulacao = UpdateStatus(FormData.id_regulacao, NovoStatus);
+        await UpdateStatus(FormData.id_regulacao, NovoStatus);
 
-        return { success: true, message: "Regulação Origem: sucesso." };
+        return { success: true, message: "Regulação Origem: Cadastrada com Sucesso." };
 
     } catch (error) {
         // Tratamento de erro
