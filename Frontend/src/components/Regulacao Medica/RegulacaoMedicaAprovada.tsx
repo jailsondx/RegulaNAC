@@ -12,8 +12,9 @@ interface Props {
   un_destino: string;
   id_regulacao: number;
   nome_regulador_medico: string;
-  onClose: () => void; // Adicionado
-  showSnackbar: (message: string, severity: 'success' | 'error') => void; // Nova prop
+  tempoEspera: string; // Tempo de espero pelo TimeTracker
+  onClose: () => void; // Função de fechado Modal + Snackbar status
+  showSnackbar: (message: string, severity: 'success' | 'error' | 'info' | 'warning') => void; // valores para controle do snackbar
 }
 
 interface FormDataRegulacaoMedico {
@@ -36,18 +37,16 @@ const initialFormData: FormDataRegulacaoMedico = {
   justificativa_tempo30: '',
 };
 
-const NovaRegulacaoMedicoAprovada: React.FC<Props> = ({ id_regulacao, nome_paciente, num_regulacao, un_origem, un_destino, nome_regulador_medico, onClose, showSnackbar }) => {
+const NovaRegulacaoMedicoAprovada: React.FC<Props> = ({ id_regulacao, nome_paciente, num_regulacao, un_origem, un_destino, nome_regulador_medico, tempoEspera, onClose, showSnackbar }) => {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [formData, setFormData] = useState<FormDataRegulacaoMedico>(initialFormData);
-  const [message, setMessage] = useState<string>('');
-  const [error, setError] = useState<string>('');
 
 
-    //Pega dados do SeassonStorage User
-    useEffect(() => {
-      const data = getUserData();
-      setUserData(data);
-    }, []);
+  //Pega dados do SeassonStorage User
+  useEffect(() => {
+    const data = getUserData();
+    setUserData(data);
+  }, []);
 
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>): void => {
@@ -61,73 +60,91 @@ const NovaRegulacaoMedicoAprovada: React.FC<Props> = ({ id_regulacao, nome_pacie
   };
 
   const validateForm = (): boolean => {
-    if (!formData.num_leito.trim()) {
-      setError('Leito é obrigatório.');
+    // Valida número do leito
+    if (!formData.num_leito) {
+      showSnackbar('O campo "Número do Leito" é obrigatório.', 'error');
       return false;
     }
-    setError('');
+
+    // Verifica o tempo e se a justificativa é necessária
+    const [hours, minutes] = tempoEspera.split(/h|m/).map(Number);
+    if ((hours > 0 || minutes >= 30) && !formData.justificativa_tempo30.trim()) {
+      showSnackbar(
+        'Para tempos de espera acima de 30 minutos, a Justificativa é obrigatória.',
+        'info'
+      );
+      return false;
+    }
     return true;
   };
+
+
 
   const handleSubmit = async (e: FormEvent): Promise<void> => {
     e.preventDefault();
     if (!validateForm()) return;
 
     try {
-        const dataToSubmit = {
-            ...formData,
-            id_user: userData?.id_user,
-            id_regulacao,
-            nome_regulador_medico: userData?.nome,
-        };
+      const dataToSubmit = {
+        ...formData,
+        id_user: userData?.id_user,
+        id_regulacao,
+        nome_regulador_medico: userData?.nome,
+      };
 
-        const response = await axios.post(`${NODE_URL}/api/internal/post/RegulacaoMedico`, dataToSubmit);
+      const response = await axios.post(`${NODE_URL}/api/internal/post/RegulacaoMedico`, dataToSubmit);
 
+      if (response.status == 200) {
         // Mensagem com base na resposta da API
         showSnackbar(
-            response.data?.message || 'Regulação médica cadastrada com sucesso!',
-            'success'
+          response.data?.message || 'Regulação Médica - Aprovada com Sucesso!',
+          'success'
         );
-
-        if (onClose) {
-            onClose(); // Fecha o modal
-        }
-    } catch (error: any) {
-        console.error('Erro ao cadastrar regulação médica:', error);
-
-        // Mensagem de erro com base na resposta da API
+        onClose(); // Fecha o modal
+      } else {
+        // Mensagem com base na resposta da API
         showSnackbar(
-            error.response?.data?.message || 'Erro ao cadastrar regulação médica. Por favor, tente novamente.',
-            'error'
+          response.data?.message || 'Regulação Médica - Aprovada: Erro!',
+          'error'
         );
-    }
-};
+      }
 
-  
-  
-  
+    } catch (error: any) {
+      console.error('Erro ao cadastrar regulação médica:', error);
+
+      // Mensagem de erro com base na resposta da API
+      showSnackbar(
+        error.response?.data?.message || 'Erro ao cadastrar regulação médica. Por favor, tente novamente.',
+        'error'
+      );
+    }
+  };
+
+
+
+
 
   return (
     <div>
       <div className='DadosPaciente-Border'>
         <label className='TitleDadosPaciente'>Dados Paciente</label>
-        <div className='Div-DadosPaciente RegulacaoMedica-Aprovada'>
-          <label>Paciente: { nome_paciente }</label>
-          <label>Regulação: { num_regulacao }</label>
-          <label>Un. Origem: { un_origem }</label>
-          <label>Un. Destino: { un_destino }</label>
-          
+        <div className='Div-DadosPaciente RegulacaoPaciente'>
+          <label>Paciente: {nome_paciente}</label>
+          <label>Regulação: {num_regulacao}</label>
+          <label>Un. Origem: {un_origem}</label>
+          <label>Un. Destino: {un_destino}</label>
+
         </div>
-        <div className='Div-DadosMedico RegulacaoMedica-Aprovada'>
-          <label>Médico Regulador: { nome_regulador_medico }</label>
+        <div className='Div-DadosMedico RegulacaoPaciente'>
+          <label>Médico Regulador: {nome_regulador_medico}</label>
         </div>
       </div>
-      
 
-      
+
+
 
       <form onSubmit={handleSubmit}>
-        <div className='Div-RegulacaoMedica-Aprovada'>
+        <div className='Div-RegulacaoMedica-AprovadaNegada'>
           <div className='num_leito'>
             <label>Número do Leito:</label>
             <input
@@ -136,23 +153,24 @@ const NovaRegulacaoMedicoAprovada: React.FC<Props> = ({ id_regulacao, nome_pacie
               className='num_leito'
               value={formData.num_leito ?? ''}
               onChange={handleChange}
+              required
             />
           </div>
           <div className='nome_regulador_medico'>
-            <label>Médico Aprovador:</label>
+            <label>Médico:</label>
             <input
               type="text"
               name="nome_regulador_medico"
               value={userData?.nome}
               onChange={handleChange}
               required
-              readOnly
+              disabled
             />
           </div>
         </div>
-       
+
         <div className='justificativa'>
-          <label>Justificativa de Tempo 30:</label>
+          <label>Justificativa de Tempo +30min:</label>
           <textarea
             name="justificativa_tempo30"
             value={formData.justificativa_tempo30}
@@ -161,8 +179,6 @@ const NovaRegulacaoMedicoAprovada: React.FC<Props> = ({ id_regulacao, nome_pacie
         </div>
         <button type="submit">Autorizar</button>
       </form>
-      {message && <p className="success">{message}</p>}
-      {error && <p className="error">{error}</p>}
     </div>
   );
 };

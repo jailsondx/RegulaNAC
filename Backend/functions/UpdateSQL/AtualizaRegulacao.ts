@@ -1,10 +1,14 @@
 /// <reference types="node" />
 const express = require('express');
 const { DBconnection } = require("../../connection.ts"); // Importa apenas o objeto DBconnection
+const VerificaStatus = require("../Checked/VerificaStatus.ts");
+const UpdateStatus = require("../UpdateSQL/UpdateStatus.ts");
 
 async function AtualizaRegulacao(FormData) {
     const DBtable = 'regulacao';
     const DBtableUsuarios = 'usuarios';
+    const StatusAtual = 'ABERTO - NOVO';
+    const msgError = 'Regulação não pode ser atualizada; Status atual é: ';
 
     try {
         // Inicie a conexão com o banco de dados
@@ -25,7 +29,7 @@ async function AtualizaRegulacao(FormData) {
 
         const userType = rowsUserPrivilege[0].tipo;
 
-        if (userType === 'Medico') {
+        if (userType === 'MEDICO') {
             // Usuário sem permissão
             console.error('\nUsuário ID: ' + FormData.id_user + ' \nSem permissão para atualizar regulação.\n');
             connection.release(); // Libera a conexão
@@ -33,37 +37,26 @@ async function AtualizaRegulacao(FormData) {
         }
 
         // Verifica o status da regulação
-        const [rowsRegulacaoStatus] = await connection.query(
-            `SELECT status_regulacao FROM ${DBtable} WHERE num_regulacao = ? AND num_prontuario = ?`, 
-            [FormData.num_regulacao, FormData.num_prontuario]
-        );
+        const statusCheck = await VerificaStatus(FormData.id_regulacao, StatusAtual, msgError);
 
-        if (rowsRegulacaoStatus.length === 0) {
-            console.error('Regulação não encontrada: num_regulacao:', FormData.num_regulacao);
-            connection.release(); // Libera a conexão
-            return { success: false, message: "Regulação não encontrada." };
+        if (!statusCheck.success) {
+
+            // Retorna a mensagem de erro da VerificaStatus
+            return { success: false, message: statusCheck.message };
         }
 
-        const currentStatus = rowsRegulacaoStatus[0].status_regulacao;
-
-        if (currentStatus !== 'ABERTO - NOVO') {
-            console.error(`Regulação não pode ser atualizada: Status atual é '${currentStatus}'`);
-            connection.release(); // Libera a conexão
-            return {
-                success: false,
-                message: "Regulação já foi aprovada pelo médico e não pode ser atualizada ou modificada."
-            };
-        }
 
         // Atualiza os dados na tabela regulacao
         const [updateResult] = await connection.query(
             `UPDATE ${DBtable} 
-             SET un_origem = ?, un_destino = ?, data_hora_solicitacao_02 = ?
+             SET id_user = ?, un_origem = ?, un_destino = ?, data_hora_solicitacao_02 = ?, nome_regulador_nac = ?
              WHERE num_prontuario = ? AND num_regulacao = ?`,
             [
+                FormData.id_user, 
                 FormData.un_origem, 
                 FormData.un_destino, 
                 FormData.data_hora_solicitacao_02,
+                FormData.nome_regulador_nac,
                 FormData.num_prontuario,
                 FormData.num_regulacao
             ]
@@ -75,8 +68,7 @@ async function AtualizaRegulacao(FormData) {
             console.error('Nenhum registro foi atualizado: Verifique os valores de num_prontuario e num_regulacao.');
             return { success: false, message: "Nenhum registro foi atualizado. Verifique os critérios fornecidos." };
         }
-
-        console.log('Atualização bem-sucedida na tabela regulacao!');
+        
         return { success: true, message: "Regulação atualizada com sucesso." };
 
     } catch (error) {

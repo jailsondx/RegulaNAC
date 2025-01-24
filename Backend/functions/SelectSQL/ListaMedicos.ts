@@ -14,8 +14,7 @@ async function ListaMedicos() {
 
         // Extrai apenas os nomes dos médicos
         const nomes = rows.map((row) => row.nome);
-
-        //console.log(nomes); // Verifica os nomes extraídos
+        
         return { success: true, data: nomes };
     } catch (error) {
         console.error('Erro ao carregar médicos:', error);

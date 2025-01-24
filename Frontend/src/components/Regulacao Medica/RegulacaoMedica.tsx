@@ -34,6 +34,7 @@ const RegulacaoMedica: React.FC = () => {
   const [showModalApproved, setShowModalApproved] = useState(false);
   const [showModalDeny, setShowModalDeny] = useState(false);
   const [currentRegulacao, setCurrentRegulacao] = useState<Regulacao | null>(null);
+  const [elapsedTime, setElapsedTime] = useState<string>(''); // Armazena o tempo decorrido
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -61,7 +62,12 @@ const RegulacaoMedica: React.FC = () => {
     fetchRegulacoes();
   }, []);
 
-  const handleOpenModalApproved = (regulacao: Regulacao) => {
+    // Atualiza o tempo decorrido
+    const handleTimeUpdate = (time: string) => {
+      setElapsedTime(time); // Salva o tempo decorrido no estado
+    };
+
+  const handleOpenModalApproved = (regulacao: Regulacao, elapsedTime: string) => {
     setCurrentRegulacao(regulacao);
     setShowModalApproved(true);
   };
@@ -124,7 +130,13 @@ const RegulacaoMedica: React.FC = () => {
                 <td>{regulacao.un_destino}</td>
                 <td>{regulacao.num_prioridade}</td>
                 <td>{new Date(regulacao.data_hora_solicitacao_02).toLocaleString()}</td>
-                <td className="td-TempoEspera"><TimeTracker startTime={regulacao.data_hora_solicitacao_02} serverTime={serverTime} /></td>
+                <td className="td-TempoEspera">
+                  <TimeTracker
+                    startTime={regulacao.data_hora_solicitacao_02}
+                    serverTime={serverTime}
+                    onTimeUpdate={handleTimeUpdate} 
+                  />
+                </td>
                 <td className="td-Icons">
                   <FcApproval className="Icon Icons-Regulacao" onClick={() => handleOpenModalApproved(regulacao)} />
                   <FcBadDecision className="Icon Icons-Regulacao" onClick={() => handleOpenModalDeny(regulacao)} />
@@ -148,6 +160,7 @@ const RegulacaoMedica: React.FC = () => {
             un_origem={currentRegulacao.un_origem}
             un_destino={currentRegulacao.un_destino}
             nome_regulador_medico={currentRegulacao.nome_regulador_medico}
+            tempoEspera={elapsedTime} // Passa o tempo para o modal
             onClose={handleCloseModal} // Fecha o modal
             showSnackbar={showSnackbar} // Passa o controle do Snackbar
           />

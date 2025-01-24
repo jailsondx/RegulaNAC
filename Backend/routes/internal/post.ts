@@ -1,9 +1,11 @@
 /// <reference types="node" />
 const express = require('express');
 const { getCurrentTimestamp } = require('../../functions/Time/Timestamp.ts');
+const { convertObjectToUpperCase } = require('../../functions/Manipulation/ObjectUpperCase.ts');
 const NovaRegulacao = require("../../functions/InsertSQL/NovaRegulacao.ts");
 const RegulacaoMedica = require("../../functions/InsertSQL/RegulacaoMedica.ts");
 const RegulacaoOrigem = require("../../functions/InsertSQL/RegulacaoOrigem.ts");
+const RegulacaoDestino = require("../../functions/InsertSQL/RegulacaoDestino.ts");
 const LoginUser = require("../../functions/SelectSQL/LoginUser.ts");
 const CadastroUser = require("../../functions/InsertSQL/CadastroUser.ts");
 
@@ -11,7 +13,7 @@ const routerPost = express.Router();
 
 routerPost.post('/Login', async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const { username, password } = convertObjectToUpperCase(req.body);;
 
     // Chama a função para autenticar o usuário
     const { success, data, error } = await LoginUser(username, password);
@@ -29,7 +31,7 @@ routerPost.post('/Login', async (req, res) => {
 
 routerPost.post('/Cadastro', async (req, res) => {
   try {
-    const formData = req.body;
+    const formData = convertObjectToUpperCase(req.body);;
 
     // Chama a função para autenticar o usuário
     const { success, message, error } = await CadastroUser(formData);
@@ -46,8 +48,9 @@ routerPost.post('/Cadastro', async (req, res) => {
 
 routerPost.post('/NovaRegulacao', async (req, res) => {
   try {
-    const formData = req.body;
-    //console.log('Dados recebidos:', formData);
+
+    const formData = convertObjectToUpperCase(req.body);
+    
     const { success, message, error } = await NovaRegulacao(formData);
 
     if(success){
@@ -65,7 +68,7 @@ routerPost.post('/NovaRegulacao', async (req, res) => {
 
 routerPost.post('/RegulacaoMedico', async (req, res) => {
   try {
-    const formData = req.body;
+    const formData = convertObjectToUpperCase(req.body);;
     formData.data_hora_regulacao_medico = getCurrentTimestamp();
 
     // Envia a resposta logo após a chamada da função
@@ -77,10 +80,6 @@ routerPost.post('/RegulacaoMedico', async (req, res) => {
       res.status(500).json({ message, error });
     }
 
-
-    // Não é mais necessário, pois a resposta já foi enviada antes
-    // console.log(formData);
-
   } catch (error) {
     console.error('Erro no processamento:', error);
     return res.status(500).json({ message: 'Erro interno do servidor.' });
@@ -89,21 +88,17 @@ routerPost.post('/RegulacaoMedico', async (req, res) => {
 
 routerPost.post('/RegulacaoOrigem', async (req, res) => {
   try {
-    const formData = req.body;
+    const formData = convertObjectToUpperCase(req.body);;
     //formData.data_hora_regulacao_medico = getCurrentTimestamp();
 
     // Envia a resposta logo após a chamada da função
     const { success, message, error } = await RegulacaoOrigem(formData);
 
-    
     if(success){
       res.status(200).json({ message});
     } else {
       res.status(500).json({ message, error });
     }
-
-    // Não é mais necessário, pois a resposta já foi enviada antes
-    // console.log(formData);
 
   } catch (error) {
     console.error('Erro no processamento:', error);
@@ -111,26 +106,19 @@ routerPost.post('/RegulacaoOrigem', async (req, res) => {
   }
 });
 
-routerPost.post('/AtualizaRegulacao', async (req, res) => {
+routerPost.post('/RegulacaoDestino', async (req, res) => {
   try {
-    const formData = req.body;
+    const formData = convertObjectToUpperCase(req.body);;
+    //formData.data_hora_regulacao_medico = getCurrentTimestamp();
 
-    console.log(formData);
-
-    /*
     // Envia a resposta logo após a chamada da função
-    const { success, message, error } = await RegulacaoMedica(formData);
+    const { success, message, error } = await RegulacaoDestino(formData);
 
     if(success){
-      res.status(200).json({ message });
+      res.status(200).json({ message});
     } else {
       res.status(500).json({ message, error });
     }
-      */
-
-
-    // Não é mais necessário, pois a resposta já foi enviada antes
-    // console.log(formData);
 
   } catch (error) {
     console.error('Erro no processamento:', error);

@@ -3,7 +3,7 @@ const express = require('express');
 const { ListaRegulacoesPendentes, ListaRegulacoesPendentes24 } = require("../../functions/SelectSQL/ListaRegulacoesPendentes.ts");
 const ListaRegulacoesAprovadas = require("../../functions/SelectSQL/ListaRegulacoesAprovadas.ts");
 const VerificaProntuario = require("../../functions/SelectSQL/VerificaProntuario.ts");
-const VerificaRegulacao = require("../../functions/SelectSQL/VerificaRegulacao.ts");
+const {VerificaRegulacao, VerificaRegulacaoID } = require("../../functions/SelectSQL/VerificaRegulacao.ts");
 const ListaMedicos = require("../../functions/SelectSQL/ListaMedicos.ts");
 
 const routerGet = express.Router();

@@ -40,8 +40,6 @@ const initialFormData: FormDataRegulacaoMedico = {
 const NovaRegulacaoMedicoNegada: React.FC<Props> = ({ id_regulacao, nome_paciente, num_regulacao, un_origem, un_destino, nome_regulador_medico, onClose, showSnackbar }) => {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [formData, setFormData] = useState<FormDataRegulacaoMedico>(initialFormData);
-  const [message, setMessage] = useState<string>('');
-  const [error, setError] = useState<string>('');
 
   //Pega dados do SeassonStorage User
   useEffect(() => {
@@ -63,66 +61,81 @@ const NovaRegulacaoMedicoNegada: React.FC<Props> = ({ id_regulacao, nome_pacient
     e.preventDefault();
 
     try {
-        const dataToSubmit = {
-            ...formData,
-            id_user: userData?.id_user, // Use o operador de encadeamento opcional para evitar erros se `userData` for `null`
-            id_regulacao,
-            nome_regulador_medico: userData?.nome,
-        };
+      const dataToSubmit = {
+        ...formData,
+        id_user: userData?.id_user, // Use o operador de encadeamento opcional para evitar erros se `userData` for `null`
+        id_regulacao,
+        nome_regulador_medico: userData?.nome,
+      };
 
-        const response = await axios.post(`${NODE_URL}/api/internal/post/RegulacaoMedico`, dataToSubmit);
+      const response = await axios.post(`${NODE_URL}/api/internal/post/RegulacaoMedico`, dataToSubmit);
 
-        // Verifica o status e exibe a mensagem de sucesso
-        showSnackbar(
-            response.data?.message || 'Regulação médica cadastrada com sucesso!',
-            'success'
-        );
+      // Verifica o status e exibe a mensagem de sucesso
+      showSnackbar(
+        response.data?.message || 'Regulação médica cadastrada com sucesso!',
+        'success'
+      );
 
-        if (onClose) {
-            onClose(); // Fecha o modal
-        }
+      if (onClose) {
+        onClose(); // Fecha o modal
+      }
     } catch (error: any) {
-        console.error('Erro ao cadastrar regulação médica:', error);
+      console.error('Erro ao cadastrar regulação médica:', error);
 
-        // Exibe mensagem de erro retornada pela API ou mensagem padrão
-        showSnackbar(
-            error.response?.data?.message || 'Erro ao cadastrar regulação médica. Por favor, tente novamente.',
-            'error'
-        );
+      // Exibe mensagem de erro retornada pela API ou mensagem padrão
+      showSnackbar(
+        error.response?.data?.message || 'Erro ao cadastrar regulação médica. Por favor, tente novamente.',
+        'error'
+      );
     }
-};
+  };
 
 
   return (
     <div>
       <div className='DadosPaciente-Border'>
         <label className='TitleDadosPaciente'>Dados Paciente</label>
-        <div className='Div-DadosPaciente RegulacaoMedica-Aprovada'>
+        <div className='Div-DadosPaciente RegulacaoPaciente'>
           <label>Paciente: {nome_paciente}</label>
           <label>Regulação: {num_regulacao}</label>
           <label>Un. Origem: {un_origem}</label>
           <label>Un. Destino: {un_destino}</label>
 
         </div>
-        <div className='Div-DadosMedico RegulacaoMedica-Aprovada'>
+        <div className='Div-DadosMedico RegulacaoPaciente'>
           <label>Médico Regulador: {nome_regulador_medico}</label>
         </div>
       </div>
 
 
       <form onSubmit={handleSubmit}>
+        <div className='Div-RegulacaoMedica-AprovadaNegada'>
+          
+          <div className='nome_regulador_medico'>
+            <label>Médico:</label>
+            <input
+              type="text"
+              name="nome_regulador_medico"
+              value={userData?.nome}
+              onChange={handleChange}
+              required
+              disabled
+            />
+          </div>
+        </div>
+
         <div className='justificativa'>
           <label>Justificativa de Negação:</label>
           <textarea
-            name="justificativa_neg"
+            name="justificativa_tempo30"
             value={formData.justificativa_neg}
             onChange={handleChange}
           />
         </div>
-        <button type="submit">Negar</button>
+
+      
+        <button type="submit" className='button-red'>Negar</button>
       </form>
-      {message && <p className="success">{message}</p>}
-      {error && <p className="error">{error}</p>}
     </div>
   );
 };

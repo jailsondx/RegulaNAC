@@ -129,6 +129,9 @@ button:disabled {
   background-color: #ff6f61;
 }
 
+.button-red{
+  background-color: #c0392b !important;
+}
 
 input, select{
   padding: 5px;
@@ -143,6 +146,10 @@ input[type=number]::-webkit-inner-spin-button {
 input[type=number] { 
  -moz-appearance: textfield;
  appearance: textfield;
+}
+
+input:disabled{
+  color: var(--text-color);
 }
 
 /* Tabela */
@@ -247,8 +254,18 @@ input[type=number] {
 }
 
 .Div-DadosPaciente{
-  height: 40px;
+  width: 100%;
+  height: 100%;
+  text-overflow: ellipsis;
   margin: 10px 0px 10px 0px; /*top, direita, bottom, esquerda*/
+}
+
+.RegulacaoPaciente{
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
 }
 
 .Div-DadosMedico{

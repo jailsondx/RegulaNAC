@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { handleUpperCaseChange } from '../../functions/InputUpperCase.ts';
 import { useNavigate } from 'react-router-dom';
 
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
@@ -54,8 +55,9 @@ const Cadastro: React.FC = () => {
             type="text"
             id="login"
             value={login}
-            onChange={(e) => setLogin(e.target.value)}
+            onChange={handleUpperCaseChange(setLogin)} // Converte para maiúsculas durante a digitação
             required
+            autoComplete='off'
           />
         </div>
         <div>
@@ -64,8 +66,9 @@ const Cadastro: React.FC = () => {
             type="text"
             id="nome"
             value={nome}
-            onChange={(e) => setNome(e.target.value)}
+            onChange={handleUpperCaseChange(setNome)} // Converte para maiúsculas durante a digitação
             required
+            autoComplete='off'
           />
         </div>
         <div>
@@ -74,8 +77,9 @@ const Cadastro: React.FC = () => {
             type="text"
             id="cpf"
             value={cpf}
-            onChange={(e) => setCpf(e.target.value)}
+            onChange={handleUpperCaseChange(setCpf)} // Converte para maiúsculas durante a digitação
             required
+            autoComplete='off'
           />
         </div>
         <div>
@@ -84,8 +88,9 @@ const Cadastro: React.FC = () => {
             type="password"
             id="senha"
             value={senha}
-            onChange={(e) => setSenha(e.target.value)}
+            onChange={handleUpperCaseChange(setSenha)} // Converte para maiúsculas durante a digitação
             required
+            autoComplete='off'
           />
         </div>
         <div>

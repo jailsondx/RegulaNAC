@@ -19,10 +19,10 @@ async function VerificaProntuario(num_prontuario) {
 
         // Verifica se há um resultado
         if (row[0]) {
-            //console.log(`Regulação pendente encontrada para prontuário: ${num_prontuario}`);
+            
             return { success: true, message: "Regulação pendente em aberto", data: row[0] };
         } else {
-            //console.log(`Nenhuma regulação pendente encontrada para prontuário: ${num_prontuario}`);
+            
             return { success: true, message: "Nenhuma regulação pendente encontrada.", data: null};
         }
     } catch (error) {

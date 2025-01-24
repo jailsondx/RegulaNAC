@@ -4,12 +4,12 @@ const { DBconnection } = require("../../connection.ts"); // Importa apenas o obj
 const VerificaStatus = require("../Checked/VerificaStatus.ts");
 const UpdateStatus = require("../UpdateSQL/UpdateStatus.ts");
 
-async function RegulacaoOrigem(FormData) {
-    const DBtable = 'setor_origem';
+async function RegulacaoDestino(FormData) {
+    const DBtable = 'setor_destino';
     const DBtableUsuarios = 'usuarios';
-    const StatusAtual = 'ABERTO - APROVADA - AGUARDANDO ORIGEM';
-    const NovoStatus = 'ABERTO - APROVADA - AGUARDANDO DESTINO';
-    const msgError = 'Regulação - Origem não pode ser atualizada; Status atual é: ';
+    const StatusAtual = 'ABERTO - APROVADA - AGUARDANDO DESTINO';
+    const NovoStatus = 'ABERTO - APROVADA - AGUARDANDO TRANSPORTE';
+    const msgError = 'Regulação - Destino não pode ser atualizada; Status atual é: ';
 
     try {
         // Inicie a conexão com o banco de dados
@@ -33,7 +33,7 @@ async function RegulacaoOrigem(FormData) {
 
         if (userType === 'MEDICO') {
             // Usuário sem permissão
-            console.error('\nUsuário ID: ' + FormData.id_user + ' \nSem permissão: Regulação Origem\n');
+            console.error('\nUsuário ID: ' + FormData.id_user + ' \nSem permissão: Regulação Destino\n');
             return { success: false, message: "Usuário não tem permissão para realizar esta ação." };
         }
 
@@ -52,13 +52,13 @@ async function RegulacaoOrigem(FormData) {
         );
         await UpdateStatus(FormData.id_regulacao, NovoStatus);
 
-        return { success: true, message: "Regulação Origem: Cadastrada com Sucesso." };
+        return { success: true, message: "Regulação destino: Cadastrada com Sucesso." };
 
     } catch (error) {
         // Tratamento de erro
-        console.error('Erro no cadastro Regulação Origem:', error);
-        return { success: false, message: "Erro ao cadastrar Regulação Origem.", error };
+        console.error('Erro no cadastro Regulação destino:', error);
+        return { success: false, message: "Erro ao cadastrar Regulação destino.", error };
     }
 }
 
-module.exports = RegulacaoOrigem;
+module.exports = RegulacaoDestino;

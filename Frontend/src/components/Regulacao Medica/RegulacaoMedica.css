@@ -1,19 +1,9 @@
 
-.Div-RegulacaoMedica-Aprovada{
+.Div-RegulacaoMedica-AprovadaNegada{
     display: flex;
     width: 100%;
-
+    margin-bottom: 20px;
 }
-
-.RegulacaoMedica-Aprovada{
-    display: flex;
-    flex-direction: column;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: flex-start;
-}
-
-
 
 .num_leito, .nome_regulador_medico, .justificativa_tempo30{
     display: flex;

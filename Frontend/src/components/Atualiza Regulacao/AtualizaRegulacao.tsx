@@ -3,7 +3,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Snackbar, Alert } from '@mui/material';
 import { getUserData } from '../../functions/storageUtils';
-import { formatDateToPtBr } from '../../functions/DateTimes';
 
 import './AtualizarRegulacao.css';
 
@@ -11,35 +10,35 @@ const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
 
 interface Regulacao {
   id_user: string;
+  id_regulacao: number;
   num_prontuario: number | null;
   nome_paciente: string;
   num_idade: number | null;
   un_origem: string;
   un_destino: string;
-  num_prioridade: number | null;
-  data_hora_solicitacao_01: string;
-  data_hora_solicitacao_02: string;
-  nome_regulador_nac: string;
   num_regulacao: number | null;
   nome_regulador_medico: string;
-  data_hora_acionamento_medico: string;
   status_regulacao: string;
 }
 
 const AtualizaRegulacao: React.FC = () => {
   const [userData, setUserData] = useState<UserData | null>(null);
-  const location = useLocation();
-  const [numProntuario, setNumProntuario] = useState<number | ''>('');
-  const [dadosPront, setDadosPront] = useState<Regulacao | null>(null);
+  const location = useLocation(); // Captura o estado enviado via navegação
+  const [numProntuario, setNumProntuario] = useState<number | ''>(''); // Número do prontuário recebido
+  const [dadosPront, setDadosPront] = useState<Regulacao | null>(null); // Dados do prontuário retornados
   const [formData, setFormData] = useState({
     un_origem: '',
     un_destino: '',
     data_hora_solicitacao_02: '',
-  });
-  const [error, setError] = useState<string | null>(null);
-  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'info' as 'success' | 'error' | 'info' | 'warning' });
-  const navigate = useNavigate();
+  }); // Estado para os campos editáveis do formulário
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: '',
+    severity: 'info' as 'success' | 'error' | 'info' | 'warning',
+  }); // Gerencia a exibição do Snackbar
+  const navigate = useNavigate(); // Usado para redirecionar após a atualização
 
+  // Captura o número do prontuário ao montar o componente
   useEffect(() => {
     const { num_prontuario } = location.state || {};
     if (num_prontuario) {
@@ -47,6 +46,7 @@ const AtualizaRegulacao: React.FC = () => {
     }
   }, [location]);
 
+  // Busca os dados do prontuário pelo número fornecido
   useEffect(() => {
     if (!numProntuario) return;
 
@@ -59,31 +59,36 @@ const AtualizaRegulacao: React.FC = () => {
         setDadosPront(data);
 
         if (data) {
-          // Pré-carrega os valores dos selects no estado formData
+          // Preenche os campos do formulário com os dados recebidos
           setFormData({
             un_origem: data.un_origem || '',
             un_destino: data.un_destino || '',
             data_hora_solicitacao_02: data.data_hora_solicitacao_02 || '',
           });
         }
-        setError(null);
-      } catch (error: any) {
-        console.error('Erro ao carregar regulações:', error);
-        setError('Erro ao carregar os dados do prontuário.');
+      } catch (error) {
+        console.error('Erro ao carregar os dados do prontuário:', error);
+        setSnackbar({
+          open: true,
+          message: 'Erro ao carregar os dados do prontuário.',
+          severity: 'error',
+        });
       }
     };
 
     fetchProntuario();
   }, [numProntuario]);
 
-  //Pega dados do SeassonStorage User
+  // Busca os dados do usuário do sessionStorage ao carregar o componente
   useEffect(() => {
     const data = getUserData();
     setUserData(data);
   }, []);
 
+  // Fecha o Snackbar
   const handleSnackbarClose = () => setSnackbar({ ...snackbar, open: false });
 
+  // Atualiza os campos do formulário
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prevFormData) => ({
@@ -92,42 +97,41 @@ const AtualizaRegulacao: React.FC = () => {
     }));
   };
 
+  // Submete os dados atualizados para o backend
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
-      const AtualizaRegulacaoAPI = await axios.put(`${NODE_URL}/api/internal/put/AtualizaRegulacao`, {
-        id_user: userData?.id_user, // Use o operador de encadeamento opcional para evitar erros se `userData` for `null`
-        num_prontuario: numProntuario,
-        num_regulacao: dadosPront.num_regulacao,
-        ...formData,
+      const response = await axios.put(`${NODE_URL}/api/internal/put/AtualizaRegulacao`, {
+        id_user: userData?.id_user, // ID do usuário logado
+        id_regulacao: dadosPront?.id_regulacao, // ID da regulação a ser atualizada
+        nome_regulador_nac: userData?.nome, // Nome do regulador NAC
+        num_prontuario: numProntuario, // Número do prontuário
+        num_regulacao: dadosPront?.num_regulacao, // Número da regulação
+        ...formData, // Dados atualizados do formulário
       });
 
-      const response = AtualizaRegulacaoAPI.data;
-
-      // Exibir mensagem de sucesso
+      // Exibe mensagem de sucesso e redireciona
       setSnackbar({
         open: true,
-        message: response.message || 'Regulação cadastrada com sucesso',
+        message: response.data.message || 'Regulação atualizada com sucesso.',
         severity: 'success',
       });
-
-      navigate('/Regulacoes', {
+      navigate('/ListaRegulacoes', {
         state: {
           snackbar: {
             open: true,
-            severity: 'success', // ou 'error', 'info', etc.
+            severity: 'success',
             message: 'Regulação atualizada com sucesso!',
           },
         },
       });
-
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erro ao atualizar regulação:', error);
 
-      // Exibir mensagem de erro
+      // Exibe mensagem de erro
       setSnackbar({
         open: true,
-        message: error.response?.data?.message || 'Erro ao cadastrar regulação. Por favor, tente novamente.',
+        message: error.response?.data?.message || 'Erro ao atualizar regulação. Tente novamente.',
         severity: 'error',
       });
     }
@@ -138,22 +142,18 @@ const AtualizaRegulacao: React.FC = () => {
       <div>
         <label className="Title-Form">Atualizar Regulação</label>
       </div>
-
-
-
-      {error && <p style={{ color: 'red' }}>{error}</p>}
       {dadosPront ? (
         <form onSubmit={handleSubmit} className="ComponentForm">
           <div className='DadosPaciente-Border'>
             <label className='TitleDadosPaciente'>Dados Paciente</label>
-            <div className='Div-DadosPaciente RegulacaoMedica-Aprovada'>
+            <div className='Div-DadosPaciente RegulacaoPaciente'>
               <label>Paciente: {dadosPront.nome_paciente}</label>
               <label>Regulação: {dadosPront.num_regulacao}</label>
               <label>Un. Origem: {dadosPront.un_origem}</label>
               <label>Un. Destino: {dadosPront.un_destino}</label>
 
             </div>
-            <div className='Div-DadosMedico RegulacaoMedica-Aprovada'>
+            <div className='Div-DadosMedico'>
               <label>Médico Regulador: {dadosPront.nome_regulador_medico}</label>
             </div>
           </div>
@@ -244,7 +244,7 @@ const AtualizaRegulacao: React.FC = () => {
           <button type="submit" className="SubmitButton">Atualizar</button>
         </form>
       ) : (
-        !error && <p>Carregando dados do prontuário...</p>
+        <p>Carregando dados do prontuário...</p>
       )}
 
       <Snackbar open={snackbar.open} autoHideDuration={6000} onClose={handleSnackbarClose}>

@@ -13,6 +13,7 @@ interface Props {
     un_destino: string;
     id_regulacao: number;
     nome_regulador_medico: string;
+    onClose: () => void; // Adicionado
     showSnackbar: (message: string, severity: 'success' | 'error' | 'info' | 'warning') => void; // Nova prop
 }
 
@@ -26,7 +27,7 @@ interface FormDataRegulacaoAprovada {
 }
 
 
-const SetorOrigem: React.FC<Props> = ({ id_regulacao, nome_paciente, num_regulacao, un_origem, un_destino, nome_regulador_medico, showSnackbar }) => {
+const SetorOrigem: React.FC<Props> = ({ id_regulacao, nome_paciente, num_regulacao, un_origem, un_destino, nome_regulador_medico, onClose, showSnackbar }) => {
     const [userData, setUserData] = useState<UserData | null>(null);
     const [formData, setFormData] = useState<FormDataRegulacaoAprovada>({
         id_user: '',
@@ -79,13 +80,15 @@ const SetorOrigem: React.FC<Props> = ({ id_regulacao, nome_paciente, num_regulac
             };
 
             const response = await axios.post(`${NODE_URL}/api/internal/post/RegulacaoOrigem`, dataToSubmit);
-            if(response.status == 200){
+           
+            if(response.status === 200){
                 // Mensagem com base na resposta da API
                 showSnackbar(
                     response.data?.message || 'Regulação Aprovada - Origem: Sucesso!',
                     'success'
                 );
-            }else{
+                onClose(); // Fecha o modal
+            } else{
                 // Mensagem com base na resposta da API
                 showSnackbar(
                     response.data?.message || 'Regulação Aprovada - Origem: Erro!',
@@ -96,7 +99,7 @@ const SetorOrigem: React.FC<Props> = ({ id_regulacao, nome_paciente, num_regulac
         } catch (error: any) {
                 // Mensagem com base na resposta da API
                 showSnackbar(
-                   'ROUTER ERROR! CONTATE O NTI',
+                   error.response?.data?.message || 'CATCH ROUTER RegulacaoOrigem',
                     'error'
                 );
         }
@@ -106,14 +109,14 @@ const SetorOrigem: React.FC<Props> = ({ id_regulacao, nome_paciente, num_regulac
         <>
       <div className='DadosPaciente-Border'>
         <label className='TitleDadosPaciente'>Dados Paciente</label>
-        <div className='Div-DadosPaciente RegulacaoMedica-Aprovada'>
+        <div className='Div-DadosPaciente RegulacaoPaciente'>
           <label>Paciente: { nome_paciente }</label>
           <label>Regulação: { num_regulacao }</label>
           <label>Un. Origem: { un_origem }</label>
           <label>Un. Destino: { un_destino }</label>
           
         </div>
-        <div className='Div-DadosMedico RegulacaoMedica-Aprovada'>
+        <div className='Div-DadosMedico RegulacaoPaciente'>
           <label>Médico Regulador: { nome_regulador_medico }</label>
         </div>
       </div>

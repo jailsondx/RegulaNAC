@@ -1,36 +1,40 @@
 import React, { useEffect, useState } from 'react';
 
 interface TimeTrackerProps {
-  startTime: string; // Hora inicial da API (formato ISO)
-  serverTime: string; // Hora atual do servidor no momento da resposta (formato ISO)
+  startTime: string; // Hora inicial
+  serverTime: string; // Hora do servidor
+  onTimeUpdate?: (elapsedTime: string) => void; // Callback para atualizar o tempo no pai
 }
 
-const TimeTracker: React.FC<TimeTrackerProps> = ({ startTime, serverTime }) => {
-  const [elapsedTime, setElapsedTime] = useState('');
+const TimeTracker: React.FC<TimeTrackerProps> = ({ startTime, serverTime, onTimeUpdate }) => {
+  const [elapsedTime, setElapsedTime] = useState("");
 
   useEffect(() => {
-    // Converta as datas para timestamps
     const serverNow = new Date(serverTime).getTime();
     const localNow = Date.now();
-    const offset = serverNow - localNow; // Diferença entre servidor e cliente
+    const offset = serverNow - localNow;
 
     const calculateElapsedTime = () => {
       const serverStart = new Date(startTime).getTime();
-      const now = Date.now() + offset; // Corrige o relógio local com o offset
-      const diff = now - serverStart; // Diferença entre agora e o início
+      const now = Date.now() + offset;
+      const diff = now - serverStart;
 
-      const hours = Math.floor(diff / (1000 * 60 * 60)); // Total de horas
-      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)); // Restante em minutos
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
 
-      setElapsedTime(`${hours}h ${minutes}m`);
+      const formattedTime = `${hours}h ${minutes}m`;
+      setElapsedTime(formattedTime);
+
+      if (onTimeUpdate) {
+        onTimeUpdate(formattedTime);
+      }
     };
 
-    // Atualiza o tempo imediatamente e depois a cada 30 segundos
     calculateElapsedTime();
-    const interval = setInterval(calculateElapsedTime, 3000); // Atualiza a cada 30 segundos
+    const interval = setInterval(calculateElapsedTime, 30000);
 
     return () => clearInterval(interval);
-  }, [startTime, serverTime]);
+  }, [startTime, serverTime, onTimeUpdate]);
 
   return <span>{elapsedTime}</span>;
 };

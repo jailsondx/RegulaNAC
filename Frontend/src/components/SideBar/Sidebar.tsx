@@ -26,11 +26,11 @@ const Sidebar: React.FC = () => {
 
   // Usando useEffect para setar a imagem do usuário baseado no tipo
   useEffect(() => {
-    if (userData?.tipo === 'Medico') {
+    if (userData?.tipo === 'MEDICO') {
       setIconUser('/IconsUser/icon-medico.jpg');
-    } else if (userData?.tipo === 'Regulador') {
+    } else if (userData?.tipo === 'REGULADOR') {
       setIconUser('/IconsUser/icon-regulador-2.jpg');
-    } else if (userData?.tipo === 'Gerencia') {
+    } else if (userData?.tipo === 'GERENCIA') {
       setIconUser('/IconsUser/icon-regulador.jpg');
     } else {
       setIconUser('/IconsUser/icon-anonimous.png'); // Default ou outra imagem
@@ -52,7 +52,7 @@ const Sidebar: React.FC = () => {
 
     const { tipo } = userData;
 
-    if (tipo === 'Medico') {
+    if (tipo === 'MEDICO') {
       return (
         <ul>
           <li> <Link to="/RegulacaoMedica"><TiHeartHalfOutline className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulação Médica</label></Link> </li>
@@ -61,7 +61,7 @@ const Sidebar: React.FC = () => {
       );
     }
 
-    if (tipo === 'Regulador') {
+    if (tipo === 'REGULADOR') {
       return (
         <>
          <ul>
@@ -75,7 +75,7 @@ const Sidebar: React.FC = () => {
     }
 
     // Adicione uma nova condição para GERENCIA visualizar tudo
-    if (tipo === 'Gerencia') {
+    if (tipo === 'GERENCIA') {
       return (
         <>
           <ul>
@@ -100,7 +100,10 @@ const Sidebar: React.FC = () => {
         <h2>RegulaNAC</h2>
         <div className='inf-user'>
           <img className="IconUser" src={iconUser || '/IconsUser/default-icon.png'} alt="User Icon" />
-          <p><label className="sidebar-Username">{userData?.login.toUpperCase()}</label></p>
+          <p>
+            <label className="sidebar-Username">{userData?.login}</label>
+            <label className="sidebar-Username">{userData?.nome}</label>
+          </p>
         </div>
 
         <ul>

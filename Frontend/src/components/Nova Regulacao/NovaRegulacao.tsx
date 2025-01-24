@@ -196,7 +196,7 @@ const NovaRegulacao: React.FC = () => {
         params: { num_prontuario: numProntuario },
       });
 
-      const { message } = response.data; console.log({ message });
+      const { message } = response.data;
 
       if (message === 'Regulação pendente em aberto') {
         setIconStatusProntOk(false);
@@ -226,7 +226,7 @@ const NovaRegulacao: React.FC = () => {
         params: { num_regulacao: numRegulacao },
       });
 
-      const { message } = response.data; console.log({ message });
+      const { message } = response.data;
 
       if (message === 'Regulação pendente em aberto') {
         setIconStatusRegOk(false);

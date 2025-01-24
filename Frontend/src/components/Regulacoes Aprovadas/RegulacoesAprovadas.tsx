@@ -6,6 +6,7 @@ import { FcHome, FcGlobe, FcInTransit } from "react-icons/fc";
 import { formatDateToPtBr } from '../../functions/DateTimes';
 import { getUserData } from '../../functions/storageUtils';
 import SetorOrigem from '../Setor Origem e Destino/SetorOrigem.tsx';
+import SetorDestino from '../Setor Origem e Destino/SetorDestino.tsx';
 
 import './Regulacoes.css'
 
@@ -20,35 +21,38 @@ interface Regulacao {
   num_regulacao: number | null;
   nome_regulador_medico: string;
   data_hora_regulacao_medico: string;
+  status_regulacao: string;
 }
 
 const RegulacoesAprovadas: React.FC = () => {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [regulacoes, setRegulacoes] = useState<Regulacao[]>([]); // Tipo do estado
   const [showModalOrigem, setShowModalOrigem] = useState(false);
+  const [showModalDestino, setShowModalDestino] = useState(false);
   const [currentRegulacao, setCurrentRegulacao] = useState<Regulacao | null>(null);
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error' | 'info' | 'warning'>("success");
 
-  //FAZ A REQUISIÇÃO DA API PARA PREENCHER A TABELA
-  useEffect(() => {
-    const fetchRegulacoes = async () => {
-      try {
-        const response = await axios.get(`${NODE_URL}/api/internal/get/ListaRegulacoesAprovadas`);
+// Defina fetchRegulacoes fora do useEffect
+  const fetchRegulacoes = async () => {
+    try {
+      const response = await axios.get(`${NODE_URL}/api/internal/get/ListaRegulacoesAprovadas`);
 
-        if (response.data && Array.isArray(response.data.data)) {
-          setRegulacoes(response.data.data);
-        } else {
-          console.error('Dados inesperados:', response.data);
-        }
-      } catch (error: any) {
-        console.error('Erro ao carregar regulações:', error);
-        setRegulacoes([]); // Garante que regulacoes seja sempre um array
+      if (response.data && Array.isArray(response.data.data)) {
+        setRegulacoes(response.data.data);
+      } else {
+        console.error('Dados inesperados:', response.data);
       }
-    };
+    } catch (error: any) {
+      console.error('Erro ao carregar regulações:', error);
+      setRegulacoes([]); // Garante que regulacoes seja sempre um array
+    }
+  };
 
+  // useEffect apenas para a chamada inicial
+  useEffect(() => {
     fetchRegulacoes();
   }, []);
 
@@ -65,8 +69,15 @@ const RegulacoesAprovadas: React.FC = () => {
     setShowModalOrigem(true);
   };
 
+  const handleOpenModalDestino = (regulacao: Regulacao) => {
+    setCurrentRegulacao(regulacao);
+    setShowModalDestino(true);
+  };
+
   const handleCloseModal = () => {
     setShowModalOrigem(false);
+    setShowModalDestino(false);
+    fetchRegulacoes();
     //window.location.reload(); // Recarregar a página ao fechar o modal
   };
 
@@ -103,6 +114,7 @@ const RegulacoesAprovadas: React.FC = () => {
               <th>Un. Destino</th>
               <th>Médico Regulador</th>
               <th>Data/Hora da Autorização</th>
+              <th>FASE</th>
 
               {userData?.tipo !== "Medico" && (
                 <th>Ações</th>
@@ -120,11 +132,12 @@ const RegulacoesAprovadas: React.FC = () => {
                 <td>{regulacao.un_destino}</td>
                 <td>{regulacao.nome_regulador_medico}</td>
                 <td>{formatDateToPtBr(regulacao.data_hora_regulacao_medico)}</td>
+                <td>{regulacao.status_regulacao}</td>
 
                 {userData?.tipo !== "Medico" && (
                   <td className="td-Icons">
                     <FcHome className="Icon Icons-Regulacao" onClick={() => handleOpenModalOrigem(regulacao)} />
-                    <FcGlobe className="Icon Icons-Regulacao" />
+                    <FcGlobe className="Icon Icons-Regulacao" onClick={() => handleOpenModalDestino(regulacao)} />
                     <FcInTransit className="Icon Icons-Regulacao" />
                   </td>
                 )}
@@ -135,7 +148,11 @@ const RegulacoesAprovadas: React.FC = () => {
         </table>
       </div>
       {showModalOrigem && currentRegulacao && (
-        <Modal show={showModalOrigem} onClose={handleCloseModal} title='Setor de Origem'>
+        <Modal 
+          show={showModalOrigem} 
+          onClose={handleCloseModal} 
+          title='Setor de Origem'
+        >
           <SetorOrigem
             id_regulacao={currentRegulacao.id_regulacao}
             nome_paciente={currentRegulacao.nome_paciente}
@@ -143,10 +160,27 @@ const RegulacoesAprovadas: React.FC = () => {
             un_origem={currentRegulacao.un_origem}
             un_destino={currentRegulacao.un_destino}
             nome_regulador_medico={currentRegulacao.nome_regulador_medico}
+            onClose={handleCloseModal} // Fecha o modal
             showSnackbar={showSnackbar} // Passa o controle do Snackbar
           />
         </Modal>
       )}
+
+      {showModalDestino && currentRegulacao && (
+        <Modal show={showModalDestino} onClose={handleCloseModal} title='Setor de Destino'>
+          <SetorDestino
+            id_regulacao={currentRegulacao.id_regulacao}
+            nome_paciente={currentRegulacao.nome_paciente}
+            num_regulacao={currentRegulacao.num_regulacao}
+            un_origem={currentRegulacao.un_origem}
+            un_destino={currentRegulacao.un_destino}
+            nome_regulador_medico={currentRegulacao.nome_regulador_medico}
+            onClose={handleCloseModal} // Fecha o modal
+            showSnackbar={showSnackbar} // Passa o controle do Snackbar
+          />
+        </Modal>
+      )}
+
 
 
       <Snackbar

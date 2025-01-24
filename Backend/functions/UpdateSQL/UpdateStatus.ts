@@ -23,7 +23,6 @@ async function UpdateStatus(id_regulacao, status) {
             return { success: false, message: "Nenhum registro foi atualizado. Verifique os critérios fornecidos." };
         }
 
-        console.log('Atualização bem-sucedida na tabela regulacao!');
         return { success: true, message: "Regulação atualizada com sucesso." };
 
     } catch (error) {

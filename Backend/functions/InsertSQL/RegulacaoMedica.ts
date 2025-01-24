@@ -28,7 +28,7 @@ async function RegulacaoMedica(FormData) {
 
         const userType = rows[0].tipo;
 
-        if (userType !== 'Medico') {
+        if (userType !== 'MEDICO') {
             // Usuário sem permissão
             console.error('\nUsuário ID: ' + FormData.id_user + ' \nSem permissão: Regulação Médica\n');
             connection.release(); // Libera a conexão antes de retornar
