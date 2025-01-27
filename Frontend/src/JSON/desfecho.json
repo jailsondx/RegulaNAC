@@ -1,0 +1,7 @@
+
+[
+  { "value": "ALTA", "label": "ALTA" },
+  { "value": "CANECLADO", "label": "CANCELADO" },
+  { "value": "MUDANÇA DE PERFIL", "label": "MUDANÇA PERFIL" },
+  { "value": "TRANSFERENCIA EXTERNA", "label": "TRANSFERENCIA EXTERNA" }
+]

@@ -7,8 +7,7 @@ import { formatDateToPtBr } from '../../functions/DateTimes';
 import { getUserData } from '../../functions/storageUtils';
 import SetorOrigem from '../Setor Origem e Destino/SetorOrigem.tsx';
 import SetorDestino from '../Setor Origem e Destino/SetorDestino.tsx';
-
-import './Regulacoes.css'
+import Transporte from '../Transporte/Transporte.tsx';
 
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
 
@@ -29,6 +28,7 @@ const RegulacoesAprovadas: React.FC = () => {
   const [regulacoes, setRegulacoes] = useState<Regulacao[]>([]); // Tipo do estado
   const [showModalOrigem, setShowModalOrigem] = useState(false);
   const [showModalDestino, setShowModalDestino] = useState(false);
+  const [ShowModalTransporte, setShowModalTransporte] = useState(false);
   const [currentRegulacao, setCurrentRegulacao] = useState<Regulacao | null>(null);
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -74,9 +74,15 @@ const RegulacoesAprovadas: React.FC = () => {
     setShowModalDestino(true);
   };
 
+  const handleOpenModalTransporte = (regulacao: Regulacao) => {
+    setCurrentRegulacao(regulacao);
+    setShowModalTransporte(true);
+  };
+
   const handleCloseModal = () => {
     setShowModalOrigem(false);
     setShowModalDestino(false);
+    setShowModalTransporte(false);
     fetchRegulacoes();
     //window.location.reload(); // Recarregar a página ao fechar o modal
   };
@@ -138,7 +144,7 @@ const RegulacoesAprovadas: React.FC = () => {
                   <td className="td-Icons">
                     <FcHome className="Icon Icons-Regulacao" onClick={() => handleOpenModalOrigem(regulacao)} />
                     <FcGlobe className="Icon Icons-Regulacao" onClick={() => handleOpenModalDestino(regulacao)} />
-                    <FcInTransit className="Icon Icons-Regulacao" />
+                    <FcInTransit className="Icon Icons-Regulacao" onClick={() => handleOpenModalTransporte(regulacao)} />
                   </td>
                 )}
 
@@ -180,6 +186,22 @@ const RegulacoesAprovadas: React.FC = () => {
           />
         </Modal>
       )}
+
+      {ShowModalTransporte && currentRegulacao && (
+        <Modal show={ShowModalTransporte} onClose={handleCloseModal} title='Transporte/Desfecho'>
+          <Transporte
+            id_regulacao={currentRegulacao.id_regulacao}
+            nome_paciente={currentRegulacao.nome_paciente}
+            num_regulacao={currentRegulacao.num_regulacao}
+            un_origem={currentRegulacao.un_origem}
+            un_destino={currentRegulacao.un_destino}
+            nome_regulador_medico={currentRegulacao.nome_regulador_medico}
+            onClose={handleCloseModal} // Fecha o modal
+            showSnackbar={showSnackbar} // Passa o controle do Snackbar
+          />
+        </Modal>
+      )}
+
 
 
 

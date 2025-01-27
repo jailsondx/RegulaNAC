@@ -164,8 +164,8 @@ const ListaRegulacoes24: React.FC = () => {
                 <td>{regulacao.un_origem}</td>
                 <td>{regulacao.un_destino}</td>
                 <td>{regulacao.num_prioridade}</td>
-                <td>{new Date(regulacao.data_hora_solicitacao_02).toLocaleString()}</td>
-                <td>{new Date(regulacao.data_hora_acionamento_medico).toLocaleString()}</td>
+                <td>{new Date(regulacao.data_hora_solicitacao_02).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</td>
+                <td>{new Date(regulacao.data_hora_acionamento_medico).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</td>
                 <td className="td-TempoEspera"><TimeTracker startTime={regulacao.data_hora_solicitacao_02} serverTime={serverTime} /></td>
                 <td className='td-Icons'>
                   <FcInspection className='Icon Icons-Regulacao' />

@@ -4,12 +4,12 @@ const { DBconnection } = require("../../connection.ts"); // Importa apenas o obj
 const VerificaStatus = require("../Checked/VerificaStatus.ts");
 const UpdateStatus = require("../UpdateSQL/UpdateStatus.ts");
 
-async function RegulacaoOrigem(FormData) {
-    const DBtable = 'setor_origem';
+async function Transporte(FormData) {
+    const DBtable = 'transporte';
     const DBtableUsuarios = 'usuarios';
-    const StatusAtual = 'ABERTO - APROVADA - AGUARDANDO ORIGEM';
-    const NovoStatus = 'ABERTO - APROVADA - AGUARDANDO DESTINO';
-    const msgError = 'Origem não pode ser atualizado; Status atual é: ';
+    const StatusAtual = 'ABERTO - APROVADA - AGUARDANDO TRANSPORTE';
+    const NovoStatus = 'ABERTO - APROVADA - AGUARDANDO DESFECHO';
+    const msgError = 'Transporte não pode ser atualizado; Status atual é: ';
 
     try {
         // Inicie a conexão com o banco de dados
@@ -52,13 +52,13 @@ async function RegulacaoOrigem(FormData) {
         );
         await UpdateStatus(FormData.id_regulacao, NovoStatus);
 
-        return { success: true, message: "Regulação Origem: Cadastrada com Sucesso." };
+        return { success: true, message: "Transporte: Cadastrada com Sucesso." };
 
     } catch (error) {
         // Tratamento de erro
-        console.error('Erro no cadastro Regulação Origem:', error);
-        return { success: false, message: "Erro ao cadastrar Regulação Origem.", error };
+        console.error('Erro no cadastro Transporte:', error);
+        return { success: false, message: "Erro ao cadastrar Transporte.", error };
     }
 }
 
-module.exports = RegulacaoOrigem;
+module.exports = Transporte;

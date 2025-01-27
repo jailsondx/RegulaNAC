@@ -9,7 +9,7 @@ async function RegulacaoDestino(FormData) {
     const DBtableUsuarios = 'usuarios';
     const StatusAtual = 'ABERTO - APROVADA - AGUARDANDO DESTINO';
     const NovoStatus = 'ABERTO - APROVADA - AGUARDANDO TRANSPORTE';
-    const msgError = 'Regulação - Destino não pode ser atualizada; Status atual é: ';
+    const msgError = 'Destino não pode ser atualizado; Status atual é: ';
 
     try {
         // Inicie a conexão com o banco de dados

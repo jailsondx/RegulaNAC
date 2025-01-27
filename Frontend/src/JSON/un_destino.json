@@ -1,0 +1,10 @@
+[
+  { "value": "AVC", "label": "AVC" },
+  { "value": "CLINICA CIRURGICA 1 - VASCULAR", "label": "CLINICA CIRURGICA 1 - VASCULAR" },
+  { "value": "CLINICA CIRURGICA 2 - GERAL", "label": "CLINICA CIRURGICA 2 - GERAL" },
+  { "value": "CLINICA CIRURGICA 3 - NEURO", "label": "CLINICA CIRURGICA 3 - NEURO" },
+  { "value": "CLINICA MEDICA", "label": "CLINICA MEDICA" },
+  { "value": "UCE", "label": "UCE" },
+  { "value": "UTI ADULTO", "label": "UTI ADULTO" }
+]
+  

@@ -1,0 +1,5 @@
+[
+    { "value": "ALTA", "label": "ALTA" },
+    { "value": "MEDIA", "label": "MEDIA" },
+    { "value": "BAIXA", "label": "BAIXA" }
+  ]

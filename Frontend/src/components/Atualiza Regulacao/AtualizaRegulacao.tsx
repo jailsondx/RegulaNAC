@@ -2,6 +2,8 @@ import React, { useState, useEffect, FormEvent } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Snackbar, Alert } from '@mui/material';
+import un_origem from '../../JSON/un_origem.json';
+import un_destino from '../../JSON/un_destino.json';
 import { getUserData } from '../../functions/storageUtils';
 
 import './AtualizarRegulacao.css';
@@ -23,6 +25,8 @@ interface Regulacao {
 
 const AtualizaRegulacao: React.FC = () => {
   const [userData, setUserData] = useState<UserData | null>(null);
+  const [unidadesOrigem, setUnidadesOrigem] = useState([]);
+  const [unidadesDestino, setUnidadesDestino] = useState([]);
   const location = useLocation(); // Captura o estado enviado via navegação
   const [numProntuario, setNumProntuario] = useState<number | ''>(''); // Número do prontuário recebido
   const [dadosPront, setDadosPront] = useState<Regulacao | null>(null); // Dados do prontuário retornados
@@ -46,6 +50,12 @@ const AtualizaRegulacao: React.FC = () => {
     }
   }, [location]);
 
+  // Carregar os dados do arquivo JSON
+  useEffect(() => {
+    setUnidadesOrigem(un_origem);
+    setUnidadesDestino(un_destino);
+  }, []);
+
   // Busca os dados do prontuário pelo número fornecido
   useEffect(() => {
     if (!numProntuario) return;
@@ -57,6 +67,7 @@ const AtualizaRegulacao: React.FC = () => {
         });
         const data = response.data.data || null;
         setDadosPront(data);
+        console.log(data);
 
         if (data) {
           // Preenche os campos do formulário com os dados recebidos
@@ -157,7 +168,7 @@ const AtualizaRegulacao: React.FC = () => {
               <label>Médico Regulador: {dadosPront.nome_regulador_medico}</label>
             </div>
           </div>
-          
+
           <div className="StepContent">
             <div className="line-StepContent">
               <label>Unidade Origem:</label>
@@ -168,46 +179,11 @@ const AtualizaRegulacao: React.FC = () => {
                 required
               >
                 <option value="">Selecione uma unidade</option>
-                <option value="">Selecione uma unidade</option>
-                <option value="AVC AG">AVC AG</option>
-                <option value="ACV SUB">ACV SUB</option>
-                <option value="CCI">CCI</option>
-                <option value="CCII">CCII</option>
-                <option value="CCIII">CCIII</option>
-                <option value="CMI">CMI</option>
-                <option value="CMII">CMII</option>
-                <option value="CO">CO</option>
-                <option value="COII">COII</option>
-                <option value="COIII">COIII</option>
-                <option value="CPN">CPN</option>
-                <option value="INTER I">INTER I</option>
-                <option value="OIA II">OIA II</option>
-                <option value="UCE">UCE</option>
-                <option value="UTI I">UTI I</option>
-                <option value="UTI II">UTI II</option>
-                <option value="UTI III">UTI III</option>
-                <option value="UTI IV">UTI IV</option>
-                <option value="UTI PED">UTI PED</option>
-                <option value="MED">MED</option>
-                <option value="OBA CIR">OBA CIR</option>
-                <option value="OBA CP">OBA CP</option>
-                <option value="OBA TD">OBA TD</option>
-                <option value="OBA VAS">OBA VAS</option>
-                <option value="OBA CL">OBA CL</option>
-                <option value="PI">PI</option>
-                <option value="PO">PO</option>
-                <option value="RA">RA</option>
-                <option value="CCG">CCG</option>
-                <option value="EMERG">EMERG</option>
-                <option value="TRIAGEM">TRIAGEM</option>
-                <option value="SCMS">SCMS</option>
-                <option value="EXTERNO REG">EXTERNO REG</option>
-                <option value="EXTERNA ARTERIO">EXTERNA ARTERIO</option>
-                <option value="OBP CP">OBP CP</option>
-                <option value="AMB">AMB</option>
-                <option value="HEMO">HEMO</option>
-                <option value="HC-EXTERNO">HC-EXTERNO</option>
-                <option value="EXTERNA EMBOL.">EXTERNA EMBOL.</option>
+                {unidadesOrigem.map((unidadeOrigem) => (
+                  <option key={unidadeOrigem.value} value={unidadeOrigem.value}>
+                    {unidadeOrigem.label}
+                  </option>
+                ))}
               </select>
             </div>
 
@@ -220,13 +196,11 @@ const AtualizaRegulacao: React.FC = () => {
                 required
               >
                 <option value="">Selecione uma unidade</option>
-                <option value="AVC">AVC</option>
-                <option value="Clinica Cirugica 1 - Vascular">Clinica Cirugica 1 - Vascular</option>
-                <option value="Clinica Cirugica 2 - Geral">Clinica Cirugica 2 - Geral</option>
-                <option value="Clinica Cirugica 3 - Neuro">Clinica Cirugica 3 - Neuro</option>
-                <option value="Clinica Medica">Clinica Medica</option>
-                <option value="UCE">UCE</option>
-                <option value="UTI Adulto">UTI Adulto</option>
+                {unidadesDestino.map((unidadeDestino) => (
+                  <option key={unidadeDestino.value} value={unidadeDestino.value}>
+                    {unidadeDestino.label}
+                  </option>
+                ))}
               </select>
             </div>
 

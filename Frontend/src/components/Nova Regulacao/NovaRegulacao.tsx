@@ -5,6 +5,8 @@ import { Snackbar, Alert } from '@mui/material';
 import { FcCheckmark, FcLeave } from "react-icons/fc";
 import { formatDateToPtBr } from '../../functions/DateTimes';
 import { getUserData } from '../../functions/storageUtils';
+import un_origem from '../../JSON/un_origem.json';
+import un_destino from '../../JSON/un_destino.json';
 import './NovaRegulacao.css';
 
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
@@ -43,12 +45,10 @@ const initialFormData: FormDataNovaRegulacao = {
   status_regulacao: ''
 };
 
-
-
-
-
 const NovaRegulacao: React.FC = () => {
   const [userData, setUserData] = useState<UserData | null>(null);
+  const [unidadesOrigem, setUnidadesOrigem] = useState([]);
+  const [unidadesDestino, setUnidadesDestino] = useState([]);
   const [formData, setFormData] = useState<FormDataNovaRegulacao>(initialFormData);
   const [medicos, setMedicos] = useState<string[]>([]); // Lista de médicos da API
   const navigate = useNavigate();
@@ -61,9 +61,15 @@ const NovaRegulacao: React.FC = () => {
   const [showAtualizarButton, setShowAtualizarButton] = useState<boolean>(false);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'info' as 'success' | 'error' | 'info' | 'warning' });
 
-  
+  // Carregar os dados do arquivo JSON
   useEffect(() => {
-    // Carrega a lista de médicos ao montar o componente
+    setUnidadesOrigem(un_origem);
+    setUnidadesDestino(un_destino);
+  }, []);
+
+  // Carrega a lista de médicos ao montar o componente
+  useEffect(() => {
+
     const fetchMedicos = async () => {
       try {
         const response = await axios.get(`${NODE_URL}/api/internal/get/ListaMedicos`);
@@ -76,7 +82,6 @@ const NovaRegulacao: React.FC = () => {
 
     fetchMedicos();
   }, []);
-
 
   //Pega dados do SeassonStorage User
   useEffect(() => {
@@ -104,7 +109,7 @@ const NovaRegulacao: React.FC = () => {
 
   const validateForm = (): boolean => {
     let invalidField: string | null = null;
-  
+
     // Identificar o campo inválido
     switch (true) {
       case !formData.nome_paciente.trim():
@@ -137,13 +142,13 @@ const NovaRegulacao: React.FC = () => {
       default:
         break;
     }
-  
+
     // Exibir erro ou retornar sucesso
     if (invalidField) {
       setSnackbar({ open: true, message: invalidField, severity: 'warning' });
       return false;
     }
-  
+
     return true;
   };
 
@@ -152,37 +157,36 @@ const NovaRegulacao: React.FC = () => {
     if (!validateForm()) return;
 
     try {
-        const dataToSubmit = {
-            ...formData,
-            id_user: userData?.id_user, // Use o operador de encadeamento opcional para evitar erros se `userData` for `null`
-            nome_regulador_nac: userData?.nome,
-        };
+      const dataToSubmit = {
+        ...formData,
+        id_user: userData?.id_user, // Use o operador de encadeamento opcional para evitar erros se `userData` for `null`
+        nome_regulador_nac: userData?.nome,
+      };
 
-        const NovaRegulacaoAPI = await axios.post(`${NODE_URL}/api/internal/post/NovaRegulacao`, dataToSubmit);
+      const NovaRegulacaoAPI = await axios.post(`${NODE_URL}/api/internal/post/NovaRegulacao`, dataToSubmit);
 
-        const response = NovaRegulacaoAPI.data;
+      const response = NovaRegulacaoAPI.data;
 
-        // Exibir mensagem de sucesso
-        setSnackbar({
-            open: true,
-            message: response.message || 'Regulação cadastrada com sucesso',
-            severity: 'success',
-        });
+      // Exibir mensagem de sucesso
+      setSnackbar({
+        open: true,
+        message: response.message || 'Regulação cadastrada com sucesso',
+        severity: 'success',
+      });
 
-        setFormData(initialFormData); // Resetar o formulário
-        setCurrentStep(1); // Voltar ao início
+      setFormData(initialFormData); // Resetar o formulário
+      setCurrentStep(1); // Voltar ao início
     } catch (error: any) {
-        console.error('Erro ao cadastrar regulação:', error);
+      console.error('Erro ao cadastrar regulação:', error);
 
-        // Exibir mensagem de erro
-        setSnackbar({
-            open: true,
-            message: error.response?.data?.message || 'Erro ao cadastrar regulação. Por favor, tente novamente.',
-            severity: 'error',
-        });
+      // Exibir mensagem de erro
+      setSnackbar({
+        open: true,
+        message: error.response?.data?.message || 'Erro ao cadastrar regulação. Por favor, tente novamente.',
+        severity: 'error',
+      });
     }
-};
-
+  };
 
   const handleVerificaProntuario = async (numProntuario: number): Promise<void> => {
     if (!numProntuario) {
@@ -324,7 +328,7 @@ const NovaRegulacao: React.FC = () => {
                         onChange={handleChange}
                         required
                       />
-                      {iconStatusProntOk && (<FcCheckmark className='Icon-Status-NovaRegulacao' title='Prontuário OK'/>)} {iconStatusProntDeny && (<FcLeave className='Icon-Status-NovaRegulacao' title='Prontuário com Pendência'/>)} 
+                      {iconStatusProntOk && (<FcCheckmark className='Icon-Status-NovaRegulacao' title='Prontuário OK' />)} {iconStatusProntDeny && (<FcLeave className='Icon-Status-NovaRegulacao' title='Prontuário com Pendência' />)}
                       {showAtualizarButton && (
                         <button type="button" className='btn button-warning' onClick={handleAtualizarRegulacao}>
                           Atualizar Regulação
@@ -358,46 +362,11 @@ const NovaRegulacao: React.FC = () => {
                     required
                   >
                     <option value="">Selecione uma unidade</option>
-                    <option value="AVC AG">AVC AG</option>
-                    <option value="ACV SUB">ACV SUB</option>
-                    <option value="CCI">CCI</option>
-                    <option value="CCII">CCII</option>
-                    <option value="CCIII">CCIII</option>
-                    <option value="CMI">CMI</option>
-                    <option value="CMII">CMII</option>
-                    <option value="CO">CO</option>
-                    <option value="COII">COII</option>
-                    <option value="COIII">COIII</option>
-                    <option value="CPN">CPN</option>
-                    <option value="INTER I">INTER I</option>
-                    <option value="OIA II">OIA II</option>
-                    <option value="UCE">UCE</option>
-                    <option value="UTI I">UTI I</option>
-                    <option value="UTI II">UTI II</option>
-                    <option value="UTI III">UTI III</option>
-                    <option value="UTI IV">UTI IV</option>
-                    <option value="UTI PED">UTI PED</option>
-                    <option value="MED">MED</option>
-                    <option value="OBA CIR">OBA CIR</option>
-                    <option value="OBA CP">OBA CP</option>
-                    <option value="OBA TD">OBA TD</option>
-                    <option value="OBA VAS">OBA VAS</option>
-                    <option value="OBA CL">OBA CL</option>
-                    <option value="PI">PI</option>
-                    <option value="PO">PO</option>
-                    <option value="RA">RA</option>
-                    <option value="CCG">CCG</option>
-                    <option value="EMERG">EMERG</option>
-                    <option value="TRIAGEM">TRIAGEM</option>
-                    <option value="SCMS">SCMS</option>
-                    <option value="EXTERNO REG">EXTERNO REG</option>
-                    <option value="EXTERNA ARTERIO">EXTERNA ARTERIO</option>
-                    <option value="OBP CP">OBP CP</option>
-                    <option value="AMB">AMB</option>
-                    <option value="HEMO">HEMO</option>
-                    <option value="HC-EXTERNO">HC-EXTERNO</option>
-                    <option value="EXTERNA EMBOL.">EXTERNA EMBOL.</option>
-
+                    {unidadesOrigem.map((unidadeOrigem) => (
+                      <option key={unidadeOrigem.value} value={unidadeOrigem.value}>
+                        {unidadeOrigem.label}
+                      </option>
+                    ))}
                   </select>
                 </div>
 
@@ -410,13 +379,11 @@ const NovaRegulacao: React.FC = () => {
                     required
                   >
                     <option value="">Selecione uma unidade</option>
-                    <option value="AVC">AVC</option>
-                    <option value="Clinica Cirugica 1 - Vascular">Clinica Cirugica 1 - Vascular</option>
-                    <option value="Clinica Cirugica 2 - Geral">Clinica Cirugica 2 - Geral</option>
-                    <option value="Clinica Cirugica 3 - Neuro">Clinica Cirugica 3 - Neuro</option>
-                    <option value="Clinica Medica">Clinica Medica</option>
-                    <option value="UCE">UCE</option>
-                    <option value="UTI Adulto">UTI Adulto</option>
+                    {unidadesDestino.map((unidadeDestino) => (
+                      <option key={unidadeDestino.value} value={unidadeDestino.value}>
+                        {unidadeDestino.label}
+                      </option>
+                    ))}
                   </select>
                 </div>
 
@@ -437,19 +404,19 @@ const NovaRegulacao: React.FC = () => {
               <div className="StepContent">
                 <div className="line-StepContent">
                   <label>Nome do Médico Regulador:</label>
-                    <select
-                      name="nome_regulador_medico"
-                      value={formData.nome_regulador_medico}
-                      onChange={handleSelectChange_medico}
-                      required
-                    >
-                      <option value="" disabled> Selecione um médico </option>
-                      {medicos.map((medico, index) => (
-                        <option key={index} value={medico}>
-                          {medico}
-                        </option>
-                      ))}
-                    </select>
+                  <select
+                    name="nome_regulador_medico"
+                    value={formData.nome_regulador_medico}
+                    onChange={handleSelectChange_medico}
+                    required
+                  >
+                    <option value="" disabled> Selecione um médico </option>
+                    {medicos.map((medico, index) => (
+                      <option key={index} value={medico}>
+                        {medico}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 <div className="line-StepContent-2">
@@ -462,11 +429,11 @@ const NovaRegulacao: React.FC = () => {
                         value={formData.num_regulacao ?? ''}
                         onChange={handleChange}
                         required
-                        
+
                       />{iconStatusRegOk && (<FcCheckmark className='Icon-Status-NovaRegulacao' />)} {iconStatusRegDeny && (<FcLeave className='Icon-Status-NovaRegulacao' />)}
                     </span>
-                    
-                    
+
+
                   </div>
 
                   <div className="line-StepContent-sub">

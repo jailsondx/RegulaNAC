@@ -58,7 +58,7 @@
 
 
 .IconUser {
-  width: 75%;
+  width: 50%;
   height: auto;
   border-radius: 50%;  /* Torna a imagem redonda */
   object-fit: cover;   /* Garante que a imagem cubra a área sem distorcer */
