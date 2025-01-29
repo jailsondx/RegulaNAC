@@ -37,6 +37,7 @@
   { "value": "AMB", "label": "AMB" },
   { "value": "HEMO", "label": "HEMO" },
   { "value": "HC-EXTERNO", "label": "HC-EXTERNO" },
-  { "value": "EXTERNA EMBOL.", "label": "EXTERNA EMBOL." }
+  { "value": "EXTERNA EMBOL.", "label": "EXTERNA EMBOL." },
+  { "value": "TESTEEEEEEEEEEEEEEEEEE.", "label": "TESTEEEEEEEEEE." }
 ]
   

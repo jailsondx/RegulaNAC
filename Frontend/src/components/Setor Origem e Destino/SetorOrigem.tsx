@@ -15,8 +15,7 @@ interface Props {
     nome_regulador_medico: string;
     onClose: () => void; // Adicionado
     showSnackbar: (message: string, severity: 'success' | 'error' | 'info' | 'warning') => void; // Nova prop
-}
-
+};
 
 interface FormDataRegulacaoAprovada {
     id_user: string;
@@ -24,8 +23,7 @@ interface FormDataRegulacaoAprovada {
     nome_colaborador: string;
     data_hora_comunicacao: string;
     preparo_leito: string;
-}
-
+};
 
 const SetorOrigem: React.FC<Props> = ({ id_regulacao, nome_paciente, num_regulacao, un_origem, un_destino, nome_regulador_medico, onClose, showSnackbar }) => {
     const [userData, setUserData] = useState<UserData | null>(null);
@@ -164,7 +162,6 @@ const SetorOrigem: React.FC<Props> = ({ id_regulacao, nome_paciente, num_regulac
                         </select>
                         </div>
                     </div>
-
                    
                 </div>
                 <button type="submit">Cadastrar Origem</button>

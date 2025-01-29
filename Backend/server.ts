@@ -32,6 +32,6 @@ app.get('/', (req, res) => {
     res.send('Backend API funcionando!');
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
     console.log(`Servidor rodando no ip ${IP} na porta ${PORT}`);
 });

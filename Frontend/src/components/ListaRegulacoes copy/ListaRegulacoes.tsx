@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { LuFilter } from "react-icons/lu";
 import { useNavigate, useLocation } from 'react-router-dom';
-import { FcFullTrash, FcPlanner  } from "react-icons/fc";
+import { FcFullTrash, FcInspection } from "react-icons/fc";
 import { Snackbar, Alert } from '@mui/material';
 
 import TimeTracker from "../TimeTracker/TimeTracker.tsx";
@@ -27,7 +27,7 @@ interface Regulacao {
   data_hora_acionamento_medico: string;
 }
 
-const ListaRegulacoes24: React.FC = () => {
+const ListaRegulacoes: React.FC = () => {
   const [serverTime, setServerTime] = useState("");
   const [regulacoes, setRegulacoes] = useState<Regulacao[]>([]); // Tipo do estado
   const [filteredRegulacoes, setFilteredRegulacoes] = useState<Regulacao[]>([]);
@@ -44,7 +44,7 @@ const ListaRegulacoes24: React.FC = () => {
   useEffect(() => {
     const fetchRegulacoes = async () => {
       try {
-        const response = await axios.get(`${NODE_URL}/api/internal/get/ListaRegulacoesPendentes24`);
+        const response = await axios.get(`${NODE_URL}/api/internal/get/ListaRegulacoesPendentes`);
 
         if (response.data && Array.isArray(response.data.data)) {
           setRegulacoes(response.data.data);
@@ -93,24 +93,18 @@ const ListaRegulacoes24: React.FC = () => {
     setFilteredRegulacoes(filtered);
   }, [unidadeOrigem, unidadeDestino, searchTerm, regulacoes]);
 
-  const handleAtualizarRegulacao = (regulacao: Regulacao): void => {
-    if (!regulacao.num_prontuario) {
-      setSnackbar({ open: true, message: 'Prontuário é obrigatório para atualizar a regulação', severity: 'warning' });
-      return;
-    }
-    // Enviando dados de forma oculta
-    navigate('/AtualizaRegulacao', {
-      state: { num_prontuario: regulacao.num_prontuario }, // Passa o prontuário da regulação específica
-    });
-  };
-  
+  const NovaRegulacao = () => {
+    navigate('/NovaRegulacao');
+  }
+
 
   return (
     <>
       <div className="Header-ListaRegulaçoes">
         <label className="Title-Tabela">
-          Lista de Regulações +24hrs<LuFilter className='Icon' onClick={() => setShowFilters(!showFilters)} title='Filtros' />
+          Lista de Regulações <LuFilter className='Icon' onClick={() => setShowFilters(!showFilters)} title='Filtros' />
         </label>
+        <button type="button" onClick={NovaRegulacao}>+ Nova Regulação</button>
       </div>
 
       {showFilters && (
@@ -178,9 +172,10 @@ const ListaRegulacoes24: React.FC = () => {
                 <td>{regulacao.num_prioridade}</td>
                 <td>{new Date(regulacao.data_hora_solicitacao_02).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</td>
                 <td>{new Date(regulacao.data_hora_acionamento_medico).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</td>
-                <td className="td-TempoEspera"><TimeTracker startTime={regulacao.data_hora_solicitacao_02} serverTime={serverTime} /></td>
+                <td className='td-TempoEspera'><TimeTracker startTime={regulacao.data_hora_solicitacao_02} serverTime={serverTime} /></td>
                 <td className='td-Icons'>
-                  <FcPlanner  className='Icon Icons-Regulacao' onClick={() => handleAtualizarRegulacao(regulacao)} title='Atualizar/Renovar Regulação' />
+                  <FcInspection className='Icon Icons-Regulacao' />
+                  <FcFullTrash className='Icon Icons-Regulacao' />
                 </td>
               </tr>
             ))}
@@ -198,4 +193,4 @@ const ListaRegulacoes24: React.FC = () => {
 };
 
 
-export default ListaRegulacoes24;
+export default ListaRegulacoes;

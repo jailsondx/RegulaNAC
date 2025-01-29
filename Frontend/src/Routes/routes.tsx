@@ -14,6 +14,8 @@ import Login from '../components/Login/Login';
 import PageNotFound from './page404';
 import RegulacoesAprovadas from '../components/Regulacoes Aprovadas/RegulacoesAprovadas';
 import ListaRegulacoes24 from '../components/ListaRegulacoes/ListaRegulacoes+24';
+import Desfecho from '../components/Desfecho/Desfecho';
+import ListaRegulacoesFinalizadas from '../components/ListaRegulacoes/ListaRegulaçoesFinalizadas';
 
 // Layout para rotas protegidas com o Sidebar
 const ProtectedLayout: React.FC = () => {
@@ -51,6 +53,8 @@ const Rotas: React.FC = () => {
           <Route path="AtualizaRegulacao" element={<AtualizaRegulacao />} />
           <Route path="RegulacaoMedica" element={<RegulacaMedica />} />
           <Route path="RegulacoesAprovadas" element={<RegulacoesAprovadas />} />
+          <Route path="Desfecho" element={<Desfecho />} />
+          <Route path="Finalizadas" element={<ListaRegulacoesFinalizadas />} />
         </Route>
 
         {/* Página 404 - Página não encontrada */}

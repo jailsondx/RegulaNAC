@@ -19,7 +19,7 @@ async function ListaRegulacoesAprovadas() {
             FROM ${DBtable} r
             LEFT JOIN ${DBtable2} rm ON r.id_regulacao = rm.id_regulacao
             WHERE r.status_regulacao LIKE ?`, 
-            ['ABERTO - APROVADA%']
+            ['ABERTO - APROVADO%']
         );
 
         connection.release(); // Libera a conexão

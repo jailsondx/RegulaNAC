@@ -14,27 +14,20 @@ interface Props {
   nome_regulador_medico: string;
   onClose: () => void; // Adicionado
   showSnackbar: (message: string, severity: 'success' | 'error') => void; // Nova prop
-}
-
+};
 
 interface FormDataRegulacaoMedico {
   id_user: string;
   vaga_autorizada: boolean;
-  num_leito: number | null;
   justificativa_neg: string;
   nome_regulador_medico: string;
-  data_hora_regulacao_medico: string;
-  justificativa_tempo30: string | null;
-}
+};
 
 const initialFormData: FormDataRegulacaoMedico = {
   id_user: '',
   vaga_autorizada: false,
-  num_leito: null,
   justificativa_neg: '',
   nome_regulador_medico: '',
-  data_hora_regulacao_medico: '',
-  justificativa_tempo30: null,
 };
 
 const NovaRegulacaoMedicoNegada: React.FC<Props> = ({ id_regulacao, nome_paciente, num_regulacao, un_origem, un_destino, nome_regulador_medico, onClose, showSnackbar }) => {
@@ -57,8 +50,18 @@ const NovaRegulacaoMedicoNegada: React.FC<Props> = ({ id_regulacao, nome_pacient
     }));
   };
 
+  const validateForm = (): boolean => {
+    // Valida número do leito
+    if (!formData.justificativa_neg) {
+      showSnackbar('O campo "Justificativa" é obrigatório.', 'error');
+      return false;
+    }
+    return true;
+  };
+
   const handleSubmit = async (e: FormEvent): Promise<void> => {
     e.preventDefault();
+    if (!validateForm()) return;
 
     try {
       const dataToSubmit = {
@@ -127,9 +130,10 @@ const NovaRegulacaoMedicoNegada: React.FC<Props> = ({ id_regulacao, nome_pacient
         <div className='justificativa'>
           <label>Justificativa de Negação:</label>
           <textarea
-            name="justificativa_tempo30"
+            name="justificativa_neg"
             value={formData.justificativa_neg}
             onChange={handleChange}
+            required
           />
         </div>
 

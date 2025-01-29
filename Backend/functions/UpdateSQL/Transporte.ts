@@ -4,12 +4,12 @@ const { DBconnection } = require("../../connection.ts"); // Importa apenas o obj
 const VerificaStatus = require("../Checked/VerificaStatus.ts");
 const UpdateStatus = require("../UpdateSQL/UpdateStatus.ts");
 
-async function RegulacaoDestino(FormData) {
-    const DBtable = 'setor_destino';
+async function updateTransporte(FormData) {
+    const DBtable = 'transporte';
     const DBtableUsuarios = 'usuarios';
-    const StatusAtual = 'ABERTO - APROVADO - AGUARDANDO DESTINO';
-    const NovoStatus = 'ABERTO - APROVADO - AGUARDANDO TRANSPORTE';
-    const msgError = 'Destino não pode ser atualizado; Status atual é: ';
+    const StatusAtual = 'ABERTO - APROVADO - AGUARDANDO FINALIZACAO TRANSPORTE';
+    const NovoStatus = 'ABERTO - APROVADO - AGUARDANDO DESFECHO';
+    const msgError = 'Finalização do Transporte não pode ser realizado; Status atual é: ';
 
     try {
         // Inicie a conexão com o banco de dados
@@ -33,7 +33,7 @@ async function RegulacaoDestino(FormData) {
 
         if (userType === 'MEDICO') {
             // Usuário sem permissão
-            console.error('\nUsuário ID: ' + FormData.id_user + ' \nSem permissão: Regulação Destino\n');
+            console.error('\nUsuário ID: ' + FormData.id_user + ' \nSem permissão: Regulação Origem\n');
             return { success: false, message: "Usuário não tem permissão para realizar esta ação." };
         }
 
@@ -45,20 +45,26 @@ async function RegulacaoDestino(FormData) {
             return { success: false, message: statusCheck.message };
         }
 
-        // Usuário possui permissão, insira os dados no banco
+        // Usuário possui permissão, atualize os dados no banco
         const [result] = await connection.query(
-            `INSERT INTO ${DBtable} SET ?`,
-            FormData
+            `UPDATE ${DBtable} SET ? WHERE id_regulacao = ?`, 
+            [FormData, FormData.id_regulacao]
         );
+
+        // Verifica se algum registro foi atualizado
+        if (result.affectedRows === 0) {
+            return { success: false, message: "Nenhum registro foi atualizado, verifique se o id_regulacao está correto." };
+        }
+
         await UpdateStatus(FormData.id_regulacao, NovoStatus);
 
-        return { success: true, message: "Regulação destino: Cadastrada com Sucesso." };
+        return { success: true, message: "Transporte atualizado com sucesso." };
 
     } catch (error) {
         // Tratamento de erro
-        console.error('Erro no cadastro Regulação destino:', error);
-        return { success: false, message: "Erro ao cadastrar Regulação destino.", error };
+        console.error('Erro ao atualizar Transporte:', error);
+        return { success: false, message: "Erro ao atualizar Transporte.", error };
     }
 }
 
-module.exports = RegulacaoDestino;
+module.exports = updateTransporte;

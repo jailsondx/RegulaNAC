@@ -1,8 +1,46 @@
+/* Responsividade para telas acima de 1160px (desktop) */
+@media screen and (min-width: 1160px) {
+  .sidebar {
+    display: flex;
+    width: 15dvw;
+  }
+  .textMenu-Item{
+    display: flex;
+  }
+}
+
+/* Responsividade para telas de até 1024px (tablets) */
+@media screen and (max-width: 1024px) {
+  /* Adicione seus estilos aqui */
+}
+
+/* Responsividade para telas de até 768px (tablets grandes e dispositivos pequenos) */
+@media screen and (max-width: 1159px) {
+  .sidebar {
+    display: flex;
+    width: 12dvw;
+  }
+  .textMenu-Item{
+    font-size: 10px;
+  }
+}
+
+/* Responsividade para telas de até 480px (smartphones) */
+@media screen and (max-width: 500px) {
+  .sidebar {
+    display: flex;
+    width: 5dvw;
+    font-size: 7px;
+  }
+  .textMenu-Item{
+    display: none;
+  }
+}
+
+
 .sidebar {
-  display: flex;
   flex-direction: column;
   justify-content: space-between;
-  width: 15dvw;
   height: 100%;
   background-color: #2c3e50;
   color: white;
@@ -11,6 +49,14 @@
   left: 0;
   padding: 0px 20px 0px 20px; /* Topo, direita, inferior, esquerda */
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-Title{
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  font-size: 1.5dvw;
+  margin: 20px 0px 20px 0px; /*top, direita, bottom, esquerda*/
 }
 
 .sidebar h2 {
@@ -91,31 +137,6 @@
   margin-bottom: 5dvh;
 }
 
-/* Submenu 
-.submenu {
-  margin-left: 20px;
-  list-style: none;
-  padding-left: 10px;
-}
-
-.submenu li {
-  margin: 5px 0;
-}
-
-.submenu-toggle {
-  background: none;
-  border: none;
-  color: inherit;
-  cursor: pointer;
-  font-size: 16px;
-  text-align: left;
-}
-
-.submenu-toggle:hover {
-  color: #007bff;
-}
-*/
-
 
 /*MUDANÇA DE TEMA*/
 .slider {
@@ -164,7 +185,6 @@
 }
 
 .textMenu-Item{
-  display: flex;
   width: 83%;
   cursor: pointer;
 }

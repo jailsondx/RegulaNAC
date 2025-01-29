@@ -23,6 +23,3 @@ async function ListaMedicos() {
 }
 
 module.exports = ListaMedicos;
-
-
-module.exports = ListaMedicos;

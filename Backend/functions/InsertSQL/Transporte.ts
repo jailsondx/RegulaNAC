@@ -4,12 +4,12 @@ const { DBconnection } = require("../../connection.ts"); // Importa apenas o obj
 const VerificaStatus = require("../Checked/VerificaStatus.ts");
 const UpdateStatus = require("../UpdateSQL/UpdateStatus.ts");
 
-async function Transporte(FormData) {
+async function saveTransporte(FormData) {
     const DBtable = 'transporte';
     const DBtableUsuarios = 'usuarios';
-    const StatusAtual = 'ABERTO - APROVADA - AGUARDANDO TRANSPORTE';
-    const NovoStatus = 'ABERTO - APROVADA - AGUARDANDO DESFECHO';
-    const msgError = 'Transporte não pode ser atualizado; Status atual é: ';
+    const StatusAtual = 'ABERTO - APROVADO - AGUARDANDO ACIONAMENTO TRANSPORTE';
+    const NovoStatus = 'ABERTO - APROVADO - AGUARDANDO FINALIZACAO TRANSPORTE';
+    const msgError = 'Acionamento do Transporte não pode ser realizado; Status atual é: ';
 
     try {
         // Inicie a conexão com o banco de dados
@@ -61,4 +61,4 @@ async function Transporte(FormData) {
     }
 }
 
-module.exports = Transporte;
+module.exports = saveTransporte;

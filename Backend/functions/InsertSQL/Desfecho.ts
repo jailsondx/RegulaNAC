@@ -7,7 +7,7 @@ const UpdateStatus = require("../UpdateSQL/UpdateStatus.ts");
 async function Desfecho(FormData) {
     const DBtable = 'desfecho';
     const DBtableUsuarios = 'usuarios';
-    const StatusAtual = 'ABERTO - APROVADA - AGUARDANDO DESFECHO';
+    const StatusAtual = 'ABERTO - APROVADO - AGUARDANDO DESFECHO';
     const NovoStatus = 'FECHADO';
     const msgError = 'Desfecho não pode ser atualizado; Status atual é: ';
 

@@ -5,6 +5,8 @@ const ListaRegulacoesAprovadas = require("../../functions/SelectSQL/ListaRegulac
 const VerificaProntuario = require("../../functions/SelectSQL/VerificaProntuario.ts");
 const {VerificaRegulacao, VerificaRegulacaoID } = require("../../functions/SelectSQL/VerificaRegulacao.ts");
 const ListaMedicos = require("../../functions/SelectSQL/ListaMedicos.ts");
+const PesquisaPaciente = require("../../functions/SelectSQL/PesquisaPaciente.ts");
+const ListaRegulacoesFinalizadas = require("../../functions/SelectSQL/ListaRegulacoesFinalizadas.ts");
 
 const routerGet = express.Router();
 
@@ -12,6 +14,23 @@ routerGet.get('/ListaRegulacoesPendentes', async (req, res) => {
   try {
     // Chama a função para buscar as regulagens pendentes
     const { success, data, error } = await ListaRegulacoesPendentes();
+    const serverTime = new Date().toISOString(); // Hora atual do servidor em formato ISO
+
+    if (success) {
+      res.status(200).json({ message: 'Lista de regulações carregada com sucesso.', data, serverTime });
+    } else {
+      res.status(500).json({ message: 'Erro ao carregar lista de regulações.', error });
+    }
+  } catch (error) {
+    console.error('Erro no processamento:', error);
+    res.status(500).json({ message: 'Erro interno do servidor.' });
+  }
+});
+
+routerGet.get('/ListaRegulacoesFinalizadas', async (req, res) => {
+  try {
+    // Chama a função para buscar as regulagens pendentes
+    const { success, data, error } = await ListaRegulacoesFinalizadas();
     const serverTime = new Date().toISOString(); // Hora atual do servidor em formato ISO
 
     if (success) {
@@ -111,5 +130,26 @@ routerGet.get('/ListaMedicos', async (req, res) => {
     res.status(500).json({ message: 'Erro interno do servidor.' });
   }
 });
+
+routerGet.get('/PesquisaPaciente', async (req, res) => {
+  try {
+    // Extração dos parâmetros de consulta da URL (se existirem)
+    const { nomePaciente, numProntuario, numRegulacao, statusRegulacao } = req.query;
+    const serverTime = new Date().toISOString(); // Hora atual do servidor em formato ISO
+
+    // Sua lógica para verificar e buscar os pacientes
+    const { success, data, error } = await PesquisaPaciente(nomePaciente, numProntuario, numRegulacao, statusRegulacao);
+
+    if (success) {
+      res.status(200).json({ message: 'Lista Carregada', data, serverTime });
+    } else {
+      res.status(500).json({ message: 'Erro na pesquisa de pacientes', error });
+    }
+  } catch (error) {
+    console.error('Erro no processamento:', error);
+    res.status(500).json({ message: 'Erro interno do servidor.' });
+  }
+});
+
 
 module.exports = routerGet;

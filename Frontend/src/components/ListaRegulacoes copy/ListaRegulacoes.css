@@ -4,6 +4,14 @@
     align-items: center;
 }
 
+.Filtro-Container{
+    display: flex;
+    justify-content: center;
+    height: 40px;
+    width: 800px;
+    margin-bottom: 10px;
+}
+
 .td-TempoEspera{
     text-transform: lowercase;
 }

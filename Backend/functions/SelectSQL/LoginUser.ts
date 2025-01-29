@@ -27,6 +27,7 @@ async function LoginUser(login, password) {
 
             if (isPasswordValid) {
                 // Senha correta
+                console.log('LOGIN USER: ' + login);
                 return { success: true, message: "Login realizado com sucesso.", data: user };
             } else {
                 // Senha incorreta

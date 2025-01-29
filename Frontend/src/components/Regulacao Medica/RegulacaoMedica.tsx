@@ -2,11 +2,13 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Modal from "../Modal/Modal.tsx";
 import { Snackbar, Alert } from "@mui/material";
+import { FcApproval, FcBadDecision } from "react-icons/fc";
+import { LuFilter } from "react-icons/lu";
+
 import NovaRegulacaoMedicoAprovada from "./RegulacaoMedicaAprovada.tsx";
 import NovaRegulacaoMedicoNegada from "./RegulacaoMedicaNegada.tsx";
 import TimeTracker from "../TimeTracker/TimeTracker.tsx";
-import { FcApproval, FcBadDecision } from "react-icons/fc";
-
+import Filtro from '../Filtro/Filtro';
 
 import "./RegulacaoMedica.css";
 
@@ -36,6 +38,18 @@ const RegulacaoMedica: React.FC = () => {
   const [currentRegulacao, setCurrentRegulacao] = useState<Regulacao | null>(null);
   const [elapsedTime, setElapsedTime] = useState<string>(''); // Armazena o tempo decorrido
 
+  /*FILTROS*/
+  const [filteredRegulacoes, setFilteredRegulacoes] = useState<Regulacao[]>([]);
+  const [unidadeOrigem, setUnidadeOrigem] = useState('');
+  const [unidadeDestino, setUnidadeDestino] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [showFilters, setShowFilters] = useState(false); // Controle da exibição dos filtros
+
+  /*PAGINAÇÃO*/
+  const [currentPage, setCurrentPage] = useState(1);  // Página atual
+  const [itemsPerPage] = useState(10);  // Número de itens por página
+
+  /*SNACKBAR*/
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">("success");
@@ -62,10 +76,34 @@ const RegulacaoMedica: React.FC = () => {
     fetchRegulacoes();
   }, []);
 
-    // Atualiza o tempo decorrido
-    const handleTimeUpdate = (time: string) => {
-      setElapsedTime(time); // Salva o tempo decorrido no estado
-    };
+  //INICIALIZAÇÃO DOS FILTROS
+  useEffect(() => {
+    let filtered = regulacoes;
+
+    if (unidadeOrigem) {
+      filtered = filtered.filter((r) => r.un_origem === unidadeOrigem);
+    }
+
+    if (unidadeDestino) {
+      filtered = filtered.filter((r) => r.un_destino === unidadeDestino);
+    }
+
+    if (searchTerm) {
+      filtered = filtered.filter(
+        (r) =>
+          r.nome_paciente?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          r.num_prontuario?.toString().includes(searchTerm) ||
+          r.num_regulacao?.toString().includes(searchTerm)
+      );
+    }
+
+    setFilteredRegulacoes(filtered);
+  }, [unidadeOrigem, unidadeDestino, searchTerm, regulacoes]);
+
+  // Atualiza o tempo decorrido
+  const handleTimeUpdate = (time: string) => {
+    setElapsedTime(time); // Salva o tempo decorrido no estado
+  };
 
   const handleOpenModalApproved = (regulacao: Regulacao, elapsedTime: string) => {
     setCurrentRegulacao(regulacao);
@@ -97,94 +135,152 @@ const RegulacaoMedica: React.FC = () => {
     setSnackbarOpen(true);
   };
 
+  //CONFIGURA A PAGINAÇÃO
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+  };
+
+  const indexOfLastRegulacao = currentPage * itemsPerPage;
+  const indexOfFirstRegulacao = indexOfLastRegulacao - itemsPerPage;
+  const currentRegulacoes = filteredRegulacoes.slice(indexOfFirstRegulacao, indexOfLastRegulacao);
+
+  const totalPages = Math.ceil(filteredRegulacoes.length / itemsPerPage);
+
   return (
     <>
-      <div className="Header-ListaRegulaçoes">
-        <label className="Title-Tabela">Regulações Pendentes</label>
-      </div>
+      <div className='Component-Table'>
 
-      <div>
-        <table className="Table-Regulacoes">
-          <thead>
-            <tr>
-              <th>Pront.</th>
-              <th>Nome Paciente</th>
-              <th>Id.</th>
-              <th>Regulação</th>
-              <th>Un. Origem</th>
-              <th>Un. Destino</th>
-              <th>Prio.</th>
-              <th>Data Solicitação</th>
-              <th>Tempo de Espera</th>
-              <th>Regulação Médica</th>
-            </tr>
-          </thead>
-          <tbody>
-            {regulacoes.map((regulacao) => (
-              <tr key={regulacao.id_regulacao}>
-                <td>{regulacao.num_prontuario}</td>
-                <td className="td-NomePaciente">{regulacao.nome_paciente}</td>
-                <td>{regulacao.num_idade} Anos</td>
-                <td>{regulacao.num_regulacao}</td>
-                <td>{regulacao.un_origem}</td>
-                <td>{regulacao.un_destino}</td>
-                <td>{regulacao.num_prioridade}</td>
-                <td>{new Date(regulacao.data_hora_solicitacao_02).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</td>
-                <td className="td-TempoEspera">
-                  <TimeTracker
-                    startTime={regulacao.data_hora_solicitacao_02}
-                    serverTime={serverTime}
-                    onTimeUpdate={handleTimeUpdate} 
-                  />
-                </td>
-                <td className="td-Icons">
-                  <FcApproval className="Icon Icons-Regulacao" onClick={() => handleOpenModalApproved(regulacao)} />
-                  <FcBadDecision className="Icon Icons-Regulacao" onClick={() => handleOpenModalDeny(regulacao)} />
-                </td>
+        <div className="Header-ListaRegulaçoes">
+          <label className="Title-Tabela">
+            Regulações Pendentes <LuFilter className='Icon' onClick={() => setShowFilters(!showFilters)} title='Filtros' />
+          </label>
+        </div>
+
+        {showFilters && (
+          <div className="Filtro-Container">
+            <input
+              type="text"
+              placeholder="Buscar por Nome, Prontuário ou Regulação"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="Search-Input"
+            />
+            <Filtro
+              filtros={[
+                {
+                  label: 'Unidade Origem',
+                  value: unidadeOrigem,
+                  options: [...new Set(regulacoes.map((r) => r.un_origem).filter(Boolean))],
+                  onChange: setUnidadeOrigem,
+                },
+                {
+                  label: 'Unidade Destino',
+                  value: unidadeDestino,
+                  options: [...new Set(regulacoes.map((r) => r.un_destino).filter(Boolean))],
+                  onChange: setUnidadeDestino,
+                },
+              ]}
+              onClear={() => {
+                setUnidadeOrigem('');
+                setUnidadeDestino('');
+                setSearchTerm('');
+              }}
+            />
+
+          </div>
+        )}
+
+        <div>
+          <table className="Table-Regulacoes">
+            <thead>
+              <tr>
+                <th>Pront.</th>
+                <th className="col-NomePaciente">Nome Paciente</th>
+                <th className="col-NumIdade">Id.</th>
+                <th className="col-NumRegulacao">Regulação</th>
+                <th>Un. Origem</th>
+                <th>Un. Destino</th>
+                <th className="col-Prioridade">Prio.</th>
+                <th>Data Solicitação</th>
+                <th>Tempo de Espera</th>
+                <th></th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {currentRegulacoes.map((regulacao) => (
+                <tr key={regulacao.id_regulacao}>
+                  <td>{regulacao.num_prontuario}</td>
+                  <td className="col-NomePaciente">{regulacao.nome_paciente}</td>
+                  <td className="col-NumIdade">{regulacao.num_idade} Anos</td>
+                  <td className="col-NumRegulacao">{regulacao.num_regulacao}</td>
+                  <td>{regulacao.un_origem}</td>
+                  <td>{regulacao.un_destino}</td>
+                  <td className="col-Prioridade">{regulacao.num_prioridade}</td>
+                  <td>{new Date(regulacao.data_hora_solicitacao_02).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</td>
+                  <td className="td-TempoEspera">
+                    <TimeTracker
+                      startTime={regulacao.data_hora_solicitacao_02}
+                      serverTime={serverTime}
+                      onTimeUpdate={handleTimeUpdate}
+                    />
+                  </td>
+                  <td className="td-Icons">
+                    <FcApproval className="Icon Icons-Regulacao" onClick={() => handleOpenModalApproved(regulacao)} />
+                    <FcBadDecision className="Icon Icons-Regulacao" onClick={() => handleOpenModalDeny(regulacao)} />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {showModalApproved && currentRegulacao && (
+          <Modal
+            show={showModalApproved}
+            onClose={handleCloseModal}
+            title="Regulação Médica: Aprovação"
+          >
+            <NovaRegulacaoMedicoAprovada
+              id_regulacao={currentRegulacao.id_regulacao}
+              nome_paciente={currentRegulacao.nome_paciente}
+              num_regulacao={currentRegulacao.num_regulacao}
+              un_origem={currentRegulacao.un_origem}
+              un_destino={currentRegulacao.un_destino}
+              nome_regulador_medico={currentRegulacao.nome_regulador_medico}
+              tempoEspera={elapsedTime} // Passa o tempo para o modal
+              onClose={handleCloseModal} // Fecha o modal
+              showSnackbar={showSnackbar} // Passa o controle do Snackbar
+            />
+          </Modal>
+        )}
+
+        {showModalDeny && currentRegulacao && (
+          <Modal
+            show={showModalDeny}
+            onClose={handleCloseModal}
+            title="Regulação Médica: Negação"
+          >
+            <NovaRegulacaoMedicoNegada
+              id_regulacao={currentRegulacao.id_regulacao}
+              nome_paciente={currentRegulacao.nome_paciente}
+              num_regulacao={currentRegulacao.num_regulacao}
+              un_origem={currentRegulacao.un_origem}
+              un_destino={currentRegulacao.un_destino}
+              nome_regulador_medico={currentRegulacao.nome_regulador_medico}
+              onClose={handleCloseModal} // Fecha o modal
+              showSnackbar={showSnackbar} // Passa o controle do Snackbar
+            />
+          </Modal>
+        )}
+
       </div>
 
-      {showModalApproved && currentRegulacao && (
-        <Modal
-          show={showModalApproved}
-          onClose={handleCloseModal}
-          title="Regulação Médica: Aprovação"
-        >
-          <NovaRegulacaoMedicoAprovada
-            id_regulacao={currentRegulacao.id_regulacao}
-            nome_paciente={currentRegulacao.nome_paciente}
-            num_regulacao={currentRegulacao.num_regulacao}
-            un_origem={currentRegulacao.un_origem}
-            un_destino={currentRegulacao.un_destino}
-            nome_regulador_medico={currentRegulacao.nome_regulador_medico}
-            tempoEspera={elapsedTime} // Passa o tempo para o modal
-            onClose={handleCloseModal} // Fecha o modal
-            showSnackbar={showSnackbar} // Passa o controle do Snackbar
-          />
-        </Modal>
-      )}
 
-      {showModalDeny && currentRegulacao && (
-        <Modal
-          show={showModalDeny}
-          onClose={handleCloseModal}
-          title="Regulação Médica: Negação"
-        >
-          <NovaRegulacaoMedicoNegada
-            id_regulacao={currentRegulacao.id_regulacao}
-            nome_paciente={currentRegulacao.nome_paciente}
-            num_regulacao={currentRegulacao.num_regulacao}
-            un_origem={currentRegulacao.un_origem}
-            un_destino={currentRegulacao.un_destino}
-            nome_regulador_medico={currentRegulacao.nome_regulador_medico}
-            onClose={handleCloseModal} // Fecha o modal
-            showSnackbar={showSnackbar} // Passa o controle do Snackbar
-          />
-        </Modal>
-      )}
+      <div className="Pagination">
+        <button className='button-pagination' onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>Anterior</button>
+        <span>{`Página ${currentPage} de ${totalPages}`}</span>
+        <button className='button-pagination' onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}>Próxima</button>
+      </div>
 
       <Snackbar
         open={snackbarOpen}

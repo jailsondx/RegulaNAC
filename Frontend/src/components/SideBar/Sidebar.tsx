@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { TiBusinessCard, TiClipboard, TiThumbsUp, TiHeartHalfOutline  } from "react-icons/ti";
+import { TiBusinessCard, TiClipboard, TiThumbsUp, TiHeartHalfOutline, TiHomeOutline  } from "react-icons/ti";
 import { getUserData, UserData } from '../../functions/storageUtils';
 import './Sidebar.css';
 
@@ -10,9 +10,6 @@ const Sidebar: React.FC = () => {
   });
   const [userData, setUserData] = useState<UserData | null>(null);
   const [iconUser, setIconUser] = useState<string | null>(null);
-
-  // Estado para gerenciar o submenu
-  const [submenuOpen, setSubmenuOpen] = useState(false);
 
   useEffect(() => {
     document.body.className = theme === 'dark' ? 'dark-theme' : 'light-theme';
@@ -41,10 +38,6 @@ const Sidebar: React.FC = () => {
     setTheme((prevTheme) => (prevTheme === 'light' ? 'dark' : 'light'));
   };
 
-  // Alternar submenu
-  const toggleSubmenu = () => {
-    setSubmenuOpen((prevState) => !prevState);
-  };
 
   // Renderiza os itens do menu de acordo com o tipo de usuário
   const renderMenuItems = () => {
@@ -68,8 +61,11 @@ const Sidebar: React.FC = () => {
             <li><Link to="/NovaRegulacao"><TiBusinessCard className='Icon-Menu-Item' /><label className='textMenu-Item'>Nova Regulação</label></Link></li>
             <li><Link to="/ListaRegulacoes"><TiClipboard className='Icon-Menu-Item' /><label className='textMenu-Item'>Lista de Regulações</label></Link></li>
             <li><Link to="/RegulacoesAprovadas"><TiThumbsUp className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações Aprovadas</label></Link></li>
-            <li><Link to="/Desfecho"><TiBusinessCard className='Icon-Menu-Item' /><label className='textMenu-Item'>Desfecho</label></Link></li>
+            <li><Link to="/Desfecho"><TiHomeOutline  className='Icon-Menu-Item' /><label className='textMenu-Item'>Desfecho</label></Link></li>
+            <hr/>
           </ul>
+          <li><Link to="/ListaRegulacoes24"><TiClipboard className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações +24hrs</label></Link></li>
+          <li><Link to="/Finalizadas"><TiClipboard className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações Finalizadas</label></Link></li>
         </>
       );
     }
@@ -82,7 +78,7 @@ const Sidebar: React.FC = () => {
             <li><Link to="/NovaRegulacao"><TiBusinessCard className='Icon-Menu-Item' /><label className='textMenu-Item'>Nova Regulação</label></Link></li>
             <li><Link to="/ListaRegulacoes"><TiClipboard className='Icon-Menu-Item' /><label className='textMenu-Item'>Lista de Regulações</label></Link></li>
             <li><Link to="/RegulacoesAprovadas"><TiThumbsUp className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações Aprovadas</label></Link></li>
-            <li><Link to="/Desfecho"><TiBusinessCard className='Icon-Menu-Item' /><label className='textMenu-Item'>Desfecho</label></Link></li>
+            <li><Link to="/Desfecho"><TiHomeOutline  className='Icon-Menu-Item' /><label className='textMenu-Item'>Desfecho</label></Link></li>
             <hr/>
           </ul>
           <li><Link to="/ListaRegulacoes24"><TiClipboard className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações +24hrs</label></Link></li>
@@ -97,7 +93,7 @@ const Sidebar: React.FC = () => {
   return (
     <div className="sidebar">
       <div className="sidebar-sup">
-        <h2>RegulaNAC</h2>
+        <label className='sidebar-Title'>RegulaNAC</label>
         <div className='inf-user'>
           <img className="IconUser" src={iconUser || '/IconsUser/default-icon.png'} alt="User Icon" />
           <p>

@@ -15,7 +15,7 @@ const Filtro: React.FC<FiltroProps> = ({ filtros, onClear }) => {
   return (
     <div className="FiltroContainer">
       {filtros.map((filtro, index) => (
-        <div className="FiltroItem" key={index}>
+        <div className="FiltroItemSelect" key={index}>
           <label>{filtro.label}</label>
           <select
             value={filtro.value}
@@ -30,11 +30,13 @@ const Filtro: React.FC<FiltroProps> = ({ filtros, onClear }) => {
           </select>
         </div>
       ))}
-      {onClear && (
-        <button type='button' className='btn button-clear' onClick={onClear}>
-          Limpar Filtros
-        </button>
-      )}
+        {onClear && (
+          <button type='button' className='btn button-clear' onClick={onClear}>
+            Limpar
+          </button>
+        )}
+      
+      
     </div>
   );
 };

@@ -7,8 +7,8 @@ const UpdateStatus = require("../UpdateSQL/UpdateStatus.ts");
 async function RegulacaoOrigem(FormData) {
     const DBtable = 'setor_origem';
     const DBtableUsuarios = 'usuarios';
-    const StatusAtual = 'ABERTO - APROVADA - AGUARDANDO ORIGEM';
-    const NovoStatus = 'ABERTO - APROVADA - AGUARDANDO DESTINO';
+    const StatusAtual = 'ABERTO - APROVADO - AGUARDANDO ORIGEM';
+    const NovoStatus = 'ABERTO - APROVADO - AGUARDANDO DESTINO';
     const msgError = 'Origem não pode ser atualizado; Status atual é: ';
 
     try {

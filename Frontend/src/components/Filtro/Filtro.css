@@ -1,15 +1,24 @@
+/* Responsividade para telas de até 480px (smartphones) */
+@media screen and (max-width: 500px) {
+  .FiltroItemSelect {
+    width: 25dvw;
+  }
+}
+
 .FiltroContainer {
     display: flex;
+    justify-content: center;
+    align-items: center;
     gap: 16px;
   }
   
-  .FiltroItem {
+  .FiltroItemSelect {
     display: flex;
     flex-direction: row;
-    width: 200px;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
   }
   
-  .FiltroItem label {
-    margin-bottom: 4px;
+  .FiltroItemSelect label {
   }
-  
