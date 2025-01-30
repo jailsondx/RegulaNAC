@@ -66,7 +66,7 @@
   body{
     font-size: 12px;
   }
-  .Component-Table {
+  .Component {
     margin-left: 50px;
   }
 }
@@ -76,7 +76,7 @@
   body{
     font-size: 12px;
   }
-  .Component-Table {
+  .Component {
     margin-left: 200px;
   }
 }
@@ -89,8 +89,11 @@
   .col-NumIdade, .col-NumRegulacao, .col-NumRegulacao{
     display: none;
   }
-  .Component-Table {
-    margin-left: 120px;
+  .Component {
+    margin-left: 320px;
+  }
+  .ComponentForm, .Title-Form{
+    margin-left: 100px;
   }
 }
 
@@ -112,6 +115,20 @@ body {
   transition: background-color 0.3s, color 0.3s;
 }
 
+a {
+  text-decoration: none; /* Remove o sublinhado */
+  color: inherit;        /* Faz com que a cor do link seja a mesma da cor do texto ao redor */
+  background: none;      /* Remove qualquer fundo que possa ser aplicado */
+  border: none;          /* Remove qualquer borda, caso tenha */
+  outline: none;         /* Remove o contorno de foco */
+}
+
+a:hover {
+  color: #49798a;        /* Faz com que a cor do link seja a mesma da cor do texto ao redor */
+  background: none;      /* Remove qualquer fundo que possa ser aplicado */
+  border: none;          /* Remove qualquer borda, caso tenha */
+  outline: none;         /* Remove o contorno de foco */
+}
 
 button {
   border-radius: 4px;
@@ -180,12 +197,25 @@ button:disabled {
 }
 
 .button-red {
-  background-color: #c0392b !important;
+  background-color: #c0392b;
   color: whitesmoke;
 }
 
 .button-pagination{
   margin: 0px 10px 0px 10px; /*top, direita, bottom, esquerda*/
+}
+
+.inline-button{
+  display: flex;
+  max-width: 80px;
+  max-height: 30px;
+  font-size: 0.5rem;
+  flex-wrap: nowrap;
+}
+
+ /* Placeholder */
+ input::placeholder {
+  color: #aaa;
 }
 
 input,
@@ -209,14 +239,16 @@ input:disabled {
   color: var(--text-color);
 }
 
+select {
+  cursor: pointer;
+}
 
 .Component {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  max-width: 70dvw;
+  min-width: 70dvw;
   height: 85dvh;
-  margin: 0 auto;
   padding: 20px;
   background-color: var(--component);
   border-radius: 8px;
@@ -238,7 +270,6 @@ input:disabled {
   min-width: 300px;
   height: auto;
   min-height: 320px;
-  margin: 0 auto;
   padding: 20px;
   border: 2px solid var(--form-border);
   background-color: var(--form-bg-color);
@@ -264,7 +295,7 @@ input:disabled {
 
 .Table-Regulacoes {
   border: 1px solid var(--table-border);
-
+  min-width: 70dvw;
   max-width: 70dvw;
   background-color: var(--table-bg);
   color: var(--text-color);
@@ -272,9 +303,20 @@ input:disabled {
 }
 
 .Table-Regulacoes th {
-  padding: 10px;
+  padding: 5px;
   background-color: var(--table-header-bg);
   color: var(--table-header-text-color);
+}
+
+.Table-Regulacoes th span{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: nowrap;
+}
+
+.Table-Regulacoes th label{
+  margin: 0px 3px 0px 3px; /*top, direita, bottom, esquerda*/
 }
 
 .Table-Regulacoes td {
@@ -299,7 +341,7 @@ input:disabled {
   align-items: center;
 
   width: 20%;
-  min-width: 100px;
+  min-width: 70px;
 
   height: 100%;
   min-height: 30px;
@@ -307,12 +349,17 @@ input:disabled {
 
 .Icons-Regulacao {
   height: auto;
-  width: 25%;
+  width: 35%;
 }
 
 .Icon:hover {
   transform: scale(1.2);
   cursor: pointer;
+}
+
+.Logo{
+  height: auto;
+  width: 100%;
 }
 
 

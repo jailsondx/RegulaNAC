@@ -1,0 +1,14 @@
+.Screen-Login{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100dvh;
+    width: 100dvw;
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(255, 255, 255, 0.5)),  url('BG/BG-LEITOS.jpg');
+}
+
+.div-Logo{
+    height: auto;
+    width: 20dvw;
+}

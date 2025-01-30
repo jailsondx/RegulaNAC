@@ -11,7 +11,7 @@ async function NovaRegulacao(FormData) {
         FormData.data_hora_solicitacao_02 = FormData.data_hora_solicitacao_01;
 
         //Define o valor do status para essa operação
-        FormData.status_regulacao = 'ABERTO - NOVO';
+        FormData.status_regulacao = 'ABERTO - AGUARDANDO AVALIACAO';
 
         // Inicie a conexão com o banco de dados
         const connection = await DBconnection.getConnection();

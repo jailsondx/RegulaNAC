@@ -8,7 +8,7 @@ async function RegulacaoDestino(FormData) {
     const DBtable = 'setor_destino';
     const DBtableUsuarios = 'usuarios';
     const StatusAtual = 'ABERTO - APROVADO - AGUARDANDO DESTINO';
-    const NovoStatus = 'ABERTO - APROVADO - AGUARDANDO TRANSPORTE';
+    const NovoStatus = 'ABERTO - APROVADO - AGUARDANDO ACIONAMENTO TRANSPORTE';
     const msgError = 'Destino não pode ser atualizado; Status atual é: ';
 
     try {

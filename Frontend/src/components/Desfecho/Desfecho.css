@@ -33,10 +33,10 @@
   }
   
   /* Estilos para os inputs e select */
-  input[type="text"],
-  input[type="number"],
-  select {
-    padding: 10px;
+  .search-desfecho-row input[type="text"],
+  .search-desfecho-row input[type="number"],
+  .search-desfecho-row select {
+    padding: 8px;
     border: 1px solid #ccc;
     border-radius: 8px;
     outline: none;
@@ -46,27 +46,19 @@
   }
   
   /* Ajuste no comportamento dos campos na linha 2 */
-  .search-desfecho-row input,
+  .search-desfecho-row input[type="text"], .search-desfecho-row input[type="number"]
   .search-desfecho-row select {
     flex: 1; /* Faz com que os campos ocupem o mesmo espaço */
     min-width: 220px; /* Impede que os campos fiquem muito pequenos */
   }
   
-  input[type="text"]:focus,
-  input[type="number"]:focus,
-  select:focus {
+  .search-desfecho-row input[type="text"]:focus,
+  .search-desfecho-row input[type="number"]:focus,
+  .search-desfecho-row select:focus {
     border-color: #4CAF50;
     box-shadow: 0 0 5px rgba(76, 175, 80, 0.2);
   }
   
-  /* Placeholder */
-  input::placeholder {
-    color: #aaa;
-  }
-  
-  select {
-    cursor: pointer;
-  }
   
   /* Botão de pesquisa */
   .search-button {

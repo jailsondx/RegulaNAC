@@ -17,7 +17,7 @@ async function ListaRegulacoesPendentes() {
             FROM ${DBtable}
             WHERE status_regulacao LIKE ?
             AND TIMESTAMPDIFF(HOUR, data_hora_solicitacao_02, ?) < 24
-        `, ['ABERTO - NOVO%', getCurrentTimestamp()]);
+        `, ['ABERTO - AGUARDANDO AVALIACAO%', getCurrentTimestamp()]);
 
         connection.release(); // Libera a conexão
 
@@ -44,7 +44,7 @@ async function ListaRegulacoesPendentes24() {
             FROM ${DBtable}
             WHERE status_regulacao = ?
             AND TIMESTAMPDIFF(HOUR, data_hora_solicitacao_02, ?) >= 24
-        `, ['ABERTO - NOVO', getCurrentTimestamp()]);
+        `, ['ABERTO - AGUARDANDO AVALIACAO', getCurrentTimestamp()]);
 
         connection.release(); // Libera a conexão
 

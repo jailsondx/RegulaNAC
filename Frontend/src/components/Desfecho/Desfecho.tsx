@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Snackbar, Alert, Button, Input } from '@mui/material';
+import { Snackbar, Alert } from '@mui/material';
+import { FcNews } from "react-icons/fc";
 import TimeTracker from "../TimeTracker/TimeTracker.tsx";
 import { removerText } from "../../functions/RemoveText.ts";
 
+import status_regulacao from '../../JSON/status_regulacao.json';
 import './Desfecho.css';
 
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
@@ -38,15 +40,20 @@ const initialForm: SearchForm = {
 
 const Desfecho: React.FC = () => {
     const [regulacoes, setRegulacoes] = useState<Regulacao[]>([]);
+    const [statusRegulacao, setstatusRegulacao] = useState([]);
     const [filteredRegulacoes, setFilteredRegulacoes] = useState<Regulacao[]>([]);
     const [serverTime, setServerTime] = useState("");
     const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'info' as 'success' | 'error' | 'info' | 'warning' });
-
     const [formData, setFormData] = useState<SearchForm>(initialForm);
 
     /*PAGINAÇÃO*/
     const [currentPage, setCurrentPage] = useState(1);  // Página atual
     const [itemsPerPage] = useState(5);  // Número de itens por página
+
+    // Carregar os dados do arquivo JSON
+    useEffect(() => {
+        setstatusRegulacao(status_regulacao);
+    }, []);
 
     const handleSnackbarClose = () => setSnackbar({ ...snackbar, open: false });
 
@@ -118,7 +125,7 @@ const Desfecho: React.FC = () => {
                         {/* Formulário de Pesquisa */}
                         <form onSubmit={handleSearch} className="form-search">
                             {/* Primeira linha: Nome do Paciente */}
-                            <div className="search-desfecho-line">
+                            <div className="search-desfecho-line search-desfecho-row">
                                 <input
                                     type="text"
                                     name="nomePaciente"
@@ -149,13 +156,12 @@ const Desfecho: React.FC = () => {
                                     value={formData.statusRegulacao}
                                     onChange={handleInputChange}
                                 >
-                                    <option value="">Selecione o Status</option>
-                                    <option value="ABERTO - NOVO">ABERTO - NOVO</option>
-                                    <option value="ABERTO - NEGADO">ABERTO - NEGADO</option>
-                                    <option value="ABERTO - APROVADO - AGUARDANDO ORIGEM">ABERTO - APROVADO - AGUARDANDO ORIGEM</option>
-                                    <option value="ABERTO - APROVADO - AGUARDANDO DESTINO">ABERTO - APROVADO - AGUARDANDO DESTINO</option>
-                                    <option value="ABERTO - APROVADO - AGUARDANDO TRANSPORTE">ABERTO - APROVADO - AGUARDANDO TRANSPORTE</option>
-                                    <option value="ABERTO - APROVADO - AGUARDANDO DESFECHO">ABERTO - APROVADO - AGUARDANDO DESFECHO</option>
+                                   <option value="">Selecione uma unidade</option>
+                                    {statusRegulacao.map((statusRegulacao) => (
+                                    <option key={statusRegulacao.value} value={statusRegulacao.value}>
+                                        {statusRegulacao.label}
+                                    </option>
+                                    ))}
                                 </select>
                             </div>
 
@@ -200,7 +206,9 @@ const Desfecho: React.FC = () => {
                                             <TimeTracker startTime={regulacao.data_hora_solicitacao_02} serverTime={serverTime} />
                                         </td>
                                         <td>{removerText(regulacao.status_regulacao)}</td>
-                                        <td><button className='button-red'>Forçar Desfecho</button></td>
+                                        <td className='td-Icons'>
+                                            <FcNews className='Icon Icons-Regulacao' title='Forçar Desfecho' />
+                                        </td>
                                     </tr>
                                 ))}
                             </tbody>

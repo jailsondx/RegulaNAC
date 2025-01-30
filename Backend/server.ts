@@ -7,6 +7,8 @@ const bodyParser = require('body-parser');
 const routePost = require('./routes/internal/post.ts');
 const routeGet = require('./routes/internal/get.ts');
 const routePut = require('./routes/internal/put.ts');
+const routeUpload = require("./routes/internal/upload.ts");
+
 
 require('dotenv').config();
 
@@ -27,6 +29,7 @@ http.globalAgent.maxSockets = Infinity;
 app.use('/api/internal/post', routePost);
 app.use('/api/internal/get', routeGet);
 app.use('/api/internal/put', routePut);
+app.use("/api/internal/upload", routeUpload);
 
 app.get('/', (req, res) => {
     res.send('Backend API funcionando!');

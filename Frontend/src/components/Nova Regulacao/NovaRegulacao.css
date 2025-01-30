@@ -85,6 +85,10 @@
     width: 50%;
   }
 
+  .line-StepContent input[type='date']{
+    width: 30%;
+  }
+
   .line-StepContent-2{
     display: flex;
     width: 100%;

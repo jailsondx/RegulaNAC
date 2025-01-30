@@ -3,10 +3,13 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Snackbar, Alert } from '@mui/material';
 import { FcCheckmark, FcLeave } from "react-icons/fc";
-import { formatDateToPtBr } from '../../functions/DateTimes';
+import { formatDateTimeToPtBr } from '../../functions/DateTimes';
 import { getUserData } from '../../functions/storageUtils';
+import { calcularIdade } from '../../functions/CalcularIdade';
+
 import un_origem from '../../JSON/un_origem.json';
 import un_destino from '../../JSON/un_destino.json';
+
 import './NovaRegulacao.css';
 
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
@@ -15,10 +18,11 @@ interface FormDataNovaRegulacao {
   id_user: string;
   num_prontuario: number | null;
   nome_paciente: string;
+  data_nascimento: string;
   num_idade: number | null;
   un_origem: string;
   un_destino: string;
-  num_prioridade: number | null;
+  prioridade: number | null;
   data_hora_solicitacao_01: string;
   data_hora_solicitacao_02: string;
   nome_regulador_nac: string;
@@ -32,10 +36,11 @@ const initialFormData: FormDataNovaRegulacao = {
   id_user: '',
   num_prontuario: null,
   nome_paciente: '',
+  data_nascimento: '',
   num_idade: null,
   un_origem: '',
   un_destino: '',
-  num_prioridade: null,
+  prioridade: null,
   data_hora_solicitacao_01: '',
   data_hora_solicitacao_02: '',
   nome_regulador_nac: '',
@@ -47,6 +52,7 @@ const initialFormData: FormDataNovaRegulacao = {
 
 const NovaRegulacao: React.FC = () => {
   const [userData, setUserData] = useState<UserData | null>(null);
+  const [file, setFile] = useState<File | null>(null);
   const [unidadesOrigem, setUnidadesOrigem] = useState([]);
   const [unidadesDestino, setUnidadesDestino] = useState([]);
   const [formData, setFormData] = useState<FormDataNovaRegulacao>(initialFormData);
@@ -96,6 +102,7 @@ const NovaRegulacao: React.FC = () => {
     setFormData((prevState) => ({
       ...prevState,
       [name]: type === 'number' ? (value ? Number(value) : null) : value,
+      num_idade: name === "data_nascimento" ? calcularIdade(value) : prevState.num_idade
     }));
 
     if (name === 'num_prontuario' && value) {
@@ -152,34 +159,74 @@ const NovaRegulacao: React.FC = () => {
     return true;
   };
 
+  //Handle para capturar o arquivo PDF
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setFile(e.target.files[0]);
+    }
+  };
+
+  const uploadFile = async (numRegulacao: number) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('num_regulacao', numRegulacao.toString()); // Adicionando num_regulacao no corpo da requisição
+  
+    try {
+      const response = await axios.post(`${NODE_URL}/api/internal/upload/uploadPDF`, formData, {
+        params: { numRegulacao }, // Passando numRegulacao através de params
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+  
+      // Resposta de sucesso
+      setSnackbar({
+        open: true,
+        message: response.data.message || 'Arquivo enviado com sucesso!',
+        severity: 'success',
+      });
+    } catch (error: any) {
+      setSnackbar({
+        open: true,
+        message: error.response?.data?.message || 'Erro ao enviar arquivo. Tente novamente.',
+        severity: 'error',
+      });
+      throw new Error('Erro ao enviar o arquivo');
+    }
+  };
+  
   const handleSubmit = async (e: FormEvent): Promise<void> => {
     e.preventDefault();
+    
+    // Valida o formulário primeiro
     if (!validateForm()) return;
-
+    
     try {
       const dataToSubmit = {
         ...formData,
         id_user: userData?.id_user, // Use o operador de encadeamento opcional para evitar erros se `userData` for `null`
         nome_regulador_nac: userData?.nome,
       };
-
-      const NovaRegulacaoAPI = await axios.post(`${NODE_URL}/api/internal/post/NovaRegulacao`, dataToSubmit);
-
-      const response = NovaRegulacaoAPI.data;
-
-      // Exibir mensagem de sucesso
+  
+      // Envia o formulário primeiro
+      const response = await axios.post(`${NODE_URL}/api/internal/post/NovaRegulacao`, dataToSubmit);
+  
+      // Verifica se há arquivo e, caso haja, faz o upload
+      if (file) {
+        await uploadFile(dataToSubmit.num_regulacao);  // Espera o upload do arquivo ser concluído antes de prosseguir
+      }
+  
+      // Se tudo ocorrer bem, exibe a resposta
       setSnackbar({
         open: true,
-        message: response.message || 'Regulação cadastrada com sucesso',
+        message: response.data.message || 'Regulação cadastrada com sucesso',
         severity: 'success',
       });
-
-      setFormData(initialFormData); // Resetar o formulário
-      setCurrentStep(1); // Voltar ao início
+  
+      // Limpeza de dados após o sucesso
+      setFormData(initialFormData);
+      setFile(null); // Reseta o arquivo após o envio
+      setCurrentStep(1); // Reinicia o passo no processo, caso haja
+  
     } catch (error: any) {
-      console.error('Erro ao cadastrar regulação:', error);
-
-      // Exibir mensagem de erro
       setSnackbar({
         open: true,
         message: error.response?.data?.message || 'Erro ao cadastrar regulação. Por favor, tente novamente.',
@@ -187,7 +234,7 @@ const NovaRegulacao: React.FC = () => {
       });
     }
   };
-
+  
   const handleVerificaProntuario = async (numProntuario: number): Promise<void> => {
     if (!numProntuario) {
       //setSnackbar({ open: true, message: 'Prontuário é obrigatório', severity: 'info' });
@@ -338,16 +385,32 @@ const NovaRegulacao: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="line-StepContent">
-                  <label>Idade:</label>
-                  <input
-                    type="number"
-                    name="num_idade"
-                    value={formData.num_idade ?? ''}
-                    onChange={handleChange}
-                    required
-                  />
+                <div className='line-StepContent-2'>
+                  <div className="line-StepContent-sub">
+                    <label>Data Nascimento:</label>
+                    <input
+                      type="date"
+                      name="data_nascimento"
+                      value={formData.data_nascimento}
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
+
+                  <div className="line-StepContent-sub">
+                    <label>Idade:</label>
+                    <input
+                      type="number"
+                      name="num_idade"
+                      value={formData.num_idade ?? ''}
+                      onChange={handleChange}
+                      disabled
+                      required
+                    />
+                  </div>
                 </div>
+
+                
               </div>
             )}
 
@@ -440,8 +503,8 @@ const NovaRegulacao: React.FC = () => {
                     <label>Prioridade:</label>
                     <input
                       type="number"
-                      name="num_prioridade"
-                      value={formData.num_prioridade ?? ''}
+                      name="prioridade"
+                      value={formData.prioridade ?? ''}
                       onChange={handleChange}
                     />
                   </div>
@@ -471,12 +534,17 @@ const NovaRegulacao: React.FC = () => {
                   <li><strong>Idade:</strong> {formData.num_idade} Anos</li>
                   <li><strong>Unidade Origem:</strong> {formData.un_origem}</li>
                   <li><strong>Unidade Destino:</strong> {formData.un_destino}</li>
-                  <li><strong>Data Hora 1ª Solicitação:</strong> {formatDateToPtBr(formData.data_hora_solicitacao_01)}</li>
-                  <li><strong>Prioridade:</strong> {formData.num_prioridade}</li>
+                  <li><strong>Data Hora 1ª Solicitação:</strong> {formatDateTimeToPtBr(formData.data_hora_solicitacao_01)}</li>
+                  <li><strong>Prioridade:</strong> {formData.prioridade}</li>
                   <li><strong>Nº Regulação:</strong> {formData.num_regulacao}</li>
                   <li><strong>Nome do Médico Regulador:</strong> {formData.nome_regulador_medico}</li>
-                  <li><strong>Data Hora Acionamento Médico:</strong> {formatDateToPtBr(formData.data_hora_acionamento_medico)}</li>
+                  <li><strong>Data Hora Acionamento Médico:</strong> {formatDateTimeToPtBr(formData.data_hora_acionamento_medico)}</li>
                 </ul>
+
+                <div className="line-StepContent">
+                  <label>Enviar Arquivo PDF:</label>
+                  <input type="file" accept="application/pdf" onChange={handleFileChange} required/>
+                </div>
               </div>
             )}
 

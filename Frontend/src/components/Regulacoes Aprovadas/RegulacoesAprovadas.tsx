@@ -3,8 +3,8 @@ import axios from 'axios';
 import Modal from '../Modal/Modal.tsx';
 import { Snackbar, Alert } from "@mui/material";
 import { LuFilter } from "react-icons/lu";
-import { FcHome, FcOrganization, FcOnlineSupport, FcOvertime } from "react-icons/fc";
-import { formatDateToPtBr } from '../../functions/DateTimes';
+import { FcHome, FcOrganization, FcOnlineSupport, FcOvertime, FcAbout  } from "react-icons/fc";
+import { formatDateTimeToPtBr } from '../../functions/DateTimes';
 import { getUserData } from '../../functions/storageUtils';
 import { removerText } from "../../functions/RemoveText.ts";
 import SetorOrigem from '../Setor Origem e Destino/SetorOrigem.tsx';
@@ -61,6 +61,7 @@ const RegulacoesAprovadas: React.FC = () => {
 
       if (response.data && Array.isArray(response.data.data)) {
         setRegulacoes(response.data.data);
+        console.log(response.data);
       } else {
         console.error('Dados inesperados:', response.data);
       }
@@ -216,14 +217,11 @@ const RegulacoesAprovadas: React.FC = () => {
                   <th>Num. Regulação</th>
                   <th>Un. Origem</th>
                   <th>Un. Destino</th>
+                  <th>Nº Leito</th>
                   <th>Médico Regulador</th>
                   <th>Data/Hora da Autorização</th>
                   <th>Fase</th>
-
-                  {userData?.tipo !== "MEDICO" && (
-                    <th></th>
-                  )}
-
+                  <th></th>
                 </tr>
               </thead>
               <tbody>
@@ -234,8 +232,9 @@ const RegulacoesAprovadas: React.FC = () => {
                     <td>{regulacao.num_regulacao}</td>
                     <td>{regulacao.un_origem}</td>
                     <td>{regulacao.un_destino}</td>
+                    <td>{regulacao.num_leito}</td>
                     <td>{regulacao.nome_regulador_medico}</td>
-                    <td>{formatDateToPtBr(regulacao.data_hora_regulacao_medico)}</td>
+                    <td>{formatDateTimeToPtBr(regulacao.data_hora_regulacao_medico)}</td>
                     <td>{removerText(regulacao.status_regulacao)}</td>
 
                     {userData?.tipo !== "MEDICO" && (
@@ -263,6 +262,13 @@ const RegulacoesAprovadas: React.FC = () => {
                         )}
                         {regulacao.status_regulacao === "ABERTO - APROVADO - AGUARDANDO FINALIZACAO TRANSPORTE" && (
                           <FcOvertime
+                            className="Icon Icons-Regulacao"
+                            onClick={() => handleOpenModalTransporte02(regulacao)}
+                            title='Finalização do Transporte'
+                          />
+                        )}
+                        {regulacao.status_regulacao === "ABERTO - APROVADO - AGUARDANDO DESFECHO" && (
+                          <FcAbout
                             className="Icon Icons-Regulacao"
                             onClick={() => handleOpenModalTransporte02(regulacao)}
                             title='Finalização do Transporte'

@@ -7,7 +7,7 @@ const UpdateStatus = require("../UpdateSQL/UpdateStatus.ts");
 async function AtualizaRegulacao(FormData) {
     const DBtable = 'regulacao';
     const DBtableUsuarios = 'usuarios';
-    const StatusAtual = 'ABERTO - NOVO';
+    const StatusAtual = 'ABERTO - AGUARDANDO AVALIACAO';
     const msgError = 'Regulação não pode ser atualizada; Status atual é: ';
 
     try {
