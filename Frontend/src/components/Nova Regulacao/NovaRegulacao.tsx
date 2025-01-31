@@ -6,6 +6,7 @@ import { FcCheckmark, FcLeave } from "react-icons/fc";
 import { formatDateTimeToPtBr } from '../../functions/DateTimes';
 import { getUserData } from '../../functions/storageUtils';
 import { calcularIdade } from '../../functions/CalcularIdade';
+import { Regulacao } from '../../interfaces/regulacao';
 
 import un_origem from '../../JSON/un_origem.json';
 import un_destino from '../../JSON/un_destino.json';
@@ -15,21 +16,7 @@ import './NovaRegulacao.css';
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
 
 interface FormDataNovaRegulacao {
-  id_user: string;
-  num_prontuario: number | null;
-  nome_paciente: string;
-  data_nascimento: string;
-  num_idade: number | null;
-  un_origem: string;
-  un_destino: string;
-  prioridade: number | null;
-  data_hora_solicitacao_01: string;
-  data_hora_solicitacao_02: string;
-  nome_regulador_nac: string;
-  num_regulacao: number | null;
-  nome_regulador_medico: string;
-  data_hora_acionamento_medico: string;
-  status_regulacao: string;
+  regulacao: Regulacao;
 }
 
 const initialFormData: FormDataNovaRegulacao = {
@@ -40,14 +27,15 @@ const initialFormData: FormDataNovaRegulacao = {
   num_idade: null,
   un_origem: '',
   un_destino: '',
-  prioridade: null,
+  prioridade: '',
   data_hora_solicitacao_01: '',
   data_hora_solicitacao_02: '',
   nome_regulador_nac: '',
   num_regulacao: null,
   nome_regulador_medico: '',
   data_hora_acionamento_medico: '',
-  status_regulacao: ''
+  status_regulacao: '',
+  link: ''
 };
 
 const NovaRegulacao: React.FC = () => {
@@ -502,7 +490,7 @@ const NovaRegulacao: React.FC = () => {
                   <div className="line-StepContent-sub">
                     <label>Prioridade:</label>
                     <input
-                      type="number"
+                      type="text"
                       name="prioridade"
                       value={formData.prioridade ?? ''}
                       onChange={handleChange}

@@ -19,3 +19,27 @@ export function formatDateToPtBr(isoDate: string): string {
 
   return `${day}/${month}/${year}`;
 }
+
+export function getYear(isoDate: string): string {
+  const date = new Date(isoDate);
+
+  const year = date.getFullYear();
+
+  return `${year}`;
+}
+
+export function getMonth(isoDate: string): string {
+  const date = new Date(isoDate);
+  
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // Os meses começam em 0
+
+  return `${month}`;
+}
+
+export function getDay(isoDate: string): string {
+  const date = new Date(isoDate);
+  
+  const day = String(date.getDate()).padStart(2, '0');
+
+  return `${day}`;
+}

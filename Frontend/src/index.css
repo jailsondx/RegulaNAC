@@ -128,6 +128,7 @@ a:hover {
   background: none;      /* Remove qualquer fundo que possa ser aplicado */
   border: none;          /* Remove qualquer borda, caso tenha */
   outline: none;         /* Remove o contorno de foco */
+  cursor: pointer;
 }
 
 button {
@@ -269,7 +270,7 @@ select {
   width: 35dvw;
   min-width: 300px;
   height: auto;
-  min-height: 320px;
+  min-height: 350px;
   padding: 20px;
   border: 2px solid var(--form-border);
   background-color: var(--form-bg-color);
