@@ -1,45 +1,42 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import Modal from "../Modal/Modal.tsx";
+import { AxiosError } from 'axios';
 import { Snackbar, Alert } from "@mui/material";
 import { FcApproval, FcBadDecision } from "react-icons/fc";
 import { LuFilter } from "react-icons/lu";
 
-import NovaRegulacaoMedicoAprovada from "./RegulacaoMedicaAprovada.tsx";
-import NovaRegulacaoMedicoNegada from "./RegulacaoMedicaNegada.tsx";
-import TimeTracker from "../TimeTracker/TimeTracker.tsx";
-import Filtro from '../Filtro/Filtro';
+/*IMPORT INTERFACES*/
+import { RegulacaoData } from '../../interfaces/Regulacao';
+import { DadosPacienteData } from "../../interfaces/DadosPaciente.ts";
 
+/*IMPORT COMPONENTS*/
+import NovaRegulacaoMedicoAprovada from "./RegulacaoMedicaAprovada";
+import NovaRegulacaoMedicoNegada from "./RegulacaoMedicaNegada";
+import TimeTracker from "../TimeTracker/TimeTracker";
+import Filtro from '../Filtro/Filtro';
+import Modal from "../Modal/Modal";
+
+/*IMPORT FUNCTIONS*/
+import { getDay, getMonth, getYear } from '../../functions/DateTimes.ts';
 import { formatDateToPtBr } from "../../functions/DateTimes.ts";
 
+/*IMPORT CSS*/
 import "./RegulacaoMedica.css";
 
+/*IMPORT VARIAVEIS DE AMBIENTE*/
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
-
-interface Regulacao {
-  id_regulacao: number;
-  num_prontuario: number | null;
-  nome_paciente: string;
-  data_nascimento: string;
-  num_idade: number | null;
-  un_origem: string;
-  un_destino: string;
-  prioridade: number | null;
-  num_regulacao: number | null;
-  nome_regulador_medico: string;
-  data_hora_acionamento_medico: string;
-}
 
 const RegulacaoMedica: React.FC = () => {
   const [serverTime, setServerTime] = useState("");
-  const [regulacoes, setRegulacoes] = useState<Regulacao[]>([]);
+  const [regulacoes, setRegulacoes] = useState<RegulacaoData[]>([]);
   const [showModalApproved, setShowModalApproved] = useState(false);
   const [showModalDeny, setShowModalDeny] = useState(false);
-  const [currentRegulacao, setCurrentRegulacao] = useState<Regulacao | null>(null);
+  const [currentRegulacao, setCurrentRegulacao] = useState<RegulacaoData | null>(null);
+  const [dadosPaciente, setDadosPaciente] = useState<DadosPacienteData | null>(null);
   const [elapsedTime, setElapsedTime] = useState<string>(''); // Armazena o tempo decorrido
 
   /*FILTROS*/
-  const [filteredRegulacoes, setFilteredRegulacoes] = useState<Regulacao[]>([]);
+  const [filteredRegulacoes, setFilteredRegulacoes] = useState<RegulacaoData[]>([]);
   const [unidadeOrigem, setUnidadeOrigem] = useState('');
   const [unidadeDestino, setUnidadeDestino] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
@@ -52,7 +49,7 @@ const RegulacaoMedica: React.FC = () => {
   /*SNACKBAR*/
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">("success");
+  const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error' | 'info' | 'warning'>('success');
 
   // Defina fetchRegulacoes fora do useEffect
   const fetchRegulacoes = async () => {
@@ -65,9 +62,19 @@ const RegulacaoMedica: React.FC = () => {
       } else {
         console.error("Dados inesperados:", response.data);
       }
-    } catch (error: any) {
-      console.error("Erro ao carregar regulações:", error);
-      setRegulacoes([]); // Garante que regulacoes seja sempre um array
+    } catch (error: unknown) {
+      if (error instanceof AxiosError) {
+        console.error('Erro ao carregar regulações:', error);
+        setRegulacoes([]); // Garante que regulacoes seja sempre um array
+      } else if (error instanceof Error) {
+        // Se o erro for do tipo genérico `Error`, trate-o também
+        console.error('Erro desconhecido:', error.message);
+        setRegulacoes([]); // Garante que regulacoes seja sempre um array
+      } else {
+        // Caso o erro seja de um tipo inesperado
+        console.error('Erro inesperado:', error);
+        setRegulacoes([]); // Garante que regulacoes seja sempre um array
+      }
     }
   };
 
@@ -100,18 +107,87 @@ const RegulacaoMedica: React.FC = () => {
     setFilteredRegulacoes(filtered);
   }, [unidadeOrigem, unidadeDestino, searchTerm, regulacoes]);
 
+  const fetchPDF = async (datetime: string, filename: string) => {
+    const year = getYear(datetime);
+    const month = getMonth(datetime);
+    const day = getDay(datetime);
+
+    try {
+      const response = await axios.get(`${NODE_URL}/api/internal/upload/ViewPDF`, {
+        params: { year, month, day, filename },
+        responseType: 'blob',
+      });
+
+      // Criar uma URL temporária para o PDF
+      const url = URL.createObjectURL(response.data);
+
+      // Abrir o PDF em uma nova aba
+      window.open(url, '_blank');
+    } catch (error: unknown) {
+      if (error instanceof AxiosError && error.response) {
+        const { status, data } = error.response;
+
+        // Usando switch case para tratar diferentes status de erro
+        switch (status) {
+          case 400:
+            showSnackbar(data?.message || 'Parâmetros inválidos. Verifique os dados.', 'error');
+            break;
+
+          case 404:
+            showSnackbar(data?.message || 'Arquivo PDF não encontrado.', 'error');
+            break;
+
+          case 500:
+            showSnackbar(data?.message || 'Erro no servidor ao buscar o arquivo.', 'error');
+            break;
+
+          default:
+            showSnackbar(data?.message || 'Erro desconhecido. Tente novamente.', 'error');
+            break;
+        }
+      } else {
+        // Caso o erro não tenha uma resposta, como no caso de problemas de rede
+        showSnackbar('Erro na requisição. Tente novamente.', 'error');
+      }
+    }
+  };
+
   // Atualiza o tempo decorrido
   const handleTimeUpdate = (time: string) => {
     setElapsedTime(time); // Salva o tempo decorrido no estado
   };
 
-  const handleOpenModalApproved = (regulacao: Regulacao, elapsedTime: string) => {
+  const handleOpenModalApproved = (regulacao: RegulacaoData) => {
     setCurrentRegulacao(regulacao);
+
+    // Supondo que você já tenha todos os dados necessários na `regulacao` ou possa fazer algum processamento:
+    const dados: DadosPacienteData = {
+      nome_paciente: regulacao.nome_paciente,
+      num_regulacao: regulacao.num_regulacao,
+      un_origem: regulacao.un_origem,
+      un_destino: regulacao.un_destino,
+      id_regulacao: regulacao.id_regulacao,
+      nome_regulador_medico: regulacao.nome_regulador_medico, // Certifique-se de que este campo possui um valor válido
+    };
+
+    setDadosPaciente(dados);
     setShowModalApproved(true);
   };
 
-  const handleOpenModalDeny = (regulacao: Regulacao) => {
+  const handleOpenModalDeny = (regulacao: RegulacaoData) => {
     setCurrentRegulacao(regulacao);
+
+    // Supondo que você já tenha todos os dados necessários na `regulacao` ou possa fazer algum processamento:
+    const dados: DadosPacienteData = {
+      nome_paciente: regulacao.nome_paciente,
+      num_regulacao: regulacao.num_regulacao,
+      un_origem: regulacao.un_origem,
+      un_destino: regulacao.un_destino,
+      id_regulacao: regulacao.id_regulacao,
+      nome_regulador_medico: regulacao.nome_regulador_medico, // Certifique-se de que este campo possui um valor válido
+    };
+
+    setDadosPaciente(dados);
     setShowModalDeny(true);
   };
 
@@ -128,7 +204,7 @@ const RegulacaoMedica: React.FC = () => {
 
   const showSnackbar = (
     message: string,
-    severity: "success" | "error"
+    severity: 'success' | 'error' | 'info' | 'warning'
   ): void => {
     setSnackbarMessage(message);
     setSnackbarSeverity(severity);
@@ -212,8 +288,12 @@ const RegulacaoMedica: React.FC = () => {
                 {currentRegulacoes.map((regulacao) => (
                   <tr key={regulacao.id_regulacao}>
                     <td>{regulacao.num_prontuario}</td>
-                    <td className="col-NomePaciente">{regulacao.nome_paciente}</td>
-                    <td className="col-NumIdade">{regulacao.num_idade} Anos</td>
+                    <td className="col-NomePaciente">
+                      <a onClick={() => fetchPDF(regulacao.data_hora_solicitacao_02, regulacao.link)}>
+                        {regulacao.nome_paciente}
+                      </a>
+                    </td>
+                    <td className="col-NumIdade">{regulacao.num_idade}</td>
                     <td>{formatDateToPtBr(regulacao.data_nascimento)}</td>
                     <td className="col-NumRegulacao">{regulacao.num_regulacao}</td>
                     <td>{regulacao.un_origem}</td>
@@ -237,19 +317,14 @@ const RegulacaoMedica: React.FC = () => {
             </table>
           </div>
 
-          {showModalApproved && currentRegulacao && (
+          {showModalApproved && currentRegulacao && dadosPaciente && (
             <Modal
               show={showModalApproved}
               onClose={handleCloseModal}
               title="Regulação Médica: Aprovação"
             >
               <NovaRegulacaoMedicoAprovada
-                id_regulacao={currentRegulacao.id_regulacao}
-                nome_paciente={currentRegulacao.nome_paciente}
-                num_regulacao={currentRegulacao.num_regulacao}
-                un_origem={currentRegulacao.un_origem}
-                un_destino={currentRegulacao.un_destino}
-                nome_regulador_medico={currentRegulacao.nome_regulador_medico}
+                dadosPaciente={dadosPaciente}
                 tempoEspera={elapsedTime} // Passa o tempo para o modal
                 onClose={handleCloseModal} // Fecha o modal
                 showSnackbar={showSnackbar} // Passa o controle do Snackbar
@@ -257,19 +332,14 @@ const RegulacaoMedica: React.FC = () => {
             </Modal>
           )}
 
-          {showModalDeny && currentRegulacao && (
+          {showModalDeny && currentRegulacao && dadosPaciente && (
             <Modal
               show={showModalDeny}
               onClose={handleCloseModal}
               title="Regulação Médica: Negação"
             >
               <NovaRegulacaoMedicoNegada
-                id_regulacao={currentRegulacao.id_regulacao}
-                nome_paciente={currentRegulacao.nome_paciente}
-                num_regulacao={currentRegulacao.num_regulacao}
-                un_origem={currentRegulacao.un_origem}
-                un_destino={currentRegulacao.un_destino}
-                nome_regulador_medico={currentRegulacao.nome_regulador_medico}
+                dadosPaciente={currentRegulacao}
                 onClose={handleCloseModal} // Fecha o modal
                 showSnackbar={showSnackbar} // Passa o controle do Snackbar
               />

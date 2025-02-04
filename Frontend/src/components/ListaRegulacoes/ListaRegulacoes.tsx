@@ -5,7 +5,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { FcFullTrash, FcInspection } from "react-icons/fc";
 import { Snackbar, Alert } from '@mui/material';
 
-import { formatDateToPtBr, getDay, getMonth, getYear } from '../../functions/DateTimes.ts';
+import { getDay, getMonth, getYear } from '../../functions/DateTimes.ts';
 
 import TimeTracker from "../TimeTracker/TimeTracker.tsx";
 import Filtro from '../Filtro/Filtro';
@@ -36,7 +36,6 @@ const ListaRegulacoes: React.FC = () => {
   const [regulacoes, setRegulacoes] = useState<Regulacao[]>([]); // Tipo do estado
   const location = useLocation();
   const navigate = useNavigate();
-  const [pdfUrl, setPdfUrl] = useState('');
 
   /*FILTROS*/
   const [unidadeOrigem, setUnidadeOrigem] = useState('');
@@ -111,7 +110,7 @@ const ListaRegulacoes: React.FC = () => {
   }, [unidadeOrigem, unidadeDestino, searchTerm, regulacoes]);
 
 
-  const fetchPDF = async (datetime, filename) => {
+const fetchPDF = async (datetime, filename) => {
     const year = getYear(datetime);
     const month = getMonth(datetime);
     const day = getDay(datetime);
@@ -168,9 +167,7 @@ const ListaRegulacoes: React.FC = () => {
         });
       }
     }
-  };
-
-
+};
 
 
 //CONFIGURA A PAGINAÇÃO

@@ -1,45 +1,39 @@
-import React, { useState, ChangeEvent, FormEvent, Suspense, useEffect } from 'react';
+import React, { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 import axios from 'axios';
+import { AxiosError } from 'axios';
+
+/*IMPORT INTERFACES*/
+import { UserData } from '../../interfaces/UserData';
+import { DadosPacienteData } from '../../interfaces/DadosPaciente';
+import { RegulacaoMedicoData } from '../../interfaces/Regulacao';
+
+/*IMPORT FUNCTIONS*/
 import { getUserData } from '../../functions/storageUtils';
 
+/*IMPORT VARIAVEIS DE AMBIENTE*/
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
 
 interface Props {
-  id_user: string;
-  nome_paciente: number;
-  num_regulacao: number;
-  un_origem: string;
-  un_destino: string;
-  id_regulacao: number;
-  nome_regulador_medico: string;
+  dadosPaciente: DadosPacienteData;
   tempoEspera: string; // Tempo de espero pelo TimeTracker
   onClose: () => void; // Função de fechado Modal + Snackbar status
   showSnackbar: (message: string, severity: 'success' | 'error' | 'info' | 'warning') => void; // valores para controle do snackbar
 }
 
-interface FormDataRegulacaoMedico {
-  id_user: string;
-  vaga_autorizada: boolean;
-  num_leito: number | null;
-  justificativa_neg: string;
-  nome_regulador_medico: string;
-  data_hora_regulacao_medico: string;
-  justificativa_tempo30: string;
-}
 
-const initialFormData: FormDataRegulacaoMedico = {
+const initialFormData: RegulacaoMedicoData = {
   id_user: '',
   vaga_autorizada: true,
-  num_leito: null,
+  num_leito: '',
   justificativa_neg: '',
   nome_regulador_medico: '',
   data_hora_regulacao_medico: '',
   justificativa_tempo30: '',
 };
 
-const NovaRegulacaoMedicoAprovada: React.FC<Props> = ({ id_regulacao, nome_paciente, num_regulacao, un_origem, un_destino, nome_regulador_medico, tempoEspera, onClose, showSnackbar }) => {
+const NovaRegulacaoMedicoAprovada: React.FC<Props> = ({ dadosPaciente, tempoEspera, onClose, showSnackbar }) => {
   const [userData, setUserData] = useState<UserData | null>(null);
-  const [formData, setFormData] = useState<FormDataRegulacaoMedico>(initialFormData);
+  const [formData, setFormData] = useState<RegulacaoMedicoData>(initialFormData);
 
 
   //Pega dados do SeassonStorage User
@@ -78,8 +72,6 @@ const NovaRegulacaoMedicoAprovada: React.FC<Props> = ({ id_regulacao, nome_pacie
     return true;
   };
 
-
-
   const handleSubmit = async (e: FormEvent): Promise<void> => {
     e.preventDefault();
     if (!validateForm()) return;
@@ -88,7 +80,7 @@ const NovaRegulacaoMedicoAprovada: React.FC<Props> = ({ id_regulacao, nome_pacie
       const dataToSubmit = {
         ...formData,
         id_user: userData?.id_user,
-        id_regulacao,
+        id_regulacao: dadosPaciente.id_regulacao,
         nome_regulador_medico: userData?.nome,
       };
 
@@ -109,39 +101,39 @@ const NovaRegulacaoMedicoAprovada: React.FC<Props> = ({ id_regulacao, nome_pacie
         );
       }
 
-    } catch (error: any) {
-      console.error('Erro ao cadastrar regulação médica:', error);
-
-      // Mensagem de erro com base na resposta da API
-      showSnackbar(
-        error.response?.data?.message || 'Erro ao cadastrar regulação médica. Por favor, tente novamente.',
-        'error'
-      );
+    } catch (error: unknown) {
+      // Verifique se o erro é uma instância de AxiosError antes de acessar propriedades específicas
+      if (error instanceof AxiosError) {
+        console.error('Erro ao cadastrar regulação médica:', error);
+    
+        // Exibe mensagem de erro retornada pela API ou mensagem padrão
+        showSnackbar(
+          error.response?.data?.message || 'Erro ao cadastrar regulação médica. Por favor, tente novamente.',
+          'error'
+        );
+      } else {
+        // Se não for um erro do Axios, trata-se de outro tipo de erro
+        console.error('Erro desconhecido:', error);
+        showSnackbar('Erro desconhecido. Por favor, tente novamente.', 'error');
+      }
     }
   };
-
-
-
-
 
   return (
     <div>
       <div className='DadosPaciente-Border'>
         <label className='TitleDadosPaciente'>Dados Paciente</label>
         <div className='Div-DadosPaciente RegulacaoPaciente'>
-          <label>Paciente: {nome_paciente}</label>
-          <label>Regulação: {num_regulacao}</label>
-          <label>Un. Origem: {un_origem}</label>
-          <label>Un. Destino: {un_destino}</label>
+          <label>Paciente: {dadosPaciente.nome_paciente}</label>
+          <label>Regulação: {dadosPaciente.num_regulacao}</label>
+          <label>Un. Origem: {dadosPaciente.un_origem}</label>
+          <label>Un. Destino: {dadosPaciente.un_destino}</label>
 
         </div>
         <div className='Div-DadosMedico RegulacaoPaciente'>
-          <label>Médico Regulador: {nome_regulador_medico}</label>
+          <label>Médico Regulador: {dadosPaciente.nome_regulador_medico}</label>
         </div>
       </div>
-
-
-
 
       <form onSubmit={handleSubmit}>
         <div className='Div-RegulacaoMedica-AprovadaNegada'>

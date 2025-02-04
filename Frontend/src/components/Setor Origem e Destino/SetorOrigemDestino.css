@@ -18,6 +18,12 @@
 }
 
 .SetorOrigemDestino-line-input{
-    width: 50%;
-    min-width: 220px;
+    width: 90%;
+    min-width: 150px;
+}
+
+.RegulacaoPaciente span{
+    display: flex;
+    width: 70%;
+    justify-content: space-between;
 }

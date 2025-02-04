@@ -1,37 +1,40 @@
-import React, { useState, ChangeEvent, FormEvent, Suspense, useEffect } from 'react';
+import React, { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 import axios from 'axios';
+import { AxiosError } from 'axios';
+
+/*IMPORT FUNCTIONS*/
 import { getUserData } from '../../functions/storageUtils';
 
+/*IMPORT INTERFACES*/
+import { UserData } from '../../interfaces/UserData';
+import { DadosPacienteData } from '../../interfaces/DadosPaciente';
+import { DestinoData } from '../../interfaces/Transporte';
+
+/*IMPORT CSS*/
 import './SetorOrigemDestino.css';
 
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
 
-interface Props {
-    nome_paciente: string;
-    num_regulacao: number | null;
-    un_origem: string;
-    un_destino: string;
-    id_regulacao: number;
-    nome_regulador_medico: string;
+interface PropsDadosPaciente {
+    dadosPaciente: DadosPacienteData;
+    onClose: () => void; // Adicionado
     showSnackbar: (message: string, severity: 'success' | 'error' | 'info' | 'warning') => void; // Nova prop
 }
 
+const initialFormData: DestinoData = {
+    id_user: '',
+    un_destino: '', // Use o valor de un_destino recebido nas PropsDadosPaciente
+    nome_colaborador: '',
+    data_hora_comunicacao: '',
+};
 
-interface FormDataRegulacaoAprovada {
-    id_user: string;
-    un_destino: string;
-    nome_colaborador: string;
-    data_hora_comunicacao: string;
-}
 
 
-const SetorDestino: React.FC<Props> = ({ id_regulacao, nome_paciente, num_regulacao, un_origem, un_destino, nome_regulador_medico, onClose, showSnackbar }) => {
+const SetorDestino: React.FC<PropsDadosPaciente> = ({ dadosPaciente, onClose, showSnackbar }) => {
     const [userData, setUserData] = useState<UserData | null>(null);
-    const [formData, setFormData] = useState<FormDataRegulacaoAprovada>({
-        id_user: '',
-        un_destino: un_destino, // Use o valor de un_origem recebido nas props
-        nome_colaborador: '',
-        data_hora_comunicacao: '',
+    const [formData, setFormData] = useState<DestinoData>({
+        ...initialFormData, // Espalha os valores iniciais
+        un_destino: dadosPaciente.un_destino, // Sobrescreve apenas 'un_destino'
     });
 
 
@@ -72,8 +75,7 @@ const SetorDestino: React.FC<Props> = ({ id_regulacao, nome_paciente, num_regula
             const dataToSubmit = {
                 ...formData,
                 id_user: userData?.id_user, // Use o operador de encadeamento opcional para evitar erros se `userData` for `null`
-                id_regulacao,
-                un_destino: un_destino,
+                id_regulacao: dadosPaciente.id_regulacao,
             };
 
             const response = await axios.post(`${NODE_URL}/api/internal/post/RegulacaoDestino`, dataToSubmit);
@@ -92,13 +94,23 @@ const SetorDestino: React.FC<Props> = ({ id_regulacao, nome_paciente, num_regula
                 );
             }
 
-        } catch (error: any) {
-                // Mensagem com base na resposta da API
-                showSnackbar(
-                    error.response?.data?.message || 'CATCH ROUTER RegulacaoDestino',
-                     'error'
-                 );
-        }
+        } catch (error: unknown) {
+            if (error instanceof AxiosError && error.response) {
+              const { data } = error.response;
+              
+              // Mensagem com base na resposta da API
+              showSnackbar(
+                data?.message || 'Erro desconhecido. Por favor, tente novamente.',
+                'error'
+              );
+            } else {
+              // Se o erro não for um AxiosError ou não tiver uma resposta
+              showSnackbar(
+                'Erro na requisição. Por favor, verifique sua conexão ou tente novamente.',
+                'error'
+              );
+            }
+          }
     };
 
     return (
@@ -106,14 +118,17 @@ const SetorDestino: React.FC<Props> = ({ id_regulacao, nome_paciente, num_regula
       <div className='DadosPaciente-Border'>
         <label className='TitleDadosPaciente'>Dados Paciente</label>
         <div className='Div-DadosPaciente RegulacaoPaciente'>
-          <label>Paciente: { nome_paciente }</label>
-          <label>Regulação: { num_regulacao }</label>
-          <label>Un. Destino: { un_origem }</label>
-          <label>Un. Destino: { un_destino }</label>
+          <label>Paciente: { dadosPaciente.nome_paciente }</label>
+          <label>Regulação: { dadosPaciente.num_regulacao }</label>
+          <label>Un. Destino: { dadosPaciente.un_origem }</label>
+          <span>
+            <label>Un. Destino: { dadosPaciente.un_destino }</label>
+            <label>Leito: { dadosPaciente.num_leito }</label>
+          </span>
           
         </div>
         <div className='Div-DadosMedico RegulacaoPaciente'>
-          <label>Médico Regulador: { nome_regulador_medico }</label>
+          <label>Médico Regulador: { dadosPaciente.nome_regulador_medico }</label>
         </div>
       </div>
 

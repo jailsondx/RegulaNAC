@@ -1,38 +1,40 @@
-import React, { useState, ChangeEvent, FormEvent, Suspense, useEffect } from 'react';
+import React, { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 import axios from 'axios';
+import { AxiosError } from 'axios';
+
+/*IMPORT FUNCTIONS*/
 import { getUserData } from '../../functions/storageUtils';
 
+/*IMPORT INTERFACES*/
+import { UserData } from '../../interfaces/UserData';
+import { DadosPacienteData } from '../../interfaces/DadosPaciente';
+import { OrigemData } from '../../interfaces/Transporte';
+
+/*IMPORT CSS*/
 import './SetorOrigemDestino.css';
+
 
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
 
 interface Props {
-    nome_paciente: string;
-    num_regulacao: number | null;
-    un_origem: string;
-    un_destino: string;
-    id_regulacao: number;
-    nome_regulador_medico: string;
+    dadosPaciente: DadosPacienteData;
     onClose: () => void; // Adicionado
     showSnackbar: (message: string, severity: 'success' | 'error' | 'info' | 'warning') => void; // Nova prop
 };
 
-interface FormDataRegulacaoAprovada {
-    id_user: string;
-    un_origem: string;
-    nome_colaborador: string;
-    data_hora_comunicacao: string;
-    preparo_leito: string;
+const initialFormData: OrigemData = {
+    id_user: '',
+    nome_colaborador: '',
+    un_origem: '',
+    data_hora_comunicacao: '',
+    preparo_leito: '',
 };
 
-const SetorOrigem: React.FC<Props> = ({ id_regulacao, nome_paciente, num_regulacao, un_origem, un_destino, nome_regulador_medico, onClose, showSnackbar }) => {
+const SetorOrigem: React.FC<Props> = ({ dadosPaciente, onClose, showSnackbar }) => {
     const [userData, setUserData] = useState<UserData | null>(null);
-    const [formData, setFormData] = useState<FormDataRegulacaoAprovada>({
-        id_user: '',
-        un_origem: un_origem, // Use o valor de un_origem recebido nas props
-        nome_colaborador: '',
-        data_hora_comunicacao: '',
-        preparo_leito: '',
+    const [formData, setFormData] = useState<OrigemData>({
+        ...initialFormData, // Espalha os valores iniciais
+        un_origem: dadosPaciente.un_origem, // Sobrescreve apenas 'un_origem'
     });
 
 
@@ -73,8 +75,7 @@ const SetorOrigem: React.FC<Props> = ({ id_regulacao, nome_paciente, num_regulac
             const dataToSubmit = {
                 ...formData,
                 id_user: userData?.id_user, // Use o operador de encadeamento opcional para evitar erros se `userData` for `null`
-                id_regulacao,
-                un_origem: un_origem,
+                id_regulacao: dadosPaciente.id_regulacao,
             };
 
             const response = await axios.post(`${NODE_URL}/api/internal/post/RegulacaoOrigem`, dataToSubmit);
@@ -94,13 +95,23 @@ const SetorOrigem: React.FC<Props> = ({ id_regulacao, nome_paciente, num_regulac
                 );
             }
 
-        } catch (error: any) {
-                // Mensagem com base na resposta da API
-                showSnackbar(
-                   error.response?.data?.message || 'CATCH ROUTER RegulacaoOrigem',
-                    'error'
-                );
-        }
+        } catch (error: unknown) {
+            if (error instanceof AxiosError && error.response) {
+              const { data } = error.response;
+              
+              // Mensagem com base na resposta da API
+              showSnackbar(
+                data?.message || 'Erro desconhecido. Por favor, tente novamente.',
+                'error'
+              );
+            } else {
+              // Se o erro não for um AxiosError ou não tiver uma resposta
+              showSnackbar(
+                'Erro na requisição. Por favor, verifique sua conexão ou tente novamente.',
+                'error'
+              );
+            }
+          }
     };
 
     return (
@@ -108,14 +119,19 @@ const SetorOrigem: React.FC<Props> = ({ id_regulacao, nome_paciente, num_regulac
       <div className='DadosPaciente-Border'>
         <label className='TitleDadosPaciente'>Dados Paciente</label>
         <div className='Div-DadosPaciente RegulacaoPaciente'>
-          <label>Paciente: { nome_paciente }</label>
-          <label>Regulação: { num_regulacao }</label>
-          <label>Un. Origem: { un_origem }</label>
-          <label>Un. Destino: { un_destino }</label>
+          <label>Paciente: { dadosPaciente.nome_paciente }</label>
+          <label>Regulação: { dadosPaciente.num_regulacao }</label>
+          <label>Un. Origem: { dadosPaciente.un_origem }</label>
+          <span>
+            <label>Un. Destino: { dadosPaciente.un_destino }</label>
+            <label>Leito: { dadosPaciente.num_leito }</label>
+          </span>
+
+          
           
         </div>
         <div className='Div-DadosMedico RegulacaoPaciente'>
-          <label>Médico Regulador: { nome_regulador_medico }</label>
+          <label>Médico Regulador: { dadosPaciente.nome_regulador_medico }</label>
         </div>
       </div>
 
@@ -149,17 +165,14 @@ const SetorOrigem: React.FC<Props> = ({ id_regulacao, nome_paciente, num_regulac
 
                         <div className="SetorOrigemDestino-line">
                             <label>Preparo do Leito:</label>
-                            <select
-                            name="preparo_leito"
-                            value={formData.preparo_leito}
-                            onChange={handleChange}
-                            required
-                            >
-                            <option value="">Selecione...</option>
-                            <option value="limpo">Limpo</option>
-                            <option value="desinfetado">Desinfetado</option>
-                            <option value="não realizado">Não realizado</option>
-                        </select>
+                            <input
+                                type="text"
+                                name="preparo_leito"
+                                className="SetorOrigemDestino-line-input"
+                                value={formData.preparo_leito}
+                                onChange={handleChange}
+                                required
+                            />
                         </div>
                     </div>
                    

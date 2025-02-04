@@ -45,36 +45,41 @@ const Login: React.FC = () => {
   return (
     <>
       <div className='Screen-Login'>
+        <div className='Component-Login'>
 
-        <div className='div-Logo'>
-          <img src='Logo/RegulaNACLogo.png' className='Logo'></img>
-        </div>
-        <div className="login-container">
-          <h1>Login</h1>
-          {error && <p className="error-message">{error}</p>}
-          <form onSubmit={handleLogin}>
-            <div>
-              <label htmlFor="username">Usuário:</label>
-              <input
-                type="text"
-                id="username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
-              />
-            </div>
-            <div>
-              <label htmlFor="password">Senha:</label>
-              <input
-                type="password"
-                id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
-            <button type="submit">Entrar</button>
-          </form>
+          <div className='div-Logo'>
+            <img src='Logo/RegulaNACLogo.png' className='Logo'></img>
+          </div>
+          <div className="login-container">
+            <h1>Login</h1>
+            {error && <p className="error-message">{error}</p>}
+            <form onSubmit={handleLogin}>
+              <div>
+                <label htmlFor="username">Usuário:</label>
+                <input
+                  type="text"
+                  id="username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  required
+                />
+              </div>
+              <div>
+                <label htmlFor="password">Senha:</label>
+                <input
+                  type="password"
+                  id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+              </div>
+              <div className='div-Submit'>
+                <button type="submit">Entrar</button>
+              </div>
+            </form>
+          </div>
+
         </div>
 
       </div>

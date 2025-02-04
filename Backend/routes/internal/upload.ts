@@ -1,3 +1,4 @@
+/// <reference types="node" />
 const express = require("express");
 const path = require("path");
 const fs = require("fs");
@@ -7,6 +8,7 @@ const routerUpload = express.Router();
 
 
 routerUpload.post("/uploadPDF", handleuploadMiddleware, async (req, res) => {
+  //const { year, month, day, filename } = req.query;
   try {
     await handleUploadPDF(req, res);
   } catch (error) {
@@ -24,7 +26,7 @@ routerUpload.get("/ViewPDF", async (req, res) => {
   }
 
   // Montar o caminho absoluto para o arquivo PDF
-  const filePath = path.join(__dirname, '../../uploadsReg/', year, month, day, filename + '.pdf');
+  const filePath = path.join(__dirname, '../../uploadsReg/', year, month, day, filename);
   console.log('Caminho do arquivo:', filePath);  // Verifique no terminal se o caminho está correto
 
    // Verificar se o arquivo existe

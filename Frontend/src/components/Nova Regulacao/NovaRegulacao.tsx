@@ -3,23 +3,30 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Snackbar, Alert } from '@mui/material';
 import { FcCheckmark, FcLeave } from "react-icons/fc";
+
+/*IMPORT INTERFACES*/
+import { NovaRegulacaoData } from '../../interfaces/Regulacao';
+import { UserData } from '../../interfaces/UserData';
+
+/*IMPORT COMPONENTS*/
+
+/*IMPORT FUNCTIONS*/
 import { formatDateTimeToPtBr } from '../../functions/DateTimes';
 import { getUserData } from '../../functions/storageUtils';
 import { calcularIdade } from '../../functions/CalcularIdade';
-import { Regulacao } from '../../interfaces/regulacao';
+import { getDay, getMonth, getYear } from '../../functions/DateTimes';
 
+/*IMPORT CSS*/
+import './NovaRegulacao.css';
+
+/*IMPORT JSON*/
 import un_origem from '../../JSON/un_origem.json';
 import un_destino from '../../JSON/un_destino.json';
 
-import './NovaRegulacao.css';
-
+/*IMPORT VARIAVEIS DE AMBIENTE*/
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
 
-interface FormDataNovaRegulacao {
-  regulacao: Regulacao;
-}
-
-const initialFormData: FormDataNovaRegulacao = {
+const initialFormData: NovaRegulacaoData = {
   id_user: '',
   num_prontuario: null,
   nome_paciente: '',
@@ -43,7 +50,7 @@ const NovaRegulacao: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
   const [unidadesOrigem, setUnidadesOrigem] = useState([]);
   const [unidadesDestino, setUnidadesDestino] = useState([]);
-  const [formData, setFormData] = useState<FormDataNovaRegulacao>(initialFormData);
+  const [formData, setFormData] = useState<NovaRegulacaoData>(initialFormData);
   const [medicos, setMedicos] = useState<string[]>([]); // Lista de médicos da API
   const navigate = useNavigate();
   const [iconStatusProntOk, setIconStatusProntOk] = useState<boolean>(false);
@@ -154,8 +161,15 @@ const NovaRegulacao: React.FC = () => {
     }
   };
 
-  const uploadFile = async (numRegulacao: number) => {
+  const uploadFile = async (datetime: string, numRegulacao: number) => {
+    const year = getYear(datetime);
+    const month = getMonth(datetime);
+    const day = getDay(datetime);
+    
     const formData = new FormData();
+    formData.append('year', year);
+    formData.append('month', month);
+    formData.append('day', day); 
     formData.append('file', file);
     formData.append('num_regulacao', numRegulacao.toString()); // Adicionando num_regulacao no corpo da requisição
   
@@ -199,7 +213,7 @@ const NovaRegulacao: React.FC = () => {
   
       // Verifica se há arquivo e, caso haja, faz o upload
       if (file) {
-        await uploadFile(dataToSubmit.num_regulacao);  // Espera o upload do arquivo ser concluído antes de prosseguir
+        await uploadFile(dataToSubmit.data_hora_solicitacao_01, dataToSubmit.num_regulacao);  // Espera o upload do arquivo ser concluído antes de prosseguir
       }
   
       // Se tudo ocorrer bem, exibe a resposta

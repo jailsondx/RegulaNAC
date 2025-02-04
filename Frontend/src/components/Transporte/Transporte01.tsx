@@ -87,7 +87,10 @@ const Transporte01: React.FC<Props> = ({ id_regulacao, nome_paciente, num_regula
                     <label>Paciente: {nome_paciente}</label>
                     <label>Regulação: {num_regulacao}</label>
                     <label>Un. Origem: {un_origem}</label>
-                    <label>Un. Destino: {un_destino}</label>
+                    <span >
+                        <label>Un. Destino: { dadosPaciente.un_destino }</label>
+                        <label>Leito: { dadosPaciente.num_leito }</label>
+                    </span>
                 </div>
                 <div className="Div-DadosMedico RegulacaoPaciente">
                     <label>Médico Regulador: {nome_regulador_medico}</label>

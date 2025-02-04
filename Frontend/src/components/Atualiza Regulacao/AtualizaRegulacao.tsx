@@ -1,45 +1,55 @@
 import React, { useState, useEffect, FormEvent } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { AxiosError } from 'axios';
 import { Snackbar, Alert } from '@mui/material';
-import un_origem from '../../JSON/un_origem.json';
-import un_destino from '../../JSON/un_destino.json';
-import { getUserData } from '../../functions/storageUtils';
 
+/*IMPORT INTERFACES*/
+import { DadosPacienteData } from "../../interfaces/DadosPaciente.ts";
+import { UpdateRegulacaoData, PartialUpdateRegulacaoData } from '../../interfaces/Regulacao';
+import { UserData } from '../../interfaces/UserData';
+
+/*IMPORT COMPONENTS*/
+
+/*IMPORT FUNCTIONS*/
+import { getUserData } from '../../functions/storageUtils';
+import { getDay, getMonth, getYear } from '../../functions/DateTimes';
+
+/*IMPORT CSS*/
 import './AtualizarRegulacao.css';
 
+/*IMPORT JSON*/
+import un_origem from '../../JSON/un_origem.json';
+import un_destino from '../../JSON/un_destino.json';
+
+/*IMPORT VARIAVEIS DE AMBIENTE*/
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
 
-interface Regulacao {
-  id_user: string;
-  id_regulacao: number;
-  num_prontuario: number | null;
-  nome_paciente: string;
-  num_idade: number | null;
-  un_origem: string;
-  un_destino: string;
-  num_regulacao: number | null;
-  nome_regulador_medico: string;
-  status_regulacao: string;
-}
+const initialFormData: UpdateRegulacaoData = {
+  id_user: '',
+  num_prontuario: null,
+  un_origem: '',
+  un_destino: '',
+  data_hora_solicitacao_02: '',
+  link: '',
+};
+
 
 const AtualizaRegulacao: React.FC = () => {
   const [userData, setUserData] = useState<UserData | null>(null);
+  const [file, setFile] = useState<File>();
   const [unidadesOrigem, setUnidadesOrigem] = useState([]);
   const [unidadesDestino, setUnidadesDestino] = useState([]);
   const location = useLocation(); // Captura o estado enviado via navegação
   const [numProntuario, setNumProntuario] = useState<number | ''>(''); // Número do prontuário recebido
-  const [dadosPront, setDadosPront] = useState<Regulacao | null>(null); // Dados do prontuário retornados
-  const [formData, setFormData] = useState({
-    un_origem: '',
-    un_destino: '',
-    data_hora_solicitacao_02: '',
-  }); // Estado para os campos editáveis do formulário
-  const [snackbar, setSnackbar] = useState({
-    open: false,
-    message: '',
-    severity: 'info' as 'success' | 'error' | 'info' | 'warning',
-  }); // Gerencia a exibição do Snackbar
+  const [dadosPaciente, setDadosPaciente] = useState<DadosPacienteData>();
+  const [formData, setFormData] = useState<PartialUpdateRegulacaoData>(initialFormData);
+
+  /*SNACKBAR*/
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error' | 'info' | 'warning'>('success');
+
   const navigate = useNavigate(); // Usado para redirecionar após a atualização
 
   // Captura o número do prontuário ao montar o componente
@@ -66,29 +76,49 @@ const AtualizaRegulacao: React.FC = () => {
           params: { num_prontuario: numProntuario },
         });
         const data = response.data.data || null;
-        setDadosPront(data);
+        setDadosPaciente(data);
         console.log(data);
 
         if (data) {
           // Preenche os campos do formulário com os dados recebidos
           setFormData({
-            un_origem: data.un_origem || '',
-            un_destino: data.un_destino || '',
-            data_hora_solicitacao_02: data.data_hora_solicitacao_02 || '',
+            un_origem: data.un_origem,
+            un_destino: data.un_destino,
+            data_hora_solicitacao_02: ''
           });
         }
-      } catch (error) {
-        console.error('Erro ao carregar os dados do prontuário:', error);
-        setSnackbar({
-          open: true,
-          message: 'Erro ao carregar os dados do prontuário.',
-          severity: 'error',
-        });
+      } catch (error: unknown) {
+        if (error instanceof AxiosError && error.response) {
+          const { status, data } = error.response;
+
+          // Tratar diferentes status de erro
+          switch (status) {
+            case 400:
+              showSnackbar(data?.message || 'Parâmetros inválidos. Verifique os dados.', 'error');
+              break;
+            case 404:
+              showSnackbar(data?.message || 'Prontuário não encontrado.', 'error');
+              break;
+            case 500:
+              showSnackbar(data?.message || 'Erro no servidor ao buscar o prontuário.', 'error');
+              break;
+            default:
+              showSnackbar(data?.message || 'Erro desconhecido. Tente novamente.', 'error');
+              break;
+          }
+        } else {
+          // Caso o erro não tenha uma resposta ou seja de outro tipo
+          showSnackbar('Erro na requisição. Tente novamente.', 'error');
+        }
       }
     };
 
+    // Chama a função
     fetchProntuario();
-  }, [numProntuario]);
+
+  }, [numProntuario]); // Certifique-se de fechar corretamente o useEffect
+
+
 
   // Busca os dados do usuário do sessionStorage ao carregar o componente
   useEffect(() => {
@@ -96,8 +126,53 @@ const AtualizaRegulacao: React.FC = () => {
     setUserData(data);
   }, []);
 
+  //Handle para capturar o arquivo PDF
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setFile(e.target.files[0]);
+    }
+  };
+
+  const uploadFile = async (datetime: string, numRegulacao: number) => {
+    const year = getYear(datetime);
+    const month = getMonth(datetime);
+    const day = getDay(datetime);
+
+    const formData = new FormData();
+    formData.append('year', year);
+    formData.append('month', month);
+    formData.append('day', day);
+    formData.append('file', file);
+    formData.append('num_regulacao', numRegulacao.toString()); // Adicionando num_regulacao no corpo da requisição
+
+    try {
+      const response = await axios.post(`${NODE_URL}/api/internal/upload/uploadPDF`, formData, {
+        params: { numRegulacao }, // Passando numRegulacao através de params
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+
+      // Resposta de sucesso
+      showSnackbar(response.data.message || 'Arquivo enviado com sucesso!', 'success');
+    } catch (error: any) {
+      showSnackbar(error.response?.data?.message || 'Erro ao enviar arquivo. Tente novamente.', 'error');
+      throw new Error('Erro ao enviar o arquivo');
+    }
+  };
+
+
+   const showSnackbar = (
+    message: string,
+    severity: 'success' | 'error' | 'info' | 'warning'
+  ): void => {
+    setSnackbarMessage(message);
+    setSnackbarSeverity(severity);
+    setSnackbarOpen(true);
+  };
+
   // Fecha o Snackbar
-  const handleSnackbarClose = () => setSnackbar({ ...snackbar, open: false });
+  const handleSnackbarClose = (): void => {
+    setSnackbarOpen(false);
+  };
 
   // Atualiza os campos do formulário
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -112,21 +187,26 @@ const AtualizaRegulacao: React.FC = () => {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
-      const response = await axios.put(`${NODE_URL}/api/internal/put/AtualizaRegulacao`, {
+
+      const dataToSubmit = {
+        ...formData,
         id_user: userData?.id_user, // ID do usuário logado
-        id_regulacao: dadosPront?.id_regulacao, // ID da regulação a ser atualizada
+        id_regulacao: dadosPaciente?.id_regulacao, // ID da regulação a ser atualizada
         nome_regulador_nac: userData?.nome, // Nome do regulador NAC
         num_prontuario: numProntuario, // Número do prontuário
-        num_regulacao: dadosPront?.num_regulacao, // Número da regulação
-        ...formData, // Dados atualizados do formulário
-      });
+        num_regulacao: dadosPaciente?.num_regulacao, // Número da regulação
+      };
+
+
+      const response = await axios.put(`${NODE_URL}/api/internal/put/AtualizaRegulacao`, dataToSubmit);
+
+      // Verifica se há arquivo e, caso haja, faz o upload
+      if (file) {
+        await uploadFile(dataToSubmit.data_hora_solicitacao_02, dadosPaciente.num_regulacao);  // Espera o upload do arquivo ser concluído antes de prosseguir
+      }
 
       // Exibe mensagem de sucesso e redireciona
-      setSnackbar({
-        open: true,
-        message: response.data.message || 'Regulação atualizada com sucesso.',
-        severity: 'success',
-      });
+      showSnackbar(response.data.message || 'Regulação atualizada com sucesso.', 'success');
       navigate('/ListaRegulacoes', {
         state: {
           snackbar: {
@@ -140,11 +220,7 @@ const AtualizaRegulacao: React.FC = () => {
       console.error('Erro ao atualizar regulação:', error);
 
       // Exibe mensagem de erro
-      setSnackbar({
-        open: true,
-        message: error.response?.data?.message || 'Erro ao atualizar regulação. Tente novamente.',
-        severity: 'error',
-      });
+      showSnackbar(error.response?.data?.message || 'Erro ao atualizar regulação. Tente novamente.', 'error');
     }
   };
 
@@ -153,19 +229,19 @@ const AtualizaRegulacao: React.FC = () => {
       <div>
         <label className="Title-Form">Atualizar Regulação</label>
       </div>
-      {dadosPront ? (
+      {dadosPaciente ? (
         <form onSubmit={handleSubmit} className="ComponentForm">
           <div className='DadosPaciente-Border'>
             <label className='TitleDadosPaciente'>Dados Paciente</label>
             <div className='Div-DadosPaciente RegulacaoPaciente'>
-              <label>Paciente: {dadosPront.nome_paciente}</label>
-              <label>Regulação: {dadosPront.num_regulacao}</label>
-              <label>Un. Origem: {dadosPront.un_origem}</label>
-              <label>Un. Destino: {dadosPront.un_destino}</label>
+              <label>Paciente: {dadosPaciente.nome_paciente}</label>
+              <label>Regulação: {dadosPaciente.num_regulacao}</label>
+              <label>Un. Origem: {dadosPaciente.un_origem}</label>
+              <label>Un. Destino: {dadosPaciente.un_destino}</label>
 
             </div>
             <div className='Div-DadosMedico'>
-              <label>Médico Regulador: {dadosPront.nome_regulador_medico}</label>
+              <label>Médico Regulador: {dadosPaciente.nome_regulador_medico}</label>
             </div>
           </div>
 
@@ -214,6 +290,10 @@ const AtualizaRegulacao: React.FC = () => {
                 required
               />
             </div>
+            <div className="line-StepContent">
+              <label>Enviar Arquivo PDF:</label>
+              <input type="file" accept="application/pdf" onChange={handleFileChange} required />
+            </div>
           </div>
           <button type="submit" className="SubmitButton">Atualizar</button>
         </form>
@@ -221,9 +301,17 @@ const AtualizaRegulacao: React.FC = () => {
         <p>Carregando dados do prontuário...</p>
       )}
 
-      <Snackbar open={snackbar.open} autoHideDuration={6000} onClose={handleSnackbarClose}>
-        <Alert onClose={handleSnackbarClose} severity={snackbar.severity}>
-          {snackbar.message}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity={snackbarSeverity}
+          sx={{ width: "100%" }}
+        >
+          {snackbarMessage}
         </Alert>
       </Snackbar>
 
