@@ -61,7 +61,7 @@ const Sidebar: React.FC = () => {
             <li><Link to="/NovaRegulacao"><TiBusinessCard className='Icon-Menu-Item' /><label className='textMenu-Item'>Nova Regulação</label></Link></li>
             <li><Link to="/ListaRegulacoes"><TiClipboard className='Icon-Menu-Item' /><label className='textMenu-Item'>Lista de Regulações</label></Link></li>
             <li><Link to="/RegulacoesAprovadas"><TiThumbsUp className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações Aprovadas</label></Link></li>
-            <li><Link to="/Desfecho"><TiHomeOutline  className='Icon-Menu-Item' /><label className='textMenu-Item'>Desfecho</label></Link></li>
+            <li><Link to="/Desfechos"><TiHomeOutline  className='Icon-Menu-Item' /><label className='textMenu-Item'>Desfechos</label></Link></li>
             <hr/>
           </ul>
           <li><Link to="/ListaRegulacoes24"><TiClipboard className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações +24hrs</label></Link></li>
@@ -78,7 +78,7 @@ const Sidebar: React.FC = () => {
             <li><Link to="/NovaRegulacao"><TiBusinessCard className='Icon-Menu-Item' /><label className='textMenu-Item'>Nova Regulação</label></Link></li>
             <li><Link to="/ListaRegulacoes"><TiClipboard className='Icon-Menu-Item' /><label className='textMenu-Item'>Lista de Regulações</label></Link></li>
             <li><Link to="/RegulacoesAprovadas"><TiThumbsUp className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações Aprovadas</label></Link></li>
-            <li><Link to="/Desfecho"><TiHomeOutline  className='Icon-Menu-Item' /><label className='textMenu-Item'>Desfecho</label></Link></li>
+            <li><Link to="/Desfechos"><TiHomeOutline  className='Icon-Menu-Item' /><label className='textMenu-Item'>Desfechos</label></Link></li>
             <hr/>
           </ul>
           <li><Link to="/ListaRegulacoes24"><TiClipboard className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações +24hrs</label></Link></li>

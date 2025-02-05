@@ -1,39 +1,37 @@
 import React, { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 import axios from 'axios';
+import { AxiosError } from 'axios';
+
+/*IMPORT FUNCTIONS*/
 import { getUserData } from '../../functions/storageUtils';
 
+/*IMPORT INTERFACES*/
+import { UserData } from '../../interfaces/UserData';
+import { DadosPacienteData } from '../../interfaces/DadosPaciente';
+import { TransporteDatesData } from '../../interfaces/Transporte';
+
+/*IMPORT CSS*/
 import './Transporte.css';
 
+/*IMPORT VARIAVEIS DE AMBIENTE*/
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
 
 interface Props {
-    nome_paciente: string;
-    num_regulacao: number | null;
-    un_origem: string;
-    un_destino: string;
-    id_regulacao: number;
-    nome_regulador_medico: string;
+    dadosPaciente: DadosPacienteData;
     onClose: () => void;
     showSnackbar: (message: string, severity: 'success' | 'error' | 'info' | 'warning') => void;
 };
 
-interface FormDataTransporte {
-    id_user: string;
-    data_hora_chegada_origem: string;
-    data_hora_saida_origem: string;
-    data_hora_chegada_destino: string;
-};
 
-const initialFormData: FormDataTransporte = {
-    id_user: '',
+const initialFormData: TransporteDatesData = {
     data_hora_chegada_origem: '',
     data_hora_saida_origem: '',
     data_hora_chegada_destino: '',
 };
 
-const Transporte02: React.FC<Props> = ({ id_regulacao, nome_paciente, num_regulacao, un_origem, un_destino, nome_regulador_medico, onClose, showSnackbar, }) => {
+const Transporte02: React.FC<Props> = ({ dadosPaciente, onClose, showSnackbar, }) => {
     const [userData, setUserData] = useState<UserData | null>(null);
-    const [formData, setFormData] = useState<FormDataTransporte>(initialFormData);
+    const [formData, setFormData] = useState<TransporteDatesData>(initialFormData);
     const [currentStep, setCurrentStep] = useState<number>(1);
 
     //Pega dados do Seasson Storage
@@ -65,8 +63,8 @@ const Transporte02: React.FC<Props> = ({ id_regulacao, nome_paciente, num_regula
         try {
             const dataToSubmit = {
                 ...formData,
-                id_user: userData?.id_user,
-                id_regulacao,
+                id_user: userData?.id_user, // Use o operador de encadeamento opcional para evitar erros se `userData` for `null`
+                id_regulacao: dadosPaciente.id_regulacao,
             };
 
             const response = await axios.put(`${NODE_URL}/api/internal/put/Transporte`, dataToSubmit);
@@ -77,8 +75,15 @@ const Transporte02: React.FC<Props> = ({ id_regulacao, nome_paciente, num_regula
             } else {
                 showSnackbar(response.data?.message || 'Regulação Aprovada - Transporte: Erro!', 'error');
             }
-        } catch (error: any) {
-            showSnackbar(error.response?.data?.message || 'Erro ao enviar os dados!', 'error');
+        } catch (error: unknown) {
+            // Verifica se o erro é uma instância de AxiosError
+            if (error instanceof AxiosError) {
+                // Exibe a mensagem de erro da resposta ou a mensagem padrão
+                showSnackbar(error.response?.data?.message || 'Erro ao enviar os dados!', 'error');
+            } else {
+                // Se o erro não for do tipo AxiosError, exibe uma mensagem genérica
+                showSnackbar('Erro desconhecido ao enviar os dados. Tente novamente.', 'error');
+            }
         }
     };
 
@@ -95,13 +100,16 @@ const Transporte02: React.FC<Props> = ({ id_regulacao, nome_paciente, num_regula
             <div className="DadosPaciente-Border">
                 <label className="TitleDadosPaciente">Dados Paciente</label>
                 <div className="Div-DadosPaciente RegulacaoPaciente">
-                    <label>Paciente: {nome_paciente}</label>
-                    <label>Regulação: {num_regulacao}</label>
-                    <label>Un. Origem: {un_origem}</label>
-                    <label>Un. Destino: {un_destino}</label>
+                    <label>Paciente: {dadosPaciente.nome_paciente}</label>
+                    <label>Regulação: {dadosPaciente.num_regulacao}</label>
+                    <label>Un. Origem: {dadosPaciente.un_origem}</label>
+                    <span >
+                        <label>Un. Destino: {dadosPaciente.un_destino}</label>
+                        <label>Leito: {dadosPaciente.num_leito}</label>
+                    </span>
                 </div>
                 <div className="Div-DadosMedico RegulacaoPaciente">
-                    <label>Médico Regulador: {nome_regulador_medico}</label>
+                    <label>Médico Regulador: {dadosPaciente.nome_regulador_medico}</label>
                 </div>
             </div>
 

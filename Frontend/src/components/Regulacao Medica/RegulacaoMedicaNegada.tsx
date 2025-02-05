@@ -16,7 +16,6 @@ const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
 
 interface Props {
   dadosPaciente: DadosPacienteData;
-  tempoEspera: string; // Tempo de espero pelo TimeTracker
   onClose: () => void; // Função de fechado Modal + Snackbar status
   showSnackbar: (message: string, severity: 'success' | 'error' | 'info' | 'warning') => void; // valores para controle do snackbar
 }

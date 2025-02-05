@@ -15,7 +15,12 @@ export interface DestinoData {
 
 export interface TransporteData {
   id_user: string;
-  un_destino: string;
   nome_colaborador: string;
-  data_hora_comunicacao: string;
+  data_hora_acionamento: string;
+}
+
+export interface TransporteDatesData {
+  data_hora_chegada_origem: string;
+  data_hora_saida_origem: string;
+  data_hora_chegada_destino: string;
 }

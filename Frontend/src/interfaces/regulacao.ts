@@ -21,6 +21,7 @@ export interface NovaRegulacaoData {
 
 export interface RegulacaoData extends NovaRegulacaoData {
   id_regulacao: number;
+  desfecho: string;
 }
 
 export interface RegulacaoAprovadaData extends RegulacaoData{

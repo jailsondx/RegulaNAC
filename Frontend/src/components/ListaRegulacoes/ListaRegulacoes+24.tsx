@@ -1,42 +1,39 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { AxiosError } from 'axios';
 import { LuFilter } from "react-icons/lu";
-import { FcLeave } from "react-icons/fc";
+import { useNavigate, useLocation } from 'react-router-dom';
+import { FcLeave  } from "react-icons/fc";
 import { Snackbar, Alert } from '@mui/material';
 
-import TimeTracker from "../TimeTracker/TimeTracker.tsx";
+/*IMPORT INTERFACES*/
+import { RegulacaoData } from '../../interfaces/Regulacao';
+
+/*IMPORT COMPONENTS*/
+import TimeTracker from "../TimeTracker/TimeTracker";
 import Filtro from '../Filtro/Filtro';
+
+/*IMPORT FUNCTIONS*/
+import { getDay, getMonth, getYear } from '../../functions/DateTimes';
+
+/*IMPORT CSS*/
 import './ListaRegulacoes.css';
 
+/*IMPORT JSON*/
+
+/*IMPORT VARIAVEIS DE AMBIENTE*/
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
 
-interface Regulacao {
-  id_regulacao: number;
-  num_prontuario: number | null;
-  nome_paciente: string;
-  num_idade: number | null;
-  un_origem: string;
-  un_destino: string;
-  prioridade: number | null;
-  data_hora_solicitacao_01: string;
-  data_hora_solicitacao_02: string;
-  nome_regulador_nac: string;
-  num_regulacao: number | null;
-  nome_regulador_medico: string;
-  data_hora_acionamento_medico: string;
-}
-
-const ListaRegulacoes24: React.FC = () => {
+const ListaRegulacoes: React.FC = () => {
   const [serverTime, setServerTime] = useState("");
-  const [regulacoes, setRegulacoes] = useState<Regulacao[]>([]); // Tipo do estado
+  const [regulacoes, setRegulacoes] = useState<RegulacaoData[]>([]); // Tipo do estado
   const location = useLocation();
   const navigate = useNavigate();
 
   /*FILTROS*/
   const [unidadeOrigem, setUnidadeOrigem] = useState('');
   const [unidadeDestino, setUnidadeDestino] = useState('');
-  const [filteredRegulacoes, setFilteredRegulacoes] = useState<Regulacao[]>([]);
+  const [filteredRegulacoes, setFilteredRegulacoes] = useState<RegulacaoData[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [showFilters, setShowFilters] = useState(false); // Controle da exibição dos filtros
 
@@ -44,9 +41,13 @@ const ListaRegulacoes24: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);  // Página atual
   const [itemsPerPage] = useState(10);  // Número de itens por página
 
+  /*ORDENAÇÃO*/
+  const [sortConfig, setSortConfig] = useState<{ key: keyof RegulacaoData; direction: "asc" | "desc" } | null>(null);
+
   /*SNACKBAR*/
-  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'info' as 'success' | 'error' | 'info' | 'warning' });
-  const handleSnackbarClose = () => setSnackbar({ ...snackbar, open: false });
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error' | 'info' | 'warning'>('success');
 
   //CHAMADA DE API PARA GERAR A LISTA DE REGULAÇÕES
   useEffect(() => {
@@ -61,19 +62,33 @@ const ListaRegulacoes24: React.FC = () => {
         } else {
           console.error('Dados inesperados:', response.data);
         }
-      } catch (error: any) {
-        console.error('Erro ao carregar regulações:', error);
-        setRegulacoes([]); // Garante que regulacoes seja sempre um array
+      } catch (error: unknown) {
+        // Verifica se o erro é uma instância de AxiosError (caso você esteja lidando com erros de rede)
+        if (error instanceof AxiosError) {
+          console.error('Erro ao carregar regulações:', error.response?.data);
+          setRegulacoes([]); // Garante que regulacoes seja sempre um array
+        } else {
+          // Caso o erro não seja um AxiosError ou seja de outro tipo
+          console.error('Erro desconhecido ao carregar regulações:', error);
+          setRegulacoes([]); // Garante que regulacoes seja sempre um array
+        }
       }
+      
     };
 
     fetchRegulacoes();
   }, []);
 
-  //SNACKBAR
+  // Snackbar vindo de navegação
   useEffect(() => {
     if (location.state?.snackbar) {
-      setSnackbar(location.state.snackbar);
+      showSnackbar(
+        location.state.snackbar.message,
+        location.state.snackbar.severity
+      );
+
+      // Limpa o state da navegação após exibir
+      location.state.snackbar = undefined;
     }
   }, [location.state?.snackbar]);
 
@@ -101,6 +116,62 @@ const ListaRegulacoes24: React.FC = () => {
     setFilteredRegulacoes(filtered);
   }, [unidadeOrigem, unidadeDestino, searchTerm, regulacoes]);
 
+
+  const fetchPDF = async (datetime: string, filename: string) => {
+    const year = getYear(datetime);
+    const month = getMonth(datetime);
+    const day = getDay(datetime);
+
+    try {
+      const response = await axios.get(`${NODE_URL}/api/internal/upload/ViewPDF`, {
+        params: { year, month, day, filename },
+        responseType: 'blob',
+      });
+
+      // Criar uma URL temporária para o PDF
+      const url = URL.createObjectURL(response.data);
+
+      // Abrir o PDF em uma nova aba
+      window.open(url, '_blank');
+    } catch (error: unknown) {
+      // Verificar se o erro é uma instância de AxiosError
+      if (error instanceof AxiosError && error.response) {
+        const { status, data } = error.response;
+
+        // Exemplo de tratamento de diferentes códigos de status usando switch case
+        switch (status) {
+          case 400:
+            showSnackbar(data?.message || 'Parâmetros inválidos. Verifique os dados.', 'error');
+            break;
+          case 404:
+            showSnackbar(data?.message || 'Arquivo PDF não encontrado.', 'error');
+            break;
+          case 500:
+            showSnackbar(data?.message || 'Erro no servidor ao buscar o arquivo.', 'error');
+            break;
+          default:
+            // Caso um erro desconhecido ocorra
+            showSnackbar(data?.message || 'Erro desconhecido. Tente novamente.', 'error');
+            break;
+        }
+      } else {
+        // Caso o erro não seja uma instância de AxiosError ou não tenha resposta, por exemplo, se o servidor não estiver acessível
+        showSnackbar('Erro na requisição. Tente novamente.', 'error');
+      }
+    }
+  };
+
+  const handleAtualizarRegulacao = (regulacao: RegulacaoData): void => {
+    if (!regulacao.num_prontuario) {
+      showSnackbar('Prontuário é obrigatório para atualizar a regulação', 'warning');
+      return;
+    }
+    // Enviando dados de forma oculta
+    navigate('/AtualizaRegulacao', {
+      state: { num_prontuario: regulacao.num_prontuario }, // Passa o prontuário da regulação específica
+    });
+  };
+
   //CONFIGURA A PAGINAÇÃO
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
@@ -112,15 +183,41 @@ const ListaRegulacoes24: React.FC = () => {
 
   const totalPages = Math.ceil(filteredRegulacoes.length / itemsPerPage);
 
-  const handleAtualizarRegulacao = (regulacao: Regulacao): void => {
-    if (!regulacao.num_prontuario) {
-      setSnackbar({ open: true, message: 'Prontuário é obrigatório para atualizar a regulação', severity: 'warning' });
-      return;
+  //CONFIGURA A ORDENAÇÃO
+  const handleSort = (key: keyof RegulacaoData) => {
+    let direction: "asc" | "desc" = "asc";
+    if (sortConfig?.key === key && sortConfig.direction === "asc") {
+      direction = "desc";
     }
-    // Enviando dados de forma oculta
-    navigate('/AtualizaRegulacao', {
-      state: { num_prontuario: regulacao.num_prontuario }, // Passa o prontuário da regulação específica
+    setSortConfig({ key, direction });
+
+    const sortedData = [...filteredRegulacoes].sort((a, b) => {
+      if (a[key] === null || b[key] === null) return 0; // Evita erros com valores null
+      if (a[key]! < b[key]!) return direction === "asc" ? -1 : 1;
+      if (a[key]! > b[key]!) return direction === "asc" ? 1 : -1;
+      return 0;
     });
+
+    setFilteredRegulacoes(sortedData);
+  };
+
+  //CHAMA A ROTA DE NOVA REGULAÇÃO
+  const NovaRegulacao = () => {
+    navigate('/NovaRegulacao');
+  }
+
+  const showSnackbar = (
+    message: string,
+    severity: 'success' | 'error' | 'info' | 'warning'
+  ): void => {
+    setSnackbarMessage(message);
+    setSnackbarSeverity(severity);
+    setSnackbarOpen(true);
+  };
+
+  // Fecha o Snackbar
+  const handleSnackbarClose = (): void => {
+    setSnackbarOpen(false);
   };
 
 
@@ -131,8 +228,9 @@ const ListaRegulacoes24: React.FC = () => {
 
           <div className="Header-ListaRegulaçoes">
             <label className="Title-Tabela">
-              Lista de Regulações +24hrs <LuFilter className='Icon' onClick={() => setShowFilters(!showFilters)} title='Filtros' />
+              Lista de Regulações +24hrs<LuFilter className='Icon' onClick={() => setShowFilters(!showFilters)} title='Filtros' />
             </label>
+            <button type="button" onClick={NovaRegulacao}>+ Nova Regulação</button>
           </div>
 
           {showFilters && (
@@ -173,15 +271,62 @@ const ListaRegulacoes24: React.FC = () => {
             <table className='Table-Regulacoes'>
               <thead>
                 <tr>
-                  <th>Pront.</th>
-                  <th>Nome Paciente</th>
-                  <th>Id.</th>
-                  <th>Num. Regulação</th>
-                  <th>Un. Origem</th>
-                  <th>Un. Destino</th>
-                  <th>Prio.</th>
-                  <th>Solicitação Recente</th>
-                  <th>Data/Hora Acionamento Médico</th>
+                  <th onClick={() => handleSort("num_prontuario")}>
+                    <span>
+                      <label>Pront.</label> <label>{sortConfig?.key === "num_prontuario" ? (sortConfig.direction === "asc" ? "🔼" : "🔽") : "↕"}</label>
+                    </span>
+                  </th>
+
+                  <th className="col-NomePaciente" onClick={() => handleSort("nome_paciente")}>
+                    <span>
+                      <label>Nome Paciente</label>
+                      <label>{sortConfig?.key === "nome_paciente" ? (sortConfig.direction === "asc" ? "🔼" : "🔽") : "↕"}</label>
+                    </span>
+                  </th>
+
+                  <th className="col-NumIdade" onClick={() => handleSort("num_idade")}>
+                    <span>
+                      <label>Id.</label>
+                      <label>{sortConfig?.key === "num_idade" ? (sortConfig.direction === "asc" ? "🔼" : "🔽") : "↕"}</label>
+                    </span>
+                  </th>
+
+                  <th className="col-NumRegulacao" onClick={() => handleSort("num_regulacao")}>
+                    Num. Regulação
+                  </th>
+
+                  <th onClick={() => handleSort("un_origem")}>
+                    Un. Origem
+                  </th>
+
+                  <th onClick={() => handleSort("un_destino")}>
+                    <span>
+                      <label>Un. Destino</label>
+                      <label>{sortConfig?.key === "un_destino" ? (sortConfig.direction === "asc" ? "🔼" : "🔽") : "↕"}</label>
+                    </span>
+                  </th>
+
+                  <th className="col-Prioridade" onClick={() => handleSort("prioridade")}>
+                    <span>
+                      <label>Prio.</label>
+                      <label>{sortConfig?.key === "prioridade" ? (sortConfig.direction === "asc" ? "🔼" : "🔽") : "↕"}</label>
+                    </span>
+                  </th>
+
+                  <th onClick={() => handleSort("data_hora_solicitacao_02")}>
+                    <span>
+                      <label>Solicitação Recente</label>
+                      <label>{sortConfig?.key === "data_hora_solicitacao_02" ? (sortConfig.direction === "asc" ? "🔼" : "🔽") : "↕"}</label>
+                    </span>
+                  </th>
+
+                  <th onClick={() => handleSort("data_hora_acionamento_medico")}>
+                    <span>
+                      <label>Acionamento Médico</label>
+                      <label>{sortConfig?.key === "data_hora_acionamento_medico" ? (sortConfig.direction === "asc" ? "🔼" : "🔽") : "↕"}</label>
+                    </span>
+                  </th>
+
                   <th>Tempo de Espera</th>
                   <th></th>
                 </tr>
@@ -190,15 +335,19 @@ const ListaRegulacoes24: React.FC = () => {
                 {currentRegulacoes.map(regulacao => (
                   <tr key={regulacao.id_regulacao}>
                     <td>{regulacao.num_prontuario}</td>
-                    <td className="td-NomePaciente">{regulacao.nome_paciente}</td>
-                    <td>{regulacao.num_idade} Anos</td>
-                    <td>{regulacao.num_regulacao}</td>
+                    <td className="col-NomePaciente">
+                      <a onClick={() => fetchPDF(regulacao.data_hora_solicitacao_02, regulacao.link)}>
+                        {regulacao.nome_paciente}
+                      </a>
+                    </td>
+                    <td className="col-NumIdade">{regulacao.num_idade} Anos</td>
+                    <td className="col-NumRegulacao">{regulacao.num_regulacao}</td>
                     <td>{regulacao.un_origem}</td>
                     <td>{regulacao.un_destino}</td>
-                    <td>{regulacao.prioridade}</td>
+                    <td className="col-Prioridade">{regulacao.prioridade}</td>
                     <td>{new Date(regulacao.data_hora_solicitacao_02).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</td>
                     <td>{new Date(regulacao.data_hora_acionamento_medico).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</td>
-                    <td className="td-TempoEspera"><TimeTracker startTime={regulacao.data_hora_solicitacao_02} serverTime={serverTime} /></td>
+                    <td className='td-TempoEspera'><TimeTracker startTime={regulacao.data_hora_solicitacao_02} serverTime={serverTime} /></td>
                     <td className='td-Icons'>
                       <FcLeave className='Icon Icons-Regulacao' onClick={() => handleAtualizarRegulacao(regulacao)} title='Atualizar/Renovar Regulação' />
                     </td>
@@ -210,18 +359,26 @@ const ListaRegulacoes24: React.FC = () => {
 
         </div>
 
+
         <div className="Pagination">
           <button className='button-pagination' onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>Anterior</button>
           <span>{`Página ${currentPage} de ${totalPages}`}</span>
           <button className='button-pagination' onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}>Próxima</button>
         </div>
-
       </div>
 
 
-      <Snackbar open={snackbar.open} autoHideDuration={6000} onClose={handleSnackbarClose}>
-        <Alert onClose={handleSnackbarClose} severity={snackbar.severity}>
-          {snackbar.message}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity={snackbarSeverity}
+          sx={{ width: "100%" }}
+        >
+          {snackbarMessage}
         </Alert>
       </Snackbar>
     </>
@@ -229,4 +386,4 @@ const ListaRegulacoes24: React.FC = () => {
 };
 
 
-export default ListaRegulacoes24;
+export default ListaRegulacoes;

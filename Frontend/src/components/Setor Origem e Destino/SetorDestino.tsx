@@ -13,6 +13,7 @@ import { DestinoData } from '../../interfaces/Transporte';
 /*IMPORT CSS*/
 import './SetorOrigemDestino.css';
 
+/*IMPORT VARIAVEIS DE AMBIENTE*/
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
 
 interface PropsDadosPaciente {

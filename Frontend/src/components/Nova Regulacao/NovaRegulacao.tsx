@@ -170,7 +170,7 @@ const NovaRegulacao: React.FC = () => {
     formData.append('year', year);
     formData.append('month', month);
     formData.append('day', day); 
-    formData.append('file', file);
+    formData.append('file', file!);
     formData.append('num_regulacao', numRegulacao.toString()); // Adicionando num_regulacao no corpo da requisição
   
     try {
@@ -544,7 +544,7 @@ const NovaRegulacao: React.FC = () => {
                 </ul>
 
                 <div className="line-StepContent">
-                  <label>Enviar Arquivo PDF:</label>
+                  <label>Enviar PDF da Regulação:</label>
                   <input type="file" accept="application/pdf" onChange={handleFileChange} required/>
                 </div>
               </div>

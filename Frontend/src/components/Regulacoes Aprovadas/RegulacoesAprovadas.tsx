@@ -15,12 +15,14 @@ import SetorOrigem from '../Setor Origem e Destino/SetorOrigem';
 import SetorDestino from '../Setor Origem e Destino/SetorDestino';
 import Transporte01 from '../Transporte/Transporte01';
 import Transporte02 from '../Transporte/Transporte02';
+import Desfecho from '../Desfecho/Desfecho';
 import Filtro from '../Filtro/Filtro';
 
 /*IMPORT FUNCTIONS*/
 import { formatDateTimeToPtBr } from '../../functions/DateTimes';
 import { getUserData } from '../../functions/storageUtils';
 import { removerText } from "../../functions/RemoveText.ts";
+
 
 /*IMPORT VARIAVEIS DE AMBIENTE*/
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
@@ -36,6 +38,7 @@ const RegulacoesAprovadas: React.FC = () => {
   const [showModalDestino, setShowModalDestino] = useState(false);
   const [ShowModalTransporte01, setShowModalTransporte01] = useState(false);
   const [ShowModalTransporte02, setShowModalTransporte02] = useState(false);
+  const [ShowModalDesfecho, setShowModalDesfecho] = useState(false);
 
   /*FILTROS*/
   const [unidadeOrigem, setUnidadeOrigem] = useState('');
@@ -208,6 +211,23 @@ const RegulacoesAprovadas: React.FC = () => {
     setShowModalTransporte02(true);
   };
 
+  const handleOpenModalDesfecho = (regulacao: RegulacaoAprovadaData) => {
+    setCurrentRegulacao(regulacao);
+
+    // Supondo que você já tenha todos os dados necessários na `regulacao` ou possa fazer algum processamento:
+    const dados: DadosPacienteData = {
+      nome_paciente: regulacao.nome_paciente,
+      num_regulacao: regulacao.num_regulacao,
+      un_origem: regulacao.un_origem,
+      un_destino: regulacao.un_destino,
+      id_regulacao: regulacao.id_regulacao,
+      nome_regulador_medico: regulacao.nome_regulador_medico, // Certifique-se de que este campo possui um valor válido
+    };
+
+    setDadosPaciente(dados);
+    setShowModalDesfecho(true);
+  };
+
   const handleCloseModal = () => {
     setShowModalOrigem(false);
     setShowModalDestino(false);
@@ -368,8 +388,8 @@ const RegulacoesAprovadas: React.FC = () => {
                         {regulacao.status_regulacao === "ABERTO - APROVADO - AGUARDANDO DESFECHO" && (
                           <FcAbout
                             className="Icon Icons-Regulacao"
-                            onClick={() => handleOpenModalTransporte02(regulacao)}
-                            title='Finalização do Transporte'
+                            onClick={() => handleOpenModalDesfecho(regulacao)}
+                            title='Desfecho'
                           />
                         )}
 
@@ -382,10 +402,10 @@ const RegulacoesAprovadas: React.FC = () => {
           </div>
         </div>
         <div className="Pagination">
-          <button className='button-pagination' onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>Anterior</button>
-          <span>{`Página ${currentPage} de ${totalPages}`}</span>
-          <button className='button-pagination' onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}>Próxima</button>
-        </div>
+                <button className='button-pagination' onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>Anterior</button>
+                <span>{`Página ${currentPage} de ${totalPages}`}</span>
+                <button className='button-pagination' onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}>Próxima</button>
+            </div>
 
       </div>
 
@@ -422,6 +442,16 @@ const RegulacoesAprovadas: React.FC = () => {
       {ShowModalTransporte02 && currentRegulacao && dadosPaciente && (
         <Modal show={ShowModalTransporte02} onClose={handleCloseModal} title='Transporte'>
           <Transporte02
+            dadosPaciente={currentRegulacao}
+            onClose={handleCloseModal} // Fecha o modal
+            showSnackbar={showSnackbar} // Passa o controle do Snackbar
+          />
+        </Modal>
+      )}
+
+      {ShowModalDesfecho && currentRegulacao && dadosPaciente && (
+        <Modal show={ShowModalDesfecho} onClose={handleCloseModal} title='Desfecho'>
+          <Desfecho
             dadosPaciente={currentRegulacao}
             onClose={handleCloseModal} // Fecha o modal
             showSnackbar={showSnackbar} // Passa o controle do Snackbar

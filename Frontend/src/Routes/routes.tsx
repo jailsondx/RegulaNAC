@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Route, Routes, Navigate, Outlet } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, Outlet } from 'react-router-dom';
 
 // Importação das páginas
 import PrivateRoute from './privateRoutes';
@@ -14,7 +14,7 @@ import Login from '../components/Login/Login';
 import PageNotFound from './page404';
 import RegulacoesAprovadas from '../components/Regulacoes Aprovadas/RegulacoesAprovadas';
 import ListaRegulacoes24 from '../components/ListaRegulacoes/ListaRegulacoes+24';
-import Desfecho from '../components/Desfecho/Desfecho';
+import ListarDesfecho from '../components/Desfecho/ListarDesfechos';
 import ListaRegulacoesFinalizadas from '../components/ListaRegulacoes/ListaRegulaçoesFinalizadas';
 
 // Layout para rotas protegidas com o Sidebar
@@ -53,7 +53,7 @@ const Rotas: React.FC = () => {
           <Route path="AtualizaRegulacao" element={<AtualizaRegulacao />} />
           <Route path="RegulacaoMedica" element={<RegulacaMedica />} />
           <Route path="RegulacoesAprovadas" element={<RegulacoesAprovadas />} />
-          <Route path="Desfecho" element={<Desfecho />} />
+          <Route path="Desfechos" element={<ListarDesfecho />} />
           <Route path="Finalizadas" element={<ListaRegulacoesFinalizadas />} />
         </Route>
 

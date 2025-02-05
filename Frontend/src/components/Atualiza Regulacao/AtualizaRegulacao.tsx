@@ -7,6 +7,7 @@ import { Snackbar, Alert } from '@mui/material';
 /*IMPORT INTERFACES*/
 import { DadosPacienteData } from "../../interfaces/DadosPaciente.ts";
 import { UpdateRegulacaoData, PartialUpdateRegulacaoData } from '../../interfaces/Regulacao';
+import { UnidadeData } from '../../interfaces/Unidade.ts'; 
 import { UserData } from '../../interfaces/UserData';
 
 /*IMPORT COMPONENTS*/
@@ -38,8 +39,8 @@ const initialFormData: UpdateRegulacaoData = {
 const AtualizaRegulacao: React.FC = () => {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [file, setFile] = useState<File>();
-  const [unidadesOrigem, setUnidadesOrigem] = useState([]);
-  const [unidadesDestino, setUnidadesDestino] = useState([]);
+  const [unidadesOrigem, setUnidadesOrigem] = useState<UnidadeData[]>([]);
+  const [unidadesDestino, setUnidadesDestino] = useState<UnidadeData[]>([]);
   const location = useLocation(); // Captura o estado enviado via navegação
   const [numProntuario, setNumProntuario] = useState<number | ''>(''); // Número do prontuário recebido
   const [dadosPaciente, setDadosPaciente] = useState<DadosPacienteData>();
@@ -118,8 +119,6 @@ const AtualizaRegulacao: React.FC = () => {
 
   }, [numProntuario]); // Certifique-se de fechar corretamente o useEffect
 
-
-
   // Busca os dados do usuário do sessionStorage ao carregar o componente
   useEffect(() => {
     const data = getUserData();
@@ -127,7 +126,7 @@ const AtualizaRegulacao: React.FC = () => {
   }, []);
 
   //Handle para capturar o arquivo PDF
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       setFile(e.target.files[0]);
     }
@@ -142,7 +141,7 @@ const AtualizaRegulacao: React.FC = () => {
     formData.append('year', year);
     formData.append('month', month);
     formData.append('day', day);
-    formData.append('file', file);
+    formData.append('file', file!);
     formData.append('num_regulacao', numRegulacao.toString()); // Adicionando num_regulacao no corpo da requisição
 
     try {
@@ -153,14 +152,23 @@ const AtualizaRegulacao: React.FC = () => {
 
       // Resposta de sucesso
       showSnackbar(response.data.message || 'Arquivo enviado com sucesso!', 'success');
-    } catch (error: any) {
-      showSnackbar(error.response?.data?.message || 'Erro ao enviar arquivo. Tente novamente.', 'error');
+    } catch (error: unknown) {
+      // Verifica se o erro é uma instância de AxiosError
+      if (error instanceof AxiosError) {
+        // Se o erro tiver uma resposta, exibe a mensagem de erro da API
+        showSnackbar(error.response?.data?.message || 'Erro ao enviar arquivo. Tente novamente.', 'error');
+      } else {
+        // Se o erro não for do tipo AxiosError, exibe uma mensagem genérica
+        showSnackbar('Erro inesperado ao enviar o arquivo. Tente novamente.', 'error');
+      }
+    
+      // Lança um novo erro para garantir que o fluxo de controle seja interrompido
       throw new Error('Erro ao enviar o arquivo');
-    }
+    }    
   };
 
 
-   const showSnackbar = (
+  const showSnackbar = (
     message: string,
     severity: 'success' | 'error' | 'info' | 'warning'
   ): void => {
@@ -202,7 +210,7 @@ const AtualizaRegulacao: React.FC = () => {
 
       // Verifica se há arquivo e, caso haja, faz o upload
       if (file) {
-        await uploadFile(dataToSubmit.data_hora_solicitacao_02, dadosPaciente.num_regulacao);  // Espera o upload do arquivo ser concluído antes de prosseguir
+        await uploadFile(dataToSubmit.data_hora_solicitacao_02, dataToSubmit.num_regulacao);  // Espera o upload do arquivo ser concluído antes de prosseguir
       }
 
       // Exibe mensagem de sucesso e redireciona
@@ -216,12 +224,26 @@ const AtualizaRegulacao: React.FC = () => {
           },
         },
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Erro ao atualizar regulação:', error);
-
-      // Exibe mensagem de erro
-      showSnackbar(error.response?.data?.message || 'Erro ao atualizar regulação. Tente novamente.', 'error');
+    
+      if (error instanceof AxiosError) {
+        // Verifica se o erro tem uma resposta da API
+        if (error.response) {
+          const { data } = error.response;
+          
+          // Exibe mensagem com base no status e dados de erro da resposta
+          showSnackbar(data?.message || 'Erro ao atualizar regulação. Tente novamente.', 'error');
+        } else {
+          // Caso o erro não tenha uma resposta (por exemplo, erro de rede ou timeout)
+          showSnackbar('Erro de rede ou timeout ao tentar atualizar regulação. Tente novamente.', 'error');
+        }
+      } else {
+        // Caso o erro não seja uma instância de AxiosError (erro desconhecido ou outro tipo de erro)
+        showSnackbar('Erro inesperado ao atualizar regulação. Tente novamente.', 'error');
+      }
     }
+    
   };
 
   return (
@@ -291,7 +313,7 @@ const AtualizaRegulacao: React.FC = () => {
               />
             </div>
             <div className="line-StepContent">
-              <label>Enviar Arquivo PDF:</label>
+              <label>Enviar PDF da Regulação:</label>
               <input type="file" accept="application/pdf" onChange={handleFileChange} required />
             </div>
           </div>
