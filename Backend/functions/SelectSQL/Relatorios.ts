@@ -1,6 +1,6 @@
 /// <reference types="node" />
 const express = require('express');
-const { exportarRelatorioCSVPaciente, exportarRelatorioCSVGerencial } = require('../Controller/ExportToCSV.ts');
+const { exportarRelatorioCSVPaciente: handleCSVPaciente, exportarRelatorioCSVGerencial: handleCSVGerencial } = require('../Controller/ExportToCSV.ts');
 const { DBconnection } = require("../../connection.ts"); // Importa apenas o objeto DBconnection
 
 async function relatorioRegulacao(FormData) {
@@ -71,7 +71,7 @@ async function relatorioRegulacao(FormData) {
         connection.release();
         console.log(rows);
 
-        const filePath = await exportarRelatorioCSVPaciente(rows);
+        const filePath = await handleCSVPaciente(rows);
         return { success: true, data: rows, filePath };
     } catch (error) {
         console.error('Erro ao carregar regulações:', error);
@@ -139,7 +139,7 @@ async function relatorioGerencial(FormData) {
         console.log('✅ Dados formatados para CSV:', dadosParaCSV);
 
         // 📂 Exportar os dados para CSV
-        const filePath = await exportarRelatorioCSVGerencial(dadosParaCSV);
+        const filePath = await handleCSVGerencial(dadosParaCSV);
         return { success: true, filePath };
     } catch (error) {
         console.error('❌ Erro ao carregar regulações:', error);

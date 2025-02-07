@@ -18,3 +18,17 @@
 .data_hora_transporte{
     width: 50%;
 }
+
+.StepContent2{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.StepContent2 input{
+    width: 130%;
+}
+
+.StepContent2 textarea{
+    width: 15dvw;
+}

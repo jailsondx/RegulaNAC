@@ -22,24 +22,37 @@ interface Props {
     showSnackbar: (message: string, severity: 'success' | 'error' | 'info' | 'warning') => void;
 };
 
-
 const initialFormData: TransporteDatesData = {
     data_hora_chegada_origem: '',
     data_hora_saida_origem: '',
     data_hora_liberacao_leito: '',
     data_hora_chegada_destino: '',
+    observacao: ''
 };
 
-const Transporte02: React.FC<Props> = ({ dadosPaciente, onClose, showSnackbar, }) => {
+const Transporte02: React.FC<Props> = ({ dadosPaciente, onClose, showSnackbar }) => {
     const [userData, setUserData] = useState<UserData | null>(null);
     const [formData, setFormData] = useState<TransporteDatesData>(initialFormData);
     const [currentStep, setCurrentStep] = useState<number>(1);
+    const [observacao, setObservacao] = useState<string>('');
+    const [diferencaHoras, setDiferencaHoras] = useState<number>(0);
 
-    //Pega dados do Seasson Storage
+    // Pega dados do Session Storage
     useEffect(() => {
         const data = getUserData();
         setUserData(data);
     }, []);
+
+    // Calcula a diferença entre os horários
+    useEffect(() => {
+        if (formData.data_hora_liberacao_leito && formData.data_hora_chegada_destino) {
+            const liberacaoLeito = new Date(formData.data_hora_liberacao_leito).getTime();
+            const chegadaDestino = new Date(formData.data_hora_chegada_destino).getTime();
+            const diferencaMs = chegadaDestino - liberacaoLeito;
+            const diferencaHoras = diferencaMs / (1000 * 60 * 60); // Converter milissegundos para horas
+            setDiferencaHoras(diferencaHoras);
+        }
+    }, [formData.data_hora_liberacao_leito, formData.data_hora_chegada_destino]);
 
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>): void => {
         const { name, value } = e.target;
@@ -51,9 +64,15 @@ const Transporte02: React.FC<Props> = ({ dadosPaciente, onClose, showSnackbar, }
 
     const validateForm = (): boolean => {
         if (!formData.data_hora_chegada_origem.trim() || !formData.data_hora_saida_origem.trim() || !formData.data_hora_liberacao_leito.trim() || !formData.data_hora_chegada_destino.trim()) {
-            showSnackbar('Todas as datas e horário são obrigatórios!', 'warning');
+            showSnackbar('Todas as datas e horários são obrigatórios!', 'warning');
             return false;
         }
+
+        if (diferencaHoras >= 2 && !observacao.trim()) {
+            showSnackbar('A observação é obrigatória quando a diferença entre os horários é igual ou maior a 2 horas.', 'warning');
+            return false;
+        }
+
         return true;
     };
 
@@ -64,7 +83,8 @@ const Transporte02: React.FC<Props> = ({ dadosPaciente, onClose, showSnackbar, }
         try {
             const dataToSubmit = {
                 ...formData,
-                id_user: userData?.id_user, // Use o operador de encadeamento opcional para evitar erros se `userData` for `null`
+                observacao: diferencaHoras >= 2 ? observacao : null, // Inclui a observação apenas se necessário
+                id_user: userData?.id_user,
                 id_regulacao: dadosPaciente.id_regulacao,
             };
 
@@ -77,12 +97,9 @@ const Transporte02: React.FC<Props> = ({ dadosPaciente, onClose, showSnackbar, }
                 showSnackbar(response.data?.message || 'Regulação Aprovada - Transporte: Erro!', 'error');
             }
         } catch (error: unknown) {
-            // Verifica se o erro é uma instância de AxiosError
             if (error instanceof AxiosError) {
-                // Exibe a mensagem de erro da resposta ou a mensagem padrão
                 showSnackbar(error.response?.data?.message || 'Erro ao enviar os dados!', 'error');
             } else {
-                // Se o erro não for do tipo AxiosError, exibe uma mensagem genérica
                 showSnackbar('Erro desconhecido ao enviar os dados. Tente novamente.', 'error');
             }
         }
@@ -94,7 +111,7 @@ const Transporte02: React.FC<Props> = ({ dadosPaciente, onClose, showSnackbar, }
 
     const previousStep = (): void => {
         setCurrentStep((prev) => Math.max(prev - 1, 1));
-    }
+    };
 
     return (
         <>
@@ -104,7 +121,7 @@ const Transporte02: React.FC<Props> = ({ dadosPaciente, onClose, showSnackbar, }
                     <label>Paciente: {dadosPaciente.nome_paciente}</label>
                     <label>Regulação: {dadosPaciente.num_regulacao}</label>
                     <label>Un. Origem: {dadosPaciente.un_origem}</label>
-                    <span >
+                    <span>
                         <label>Un. Destino: {dadosPaciente.un_destino}</label>
                         <label>Leito: {dadosPaciente.num_leito}</label>
                     </span>
@@ -121,7 +138,6 @@ const Transporte02: React.FC<Props> = ({ dadosPaciente, onClose, showSnackbar, }
 
             <form onSubmit={handleSubmit}>
                 <div className="div-Transporte">
-
                     {currentStep === 1 && (
                         <div className="StepContent">
                             <div className="Transporte-line">
@@ -151,34 +167,47 @@ const Transporte02: React.FC<Props> = ({ dadosPaciente, onClose, showSnackbar, }
                     )}
 
                     {currentStep === 2 && (
-                        <div className="StepContent">
-                             <div className="Transporte-line">
-                                <label>Hora da liberação do leito:</label>
-                                <input
-                                    type="datetime-local"
-                                    name="data_hora_liberacao_leito"
-                                    className="data_hora_transporte"
-                                    value={formData.data_hora_liberacao_leito}
-                                    onChange={handleChange}
-                                    required
-                                />
+                        <div className="StepContent2">
+                            <div>
+                                <div className="Transporte-line">
+                                    <label>Hora da liberação do leito:</label>
+                                    <input
+                                        type="datetime-local"
+                                        name="data_hora_liberacao_leito"
+                                        className="data_hora_transporte"
+                                        value={formData.data_hora_liberacao_leito}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
+                                <div className="Transporte-line">
+                                    <label>Chegada do Paciente no Setor de Destino:</label>
+                                    <input
+                                        type="datetime-local"
+                                        name="data_hora_chegada_destino"
+                                        className="data_hora_transporte"
+                                        value={formData.data_hora_chegada_destino}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
                             </div>
+                          
+                          <div>
                             <div className="Transporte-line">
-                                <label>Chegada do Paciente no Setor de Destino:</label>
-                                <input
-                                    type="datetime-local"
-                                    name="data_hora_chegada_destino"
-                                    className="data_hora_transporte"
-                                    value={formData.data_hora_chegada_destino}
-                                    onChange={handleChange}
-                                    required
-                                />
-                            </div>
+                                    <label>Observação:</label>
+                                    <textarea
+                                        name="observacao"
+                                        value={observacao}
+                                        onChange={(e) => setObservacao(e.target.value)}
+                                        placeholder="Observação obrigatório caso o tempo seja maior do que 2h"
+                                        required={diferencaHoras >= 2} // Torna obrigatório se a diferença ≥ 2h
+                                    />
+                                </div>
+                          </div>
+                           
                         </div>
                     )}
-
-
-
                 </div>
                 <div className="Form-NovaRegulacao-Buttons">
                     {currentStep > 1 && <button type="button" onClick={previousStep}>Voltar</button>}
