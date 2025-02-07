@@ -1,12 +1,12 @@
 {
   "compilerOptions": {
-    "target": "ES6",          // Mantenha ou atualize para uma versão mais recente, como "ES2020"
-    "module": "ESNext",       // Mude para "ESNext" ou "ES6"
-    "moduleResolution": "node", // Mantenha como "node" para compatibilidade com Node.js
+    "target": "ES6",
+    "module": "CommonJS",
+    "moduleResolution": "node",
     "outDir": "./dist",
     "rootDir": "./src",
     "strict": true,
-    "esModuleInterop": true,  // Mantenha como true para compatibilidade com CommonJS
+    "esModuleInterop": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
@@ -17,6 +17,7 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true
   },
-  "include": ["src/**/*"],    // Certifique-se de incluir apenas os arquivos TypeScript
+  //"include": ["src/**/*"],
+  "include": ["./"],
   "exclude": ["node_modules"]
 }

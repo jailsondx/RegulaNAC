@@ -1,16 +1,19 @@
-/// <reference types="node" />
+import dotenv from 'dotenv';
+import mysql from 'mysql2/promise';
 
-require('dotenv').config();
-const mysql = require('mysql2/promise');
+// Configura o dotenv
+dotenv.config();
 
+// Cria o pool de conexão
 const DBconnection = mysql.createPool({
     host: process.env.DB_HOST || 'localhost',
-    port: process.env.DB_PORT || '3306',
+    port: parseInt(process.env.DB_PORT || '3306', 10), // Converte para número
     user: process.env.DB_USER || 'root',
     password: process.env.DB_PASSWORD || '',
     database: process.env.DB_NAME || 'regulanac_database'
 });
 
+// Função para testar a conexão
 async function testConnection() {
     try {
         const connectionTest = await DBconnection.getConnection();
@@ -29,8 +32,8 @@ async function testConnection() {
     }
 }
 
-// Testa a conexão
+// Testa a conexão (opcional)
 testConnection();
 
-// Exporta apenas o pool de conexão e a função de teste (opcional)
-module.exports = { DBconnection };
+// Exporta o pool de conexão e a função de teste (opcional)
+export { DBconnection, testConnection };
