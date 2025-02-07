@@ -7,6 +7,10 @@ async function NovaRegulacao(FormData) {
     const DBtableUsuarios = 'usuarios';
 
     try {
+
+        // Defina a data_hora_solicitacao_02 como o mesmo valor que a data_hora_solicitacao_01
+        FormData.qtd_solicitacoes = 1;
+
         // Defina a data_hora_solicitacao_02 como o mesmo valor que a data_hora_solicitacao_01
         FormData.data_hora_solicitacao_02 = FormData.data_hora_solicitacao_01;
 
@@ -32,7 +36,7 @@ async function NovaRegulacao(FormData) {
 
         const userType = rowsUserPrivilege[0].tipo;
 
-        if (userType === 'Medico') {
+        if (userType === 'MEDICO') {
             // Usuário sem permissão
             console.error('\nUsuário ID: ' + FormData.id_user + ' \nSem permissão: Nova Regulação\n');
             return { success: false, message: "Usuário não tem permissão para realizar esta ação." };

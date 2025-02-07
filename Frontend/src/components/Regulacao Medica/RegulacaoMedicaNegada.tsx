@@ -23,8 +23,8 @@ interface Props {
 
 const initialFormData: RegulacaoMedicoData = {
   id_user: '',
-  vaga_autorizada: true,
-  num_leito: null,
+  vaga_autorizada: false,
+  num_leito: '',
   justificativa_neg: '',
   nome_regulador_medico: '',
   data_hora_regulacao_medico: '',

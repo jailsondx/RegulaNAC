@@ -53,6 +53,7 @@ routerPost.post('/NovaRegulacao', async (req, res) => {
   try {
 
     const formData = convertObjectToUpperCase(req.body);
+    //console.log(formData);
     
     const { success, message, error } = await NovaRegulacao(formData);
 
@@ -136,6 +137,26 @@ routerPost.post('/Transporte', async (req, res) => {
 
     // Envia a resposta logo após a chamada da função
     const { success, message, error } = await saveTransporte(formData);
+
+    if(success){
+      res.status(200).json({ message});
+    } else {
+      res.status(500).json({ message, error });
+    }
+
+  } catch (error) {
+    console.error('Erro no processamento:', error);
+    return res.status(500).json({ message: 'Erro interno do servidor.' });
+  }
+});
+
+routerPost.post('/Desfecho', async (req, res) => {
+  try {
+    const formData = convertObjectToUpperCase(req.body);
+    //formData.data_hora_regulacao_medico = getCurrentTimestamp();
+
+    // Envia a resposta logo após a chamada da função
+    const { success, message, error } = await Desfecho(formData);
 
     if(success){
       res.status(200).json({ message});

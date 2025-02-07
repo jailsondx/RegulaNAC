@@ -1,13 +1,17 @@
 /// <reference types="node" />
 const express = require('express');
 const UpdateStatus = require("../UpdateSQL/UpdateStatus.ts");
+const UpdateMedico = require("../UpdateSQL/UpdateMedico.ts")
 const { DBconnection } = require("../../connection.ts"); // Importa apenas o objeto DBconnection
 
 async function RegulacaoMedica(FormData) {
     const DBtable = 'regulacao_medico';
+    const DBtableRegulacao = 'regulacao';
     const DBtableUsuarios = 'usuarios';
     const NovoStatusApproved = 'ABERTO - APROVADO - AGUARDANDO ORIGEM';
     const NovoStatusDeny = 'ABERTO - NEGADO';
+
+    console.log('VAGA AUTORIZADA?'+FormData.vaga_autorizada);
 
     try {
         // Inicie a conexão com o banco de dados
@@ -48,9 +52,11 @@ async function RegulacaoMedica(FormData) {
             // Atualize o status de regulação
             if (FormData.vaga_autorizada) {
                 await UpdateStatus(FormData.id_regulacao, NovoStatusApproved);
+                await UpdateMedico(FormData.id_regulacao, FormData.nome_regulador_medico);
                 return { success: true, message: "Regulação Médica: Aprovada." };
             } else {
                 await UpdateStatus(FormData.id_regulacao, NovoStatusDeny);
+                await UpdateMedico(FormData.id_regulacao, FormData.nome_regulador_medico);
                 return { success: true, message: "Regulação Médica: Negada." };
             }
         }

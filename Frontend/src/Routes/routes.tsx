@@ -16,6 +16,8 @@ import RegulacoesAprovadas from '../components/Regulacoes Aprovadas/RegulacoesAp
 import ListaRegulacoes24 from '../components/ListaRegulacoes/ListaRegulacoes+24';
 import ListarDesfecho from '../components/Desfecho/ListarDesfechos';
 import ListaRegulacoesFinalizadas from '../components/ListaRegulacoes/ListaRegulaçoesFinalizadas';
+import RelatoriosRegulacao from '../components/Relatorios/RelatoriosRegulacao';
+import RelatoriosGerencial from '../components/Relatorios/RelatoriosGerencial';
 
 // Layout para rotas protegidas com o Sidebar
 const ProtectedLayout: React.FC = () => {
@@ -55,6 +57,8 @@ const Rotas: React.FC = () => {
           <Route path="RegulacoesAprovadas" element={<RegulacoesAprovadas />} />
           <Route path="Desfechos" element={<ListarDesfecho />} />
           <Route path="Finalizadas" element={<ListaRegulacoesFinalizadas />} />
+          <Route path="RelatoriosRegulacao" element={<RelatoriosRegulacao />} />
+          <Route path="RelatoriosGerencial" element={<RelatoriosGerencial />} />
         </Route>
 
         {/* Página 404 - Página não encontrada */}

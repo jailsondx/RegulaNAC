@@ -37,6 +37,7 @@ const initialFormData: NovaRegulacaoData = {
   prioridade: '',
   data_hora_solicitacao_01: '',
   data_hora_solicitacao_02: '',
+  qtd_solicitacoes: 1,
   nome_regulador_nac: '',
   num_regulacao: null,
   nome_regulador_medico: '',

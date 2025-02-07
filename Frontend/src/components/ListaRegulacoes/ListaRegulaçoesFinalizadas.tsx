@@ -294,6 +294,7 @@ const ListaRegulacoes: React.FC = () => {
               <tbody>
                 {currentRegulacoes.map(regulacao => (
                   <tr key={regulacao.id_regulacao}>
+                    <td>{regulacao.nome_regulador_nac}</td>
                     <td>{regulacao.num_prontuario}</td>
                     <td className="col-NomePaciente">
                       <a onClick={() => fetchPDF(regulacao.data_hora_solicitacao_02, regulacao.link)}>
@@ -303,7 +304,6 @@ const ListaRegulacoes: React.FC = () => {
                     <td className="col-NumRegulacao">{regulacao.num_regulacao}</td>
                     <td>{regulacao.un_origem}</td>
                     <td>{regulacao.un_destino}</td>
-                    <td className="col-Prioridade">{regulacao.prioridade}</td>
                     <td>{regulacao.desfecho}</td>
                   </tr>
                 ))}

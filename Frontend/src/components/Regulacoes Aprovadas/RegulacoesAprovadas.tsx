@@ -233,6 +233,7 @@ const RegulacoesAprovadas: React.FC = () => {
     setShowModalDestino(false);
     setShowModalTransporte01(false);
     setShowModalTransporte02(false);
+    setShowModalDesfecho(false);
     fetchRegulacoes();
     //window.location.reload(); // Recarregar a página ao fechar o modal
   };
@@ -453,6 +454,7 @@ const RegulacoesAprovadas: React.FC = () => {
         <Modal show={ShowModalDesfecho} onClose={handleCloseModal} title='Desfecho'>
           <Desfecho
             dadosPaciente={currentRegulacao}
+            forcado='FALSE'
             onClose={handleCloseModal} // Fecha o modal
             showSnackbar={showSnackbar} // Passa o controle do Snackbar
           />

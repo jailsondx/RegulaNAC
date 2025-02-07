@@ -23,6 +23,7 @@ const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
 
 interface PropsDadosPaciente {
     dadosPaciente: DadosPacienteData;
+    forcado: boolean;
     onClose: () => void;
     showSnackbar: (message: string, severity: 'success' | 'error' | 'info' | 'warning') => void;
 }
@@ -32,12 +33,16 @@ const initialFormData: DesfechoData = {
     id_regulacao: null,
     desfecho: '',
     criticidade: '',
-    fastmedic: ''
+    forcado: false,
+    fastmedic: false, // Valor padrão definido como 'NAO'
 };
 
-const Desfecho: React.FC<PropsDadosPaciente> = ({ dadosPaciente, onClose, showSnackbar }) => {
+const Desfecho: React.FC<PropsDadosPaciente> = ({ dadosPaciente, forcado, onClose, showSnackbar }) => {
     const [userData, setUserData] = useState<UserData | null>(null);
-    const [formData, setFormData] = useState<DesfechoData>(initialFormData);
+    const [formData, setFormData] = useState<DesfechoData>({
+        ...initialFormData,
+        forcado, // Atribui o valor recebido via props
+    });
     const [optionsDesfecho, setDesfecho] = useState<DesfechoOptions[]>([]);
     const [optionsCriticidade, setCriticidade] = useState<CriticidadeOptions[]>([]);
 
@@ -68,6 +73,10 @@ const Desfecho: React.FC<PropsDadosPaciente> = ({ dadosPaciente, onClose, showSn
             showSnackbar('Desfecho é obrigatório!', 'warning');
             return false;
         }
+        if (!formData.criticidade.trim()) {
+            showSnackbar('Criticidade é obrigatório!', 'warning');
+            return false;
+        }
         return true;
     };
 
@@ -82,10 +91,11 @@ const Desfecho: React.FC<PropsDadosPaciente> = ({ dadosPaciente, onClose, showSn
                 id_regulacao: dadosPaciente.id_regulacao,
             };
 
-            const response = await axios.post(`${NODE_URL}/api/internal/post/RegulacaoDesfecho`, dataToSubmit);
+            const response = await axios.post(`${NODE_URL}/api/internal/post/Desfecho`, dataToSubmit);
             if (response.status === 200) {
                 showSnackbar(response.data?.message || 'Desfecho registrado com sucesso!', 'success');
                 onClose();
+                
             } else {
                 showSnackbar(response.data?.message || 'Erro ao registrar desfecho', 'error');
             }
@@ -118,44 +128,61 @@ const Desfecho: React.FC<PropsDadosPaciente> = ({ dadosPaciente, onClose, showSn
 
             <form onSubmit={handleSubmit}>
                 <div className='div-Desfecho'>
-                    <div className='subdiv-Desfecho'>
-                        <div className="Desfecho-line">
-                            <label>Desfecho:</label>
-                            <select
-                                name="desfecho"
-                                value={formData.desfecho}
-                                onChange={handleChange}
-                                required
-                            >
-                                <option value="">Selecione o Desfecho</option>
-                                {optionsDesfecho.map((option) => (
-                                    <option key={option.value} value={option.value}>
-                                        {option.label}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                    </div>
-
                     <div className="Desfecho-line">
-                        <label>Criticidade:</label>
+                        <label>Desfecho:</label>
                         <select
-                            name="criticidade"
-                            value={formData.criticidade}
+                            name="desfecho"
+                            value={formData.desfecho}
                             onChange={handleChange}
                             required
                         >
-                            <option value="">Selecione Criticidade</option>
-                            {optionsCriticidade.map((option) => (
+                            <option value="">Selecione o Desfecho</option>
+                            {optionsDesfecho.map((option) => (
                                 <option key={option.value} value={option.value}>
                                     {option.label}
                                 </option>
                             ))}
                         </select>
                     </div>
+
+                    <div className='subdiv-Desfecho'>
+                        <div className="Desfecho-line">
+                            <label>Criticidade:</label>
+                            <select
+                                name="criticidade"
+                                value={formData.criticidade}
+                                onChange={handleChange}
+                                required
+                            >
+                                <option value="">Selecione Criticidade</option>
+                                {optionsCriticidade.map((option) => (
+                                    <option key={option.value} value={option.value}>
+                                        {option.label}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+
+                        <div className="Desfecho-line fastmedic">
+                            <label>Já regulado no Fastmedic ?</label>
+                            <select
+                                name="fastmedic"
+                                value={formData.fastmedic}
+                                onChange={handleChange}
+                                required
+                            >
+                                <option value="false" selected>NÃO</option>
+                                <option value="true">SIM</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    
                 </div>
+                <p>*Forçar o desfecho ira encerrar essa regulação, essa ação não pode ser desfeita.</p>
                 <button type="submit">Cadastrar Desfecho</button>
             </form>
+            
         </>
     );
 };

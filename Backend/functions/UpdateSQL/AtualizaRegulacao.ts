@@ -45,20 +45,30 @@ async function AtualizaRegulacao(FormData) {
             return { success: false, message: statusCheck.message };
         }
 
-
-        // Atualiza os dados na tabela regulacao
+        const [valueRequests] = await connection.query(
+            `SELECT qtd_solicitacoes
+             FROM ${DBtable}
+             WHERE id_regulacao = ?`,
+            [FormData.id_regulacao]
+        );
+                
+        // Acesso correto ao valor de qtd_solicitacoes
+        const qtdSolicitacoes = valueRequests[0].qtd_solicitacoes;
+        console.log('SOL JA REALIZADAS:', qtdSolicitacoes);
+        
+        // Atualização correta da query
         const [updateResult] = await connection.query(
             `UPDATE ${DBtable} 
-             SET id_user = ?, un_origem = ?, un_destino = ?, data_hora_solicitacao_02 = ?, nome_regulador_nac = ?
-             WHERE num_prontuario = ? AND num_regulacao = ?`,
+             SET id_user = ?, un_origem = ?, un_destino = ?, data_hora_solicitacao_02 = ?, nome_regulador_nac = ?, qtd_solicitacoes = ?
+             WHERE id_regulacao = ?`,
             [
                 FormData.id_user, 
                 FormData.un_origem, 
                 FormData.un_destino, 
                 FormData.data_hora_solicitacao_02,
                 FormData.nome_regulador_nac,
-                FormData.num_prontuario,
-                FormData.num_regulacao
+                qtdSolicitacoes + 1, // Valor existente + 1
+                FormData.id_regulacao
             ]
         );
 

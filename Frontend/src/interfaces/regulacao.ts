@@ -11,6 +11,7 @@ export interface NovaRegulacaoData {
   prioridade?: string | null;
   data_hora_solicitacao_01: string;
   data_hora_solicitacao_02: string;
+  qtd_solicitacoes: number;
   nome_regulador_nac: string;
   num_regulacao: number;
   nome_regulador_medico: string;

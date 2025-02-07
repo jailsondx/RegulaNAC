@@ -6,11 +6,14 @@ import { Snackbar, Alert } from '@mui/material';
 import { FcNews } from "react-icons/fc";
 
 /*IMPORT COMPONENTS*/
+import Modal from '../Modal/Modal';
+import Desfecho from '../Desfecho/Desfecho';
 import TimeTracker from "../TimeTracker/TimeTracker.tsx";
 
 /*IMPORT INTERFACES*/
 import { RegulacaoData } from '../../interfaces/Regulacao.ts';
 import { StatusRegulacaoData } from '../../interfaces/Status.ts';
+import { DadosPacienteData } from "../../interfaces/DadosPaciente.ts";
 
 /*IMPORT FUNCTIONS*/
 import { removerText } from "../../functions/RemoveText.ts";
@@ -40,10 +43,15 @@ const initialForm: SearchForm = {
 
 const ListarDesfecho: React.FC = () => {
   const location = useLocation();
+  const [currentRegulacao, setCurrentRegulacao] = useState<RegulacaoData | null>(null);
+  const [dadosPaciente, setDadosPaciente] = useState<DadosPacienteData | null>(null);
   const [statusRegulacao, setStatusRegulacao] = useState<StatusRegulacaoData[]>([]);
   const [filteredRegulacoes, setFilteredRegulacoes] = useState<RegulacaoData[]>([]);
   const [serverTime, setServerTime] = useState("");
   const [formData, setFormData] = useState<SearchForm>(initialForm);
+
+  /*MODAIS*/
+  const [ShowModalDesfecho, setShowModalDesfecho] = useState(false);
 
   /*PAGINAÇÃO*/
   const [currentPage, setCurrentPage] = useState(1);
@@ -66,7 +74,7 @@ const ListarDesfecho: React.FC = () => {
         location.state.snackbar.message,
         location.state.snackbar.severity
       );
-      
+
       // Limpa o state da navegação após exibir
       location.state.snackbar = undefined;
     }
@@ -116,6 +124,28 @@ const ListarDesfecho: React.FC = () => {
     }
   };
 
+  const handleOpenModalDesfecho = (regulacao: RegulacaoData) => {
+    setCurrentRegulacao(regulacao);
+
+    // Supondo que você já tenha todos os dados necessários na `regulacao` ou possa fazer algum processamento:
+    const dados: DadosPacienteData = {
+      nome_paciente: regulacao.nome_paciente,
+      num_regulacao: regulacao.num_regulacao,
+      un_origem: regulacao.un_origem,
+      un_destino: regulacao.un_destino,
+      id_regulacao: regulacao.id_regulacao,
+      nome_regulador_medico: regulacao.nome_regulador_medico, // Certifique-se de que este campo possui um valor válido
+    };
+
+    setDadosPaciente(dados);
+    setShowModalDesfecho(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModalDesfecho(false);
+    //window.location.reload(); // Recarregar a página ao fechar o modal
+  };
+
   const filterClear = (e: React.FormEvent) => {
     e.preventDefault();
     setFormData(initialForm);
@@ -126,120 +156,135 @@ const ListarDesfecho: React.FC = () => {
     setCurrentPage(newPage);
   };
 
-    const indexOfLastRegulacao = currentPage * itemsPerPage;
-    const indexOfFirstRegulacao = indexOfLastRegulacao - itemsPerPage;
-    const currentRegulacoes = filteredRegulacoes.slice(indexOfFirstRegulacao, indexOfLastRegulacao);
+  const indexOfLastRegulacao = currentPage * itemsPerPage;
+  const indexOfFirstRegulacao = indexOfLastRegulacao - itemsPerPage;
+  const currentRegulacoes = filteredRegulacoes.slice(indexOfFirstRegulacao, indexOfLastRegulacao);
 
-    const totalPages = Math.ceil(filteredRegulacoes.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredRegulacoes.length / itemsPerPage);
 
-return (
+  return (
     <>
-        <div className='Component'>
-            <div className='Component-Table'>
-                <div className="Header-ListaRegulaçoes">
-                    <label className="Title-Tabela">Desfechos</label>
-                </div>
+      <div className='Component'>
+        <div className='Component-Table'>
+          <div className="Header-ListaRegulaçoes">
+            <label className="Title-Tabela">Desfechos</label>
+          </div>
 
-                <div>
-                    {/* Formulário de Pesquisa */}
-                    <form onSubmit={handleSearch} className="form-search">
-                        {/* Primeira linha: Nome do Paciente */}
-                        <div className="search-desfecho-line search-desfecho-row">
-                            <input
-                                type="text"
-                                name="nomePaciente"
-                                value={formData.nomePaciente}
-                                onChange={handleInputChange}
-                                placeholder="Nome do Paciente"
-                            />
-                        </div>
+          <div>
+            {/* Formulário de Pesquisa */}
+            <form onSubmit={handleSearch} className="form-search">
+              {/* Primeira linha: Nome do Paciente */}
+              <div className="search-desfecho-line search-desfecho-row">
+                <input
+                  type="text"
+                  name="nomePaciente"
+                  value={formData.nomePaciente}
+                  onChange={handleInputChange}
+                  placeholder="Nome do Paciente"
+                />
+              </div>
 
-                        {/* Segunda linha: Número do prontuário, Número da regulação e Status */}
-                        <div className="search-desfecho-line search-desfecho-row">
-                            <input
-                                type="number"
-                                name="numProntuario"
-                                value={formData.numProntuario}
-                                onChange={handleInputChange}
-                                placeholder="Nº do Prontuário"
-                            />
-                            <input
-                                type="number"
-                                name="numRegulacao"
-                                value={formData.numRegulacao}
-                                onChange={handleInputChange}
-                                placeholder="Nº da Regulação"
-                            />
-                            <select
-                                name="statusRegulacao"
-                                value={formData.statusRegulacao}
-                                onChange={handleInputChange}
-                            >
-                               <option value="">Selecione uma unidade</option>
-                                {statusRegulacao.map((statusRegulacao) => (
-                                <option key={statusRegulacao.value} value={statusRegulacao.value}>
-                                    {statusRegulacao.label}
-                                </option>
-                                ))}
-                            </select>
-                        </div>
+              {/* Segunda linha: Número do prontuário, Número da regulação e Status */}
+              <div className="search-desfecho-line search-desfecho-row">
+                <input
+                  type="number"
+                  name="numProntuario"
+                  value={formData.numProntuario}
+                  onChange={handleInputChange}
+                  placeholder="Nº do Prontuário"
+                />
+                <input
+                  type="number"
+                  name="numRegulacao"
+                  value={formData.numRegulacao}
+                  onChange={handleInputChange}
+                  placeholder="Nº da Regulação"
+                />
+                <select
+                  name="statusRegulacao"
+                  value={formData.statusRegulacao}
+                  onChange={handleInputChange}
+                >
+                  <option value="">Selecione uma unidade</option>
+                  {statusRegulacao.map((statusRegulacao) => (
+                    <option key={statusRegulacao.value} value={statusRegulacao.value}>
+                      {statusRegulacao.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-                        {/* Terceira linha: Botão de Pesquisar */}
-                        <div className="search-desfecho-line-button">
-                            <button type="submit" className="button">
-                                Pesquisar
-                            </button>
-                            <button type="button" className="button-clear" onClick={filterClear}>
-                                Limpar
-                            </button>
-                        </div>
-                    </form>
-                </div>
+              {/* Terceira linha: Botão de Pesquisar */}
+              <div className="search-desfecho-line-button">
+                <button type="submit" className="button">
+                  Pesquisar
+                </button>
+                <button type="button" className="button-clear" onClick={filterClear}>
+                  Limpar
+                </button>
+              </div>
+            </form>
+          </div>
 
-                {/* Tabela de Regulações */}
-                <div>
-                    <table className='Table-Regulacoes'>
-                        <thead>
-                            <tr>
-                                <th>Regulador NAC</th>
-                                <th>Pront.</th>
-                                <th>Nome Paciente</th>
-                                <th>Num. Regulação</th>
-                                <th>Un. Origem</th>
-                                <th>Un. Destino</th>
-                                <th>Tempo de Espera</th>
-                                <th>Fase</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {currentRegulacoes.map(regulacao => (
-                                <tr key={regulacao.id_regulacao}>
-                                    <td>{regulacao.nome_regulador_nac}</td>
-                                    <td>{regulacao.num_prontuario}</td>
-                                    <td className="td-NomePaciente">{regulacao.nome_paciente}</td>
-                                    <td>{regulacao.num_regulacao}</td>
-                                    <td>{regulacao.un_origem}</td>
-                                    <td>{regulacao.un_destino}</td>
-                                    <td className='td-TempoEspera'>
-                                        <TimeTracker startTime={regulacao.data_hora_solicitacao_02} serverTime={serverTime} />
-                                    </td>
-                                    <td>{removerText(regulacao.status_regulacao)}</td>
-                                    <td className='td-Icons'>
-                                        <FcNews className='Icon Icons-Regulacao' title='Forçar Desfecho' />
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div className="Pagination">
-                <button className='button-pagination' onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>Anterior</button>
-                <span>{`Página ${currentPage} de ${totalPages}`}</span>
-                <button className='button-pagination' onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}>Próxima</button>
-            </div>
+          {/* Tabela de Regulações */}
+          <div>
+            <table className='Table-Regulacoes'>
+              <thead>
+                <tr>
+                  <th>Regulador NAC</th>
+                  <th>Pront.</th>
+                  <th>Nome Paciente</th>
+                  <th>Num. Regulação</th>
+                  <th>Un. Origem</th>
+                  <th>Un. Destino</th>
+                  <th>Tempo de Espera</th>
+                  <th>Fase</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {currentRegulacoes.map(regulacao => (
+                  <tr key={regulacao.id_regulacao}>
+                    <td>{regulacao.nome_regulador_nac}</td>
+                    <td>{regulacao.num_prontuario}</td>
+                    <td className="td-NomePaciente">{regulacao.nome_paciente}</td>
+                    <td>{regulacao.num_regulacao}</td>
+                    <td>{regulacao.un_origem}</td>
+                    <td>{regulacao.un_destino}</td>
+                    <td className='td-TempoEspera'>
+                      <TimeTracker startTime={regulacao.data_hora_solicitacao_02} serverTime={serverTime} />
+                    </td>
+                    <td>{removerText(regulacao.status_regulacao)}</td>
+                    <td className='td-Icons'>
+                      <FcNews
+                        className='Icon Icons-Regulacao'
+                        onClick={() => handleOpenModalDesfecho(regulacao)}
+                        title='Forçar Desfecho' />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
+        <div className="Pagination">
+          <button className='button-pagination' onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>Anterior</button>
+          <span>{`Página ${currentPage} de ${totalPages}`}</span>
+          <button className='button-pagination' onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}>Próxima</button>
+        </div>
+      </div>
+
+
+      {ShowModalDesfecho && currentRegulacao && dadosPaciente && (
+        <Modal show={ShowModalDesfecho} onClose={handleCloseModal} title='Desfecho'>
+          <Desfecho
+            dadosPaciente={currentRegulacao}
+            forcado= {true}
+            onClose={handleCloseModal} // Fecha o modal
+            showSnackbar={showSnackbar} // Passa o controle do Snackbar
+          />
+        </Modal>
+      )}
 
       <Snackbar
         open={snackbarOpen}

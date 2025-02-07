@@ -1,0 +1,162 @@
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { AxiosError } from 'axios';
+import { Snackbar, Alert } from "@mui/material";
+
+
+/*IMPORT INTERFACES*/
+import { UserData } from '../../interfaces/UserData';
+interface ReportData {
+  startDate?: string;
+  endDate?: string;
+}
+
+/*IMPORT COMPONENTS*/
+
+
+/*IMPORT FUNCTIONS*/
+import { getUserData } from '../../functions/storageUtils';
+
+
+
+/*IMPORT VARIAVEIS DE AMBIENTE*/
+const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
+
+const Relatorios: React.FC = () => {
+  const [userData, setUserData] = useState<UserData | null>(null);
+  const [formData, setFormData] = useState<ReportData>({});
+  const [showError, setShowError] = useState(false);
+
+
+  /*SNACKBAR*/
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error' | 'info' | 'warning'>("success");
+
+
+  //Pega dados do Seasson Storage
+  useEffect(() => {
+    const data = getUserData();
+    setUserData(data);
+  }, []);
+
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>): void => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+    setShowError(false);
+  };
+
+  const validateForm = (): boolean => {
+    return Object.values(formData).some(value => value && value.trim() !== '');
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!validateForm()) {
+      setShowError(true);
+      return;
+    }
+
+    try {
+      const dataToSubmit = {
+        ...formData,
+        id_user: userData?.id_user,
+      };
+
+      // Configura o axios para receber a resposta como um blob (arquivo)
+      const response = await axios.post(`${NODE_URL}/api/internal/report/Gerencial`, dataToSubmit)
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `Relatorio.csv`); // Nome do arquivo que será baixado
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode.removeChild(link);
+
+
+      // Exibe uma mensagem de sucesso
+      showSnackbar('Relatório gerado e download iniciado com sucesso!', 'success');
+    } catch (error) {
+      console.error('Erro na requisição:', error);
+      showSnackbar('Erro ao gerar o relatório.', 'error');
+    }
+  };
+
+  /*SNACKBARS*/
+  const handleSnackbarClose = (): void => {
+    setSnackbarOpen(false);
+  };
+
+  const showSnackbar = (
+    message: string,
+    severity: 'success' | 'error' | 'info' | 'warning'
+  ): void => {
+    setSnackbarMessage(message);
+    setSnackbarSeverity(severity);
+    setSnackbarOpen(true);
+  };
+
+
+  return (
+    <>
+      <div className='Component'>
+        Relatórios Gerencial
+
+        <div className="report-container">
+          <form onSubmit={handleSubmit} className="report-form">
+            {showError && <div className="error-message">Preencha pelo menos um campo para gerar o relatório</div>}
+
+            <div className="form-group">
+              <label>Data de Solicitação INICIO:</label>
+              <input
+                type="date"
+                name="data_Solicitacao_Inicio"
+                onChange={handleChange}
+                className="form-input"
+              />
+            </div>
+            <div className="form-group">
+              <label>Data de Solicitação FIM:</label>
+              <input
+                type="date"
+                name="data_Solicitacao_Fim"
+                onChange={handleChange}
+                className="form-input"
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="submit-button"
+              disabled={!validateForm()}
+            >
+              Gerar Relatório
+            </button>
+          </form>
+        </div>
+        );
+
+      </div>
+
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity={snackbarSeverity}
+          sx={{ width: "100%" }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
+    </>
+  );
+};
+
+
+export default Relatorios;

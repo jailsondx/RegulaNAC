@@ -8,6 +8,7 @@ const routePost = require('./routes/internal/post.ts');
 const routeGet = require('./routes/internal/get.ts');
 const routePut = require('./routes/internal/put.ts');
 const routeUpload = require("./routes/internal/upload.ts");
+const routerReport = require("./routes/internal/reports.ts");
 
 
 require('dotenv').config();
@@ -30,6 +31,7 @@ app.use('/api/internal/post', routePost);
 app.use('/api/internal/get', routeGet);
 app.use('/api/internal/put', routePut);
 app.use("/api/internal/upload", routeUpload);
+app.use("/api/internal/report", routerReport);
 
 app.get('/', (req, res) => {
     res.send('Backend API funcionando!');

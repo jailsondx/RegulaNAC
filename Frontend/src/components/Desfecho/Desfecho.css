@@ -1,109 +1,134 @@
 /* Container principal */
 .form-search {
-    display: flex;
-    flex-direction: column;
-    max-width: 70dvw;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: var(--component);
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    border: solid 1px var(--border-form-search);
-  }
-  
-  /* Linha individual para cada seção */
-  .search-desfecho-line {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-  }
+  display: flex;
+  flex-direction: column;
+  max-width: 70dvw;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: var(--component);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: solid 1px var(--border-form-search);
+}
 
-  .search-desfecho-line-button{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 5px;
-  }
-  
+/* Linha individual para cada seção */
+.search-desfecho-line {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.search-desfecho-line-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 5px;
+}
+
+.search-desfecho-row {
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+  flex-wrap: nowrap;
+}
+
+/* Estilos para os inputs e select */
+.search-desfecho-row input[type="text"],
+.search-desfecho-row input[type="number"],
+.search-desfecho-row select {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  width: 100%;
+  /* Garante que os inputs ocuparam toda a largura disponível */
+  box-sizing: border-box;
+}
+
+/* Ajuste no comportamento dos campos na linha 2 */
+.search-desfecho-row input[type="text"],
+.search-desfecho-row input[type="number"] .search-desfecho-row select {
+  flex: 1;
+  /* Faz com que os campos ocupem o mesmo espaço */
+  min-width: 220px;
+  /* Impede que os campos fiquem muito pequenos */
+}
+
+.search-desfecho-row input[type="text"]:focus,
+.search-desfecho-row input[type="number"]:focus,
+.search-desfecho-row select:focus {
+  border-color: #4CAF50;
+  box-shadow: 0 0 5px rgba(76, 175, 80, 0.2);
+}
+
+
+/* Botão de pesquisa */
+.search-button {
+  background-color: #4CAF50;
+  color: white;
+  padding: 12px;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.search-button:hover {
+  background-color: #45a049;
+  transform: scale(1.05);
+}
+
+.search-button:active {
+  transform: scale(1);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
   .search-desfecho-row {
-    display: flex;
-    flex-direction: row;
-    gap: 15px;
-    flex-wrap: nowrap;
+    flex-direction: column;
   }
-  
-  /* Estilos para os inputs e select */
-  .search-desfecho-row input[type="text"],
-  .search-desfecho-row input[type="number"],
-  .search-desfecho-row select {
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    outline: none;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    width: 100%; /* Garante que os inputs ocuparam toda a largura disponível */
-    box-sizing: border-box;
-  }
-  
-  /* Ajuste no comportamento dos campos na linha 2 */
-  .search-desfecho-row input[type="text"], .search-desfecho-row input[type="number"]
-  .search-desfecho-row select {
-    flex: 1; /* Faz com que os campos ocupem o mesmo espaço */
-    min-width: 220px; /* Impede que os campos fiquem muito pequenos */
-  }
-  
-  .search-desfecho-row input[type="text"]:focus,
-  .search-desfecho-row input[type="number"]:focus,
-  .search-desfecho-row select:focus {
-    border-color: #4CAF50;
-    box-shadow: 0 0 5px rgba(76, 175, 80, 0.2);
-  }
-  
-  
-  /* Botão de pesquisa */
-  .search-button {
-    background-color: #4CAF50;
-    color: white;
-    padding: 12px;
-    font-weight: bold;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-  }
-  
-  .search-button:hover {
-    background-color: #45a049;
-    transform: scale(1.05);
-  }
-  
-  .search-button:active {
-    transform: scale(1);
-  }
-  
-  /* Responsividade */
-  @media (max-width: 768px) {
-    .search-desfecho-row {
-      flex-direction: column;
-    }
-  
-    /* Os inputs e select terão 100% da largura na tela pequena */
-    .search-desfecho-row input,
-    .search-desfecho-row select {
-      width: 100%;
-      min-width: unset;
-    }
-  
-    input[type="text"],
-    input[type="number"],
-    select {
-      padding: 8px;
-    }
-  
-    .search-button {
-      padding: 10px;
-    }
-  }
-  
 
-  
+  /* Os inputs e select terão 100% da largura na tela pequena */
+  .search-desfecho-row input,
+  .search-desfecho-row select {
+    width: 100%;
+    min-width: unset;
+  }
+
+  input[type="text"],
+  input[type="number"],
+  select {
+    padding: 8px;
+  }
+
+  .search-button {
+    padding: 10px;
+  }
+}
+
+.div-Desfecho{
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  height: 20dvh;
+  min-height: 130px;
+}
+
+.subdiv-Desfecho{
+  display: flex;
+  width: 98%;
+  gap: 10%;
+}
+
+
+
+.Desfecho-line {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+  margin-bottom: 20px;
+}

@@ -62,6 +62,8 @@ const Sidebar: React.FC = () => {
             <li><Link to="/ListaRegulacoes"><TiClipboard className='Icon-Menu-Item' /><label className='textMenu-Item'>Lista de Regulações</label></Link></li>
             <li><Link to="/RegulacoesAprovadas"><TiThumbsUp className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações Aprovadas</label></Link></li>
             <li><Link to="/Desfechos"><TiHomeOutline  className='Icon-Menu-Item' /><label className='textMenu-Item'>Desfechos</label></Link></li>
+            <li><Link to="/RelatoriosRegulacao"><TiHomeOutline  className='Icon-Menu-Item' /><label className='textMenu-Item'>Relatorios R</label></Link></li>
+            <li><Link to="/RelatoriosGerencial"><TiHomeOutline  className='Icon-Menu-Item' /><label className='textMenu-Item'>Relatorios G</label></Link></li>
             <hr/>
           </ul>
           <li><Link to="/ListaRegulacoes24"><TiClipboard className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações +24hrs</label></Link></li>
@@ -79,6 +81,8 @@ const Sidebar: React.FC = () => {
             <li><Link to="/ListaRegulacoes"><TiClipboard className='Icon-Menu-Item' /><label className='textMenu-Item'>Lista de Regulações</label></Link></li>
             <li><Link to="/RegulacoesAprovadas"><TiThumbsUp className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações Aprovadas</label></Link></li>
             <li><Link to="/Desfechos"><TiHomeOutline  className='Icon-Menu-Item' /><label className='textMenu-Item'>Desfechos</label></Link></li>
+            <li><Link to="/RelatoriosRegulacao"><TiHomeOutline  className='Icon-Menu-Item' /><label className='textMenu-Item'>Relatorios</label></Link></li>
+            <li><Link to="/RelatoriosGerencial"><TiHomeOutline  className='Icon-Menu-Item' /><label className='textMenu-Item'>Relatorios G</label></Link></li>
             <hr/>
           </ul>
           <li><Link to="/ListaRegulacoes24"><TiClipboard className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações +24hrs</label></Link></li>

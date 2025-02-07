@@ -3,7 +3,8 @@ export interface DesfechoData {
   id_regulacao: number | null;
   desfecho: string;
   criticidade: string;
-  fastmedic: string;
+  forcado: boolean;
+  fastmedic: boolean;
 }
 
 export interface DesfechoOptions {

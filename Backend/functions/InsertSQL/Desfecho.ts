@@ -7,6 +7,7 @@ const UpdateStatus = require("../UpdateSQL/UpdateStatus.ts");
 async function Desfecho(FormData) {
     const DBtable = 'desfecho';
     const DBtableUsuarios = 'usuarios';
+    const DesfechoForcado = FormData.forcado;
     const StatusAtual = 'ABERTO - APROVADO - AGUARDANDO DESFECHO';
     const NovoStatus = 'FECHADO';
     const msgError = 'Desfecho não pode ser atualizado; Status atual é: ';
@@ -40,11 +41,13 @@ async function Desfecho(FormData) {
         // Verifica o status da regulação
         const statusCheck = await VerificaStatus(FormData.id_regulacao, StatusAtual, msgError);
 
-        if (!statusCheck.success) {
-            // Retorna a mensagem de erro da VerificaStatus
-            return { success: false, message: statusCheck.message };
+        if(DesfechoForcado === false){
+            if (!statusCheck.success) {
+                // Retorna a mensagem de erro da VerificaStatus
+                return { success: false, message: statusCheck.message };
+            }    
         }
-
+       
         // Usuário possui permissão, insira os dados no banco
         const [result] = await connection.query(
             `INSERT INTO ${DBtable} SET ?`,
