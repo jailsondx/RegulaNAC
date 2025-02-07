@@ -154,7 +154,7 @@ const SetorDestino: React.FC<PropsDadosPaciente> = ({ dadosPaciente, onClose, sh
                             <input
                                 type="datetime-local"
                                 name="data_hora_comunicacao"
-                                className="SetorOrigemDestino-line-input"
+                                className="SetorOrigemDestino-line-input-2"
                                 value={formData.data_hora_comunicacao}
                                 onChange={handleChange}
                                 required

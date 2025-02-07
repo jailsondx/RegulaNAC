@@ -98,8 +98,11 @@ const ListarDesfecho: React.FC = () => {
     setFormData(prevData => ({ ...prevData, [name]: value }));
   };
 
-  const handleSearch = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSearch = async (e?: React.FormEvent) => {
+    // Evita o comportamento padrão do formulário se o evento existir
+    if (e) {
+      e.preventDefault();
+    }
 
     try {
       const params = new URLSearchParams();
@@ -142,7 +145,9 @@ const ListarDesfecho: React.FC = () => {
   };
 
   const handleCloseModal = () => {
+    handleSearch();
     setShowModalDesfecho(false);
+
     //window.location.reload(); // Recarregar a página ao fechar o modal
   };
 

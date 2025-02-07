@@ -84,6 +84,8 @@ async function relatorioGerencial(FormData) {
     const startDate = FormData.data_Solicitacao_Inicio;
     const endDate = FormData.data_Solicitacao_Fim;
 
+    console.log(startDate+endDate);
+
     try {
         const connection = await DBconnection.getConnection();
 
@@ -110,7 +112,7 @@ async function relatorioGerencial(FormData) {
             WHERE DATE(data_hora_solicitacao_01) BETWEEN ? AND ?
               AND status_regulacao = ?
             GROUP BY un_destino
-        `, [startDate, endDate, 'FINALIZADO']);
+        `, [startDate, endDate, 'FECHADO']);
 
         connection.release();
 

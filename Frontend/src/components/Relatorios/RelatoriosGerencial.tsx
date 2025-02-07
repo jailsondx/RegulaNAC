@@ -17,7 +17,8 @@ interface ReportData {
 /*IMPORT FUNCTIONS*/
 import { getUserData } from '../../functions/storageUtils';
 
-
+/*IMPORT CSS*/
+import './Relatorios.css';
 
 /*IMPORT VARIAVEIS DE AMBIENTE*/
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
@@ -102,15 +103,22 @@ const Relatorios: React.FC = () => {
 
   return (
     <>
-      <div className='Component'>
-        Relatórios Gerencial
+      <div>
+        <label className='Title-Form'>Gerar relatório Gerencial</label>
+      </div>
 
-        <div className="report-container">
-          <form onSubmit={handleSubmit} className="report-form">
-            {showError && <div className="error-message">Preencha pelo menos um campo para gerar o relatório</div>}
+      <div className="ComponentForm">
+        <form onSubmit={handleSubmit} className="report-form">
+          {showError && <div className="error-message">Preencha pelo menos um campo para gerar o relatório</div>}
 
-            <div className="form-group">
-              <label>Data de Solicitação INICIO:</label>
+          <div className='SubTitle-Form'>
+            <label>Insira o intervalo de datas referente a 1ª Solicitação</label>
+          </div>
+
+
+          <div className='report-inputs'>
+            <div>
+              <label>Data Inicial</label>
               <input
                 type="date"
                 name="data_Solicitacao_Inicio"
@@ -118,8 +126,9 @@ const Relatorios: React.FC = () => {
                 className="form-input"
               />
             </div>
-            <div className="form-group">
-              <label>Data de Solicitação FIM:</label>
+
+            <div>
+              <label>Data Final</label>
               <input
                 type="date"
                 name="data_Solicitacao_Fim"
@@ -127,19 +136,16 @@ const Relatorios: React.FC = () => {
                 className="form-input"
               />
             </div>
+          </div>
 
-            <button
-              type="submit"
-              className="submit-button"
-              disabled={!validateForm()}
-            >
-              Gerar Relatório
-            </button>
-          </form>
-        </div>
-        );
 
+          <div className='Form-NovaRegulacao-Buttons'>
+            <button type="submit" className="submit-button" disabled={!validateForm()}> Gerar Relatório </button>
+          </div>
+
+        </form>
       </div>
+
 
       <Snackbar
         open={snackbarOpen}

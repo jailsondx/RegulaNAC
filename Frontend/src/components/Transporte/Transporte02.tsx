@@ -26,6 +26,7 @@ interface Props {
 const initialFormData: TransporteDatesData = {
     data_hora_chegada_origem: '',
     data_hora_saida_origem: '',
+    data_hora_liberacao_leito: '',
     data_hora_chegada_destino: '',
 };
 
@@ -49,7 +50,7 @@ const Transporte02: React.FC<Props> = ({ dadosPaciente, onClose, showSnackbar, }
     };
 
     const validateForm = (): boolean => {
-        if (!formData.data_hora_chegada_origem.trim() || !formData.data_hora_saida_origem.trim() || !formData.data_hora_chegada_destino.trim()) {
+        if (!formData.data_hora_chegada_origem.trim() || !formData.data_hora_saida_origem.trim() || !formData.data_hora_liberacao_leito.trim() || !formData.data_hora_chegada_destino.trim()) {
             showSnackbar('Todas as datas e horário são obrigatórios!', 'warning');
             return false;
         }
@@ -151,6 +152,17 @@ const Transporte02: React.FC<Props> = ({ dadosPaciente, onClose, showSnackbar, }
 
                     {currentStep === 2 && (
                         <div className="StepContent">
+                             <div className="Transporte-line">
+                                <label>Hora da liberação do leito:</label>
+                                <input
+                                    type="datetime-local"
+                                    name="data_hora_liberacao_leito"
+                                    className="data_hora_transporte"
+                                    value={formData.data_hora_liberacao_leito}
+                                    onChange={handleChange}
+                                    required
+                                />
+                            </div>
                             <div className="Transporte-line">
                                 <label>Chegada do Paciente no Setor de Destino:</label>
                                 <input

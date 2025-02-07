@@ -454,7 +454,7 @@ const RegulacoesAprovadas: React.FC = () => {
         <Modal show={ShowModalDesfecho} onClose={handleCloseModal} title='Desfecho'>
           <Desfecho
             dadosPaciente={currentRegulacao}
-            forcado='FALSE'
+            forcado= {false}
             onClose={handleCloseModal} // Fecha o modal
             showSnackbar={showSnackbar} // Passa o controle do Snackbar
           />

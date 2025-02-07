@@ -266,6 +266,11 @@ select {
   text-transform: uppercase;
 }
 
+.SubTitle-Form{
+  font-size: 14px;
+  margin: 0px 0px 20px 0px; /*top, direita, bottom, esquerda*/
+}
+
 .ComponentForm {
   width: 35dvw;
   min-width: 300px;

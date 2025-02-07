@@ -60,8 +60,15 @@ const Desfecho: React.FC<PropsDadosPaciente> = ({ dadosPaciente, forcado, onClos
 
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>): void => {
         const { name, value, type } = e.target;
-        const fieldValue = type === 'checkbox' ? (e.target as HTMLInputElement).checked : value;
-
+        let fieldValue: string | boolean = value;
+    
+        if (type === 'checkbox') {
+            fieldValue = (e.target as HTMLInputElement).checked;
+        } else if (name === 'fastmedic') {
+            // Converte o valor de string para booleano
+            fieldValue = value === 'true';
+        }
+    
         setFormData((prevState) => ({
             ...prevState,
             [name]: fieldValue,
@@ -171,7 +178,7 @@ const Desfecho: React.FC<PropsDadosPaciente> = ({ dadosPaciente, forcado, onClos
                                 onChange={handleChange}
                                 required
                             >
-                                <option value="false" selected>NÃO</option>
+                                <option value="false">NÃO</option>
                                 <option value="true">SIM</option>
                             </select>
                         </div>

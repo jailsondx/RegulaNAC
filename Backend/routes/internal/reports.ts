@@ -36,6 +36,8 @@ routerReport.post('/Gerencial', async (req, res) => {
 
   const formData = convertObjectToUpperCase(req.body);
 
+  console.log(formData);
+
   try {
     // Chama a função para autenticar o usuário
     const { success, data, error, filePath } = await relatorioGerencial(formData);
