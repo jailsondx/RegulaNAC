@@ -130,5 +130,5 @@ dist
 .pnp.*
 
 #Ignore de almus pastas
-backend/uploadsReg
-backend/Relatorios
+backend/src/uploadsReg
+backend/src/Relatorios

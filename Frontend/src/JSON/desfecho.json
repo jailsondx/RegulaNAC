@@ -1,7 +1,14 @@
-
 [
   { "value": "ALTA", "label": "ALTA" },
+  { "value": "ÓBITO", "label": "ÓBITO" },
+  { "value": "TRANSFERÊNCIA EXTERNA", "label": "TRANSFERÊNCIA EXTERNA" },
+  { "value": "PRIORIZADO OUTRO PACIENTE", "label": "PRIORIZADO OUTRO PACIENTE" },
+  { "value": "MUDANÇA DE PERFIL", "label": "MUDANÇA DE PERFIL" },
+  { "value": "MÉDICO CANCELOU", "label": "MÉDICO CANCELOU" },
+  { "value": "FORA DO PERFIL", "label": "FORA DO PERFIL" },
+  { "value": "INSTABILIDADE CLÍNICA", "label": "INSTABILIDADE CLÍNICA" },
+  { "value": "RECUSA DO PCT", "label": "RECUSA DO PCT" },
+  { "value": "EVASÃO", "label": "EVASÃO" },
   { "value": "CANCELADO", "label": "CANCELADO" },
-  { "value": "MUDANÇA DE PERFIL", "label": "MUDANÇA PERFIL" },
-  { "value": "TRANSFERENCIA EXTERNA", "label": "TRANSFERENCIA EXTERNA" }
+  { "value": "PACIENTE NÃO COMPARECEU", "label": "PACIENTE NÃO COMPARECEU" }
 ]
