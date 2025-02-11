@@ -2,6 +2,8 @@ import React, { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 import axios from 'axios';
 import { AxiosError } from 'axios';
 
+/*IMPORT COMPONENTS*/
+import DadosPaciente from '../Dados Paciente/DadosPaciente';
 
 /*IMPORT INTERFACES*/
 import { UserData } from '../../interfaces/UserData';
@@ -87,7 +89,7 @@ const NovaRegulacaoMedicoNegada: React.FC<Props> = ({ dadosPaciente, onClose, sh
       // Verifique se o erro é uma instância de AxiosError antes de acessar propriedades específicas
       if (error instanceof AxiosError) {
         console.error('Erro ao cadastrar regulação médica:', error);
-    
+
         // Exibe mensagem de erro retornada pela API ou mensagem padrão
         showSnackbar(
           error.response?.data?.message || 'Erro ao cadastrar regulação médica. Por favor, tente novamente.',
@@ -104,24 +106,14 @@ const NovaRegulacaoMedicoNegada: React.FC<Props> = ({ dadosPaciente, onClose, sh
 
   return (
     <div>
-      <div className='DadosPaciente-Border'>
-        <label className='TitleDadosPaciente'>Dados Paciente</label>
-        <div className='Div-DadosPaciente RegulacaoPaciente'>
-          <label>Paciente: {dadosPaciente.nome_paciente}</label>
-          <label>Regulação: {dadosPaciente.num_regulacao}</label>
-          <label>Un. Origem: {dadosPaciente.un_origem}</label>
-          <label>Un. Destino: {dadosPaciente.un_destino}</label>
-
-        </div>
-        <div className='Div-DadosMedico RegulacaoPaciente'>
-          <label>Médico Regulador: {dadosPaciente.nome_regulador_medico}</label>
-        </div>
+      <div>
+        <DadosPaciente dadosPaciente={dadosPaciente} />
       </div>
 
 
       <form onSubmit={handleSubmit}>
         <div className='Div-RegulacaoMedica-AprovadaNegada'>
-          
+
           <div className='nome_regulador_medico'>
             <label>Médico:</label>
             <input
@@ -145,7 +137,7 @@ const NovaRegulacaoMedicoNegada: React.FC<Props> = ({ dadosPaciente, onClose, sh
           />
         </div>
 
-      
+
         <button type="submit" className='button-red'>Negar</button>
       </form>
     </div>

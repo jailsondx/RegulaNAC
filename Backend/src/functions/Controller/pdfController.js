@@ -11,7 +11,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const storage = multer.diskStorage({
-  destination: (req, cb) => {
+  destination: (req, file, cb) => { // Adicionando 'file' como segundo parâmetro
     const { year, month, day } = req.body;
     if (!year || !month || !day) {
       return cb(new Error('Dados de data não fornecidos.'), null);

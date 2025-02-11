@@ -10,6 +10,8 @@ async function Desfecho(FormData) {
     const NovoStatus = 'FECHADO';
     const msgError = 'Desfecho não pode ser atualizado; Status atual é: ';
 
+    console.log('RECEBIDO:'+FormData);
+
     let connection;
     try {
         // Inicia a conexão com o banco de dados
@@ -43,8 +45,8 @@ async function Desfecho(FormData) {
 
         // Insere os dados no banco
         const [result] = await connection.query(
-            `INSERT INTO ${DBtable} (id_regulacao, id_user, descricao, forcado, data_hora) VALUES (?, ?, ?, ?, ?)`,
-            [FormData.id_regulacao, FormData.id_user, FormData.descricao, FormData.forcado, FormData.data_hora]
+            `INSERT INTO ${DBtable} SET ?`,
+            [FormData]
         );
 
         if (result.affectedRows === 0) {

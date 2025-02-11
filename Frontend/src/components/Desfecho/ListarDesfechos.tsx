@@ -80,18 +80,6 @@ const ListarDesfecho: React.FC = () => {
     }
   }, [location.state?.snackbar]);
 
-  const showSnackbar = (
-    message: string,
-    severity: 'success' | 'error' | 'info' | 'warning'
-  ): void => {
-    setSnackbarMessage(message);
-    setSnackbarSeverity(severity);
-    setSnackbarOpen(true);
-  };
-
-  const handleSnackbarClose = (): void => {
-    setSnackbarOpen(false);
-  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -134,6 +122,7 @@ const ListarDesfecho: React.FC = () => {
     const dados: DadosPacienteData = {
       nome_paciente: regulacao.nome_paciente,
       num_regulacao: regulacao.num_regulacao,
+      num_prontuario: regulacao.num_prontuario,
       un_origem: regulacao.un_origem,
       un_destino: regulacao.un_destino,
       id_regulacao: regulacao.id_regulacao,
@@ -159,6 +148,20 @@ const ListarDesfecho: React.FC = () => {
   //CONFIGURA A PAGINAÇÃO
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
+  };
+
+
+  const showSnackbar = (
+    message: string,
+    severity: 'success' | 'error' | 'info' | 'warning'
+  ): void => {
+    setSnackbarMessage(message);
+    setSnackbarSeverity(severity);
+    setSnackbarOpen(true);
+  };
+
+  const handleSnackbarClose = (): void => {
+    setSnackbarOpen(false);
   };
 
   const indexOfLastRegulacao = currentPage * itemsPerPage;
@@ -210,7 +213,7 @@ const ListarDesfecho: React.FC = () => {
                   value={formData.statusRegulacao}
                   onChange={handleInputChange}
                 >
-                  <option value="">Selecione uma unidade</option>
+                  <option value="">Selecione uma status</option>
                   {statusRegulacao.map((statusRegulacao) => (
                     <option key={statusRegulacao.value} value={statusRegulacao.value}>
                       {statusRegulacao.label}

@@ -11,6 +11,7 @@ import { UnidadeData } from '../../interfaces/Unidade.ts';
 import { UserData } from '../../interfaces/UserData';
 
 /*IMPORT COMPONENTS*/
+import DadosPaciente from '../Dados Paciente/DadosPaciente';
 
 /*IMPORT FUNCTIONS*/
 import { getUserData } from '../../functions/storageUtils';
@@ -253,18 +254,8 @@ const AtualizaRegulacao: React.FC = () => {
       </div>
       {dadosPaciente ? (
         <form onSubmit={handleSubmit} className="ComponentForm">
-          <div className='DadosPaciente-Border'>
-            <label className='TitleDadosPaciente'>Dados Paciente</label>
-            <div className='Div-DadosPaciente RegulacaoPaciente'>
-              <label>Paciente: {dadosPaciente.nome_paciente}</label>
-              <label>Regulação: {dadosPaciente.num_regulacao}</label>
-              <label>Un. Origem: {dadosPaciente.un_origem}</label>
-              <label>Un. Destino: {dadosPaciente.un_destino}</label>
-
-            </div>
-            <div className='Div-DadosMedico'>
-              <label>Médico Regulador: {dadosPaciente.nome_regulador_medico}</label>
-            </div>
+          <div>
+            <DadosPaciente dadosPaciente={dadosPaciente} />
           </div>
 
           <div className="StepContent">

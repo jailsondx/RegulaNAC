@@ -2,6 +2,9 @@ import React, { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 import axios from 'axios';
 import { AxiosError } from 'axios';
 
+/*IMPORT COMPONENTS*/
+import DadosPaciente from '../Dados Paciente/DadosPaciente';
+
 /*IMPORT FUNCTIONS*/
 import { getUserData } from '../../functions/storageUtils';
 
@@ -119,20 +122,8 @@ const Desfecho: React.FC<PropsDadosPaciente> = ({ dadosPaciente, forcado, onClos
 
     return (
         <>
-            <div className='DadosPaciente-Border'>
-                <label className='TitleDadosPaciente'>Dados Paciente</label>
-                <div className='Div-DadosPaciente RegulacaoPaciente'>
-                    <label>Paciente: {dadosPaciente.nome_paciente}</label>
-                    <label>Regulação: {dadosPaciente.num_regulacao}</label>
-                    <label>Un. Destino: {dadosPaciente.un_origem}</label>
-                    <span>
-                        <label>Un. Destino: {dadosPaciente.un_destino}</label>
-                        <label>Leito: {dadosPaciente.num_leito}</label>
-                    </span>
-                </div>
-                <div className='Div-DadosMedico RegulacaoPaciente'>
-                    <label>Médico Regulador: {dadosPaciente.nome_regulador_medico}</label>
-                </div>
+            <div>
+                <DadosPaciente dadosPaciente={dadosPaciente} />
             </div>
 
             <form onSubmit={handleSubmit}>
@@ -189,7 +180,7 @@ const Desfecho: React.FC<PropsDadosPaciente> = ({ dadosPaciente, forcado, onClos
 
                     
                 </div>
-                <p>*Forçar o desfecho ira encerrar essa regulação, essa ação não pode ser desfeita.</p>
+                <p>*O desfecho ira encerrar essa regulação, essa ação não pode ser desfeita.</p>
                 <button type="submit">Cadastrar Desfecho</button>
             </form>
             

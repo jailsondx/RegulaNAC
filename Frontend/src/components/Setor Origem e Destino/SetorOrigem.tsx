@@ -2,6 +2,9 @@ import React, { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 import axios from 'axios';
 import { AxiosError } from 'axios';
 
+/*IMPORT COMPONENTS*/
+import DadosPaciente from '../Dados Paciente/DadosPaciente';
+
 /*IMPORT FUNCTIONS*/
 import { getUserData } from '../../functions/storageUtils';
 
@@ -79,15 +82,15 @@ const SetorOrigem: React.FC<Props> = ({ dadosPaciente, onClose, showSnackbar }) 
             };
 
             const response = await axios.post(`${NODE_URL}/api/internal/post/RegulacaoOrigem`, dataToSubmit);
-           
-            if(response.status === 200){
+
+            if (response.status === 200) {
                 // Mensagem com base na resposta da API
                 showSnackbar(
                     response.data?.message || 'Regulação Aprovada - Origem: Sucesso!',
                     'success'
                 );
                 onClose(); // Fecha o modal
-            } else{
+            } else {
                 // Mensagem com base na resposta da API
                 showSnackbar(
                     response.data?.message || 'Regulação Aprovada - Origem: Erro!',
@@ -97,43 +100,28 @@ const SetorOrigem: React.FC<Props> = ({ dadosPaciente, onClose, showSnackbar }) 
 
         } catch (error: unknown) {
             if (error instanceof AxiosError && error.response) {
-              const { data } = error.response;
-              
-              // Mensagem com base na resposta da API
-              showSnackbar(
-                data?.message || 'Erro desconhecido. Por favor, tente novamente.',
-                'error'
-              );
+                const { data } = error.response;
+
+                // Mensagem com base na resposta da API
+                showSnackbar(
+                    data?.message || 'Erro desconhecido. Por favor, tente novamente.',
+                    'error'
+                );
             } else {
-              // Se o erro não for um AxiosError ou não tiver uma resposta
-              showSnackbar(
-                'Erro na requisição. Por favor, verifique sua conexão ou tente novamente.',
-                'error'
-              );
+                // Se o erro não for um AxiosError ou não tiver uma resposta
+                showSnackbar(
+                    'Erro na requisição. Por favor, verifique sua conexão ou tente novamente.',
+                    'error'
+                );
             }
-          }
+        }
     };
 
     return (
         <>
-      <div className='DadosPaciente-Border'>
-        <label className='TitleDadosPaciente'>Dados Paciente</label>
-        <div className='Div-DadosPaciente RegulacaoPaciente'>
-          <label>Paciente: { dadosPaciente.nome_paciente }</label>
-          <label>Regulação: { dadosPaciente.num_regulacao }</label>
-          <label>Un. Origem: { dadosPaciente.un_origem }</label>
-          <span>
-            <label>Un. Destino: { dadosPaciente.un_destino }</label>
-            <label>Leito: { dadosPaciente.num_leito }</label>
-          </span>
-
-          
-          
-        </div>
-        <div className='Div-DadosMedico RegulacaoPaciente'>
-          <label>Médico Regulador: { dadosPaciente.nome_regulador_medico }</label>
-        </div>
-      </div>
+            <div>
+                <DadosPaciente dadosPaciente={dadosPaciente} />
+            </div>
 
             <form onSubmit={handleSubmit}>
                 <div className='div-SetorOrigemDestino'>
@@ -149,7 +137,7 @@ const SetorOrigem: React.FC<Props> = ({ dadosPaciente, onClose, showSnackbar }) 
                             />
                         </div>
                     </div>
-                    
+
                     <div className='subdiv-SetorOrigemDestino'>
                         <div className="SetorOrigemDestino-line">
                             <label>Data e Hora do Acionamento:</label>
@@ -175,7 +163,7 @@ const SetorOrigem: React.FC<Props> = ({ dadosPaciente, onClose, showSnackbar }) 
                             />
                         </div>
                     </div>
-                   
+
                 </div>
                 <button type="submit">Cadastrar Origem</button>
             </form>
