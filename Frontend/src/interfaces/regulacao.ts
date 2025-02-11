@@ -2,16 +2,16 @@
 
 export interface NovaRegulacaoData {
   id_user: string;
-  num_prontuario: number;
+  num_prontuario: number | null;
   nome_paciente: string;
   data_nascimento: string;
-  num_idade: number;
+  num_idade: number | null;
   un_origem: string;
   un_destino: string;
   prioridade?: string | null;
   data_hora_solicitacao_01: string;
   data_hora_solicitacao_02: string;
-  qtd_solicitacoes: number;
+  qtd_solicitacoes: number | null;
   nome_regulador_nac: string;
   num_regulacao: number;
   nome_regulador_medico: string;

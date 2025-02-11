@@ -1,5 +1,6 @@
 import React, { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 import axios from 'axios';
+import { AxiosError } from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Snackbar, Alert } from '@mui/material';
 import { FcCheckmark, FcLeave } from "react-icons/fc";
@@ -7,6 +8,7 @@ import { FcCheckmark, FcLeave } from "react-icons/fc";
 /*IMPORT INTERFACES*/
 import { NovaRegulacaoData } from '../../interfaces/Regulacao';
 import { UserData } from '../../interfaces/UserData';
+import { UnidadeData } from '../../interfaces/Unidade';
 
 /*IMPORT COMPONENTS*/
 
@@ -39,7 +41,7 @@ const initialFormData: NovaRegulacaoData = {
   data_hora_solicitacao_02: '',
   qtd_solicitacoes: 1,
   nome_regulador_nac: '',
-  num_regulacao: null,
+  num_regulacao: 0,
   nome_regulador_medico: '',
   data_hora_acionamento_medico: '',
   status_regulacao: '',
@@ -49,8 +51,8 @@ const initialFormData: NovaRegulacaoData = {
 const NovaRegulacao: React.FC = () => {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [file, setFile] = useState<File | null>(null);
-  const [unidadesOrigem, setUnidadesOrigem] = useState([]);
-  const [unidadesDestino, setUnidadesDestino] = useState([]);
+  const [unidadesOrigem, setUnidadesOrigem] = useState<UnidadeData[]>([]);
+  const [unidadesDestino, setUnidadesDestino] = useState<UnidadeData[]>([]);
   const [formData, setFormData] = useState<NovaRegulacaoData>(initialFormData);
   const [medicos, setMedicos] = useState<string[]>([]); // Lista de médicos da API
   const navigate = useNavigate();
@@ -58,10 +60,13 @@ const NovaRegulacao: React.FC = () => {
   const [iconStatusProntDeny, setIconStatusProntDeny] = useState<boolean>(false);
   const [iconStatusRegOk, setIconStatusRegOk] = useState<boolean>(false);
   const [iconStatusRegDeny, setIconStatusRegDeny] = useState<boolean>(false);
-  const [error, setError] = useState<string>('');
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [showAtualizarButton, setShowAtualizarButton] = useState<boolean>(false);
-  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'info' as 'success' | 'error' | 'info' | 'warning' });
+
+  /*SNACKBAR*/
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error' | 'info' | 'warning'>("success");
 
   // Carregar os dados do arquivo JSON
   useEffect(() => {
@@ -77,8 +82,19 @@ const NovaRegulacao: React.FC = () => {
         const response = await axios.get(`${NODE_URL}/api/internal/get/ListaMedicos`);
         const nomes_medicos_list = response.data.data;
         setMedicos(nomes_medicos_list || []); // Supondo que o retorno é { medicos: [] }
-      } catch (err: any) {
-        setError(err.response?.data?.message || 'Erro ao carregar lista de médicos.');
+      } catch (error: unknown) {
+        if (error instanceof AxiosError) {
+          console.error('Erro ao carregar lista de médicos.', error);
+          showSnackbar(error.response?.data?.message || 'Erro ao carregar lista de médicos.', 'error');
+        } else if (error instanceof Error) {
+          // Se o erro for do tipo genérico `Error`, trate-o também
+          console.error('Erro desconhecido:', error.message);
+          showSnackbar('Erro desconhecido:', 'error');
+        } else {
+          // Caso o erro seja de um tipo inesperado
+          console.error('Erro inesperado:', error);
+          showSnackbar('Erro inesperado:', 'error');
+        }
       }
     };
 
@@ -90,8 +106,6 @@ const NovaRegulacao: React.FC = () => {
     const data = getUserData();
     setUserData(data);
   }, []);
-
-  const handleSnackbarClose = () => setSnackbar({ ...snackbar, open: false });
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>): void => {
     const { name, value, type } = e.target;
@@ -148,10 +162,9 @@ const NovaRegulacao: React.FC = () => {
 
     // Exibir erro ou retornar sucesso
     if (invalidField) {
-      setSnackbar({ open: true, message: invalidField, severity: 'warning' });
+      showSnackbar(invalidField || 'Revise os Campos', 'warning');
       return false;
     }
-
     return true;
   };
 
@@ -166,78 +179,83 @@ const NovaRegulacao: React.FC = () => {
     const year = getYear(datetime);
     const month = getMonth(datetime);
     const day = getDay(datetime);
-    
+
     const formData = new FormData();
     formData.append('year', year);
     formData.append('month', month);
-    formData.append('day', day); 
+    formData.append('day', day);
     formData.append('file', file!);
     formData.append('num_regulacao', numRegulacao.toString()); // Adicionando num_regulacao no corpo da requisição
-  
+
     try {
       const response = await axios.post(`${NODE_URL}/api/internal/upload/uploadPDF`, formData, {
         params: { numRegulacao }, // Passando numRegulacao através de params
         headers: { 'Content-Type': 'multipart/form-data' },
       });
-  
+
       // Resposta de sucesso
-      setSnackbar({
-        open: true,
-        message: response.data.message || 'Arquivo enviado com sucesso!',
-        severity: 'success',
-      });
-    } catch (error: any) {
-      setSnackbar({
-        open: true,
-        message: error.response?.data?.message || 'Erro ao enviar arquivo. Tente novamente.',
-        severity: 'error',
-      });
-      throw new Error('Erro ao enviar o arquivo');
+      showSnackbar(response.data.message || 'Erro inesperado:', 'success');
+    } catch (error: unknown) {
+      if (error instanceof AxiosError) {
+        console.error('Erro ao enviar o arquivo:', error);
+        showSnackbar('Erro ao enviar o arquivo:', 'error');
+      } else if (error instanceof Error) {
+        // Se o erro for do tipo genérico `Error`, trate-o também
+        console.error('Erro desconhecido:', error.message);
+        showSnackbar('Erro desconhecido:', 'error');
+      } else {
+        // Caso o erro seja de um tipo inesperado
+        console.error('Erro inesperado:', error);
+        showSnackbar('Erro inesperado:', 'error');
+      }
     }
   };
-  
+
   const handleSubmit = async (e: FormEvent): Promise<void> => {
     e.preventDefault();
-    
+
     // Valida o formulário primeiro
     if (!validateForm()) return;
-    
+
     try {
       const dataToSubmit = {
         ...formData,
         id_user: userData?.id_user, // Use o operador de encadeamento opcional para evitar erros se `userData` for `null`
         nome_regulador_nac: userData?.nome,
       };
-  
+
       // Envia o formulário primeiro
       const response = await axios.post(`${NODE_URL}/api/internal/post/NovaRegulacao`, dataToSubmit);
-  
+
       // Verifica se há arquivo e, caso haja, faz o upload
       if (file) {
         await uploadFile(dataToSubmit.data_hora_solicitacao_01, dataToSubmit.num_regulacao);  // Espera o upload do arquivo ser concluído antes de prosseguir
       }
-  
+
       // Se tudo ocorrer bem, exibe a resposta
-      setSnackbar({
-        open: true,
-        message: response.data.message || 'Regulação cadastrada com sucesso',
-        severity: 'success',
-      });
-  
+      showSnackbar(response.data.message || 'Erro inesperado:', 'success');
+
       // Limpeza de dados após o sucesso
       setFormData(initialFormData);
       setFile(null); // Reseta o arquivo após o envio
       setCurrentStep(1); // Reinicia o passo no processo, caso haja
-  
-    } catch (error: any) {
-      setSnackbar({
-        open: true,
-        message: error.response?.data?.message || 'Erro ao cadastrar regulação. Por favor, tente novamente.',
-        severity: 'error',
-      });
+
+    } catch (error: unknown) {
+      if (error instanceof AxiosError) {
+        console.error(error.response?.data?.message || 'Erro ao cadastrar regulação. Por favor, tente novamente.', error);
+        showSnackbar(error.response?.data?.message || 'Erro ao cadastrar regulação. Por favor, tente novamente.', 'error');
+      } else if (error instanceof Error) {
+        // Se o erro for do tipo genérico `Error`, trate-o também
+        console.error('Erro desconhecido:', error.message);
+        showSnackbar('Erro desconhecido:', 'error');
+      } else {
+        // Caso o erro seja de um tipo inesperado
+        console.error('Erro inesperado:', error);
+        showSnackbar('Erro inesperado:', 'error');
+      }
     }
   };
-  
+
   const handleVerificaProntuario = async (numProntuario: number): Promise<void> => {
     if (!numProntuario) {
       //setSnackbar({ open: true, message: 'Prontuário é obrigatório', severity: 'info' });
@@ -262,9 +280,22 @@ const NovaRegulacao: React.FC = () => {
         setShowAtualizarButton(false);
       }
 
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Erro ao verificar prontuário.');
-      setShowAtualizarButton(false);
+    } catch (error: unknown) {
+      if (error instanceof AxiosError) {
+        console.error(error.response?.data?.message || 'Erro ao verificar prontuário.', error);
+        showSnackbar(error.response?.data?.message || 'Erro ao verificar prontuário.', 'error');
+        setShowAtualizarButton(false);
+      } else if (error instanceof Error) {
+        // Se o erro for do tipo genérico `Error`, trate-o também
+        console.error('Erro desconhecido:', error.message);
+        showSnackbar('Erro desconhecido:', 'error');
+        setShowAtualizarButton(false);
+      } else {
+        // Caso o erro seja de um tipo inesperado
+        console.error('Erro inesperado:', error);
+        showSnackbar('Erro inesperado:', 'error');
+        setShowAtualizarButton(false);
+      }
     }
   };
 
@@ -291,15 +322,28 @@ const NovaRegulacao: React.FC = () => {
         setShowAtualizarButton(false);
       }
 
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Erro ao verificar prontuário.');
-      setShowAtualizarButton(false);
+    } catch (error: unknown) {
+      if (error instanceof AxiosError) {
+        console.error(error.response?.data?.message || 'Erro ao verificar regulação.', error);
+        showSnackbar(error.response?.data?.message || 'Erro ao verificar regulação.', 'error');
+        setShowAtualizarButton(false);
+      } else if (error instanceof Error) {
+        // Se o erro for do tipo genérico `Error`, trate-o também
+        console.error('Erro desconhecido:', error.message);
+        showSnackbar('Erro desconhecido:', 'error');
+        setShowAtualizarButton(false);
+      } else {
+        // Caso o erro seja de um tipo inesperado
+        console.error('Erro inesperado:', error);
+        showSnackbar('Erro inesperado:', 'error');
+        setShowAtualizarButton(false);
+      }
     }
   };
 
   const handleAtualizarRegulacao = (): void => {
     if (!formData.num_prontuario) {
-      setSnackbar({ open: true, message: 'Prontuário é obrigatório para atualizar a regulação', severity: 'warning' });
+      showSnackbar('Prontuário é obrigatório para atualizar a regulação', 'warning');
       return;
     }
     // Enviando dados de forma oculta
@@ -318,12 +362,12 @@ const NovaRegulacao: React.FC = () => {
 
   const nextStep = (): void => {
     if (showAtualizarButton) {
-      setSnackbar({ open: true, message: 'Não é possivel abrir uma nova regulação para paciente com regulação pendente em aberto, revise o Nº PRONTUARIO', severity: 'warning' });
+      showSnackbar('Não é possivel abrir uma nova regulação para paciente com regulação pendente em aberto, revise o Nº PRONTUARIO', 'warning');
       return;
     }
 
     if (iconStatusRegDeny) {
-      setSnackbar({ open: true, message: 'Não é possivel abrir uma nova regulação para paciente com regulação pendente em aberto, revise o Nº REGULAÇÃO', severity: 'warning' });
+      showSnackbar('Não é possivel abrir uma nova regulação para paciente com regulação pendente em aberto, revise o Nº REGULAÇÃO', 'warning');
       return;
     }
 
@@ -332,12 +376,26 @@ const NovaRegulacao: React.FC = () => {
 
   const previousStep = (): void => {
     if (iconStatusRegDeny) {
-      setSnackbar({ open: true, message: 'Não é possivel abrir uma nova regulação para paciente com regulação pendente em aberto, revise o Nº REGULAÇÃO', severity: 'warning' });
+      showSnackbar('Não é possivel abrir uma nova regulação para paciente com regulação pendente em aberto, revise o Nº REGULAÇÃO', 'warning');
       return;
     }
-
     setCurrentStep((prev) => Math.max(prev - 1, 1));
   }
+
+  /*SNACKBARS*/
+  const handleSnackbarClose = (): void => {
+    setSnackbarOpen(false);
+  };
+
+  const showSnackbar = (
+    message: string,
+    severity: 'success' | 'error' | 'info' | 'warning'
+  ): void => {
+    setSnackbarMessage(message);
+    setSnackbarSeverity(severity);
+    setSnackbarOpen(true);
+  };
+
 
   return (
     <>
@@ -413,7 +471,7 @@ const NovaRegulacao: React.FC = () => {
                   </div>
                 </div>
 
-                
+
               </div>
             )}
 
@@ -546,13 +604,12 @@ const NovaRegulacao: React.FC = () => {
 
                 <div className="line-StepContent">
                   <label>Enviar PDF da Regulação:</label>
-                  <input type="file" accept="application/pdf" onChange={handleFileChange} required/>
+                  <input type="file" accept="application/pdf" onChange={handleFileChange} required />
                 </div>
               </div>
             )}
 
           </div>
-          {error}
           <div className="Form-NovaRegulacao-Buttons">
             {currentStep > 1 && <button type="button" onClick={previousStep}>Voltar</button>}
             {currentStep < 4 && <button type="button" onClick={nextStep}>Avançar</button>}
@@ -562,9 +619,17 @@ const NovaRegulacao: React.FC = () => {
 
       </div>
 
-      <Snackbar open={snackbar.open} autoHideDuration={6000} onClose={handleSnackbarClose}>
-        <Alert onClose={handleSnackbarClose} severity={snackbar.severity}>
-          {snackbar.message}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity={snackbarSeverity}
+          sx={{ width: "100%" }}
+        >
+          {snackbarMessage}
         </Alert>
       </Snackbar>
 

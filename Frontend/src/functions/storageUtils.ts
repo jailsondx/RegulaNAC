@@ -1,14 +1,6 @@
-export interface UserData {
-  id_user: string;
-  nome: string;
-  login: string;
-  tipo: string;
-}
+/*IMPORT INTERFACES*/
+import { UserData } from "../interfaces/UserData";
 
-/**
- * Função para obter os dados do usuário do sessionStorage
- * @returns {UserData | null} Dados do usuário ou null se não encontrados
- */
 export function getUserData(): UserData | null {
   try {
     const id_user = sessionStorage.getItem('id_user');
@@ -16,7 +8,7 @@ export function getUserData(): UserData | null {
     const nome = sessionStorage.getItem('nome');
     const tipo = sessionStorage.getItem('tipo');
 
-    if (id_user && login && tipo) {
+    if (id_user && nome &&login && tipo) {
       return { id_user, login, nome, tipo };
     }
 

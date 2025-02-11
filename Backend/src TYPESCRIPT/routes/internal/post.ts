@@ -32,7 +32,11 @@ routerPost.post('/Login', async (req: Request, res: Response) => {
     handleResponse(res, result);
 
   } catch (error) {
-    handleError(res, error);
+    console.error('Erro no processamento:', error);
+  res.status(500).json({
+    message: 'Erro interno do servidor',
+    error: 'Erro desconhecido',
+  });
   }
 });
 
@@ -43,7 +47,11 @@ routerPost.post('/Cadastro', async (req: Request, res: Response) => {
     handleResponse(res, result);
 
   } catch (error) {
-    handleError(res, error);
+    console.error('Erro no processamento:', error);
+  res.status(500).json({
+    message: 'Erro interno do servidor',
+    error: 'Erro desconhecido',
+  });
   }
 });
 
@@ -54,7 +62,11 @@ routerPost.post('/NovaRegulacao', async (req: Request, res: Response) => {
     handleResponse(res, result);
 
   } catch (error) {
-    handleError(res, error);
+    console.error('Erro no processamento:', error);
+  res.status(500).json({
+    message: 'Erro interno do servidor',
+    error: 'Erro desconhecido',
+  });
   }
 });
 
@@ -67,7 +79,11 @@ routerPost.post('/RegulacaoMedico', async (req: Request, res: Response) => {
     handleResponse(res, result);
 
   } catch (error) {
-    handleError(res, error);
+    console.error('Erro no processamento:', error);
+  res.status(500).json({
+    message: 'Erro interno do servidor',
+    error: 'Erro desconhecido',
+  });
   }
 });
 
@@ -78,7 +94,11 @@ routerPost.post('/RegulacaoOrigem', async (req: Request, res: Response) => {
     handleResponse(res, result);
 
   } catch (error) {
-    handleError(res, error);
+    console.error('Erro no processamento:', error);
+  res.status(500).json({
+    message: 'Erro interno do servidor',
+    error: 'Erro desconhecido',
+  });
   }
 });
 
@@ -89,7 +109,11 @@ routerPost.post('/RegulacaoDestino', async (req: Request, res: Response) => {
     handleResponse(res, result);
 
   } catch (error) {
-    handleError(res, error);
+    console.error('Erro no processamento:', error);
+  res.status(500).json({
+    message: 'Erro interno do servidor',
+    error: 'Erro desconhecido',
+  });
   }
 });
 
@@ -100,7 +124,11 @@ routerPost.post('/Transporte', async (req: Request, res: Response) => {
     handleResponse(res, result);
 
   } catch (error) {
-    handleError(res, error);
+    console.error('Erro no processamento:', error);
+  res.status(500).json({
+    message: 'Erro interno do servidor',
+    error: 'Erro desconhecido',
+  });
   }
 });
 
@@ -111,7 +139,11 @@ routerPost.post('/Desfecho', async (req: Request, res: Response) => {
     handleResponse(res, result);
 
   } catch (error) {
-    handleError(res, error);
+    console.error('Erro no processamento:', error);
+  res.status(500).json({
+    message: 'Erro interno do servidor',
+    error: 'Erro desconhecido',
+  });
   }
 });
 

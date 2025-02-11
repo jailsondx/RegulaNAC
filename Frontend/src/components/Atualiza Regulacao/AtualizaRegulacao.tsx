@@ -7,7 +7,7 @@ import { Snackbar, Alert } from '@mui/material';
 /*IMPORT INTERFACES*/
 import { DadosPacienteData } from "../../interfaces/DadosPaciente.ts";
 import { UpdateRegulacaoData, PartialUpdateRegulacaoData } from '../../interfaces/Regulacao';
-import { UnidadeData } from '../../interfaces/Unidade.ts'; 
+import { UnidadeData } from '../../interfaces/Unidade.ts';
 import { UserData } from '../../interfaces/UserData';
 
 /*IMPORT COMPONENTS*/
@@ -161,10 +161,10 @@ const AtualizaRegulacao: React.FC = () => {
         // Se o erro não for do tipo AxiosError, exibe uma mensagem genérica
         showSnackbar('Erro inesperado ao enviar o arquivo. Tente novamente.', 'error');
       }
-    
+
       // Lança um novo erro para garantir que o fluxo de controle seja interrompido
       throw new Error('Erro ao enviar o arquivo');
-    }    
+    }
   };
 
 
@@ -205,13 +205,18 @@ const AtualizaRegulacao: React.FC = () => {
         num_regulacao: dadosPaciente?.num_regulacao, // Número da regulação
       };
 
+      // Verifica se num_regulacao é válido
+      if (dataToSubmit.num_regulacao != null) {
+        // Verifica se há arquivo e, caso haja, faz o upload
+        if (file) {
+          await uploadFile(dataToSubmit.data_hora_solicitacao_02, dataToSubmit.num_regulacao);
+        }
+      } else {
+        console.error('Número de regulação inválido.');
+        // Opcional: mostrar uma mensagem para o usuário
+      }
 
       const response = await axios.put(`${NODE_URL}/api/internal/put/AtualizaRegulacao`, dataToSubmit);
-
-      // Verifica se há arquivo e, caso haja, faz o upload
-      if (file) {
-        await uploadFile(dataToSubmit.data_hora_solicitacao_02, dataToSubmit.num_regulacao);  // Espera o upload do arquivo ser concluído antes de prosseguir
-      }
 
       // Exibe mensagem de sucesso e redireciona
       showSnackbar(response.data.message || 'Regulação atualizada com sucesso.', 'success');
@@ -225,25 +230,20 @@ const AtualizaRegulacao: React.FC = () => {
         },
       });
     } catch (error: unknown) {
-      console.error('Erro ao atualizar regulação:', error);
-    
       if (error instanceof AxiosError) {
-        // Verifica se o erro tem uma resposta da API
-        if (error.response) {
-          const { data } = error.response;
-          
-          // Exibe mensagem com base no status e dados de erro da resposta
-          showSnackbar(data?.message || 'Erro ao atualizar regulação. Tente novamente.', 'error');
-        } else {
-          // Caso o erro não tenha uma resposta (por exemplo, erro de rede ou timeout)
-          showSnackbar('Erro de rede ou timeout ao tentar atualizar regulação. Tente novamente.', 'error');
-        }
+        console.error(error.response?.data?.message || 'Erro ao atualizar regulação. Por favor, tente novamente.', error);
+        showSnackbar(error.response?.data?.message || 'Erro ao atualizar regulação. Por favor, tente novamente.', 'error');
+      } else if (error instanceof Error) {
+        // Se o erro for do tipo genérico `Error`, trate-o também
+        console.error('Erro desconhecido:', error.message);
+        showSnackbar('Erro desconhecido:', 'error');
       } else {
-        // Caso o erro não seja uma instância de AxiosError (erro desconhecido ou outro tipo de erro)
-        showSnackbar('Erro inesperado ao atualizar regulação. Tente novamente.', 'error');
+        // Caso o erro seja de um tipo inesperado
+        console.error('Erro inesperado:', error);
+        showSnackbar('Erro inesperado:', 'error');
       }
     }
-    
+
   };
 
   return (

@@ -66,14 +66,16 @@ const Desfecho: React.FC<PropsDadosPaciente> = ({ dadosPaciente, forcado, onClos
             fieldValue = (e.target as HTMLInputElement).checked;
         } else if (name === 'fastmedic') {
             // Converte o valor de string para booleano
-            fieldValue = value === 'true';
+            fieldValue = value === 'true'; // Aqui você converte para booleano
         }
-    
+        
+        // Atualiza o estado de forma coerente com os tipos
         setFormData((prevState) => ({
             ...prevState,
             [name]: fieldValue,
         }));
     };
+    
 
     const validateForm = (): boolean => {
         if (!formData.desfecho.trim()) {
@@ -174,14 +176,15 @@ const Desfecho: React.FC<PropsDadosPaciente> = ({ dadosPaciente, forcado, onClos
                             <label>Já regulado no Fastmedic ?</label>
                             <select
                                 name="fastmedic"
-                                value={formData.fastmedic}
-                                onChange={handleChange}
+                                value={formData.fastmedic ? "true" : "false"} // Converte o booleano para string
+                                onChange={(e) => handleChange(e)} // A função onChange precisa converter a string para booleano
                                 required
                             >
                                 <option value="false">NÃO</option>
                                 <option value="true">SIM</option>
                             </select>
-                        </div>
+                            </div>
+
                     </div>
 
                     

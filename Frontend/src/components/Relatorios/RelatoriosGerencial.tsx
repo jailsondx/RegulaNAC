@@ -75,14 +75,28 @@ const Relatorios: React.FC = () => {
       link.setAttribute('download', `Relatorio.csv`); // Nome do arquivo que será baixado
       document.body.appendChild(link);
       link.click();
-      link.parentNode.removeChild(link);
+
+      // Verifica se o link ainda tem um nó pai antes de removê-lo
+      if (link.parentNode) {
+        link.parentNode.removeChild(link);
+      }
 
 
       // Exibe uma mensagem de sucesso
       showSnackbar('Relatório gerado e download iniciado com sucesso!', 'success');
-    } catch (error) {
-      console.error('Erro na requisição:', error);
-      showSnackbar('Erro ao gerar o relatório.', 'error');
+    } catch (error: unknown) {
+      if (error instanceof AxiosError) {
+        console.error('Erro ao gerar o relatório:', error);
+        showSnackbar('Erro ao gerar o relatório.', 'error');
+      } else if (error instanceof Error) {
+        // Se o erro for do tipo genérico `Error`, trate-o também
+        console.error('Erro desconhecido:', error.message);
+        showSnackbar('Erro desconhecido:', 'error');
+      } else {
+        // Caso o erro seja de um tipo inesperado
+        console.error('Erro inesperado:', error);
+        showSnackbar('Erro inesperado:', 'error');
+      }
     }
   };
 

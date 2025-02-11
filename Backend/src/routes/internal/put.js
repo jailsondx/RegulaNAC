@@ -1,47 +1,46 @@
-// Importações usando ESM
-import express, { Request, Response } from 'express';
+import express from 'express';
 import { convertObjectToUpperCase } from '../../functions/Manipulation/ObjectUpperCase.js';
 import AtualizaRegulacao from '../../functions/UpdateSQL/AtualizaRegulacao.js';
 import updateTransporte from '../../functions/UpdateSQL/Transporte.js';
-
-/*IMPORT INTERFACES*/
-import { ApiResponse } from '../../Interfaces/API.js';
-import { RegulacaoData } from '../../Interfaces/Regulacao.js';
-import { TransporteDatesData } from '../../Interfaces/Transporte.js';
-
 
 const routerPut = express.Router();
 
 // Middleware para parsing de JSON
 routerPut.use(express.json());
 
-
 // Rotas
-routerPut.put('/AtualizaRegulacao', async (req: Request, res: Response) => {
+routerPut.put('/AtualizaRegulacao', async (req, res) => {
   try {
-    const formData = req.body as RegulacaoData; // Tipagem do corpo da requisição
-    const result = await AtualizaRegulacao(formData) as any;
+    const formData = req.body; // Corpo da requisição
+    const result = await AtualizaRegulacao(formData);
     handleResponse(res, result);
   } catch (error) {
-    handleError(res, error);
+    console.error('Erro no processamento:', error);
+  res.status(500).json({
+    message: 'Erro interno do servidor',
+    error: 'Erro desconhecido',
+  });
   }
 });
 
-routerPut.put('/Transporte', async (req: Request, res: Response) => {
+routerPut.put('/Transporte', async (req, res) => {
   try {
-    const formData = convertObjectToUpperCase(req.body) as TransporteDatesData;
+    const formData = convertObjectToUpperCase(req.body); // Converte os dados para maiúsculas
     console.log(formData); // Log para depuração
 
-    const result = await updateTransporte(formData) as any;
+    const result = await updateTransporte(formData);
     handleResponse(res, result);
   } catch (error) {
-    handleError(res, error);
+    console.error('Erro no processamento:', error);
+  res.status(500).json({
+    message: 'Erro interno do servidor',
+    error: 'Erro desconhecido',
+  });
   }
 });
 
-
 // Métodos auxiliares para padronizar respostas e erros
-const handleResponse = (res: Response, result: ApiResponse) => {
+const handleResponse = (res, result) => {
   if (result.success) {
     res.status(200).json({ message: result.message });
   } else {
@@ -49,7 +48,7 @@ const handleResponse = (res: Response, result: ApiResponse) => {
   }
 };
 
-const handleError = (res: Response, error: unknown) => {
+const handleError = (res, error) => {
   console.error('Erro no processamento:', error);
   res.status(500).json({
     message: 'Erro interno do servidor',

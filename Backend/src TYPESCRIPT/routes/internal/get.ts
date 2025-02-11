@@ -18,42 +18,58 @@ routerGet.use(express.json());
 
 
 // Rotas
-routerGet.get('/ListaRegulacoesPendentes', async (res: Response) => {
+routerGet.get('/ListaRegulacoesPendentes', async (req: Request, res: Response) => {
   try {
     const result = await ListaRegulacoesPendentes() as any;
     const serverTime = new Date().toISOString();
-    handleResponse(res, result, serverTime);
-  } catch (error) {
-    handleError(res, error);
+    handleResponse(res, result , serverTime);
+  } catch (error:any) {
+    console.error('Erro no processamento:', error);
+  res.status(500).json({
+    message: 'Erro interno do servidor',
+    error: 'Erro desconhecido',
+  });
   }
 });
 
-routerGet.get('/ListaRegulacoesFinalizadas', async (res: Response) => {
+routerGet.get('/ListaRegulacoesFinalizadas', async (req: Request, res: Response) => {
   try {
     const result = await ListaRegulacoesFinalizadas() as any;
     const serverTime = new Date().toISOString();
     handleResponse(res, result, serverTime);
-  } catch (error) {
-    handleError(res, error);
+  } catch (error:any) {
+    console.error('Erro no processamento:', error);
+  res.status(500).json({
+    message: 'Erro interno do servidor',
+    error: 'Erro desconhecido',
+  });
   }
 });
 
-routerGet.get('/ListaRegulacoesPendentes24', async (res: Response) => {
+routerGet.get('/ListaRegulacoesPendentes24', async (req: Request, res: Response) => {
   try {
     const result = await ListaRegulacoesPendentes24() as any;
     const serverTime = new Date().toISOString();
     handleResponse(res, result, serverTime);
-  } catch (error) {
-    handleError(res, error);
+  } catch (error:any) {
+    console.error('Erro no processamento:', error);
+  res.status(500).json({
+    message: 'Erro interno do servidor',
+    error: 'Erro desconhecido',
+  });
   }
 });
 
-routerGet.get('/ListaRegulacoesAprovadas', async (res: Response) => {
+routerGet.get('/ListaRegulacoesAprovadas', async (req: Request, res: Response) => {
   try {
     const result = await ListaRegulacoesAprovadas() as any;
     handleResponse(res, result);
-  } catch (error) {
-    handleError(res, error);
+  } catch (error:any) {
+    console.error('Erro no processamento:', error);
+  res.status(500).json({
+    message: 'Erro interno do servidor',
+    error: 'Erro desconhecido',
+  });
   }
 });
 
@@ -62,8 +78,12 @@ routerGet.get('/VerificaProntuario', async (req: Request, res: Response) => {
     const { num_prontuario } = req.query as { num_prontuario: string };
     const result = await VerificaProntuario(num_prontuario);
     handleResponse(res, result);
-  } catch (error) {
-    handleError(res, error);
+  } catch (error:any) {
+    console.error('Erro no processamento:', error);
+  res.status(500).json({
+    message: 'Erro interno do servidor',
+    error: 'Erro desconhecido',
+  });
   }
 });
 
@@ -72,17 +92,25 @@ routerGet.get('/VerificaRegulacao', async (req: Request, res: Response) => {
     const { num_regulacao } = req.query as { num_regulacao: string };
     const result = await VerificaRegulacao(num_regulacao);
     handleResponse(res, result);
-  } catch (error) {
-    handleError(res, error);
+  } catch (error:any) {
+    console.error('Erro no processamento:', error);
+  res.status(500).json({
+    message: 'Erro interno do servidor',
+    error: 'Erro desconhecido',
+  });
   }
 });
 
-routerGet.get('/ListaMedicos', async (res: Response) => {
+routerGet.get('/ListaMedicos', async (req: Request, res: Response) => {
   try {
     const result = await ListaMedicos() as any;
     handleResponse(res, result);
-  } catch (error) {
-    handleError(res, error);
+  } catch (error:any) {
+    console.error('Erro no processamento:', error);
+  res.status(500).json({
+    message: 'Erro interno do servidor',
+    error: 'Erro desconhecido',
+  });
   }
 });
 
@@ -97,8 +125,12 @@ routerGet.get('/PesquisaPaciente', async (req: Request, res: Response) => {
     const serverTime = new Date().toISOString();
     const result = await PesquisaPaciente(nomePaciente, numProntuario, numRegulacao, statusRegulacao) as any;
     handleResponse(res, result, serverTime);
-  } catch (error) {
-    handleError(res, error);
+  } catch (error:any) {
+    console.error('Erro no processamento:', error);
+  res.status(500).json({
+    message: 'Erro interno do servidor',
+    error: 'Erro desconhecido',
+  });
   }
 });
 
@@ -115,7 +147,7 @@ const handleError = (res: Response, error: unknown) => {
   console.error('Erro no processamento:', error);
   res.status(500).json({
     message: 'Erro interno do servidor',
-    error: error instanceof Error ? error.message : 'Erro desconhecido',
+    error: 'Erro desconhecido',
   });
 };
 

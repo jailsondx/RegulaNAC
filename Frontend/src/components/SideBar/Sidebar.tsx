@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { TiBusinessCard, TiClipboard, TiThumbsUp, TiHeartHalfOutline, TiHomeOutline, TiUpload  } from "react-icons/ti";
-import { getUserData, UserData } from '../../functions/storageUtils';
+import { getUserData} from '../../functions/storageUtils';
+
+/*IMPORT INTERFACE*/
+import { UserData } from '../../interfaces/UserData';
+
+/*IMPORT CSS*/
 import './Sidebar.css';
 
 const Sidebar: React.FC = () => {
@@ -61,7 +66,7 @@ const Sidebar: React.FC = () => {
             <li><Link to="/NovaRegulacao"><TiBusinessCard className='Icon-Menu-Item' /><label className='textMenu-Item'>Nova Regulação</label></Link></li>
             <li><Link to="/ListaRegulacoes"><TiClipboard className='Icon-Menu-Item' /><label className='textMenu-Item'>Lista de Regulações</label></Link></li>
             <li><Link to="/RegulacoesAprovadas"><TiThumbsUp className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações Aprovadas</label></Link></li>
-            <li><Link to="/Desfechos"><TiHomeOutline  className='Icon-Menu-Item' /><label className='textMenu-Item'>Desfechos</label></Link></li>
+            <li><Link to="/Desfechos"><TiHomeOutline  className='Icon-Menu-Item' /><label className='textMenu-Item'>Gerar Desfecho</label></Link></li>
             <li><Link to="/RelatoriosRegulacao"><TiUpload  className='Icon-Menu-Item' /><label className='textMenu-Item'>Relatorios R</label></Link></li>
             <li><Link to="/RelatoriosGerencial"><TiUpload  className='Icon-Menu-Item' /><label className='textMenu-Item'>Relatorios G</label></Link></li>
             <hr/>
@@ -80,7 +85,7 @@ const Sidebar: React.FC = () => {
             <li><Link to="/NovaRegulacao"><TiBusinessCard className='Icon-Menu-Item' /><label className='textMenu-Item'>Nova Regulação</label></Link></li>
             <li><Link to="/ListaRegulacoes"><TiClipboard className='Icon-Menu-Item' /><label className='textMenu-Item'>Lista de Regulações</label></Link></li>
             <li><Link to="/RegulacoesAprovadas"><TiThumbsUp className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações Aprovadas</label></Link></li>
-            <li><Link to="/Desfechos"><TiHomeOutline  className='Icon-Menu-Item' /><label className='textMenu-Item'>Desfechos</label></Link></li>
+            <li><Link to="/Desfechos"><TiHomeOutline  className='Icon-Menu-Item' /><label className='textMenu-Item'>Gerar Desfecho</label></Link></li>
             <li><Link to="/RelatoriosRegulacao"><TiUpload  className='Icon-Menu-Item' /><label className='textMenu-Item'>Relatorios R</label></Link></li>
             <li><Link to="/RelatoriosGerencial"><TiUpload  className='Icon-Menu-Item' /><label className='textMenu-Item'>Relatorios G</label></Link></li>
             <hr/>

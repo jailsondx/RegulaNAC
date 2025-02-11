@@ -23,7 +23,11 @@ routerReport.post('/', async (req: Request, res: Response) => {
       res.status(401).json({ message: 'Credenciais inválidas.', error: result.error });
     }
   } catch (error) {
-    handleError(res, error);
+    console.error('Erro no processamento:', error);
+  res.status(500).json({
+    message: 'Erro interno do servidor',
+    error: 'Erro desconhecido',
+  });
   }
 });
 
@@ -41,7 +45,11 @@ routerReport.post('/Gerencial', async (req: Request, res: Response) => {
       res.status(401).json({ message: 'Credenciais inválidas.', error: result.error });
     }
   } catch (error) {
-    handleError(res, error);
+    console.error('Erro no processamento:', error);
+  res.status(500).json({
+    message: 'Erro interno do servidor',
+    error: 'Erro desconhecido',
+  });
   }
 });
 

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { handleUpperCaseChange } from '../../functions/InputUpperCase.ts';
-import { useNavigate } from 'react-router-dom';
 
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
 
@@ -13,7 +12,6 @@ const Cadastro: React.FC = () => {
   const [tipo, setTipo] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const navigate = useNavigate();
 
   const handleCadastro = async (e: React.FormEvent) => {
     e.preventDefault();

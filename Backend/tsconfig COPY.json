@@ -4,7 +4,7 @@
     "module": "ESNext",       // Mude para "ESNext" ou "ES6"
     "moduleResolution": "node", // Mantenha como "node" para compatibilidade com Node.js
     "outDir": "./dist",
-    "rootDir": "./src",
+    "rootDir": "src TYPESCRIPT",
     "strict": true,
     "esModuleInterop": true,  // Mantenha como true para compatibilidade com CommonJS
     "allowJs": true,
@@ -18,6 +18,6 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true
   },
-  "include": ["src/**/*.ts"],    // Certifique-se de incluir apenas os arquivos TypeScript
+  "include": ["src TYPESCRIPT/**/*.ts"],    // Certifique-se de incluir apenas os arquivos TypeScript
   "exclude": ["node_modules"]
 }

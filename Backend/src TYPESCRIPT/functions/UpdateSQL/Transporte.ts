@@ -1,7 +1,7 @@
 import { DBconnection } from "../Controller/connection.js"; // Importa apenas o objeto DBconnection
 import { RowDataPacket } from "mysql2/promise"; // Importa RowDataPacket para tipagem correta
 import VerificaStatus from "../Checked/VerificaStatus.js";
-import UpdateStatus from "../UpdateSQL/UpdateStatus.js";
+import UpdateStatus from "./UpdateStatus.js";
 
 /*IMPORT INTERFACES*/
 import { TransporteDatesData } from '../../Interfaces/Transporte.js';

@@ -62,11 +62,8 @@ const NovaRegulacaoMedicoAprovada: React.FC<Props> = ({ dadosPaciente, tempoEspe
 
     // Verifica o tempo e se a justificativa é necessária
     const [hours, minutes] = tempoEspera.split(/h|m/).map(Number);
-    if ((hours > 0 || minutes >= 30) && !formData.justificativa_tempo30.trim()) {
-      showSnackbar(
-        'Para tempos de espera acima de 30 minutos, a Justificativa é obrigatória.',
-        'info'
-      );
+    if ((hours > 0 || minutes >= 30) && !formData.justificativa_tempo30?.trim()) {
+      showSnackbar('Para tempos de espera acima de 30 minutos, a Justificativa é obrigatória.', 'info');
       return false;
     }
     return true;

@@ -308,7 +308,7 @@ const RegulacaoMedica: React.FC = () => {
                       />
                     </td>
                     <td className="td-Icons">
-                      <FcApproval className="Icon Icons-Regulacao" onClick={() => handleOpenModalApproved(regulacao, elapsedTime)} />
+                      <FcApproval className="Icon Icons-Regulacao" onClick={() => handleOpenModalApproved(regulacao)} />
                       <FcBadDecision className="Icon Icons-Regulacao" onClick={() => handleOpenModalDeny(regulacao)} />
                     </td>
                   </tr>

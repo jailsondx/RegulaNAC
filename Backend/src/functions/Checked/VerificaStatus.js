@@ -1,24 +1,18 @@
-/// <reference types="node" />
-import { RowDataPacket } from "mysql2";
-import { DBconnection } from "../Controller/connection.js"; // Importa apenas o objeto DBconnection
+import { DBconnection } from '../Controller/connection.js'; // Importa o objeto DBconnection
 
-interface RegulacaoStatus {
-    status_regulacao: string;
-}
-
-async function VerificaStatus(id_regulacao: number, status: string, msgError: string) {
+async function VerificaStatus(id_regulacao, status, msgError) {
     const DBtable = 'regulacao';
     let connection;
 
     try {
-        // Inicie a conexão com o banco de dados
+        // Inicia a conexão com o banco de dados
         connection = await DBconnection.getConnection();
 
         // Verifica o status da regulação
-        const [rowsRegulacaoStatus] = await connection.query<RegulacaoStatus[] & RowDataPacket[]>(
+        const [rowsRegulacaoStatus] = await connection.query(
             `SELECT status_regulacao FROM ?? WHERE id_regulacao = ?`,
             [DBtable, id_regulacao]
-        );        
+        );
 
         if (rowsRegulacaoStatus.length === 0) {
             console.error('Regulação não encontrada: id_regulacao:', id_regulacao);
@@ -47,4 +41,4 @@ async function VerificaStatus(id_regulacao: number, status: string, msgError: st
     }
 }
 
-export default VerificaStatus;
+export default VerificaStatus; // Exporta a função para uso em outros arquivos

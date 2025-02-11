@@ -2,7 +2,8 @@
   "name": "backend",
   "version": "1.0.0",
   "main": "server.ts",
-  "bin": "server.ts",
+  "type": "module",
+  "bin": "server.js",
   "scripts": {
     "dev": "node --watch server.js",
     "build": "tsc",
