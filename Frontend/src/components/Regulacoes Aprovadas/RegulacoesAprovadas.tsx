@@ -70,7 +70,7 @@ const RegulacoesAprovadas: React.FC = () => {
       } else {
         console.error('Dados inesperados:', response.data);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Erro ao carregar regulações:', error);
       setRegulacoes([]); // Garante que regulacoes seja sempre um array
     }
@@ -147,10 +147,10 @@ const RegulacoesAprovadas: React.FC = () => {
     // Supondo que você já tenha todos os dados necessários na `regulacao` ou possa fazer algum processamento:
     const dados: DadosPacienteData = {
       nome_paciente: regulacao.nome_paciente,
+      num_prontuario: regulacao.num_prontuario,
       num_regulacao: regulacao.num_regulacao,
       un_origem: regulacao.un_origem,
       un_destino: regulacao.un_destino,
-      num_leito: regulacao.num_leito,
       id_regulacao: regulacao.id_regulacao,
       nome_regulador_medico: regulacao.nome_regulador_medico, // Certifique-se de que este campo possui um valor válido
     };
@@ -165,10 +165,10 @@ const RegulacoesAprovadas: React.FC = () => {
     // Supondo que você já tenha todos os dados necessários na `regulacao` ou possa fazer algum processamento:
     const dados: DadosPacienteData = {
       nome_paciente: regulacao.nome_paciente,
+      num_prontuario: regulacao.num_prontuario,
       num_regulacao: regulacao.num_regulacao,
       un_origem: regulacao.un_origem,
       un_destino: regulacao.un_destino,
-      num_leito: regulacao.num_leito,
       id_regulacao: regulacao.id_regulacao,
       nome_regulador_medico: regulacao.nome_regulador_medico, // Certifique-se de que este campo possui um valor válido
     };
@@ -183,6 +183,7 @@ const RegulacoesAprovadas: React.FC = () => {
     // Supondo que você já tenha todos os dados necessários na `regulacao` ou possa fazer algum processamento:
     const dados: DadosPacienteData = {
       nome_paciente: regulacao.nome_paciente,
+      num_prontuario: regulacao.num_prontuario,
       num_regulacao: regulacao.num_regulacao,
       un_origem: regulacao.un_origem,
       un_destino: regulacao.un_destino,
@@ -200,6 +201,7 @@ const RegulacoesAprovadas: React.FC = () => {
     // Supondo que você já tenha todos os dados necessários na `regulacao` ou possa fazer algum processamento:
     const dados: DadosPacienteData = {
       nome_paciente: regulacao.nome_paciente,
+      num_prontuario: regulacao.num_prontuario,
       num_regulacao: regulacao.num_regulacao,
       un_origem: regulacao.un_origem,
       un_destino: regulacao.un_destino,
@@ -217,6 +219,7 @@ const RegulacoesAprovadas: React.FC = () => {
     // Supondo que você já tenha todos os dados necessários na `regulacao` ou possa fazer algum processamento:
     const dados: DadosPacienteData = {
       nome_paciente: regulacao.nome_paciente,
+      num_prontuario: regulacao.num_prontuario,
       num_regulacao: regulacao.num_regulacao,
       un_origem: regulacao.un_origem,
       un_destino: regulacao.un_destino,

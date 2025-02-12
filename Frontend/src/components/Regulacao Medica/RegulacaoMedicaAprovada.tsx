@@ -27,6 +27,7 @@ const initialFormData: RegulacaoMedicoData = {
   id_user: '',
   vaga_autorizada: true,
   num_leito: '',
+  extra: false,
   justificativa_neg: '',
   nome_regulador_medico: '',
   data_hora_regulacao_medico: '',
@@ -126,17 +127,31 @@ const NovaRegulacaoMedicoAprovada: React.FC<Props> = ({ dadosPaciente, tempoEspe
 
       <form onSubmit={handleSubmit}>
         <div className='Div-RegulacaoMedica-AprovadaNegada'>
-          <div className='num_leito'>
-            <label>Número do Leito:</label>
-            <input
-              type="number"
-              name="num_leito"
-              className='num_leito'
-              value={formData.num_leito ?? ''}
-              onChange={handleChange}
-              required
-            />
+          <div className='div-Leito'>
+            <div className='num_leito'>
+              <label>Nº do Leito:</label>
+              <input
+                type="number"
+                name="num_leito"
+                className='num_leito'
+                value={formData.num_leito ?? ''}
+                onChange={handleChange}
+                required
+              />
+              </div>
+              <div className="extra">
+                <span>Extra?</span>
+                <input
+                  type="checkbox"
+                  id="extraCheckbox"
+                  name="extra"
+                  checked={formData.extra}
+                  onChange={handleChange}
+                />
+                <label htmlFor="extraCheckbox"></label>
+              </div>
           </div>
+          
           <div className='nome_regulador_medico'>
             <label>Médico:</label>
             <input

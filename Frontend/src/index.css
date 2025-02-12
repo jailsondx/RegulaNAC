@@ -219,6 +219,10 @@ button:disabled {
   color: #aaa;
 }
 
+textarea {
+  resize: none;
+}
+
 input,
 select {
   padding: 5px;

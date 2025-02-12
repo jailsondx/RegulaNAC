@@ -163,6 +163,7 @@ const RegulacaoMedica: React.FC = () => {
     // Supondo que você já tenha todos os dados necessários na `regulacao` ou possa fazer algum processamento:
     const dados: DadosPacienteData = {
       nome_paciente: regulacao.nome_paciente,
+      num_prontuario: regulacao.num_prontuario,
       num_regulacao: regulacao.num_regulacao,
       un_origem: regulacao.un_origem,
       un_destino: regulacao.un_destino,
@@ -180,6 +181,7 @@ const RegulacaoMedica: React.FC = () => {
     // Supondo que você já tenha todos os dados necessários na `regulacao` ou possa fazer algum processamento:
     const dados: DadosPacienteData = {
       nome_paciente: regulacao.nome_paciente,
+      num_prontuario: regulacao.num_prontuario,
       num_regulacao: regulacao.num_regulacao,
       un_origem: regulacao.un_origem,
       un_destino: regulacao.un_destino,

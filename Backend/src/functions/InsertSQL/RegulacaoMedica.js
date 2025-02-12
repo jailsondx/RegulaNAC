@@ -33,6 +33,11 @@ async function RegulacaoMedica(FormData) {
             };
         }
 
+        //Verifica se é LEITO EXTRA
+        if (FormData.extra === true || FormData.extra === 1){
+            FormData.num_leito = 'EXTRA.' + FormData.num_leito;
+        }
+
         // Insere os dados no banco
         const [result] = await connection.query(
             `INSERT INTO ${DBtable} SET ?`,

@@ -41,7 +41,7 @@ const initialFormData: NovaRegulacaoData = {
   data_hora_solicitacao_02: '',
   qtd_solicitacoes: 1,
   nome_regulador_nac: '',
-  num_regulacao: 0,
+  num_regulacao: null,
   nome_regulador_medico: '',
   data_hora_acionamento_medico: '',
   status_regulacao: '',
@@ -227,9 +227,15 @@ const NovaRegulacao: React.FC = () => {
       // Envia o formulário primeiro
       const response = await axios.post(`${NODE_URL}/api/internal/post/NovaRegulacao`, dataToSubmit);
 
-      // Verifica se há arquivo e, caso haja, faz o upload
-      if (file) {
-        await uploadFile(dataToSubmit.data_hora_solicitacao_01, dataToSubmit.num_regulacao);  // Espera o upload do arquivo ser concluído antes de prosseguir
+       // Verifica se num_regulacao é válido
+       if (dataToSubmit.num_regulacao != null) {
+        // Verifica se há arquivo e, caso haja, faz o upload
+        if (file) {
+          await uploadFile(dataToSubmit.data_hora_solicitacao_02, dataToSubmit.num_regulacao);
+        }
+      } else {
+        console.error('Número de regulação inválido.');
+        // Opcional: mostrar uma mensagem para o usuário
       }
 
       // Se tudo ocorrer bem, exibe a resposta

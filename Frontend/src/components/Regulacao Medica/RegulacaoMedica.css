@@ -5,6 +5,14 @@
     margin-bottom: 20px;
 }
 
+.div-Leito{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    width: 30%;
+    gap: 4px;
+}
+
 .num_leito, .nome_regulador_medico, .justificativa_tempo30{
     display: flex;
     flex-direction: column;
@@ -13,8 +21,57 @@
 }
 
 .num_leito{
-    width: 30%;
+    width: 55%;
 }
+
+.num_leito input{
+    width: 70%;
+}
+
+.extra{
+    display: flex;
+    flex-direction: column;
+}
+
+.extra span{
+    margin-bottom: 3px;
+}
+
+/*CHECKBOX ESTILIZADA*/
+.extra input[type="checkbox"] {
+    display: none; /* Esconde a checkbox padrão */
+}
+
+.extra label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+/* Caixa customizada */
+.extra label::before {
+    content: "";
+    width: 28px;
+    height: 28px;
+    display: inline-block;
+    border-radius: 4px;
+    background-color: white;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+/* Quando marcada, muda a cor */
+.extra input[type="checkbox"]:checked + label::before {
+    background-color: #218838;
+    border-color: #218838;
+    content: "✔"; /* Adiciona um check */
+    color: white;
+    font-size: 14px;
+    text-align: center;
+    line-height: 28px;
+    font-weight: bold;
+}
+
 
 .nome_regulador_medico{
     width: 70%;
