@@ -51,7 +51,6 @@ async function AtualizaRegulacao(FormData) {
         }
 
         const qtdSolicitacoes = valueRequests[0].qtd_solicitacoes;
-        console.log('SOLICITAÇÕES JÁ REALIZADAS:', qtdSolicitacoes);
 
         await connection.query(`
             UPDATE ${DBtable} 

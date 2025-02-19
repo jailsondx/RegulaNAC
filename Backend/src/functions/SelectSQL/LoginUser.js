@@ -9,9 +9,7 @@ async function LoginUser(login, password) {
         const connection = await DBconnection.getConnection();
 
         // Execute a query para buscar o usuário na tabela de usuários
-        const [rows] = await connection.query(`
-            SELECT * FROM ${DBtable} WHERE login = ? LIMIT 1
-        `, [login]);
+        const [rows] = await connection.query(`SELECT * FROM ${DBtable} WHERE login = ? LIMIT 1`, [login]);
 
         connection.release(); // Libera a conexão
 
@@ -23,7 +21,7 @@ async function LoginUser(login, password) {
             const isPasswordValid = await bcrypt.compare(password, user.senha); // Usando bcrypt para comparar as senhas
 
             if (isPasswordValid) {
-                console.log("LOGIN USER:", login);
+                console.log("✅ Usuario Logado:", login);
                 return { success: true, message: "Login realizado com sucesso.", data: user };
             } else {
                 return { success: false, message: "Credenciais inválidas." };
@@ -32,7 +30,7 @@ async function LoginUser(login, password) {
             return { success: false, message: "Usuário não encontrado." };
         }
     } catch (error) {
-        console.error("Erro ao verificar usuário:", error);
+        console.error("❌ Erro ao verificar usuário:", error);
         return { success: false, message: "Erro ao verificar usuário.", error };
     }
 }

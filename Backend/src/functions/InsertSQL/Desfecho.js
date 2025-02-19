@@ -10,8 +10,6 @@ async function Desfecho(FormData) {
     const NovoStatus = 'FECHADO';
     const msgError = 'Desfecho não pode ser atualizado; Status atual é: ';
 
-    console.log('RECEBIDO:'+FormData);
-
     let connection;
     try {
         // Inicia a conexão com o banco de dados

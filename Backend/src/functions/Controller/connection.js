@@ -18,7 +18,7 @@ async function testConnection() {
     try {
         const connectionTest = await DBconnection.getConnection();
         console.log(
-            'CONNECTION MYSQL: Conectado ao Banco de Dados MySql:',
+            '✅ CONNECTION MYSQL: Conectado ao Banco de Dados MySql:',
             process.env.DB_NAME
         );
         console.log(
@@ -27,7 +27,7 @@ async function testConnection() {
         );
         connectionTest.release(); // Libera a conexão para o pool
     } catch (error) {
-        console.error(`Error connecting to the database (${process.env.DB_HOST}:${process.env.DB_PORT}):`, error.message);
+        console.error(`❌ Error connecting to the database (${process.env.DB_HOST}:${process.env.DB_PORT}):`, error.message);
         process.exit(1); // Sai do processo em caso de falha
     }
 }

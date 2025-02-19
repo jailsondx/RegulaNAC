@@ -3,9 +3,6 @@ import { DBconnection } from "../Controller/connection.js"; // Importa apenas o 
 
 async function UpdateLinkDOC(num_regulacao, link) {
     const DBtable = 'regulacao';
-
-    console.log('\nRegulacao:', num_regulacao);
-    console.log('PDF:', link);
     
     let connection;
 

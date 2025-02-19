@@ -28,7 +28,6 @@ routerReport.post('/', async (req, res) => {
 routerReport.post('/Gerencial', async (req, res) => {
   try {
     const formData = convertObjectToUpperCase(req.body); // Converte os dados para maiúsculas
-    console.log(formData); // Log para depuração
 
     const result = await relatorioGerencial(formData);
 

@@ -67,7 +67,6 @@ async function relatorioRegulacao(FormData) {
         const [rows] = await connection.query(query, queryParams);
 
         connection.release();
-        console.log(rows);
 
         const filePath = await handleCSVPaciente(rows);
         return { success: true, data: rows, filePath };
@@ -81,8 +80,6 @@ async function relatorioGerencial(FormData) {
     const DBtableRegulacao = 'regulacao';
     const startDate = FormData.data_Solicitacao_Inicio;
     const endDate = FormData.data_Solicitacao_Fim;
-
-    console.log(startDate + endDate);
 
     try {
         const connection = await DBconnection.getConnection();
@@ -152,7 +149,7 @@ async function relatorioGerencial(FormData) {
         // Ordenar os dados antes de exportar o CSV
         dadosParaCSV.sort((a, b) => a.un_destino.localeCompare(b.un_destino));
 
-        console.log('✅ Dados formatados para CSV:', dadosParaCSV);
+        console.log('✅ Dados formatados para CSV:');
 
         // 📂 Exportar os dados para CSV
         const filePath = await handleCSVGerencial(dadosParaCSV);

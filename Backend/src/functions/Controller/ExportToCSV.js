@@ -48,7 +48,7 @@ async function exportarRelatorioCSVPaciente(dados) {
         });
 
         await csvWriter.writeRecords(dados);
-        console.log(`✅ Relatório CSV gerado com sucesso em: \n${filePath}`);
+        console.log(`✅ Relatório CSV gerado com sucesso`);
         return filePath;
     } catch (error) {
         console.error('❌ Erro ao gerar o relatório CSV:', error);
@@ -75,7 +75,7 @@ async function exportarRelatorioCSVGerencial(dados) {
         });
 
         await csvWriter.writeRecords(dados);
-        console.log(`✅ Relatório CSV gerado com sucesso em:\n${filePath}`);
+        console.log(`✅ Relatório CSV gerado com sucesso`);
         return filePath;
     } catch (error) {
         console.error('❌ Erro ao gerar o relatório CSV:', error);

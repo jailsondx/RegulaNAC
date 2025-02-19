@@ -45,9 +45,7 @@ async function uploadPDF(req, res) {
     
     const fileUrl = `http://${NODE_URL}/uploadsReg/${year}/${month}/${day}/${req.file.filename}`;
     
-    const responseLink = await UpdateLinkDOC(num_regulacao, req.file.filename);
-    console.log(responseLink.message);
-    console.log(`Arquivo vinculado com o nome único ${req.file.filename}: ${fileUrl}`);
+    await UpdateLinkDOC(num_regulacao, req.file.filename);
     
     return res.json({ message: 'Upload realizado com sucesso', fileUrl });
   } catch (error) {
