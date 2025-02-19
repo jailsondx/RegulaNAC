@@ -114,20 +114,39 @@ async function relatorioGerencial(FormData) {
 
         connection.release();
 
+        // 🚀 🔄 **Garantir que todas as unidades de destino estejam presentes**
+        const unidadesDestino = new Set([
+            ...rows_qtdSolicitacoes.map(row => row.un_destino),
+            ...rows_qtdPacientes.map(row => row.un_destino),
+            ...rows_qtdFinalizados.map(row => row.un_destino)
+        ]);
+
         // 🚀 🔄 **Transformar os dados para o formato correto**
         const dadosParaCSV = [];
 
         // Criando linhas individuais para cada unidade de destino e tipo de dado
-        rows_qtdSolicitacoes.forEach(row => {
-            dadosParaCSV.push({ un_destino: row.un_destino, especificacao: 'Nº DE SOLICITAÇÕES', valor_absoluto: row.total_solicitacoes });
-        });
+        unidadesDestino.forEach(unidade => {
+            const solicitacoes = rows_qtdSolicitacoes.find(row => row.un_destino === unidade);
+            const pacientes = rows_qtdPacientes.find(row => row.un_destino === unidade);
+            const finalizados = rows_qtdFinalizados.find(row => row.un_destino === unidade);
 
-        rows_qtdPacientes.forEach(row => {
-            dadosParaCSV.push({ un_destino: row.un_destino, especificacao: 'Nº DE PACIENTES', valor_absoluto: row.total_pacientes });
-        });
+            dadosParaCSV.push({
+                un_destino: unidade,
+                especificacao: 'Nº DE SOLICITAÇÕES',
+                valor_absoluto: solicitacoes ? solicitacoes.total_solicitacoes : 0
+            });
 
-        rows_qtdFinalizados.forEach(row => {
-            dadosParaCSV.push({ un_destino: row.un_destino, especificacao: 'Nº DE TRANSFERÊNCIAS EFETIVADAS', valor_absoluto: row.total_finalizados });
+            dadosParaCSV.push({
+                un_destino: unidade,
+                especificacao: 'Nº DE PACIENTES',
+                valor_absoluto: pacientes ? pacientes.total_pacientes : 0
+            });
+
+            dadosParaCSV.push({
+                un_destino: unidade,
+                especificacao: 'Nº DE TRANSFERÊNCIAS EFETIVADAS',
+                valor_absoluto: finalizados ? finalizados.total_finalizados : 0
+            });
         });
 
         // Ordenar os dados antes de exportar o CSV
