@@ -608,7 +608,7 @@ const NovaRegulacao: React.FC = () => {
                   <li><strong>Data Hora Acionamento Médico:</strong> {formatDateTimeToPtBr(formData.data_hora_acionamento_medico)}</li>
                 </ul>
 
-                <div className="line-StepContent">
+                <div className="line-StepContent upload">
                   <label>Enviar PDF da Regulação:</label>
                   <input type="file" accept="application/pdf" onChange={handleFileChange} required />
                 </div>
@@ -616,7 +616,7 @@ const NovaRegulacao: React.FC = () => {
             )}
 
           </div>
-          <div className="Form-NovaRegulacao-Buttons">
+          <div className="Div-Buttons End End">
             {currentStep > 1 && <button type="button" onClick={previousStep}>Voltar</button>}
             {currentStep < 4 && <button type="button" onClick={nextStep}>Avançar</button>}
             {currentStep === 4 && <button type="submit">Finalizar</button>}

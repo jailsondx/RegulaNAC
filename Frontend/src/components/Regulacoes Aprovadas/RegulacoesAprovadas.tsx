@@ -155,6 +155,8 @@ const RegulacoesAprovadas: React.FC = () => {
       nome_regulador_medico: regulacao.nome_regulador_medico, // Certifique-se de que este campo possui um valor válido
     };
 
+    console.log(dados);
+
     setDadosPaciente(dados);
     setShowModalOrigem(true);
   };

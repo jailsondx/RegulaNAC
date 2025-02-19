@@ -303,7 +303,7 @@ const AtualizaRegulacao: React.FC = () => {
                 required
               />
             </div>
-            <div className="line-StepContent">
+            <div className="line-StepContent upload">
               <label>Enviar PDF da Regulação:</label>
               <input type="file" accept="application/pdf" onChange={handleFileChange} required />
             </div>

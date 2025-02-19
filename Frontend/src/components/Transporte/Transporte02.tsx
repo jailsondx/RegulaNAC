@@ -200,7 +200,7 @@ const Transporte02: React.FC<Props> = ({ dadosPaciente, onClose, showSnackbar })
                         </div>
                     )}
                 </div>
-                <div className="Form-NovaRegulacao-Buttons">
+                <div className="Div-Buttons End">
                     {currentStep > 1 && <button type="button" onClick={previousStep}>Voltar</button>}
                     {currentStep < 2 && <button type="button" onClick={nextStep}>Avançar</button>}
                     {currentStep === 2 && <button type="submit">Finalizar</button>}

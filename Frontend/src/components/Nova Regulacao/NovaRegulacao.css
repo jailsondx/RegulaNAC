@@ -51,20 +51,9 @@
     min-height: 220px;
   }
 
-  .Form-NovaRegulacao-Buttons{
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-  }
 
-  
-  input, select {
-    width: 95%;
-    border: 1px solid #ccc;
-  }
-
-  input[type="number"]{
-    width: 30%;
+  .line-StepContent input[type="number"]{
+    width: 42%;
   }
 
   .line-StepContent,  .line-StepContent-sub{
@@ -78,7 +67,7 @@
   }
 
   .line-StepContent-sub input{
-    width: 70%;
+    width: 94%;
   }
 
   .line-StepContent input[type='datetime-local']{
@@ -86,27 +75,17 @@
   }
 
   .line-StepContent input[type='date']{
-    width: 30%;
+    width: 100%;
   }
 
   .line-StepContent-2{
     display: flex;
     width: 100%;
     justify-content: left;
+    gap: 10%;
   }
   
-  input:focus, select:focus {
-    border-color: #007bff;
-    outline: none;
-  }
-  
-  input.valid {
-    border-color: #28a745;
-  }
-  
-  input.invalid {
-    border-color: #dc3545;
-  }
+
 
   .div-VerificarProntuario{
     display: flex;

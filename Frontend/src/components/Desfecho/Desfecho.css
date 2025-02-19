@@ -116,10 +116,15 @@
   min-height: 130px;
 }
 
-.subdiv-Desfecho{
+.Desfecho-line-2{
   display: flex;
-  width: 98%;
+  width: 100%;
   gap: 10%;
+}
+
+.Desfecho-line-2 select{
+  width: 100%;
+
 }
 
 

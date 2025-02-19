@@ -45,6 +45,7 @@ const SetorOrigem: React.FC<Props> = ({ dadosPaciente, onClose, showSnackbar }) 
     useEffect(() => {
         const data = getUserData();
         setUserData(data);
+        console.log(dadosPaciente);
     }, []);
 
 

@@ -153,7 +153,7 @@ const Relatorios: React.FC = () => {
           </div>
 
 
-          <div className='Form-NovaRegulacao-Buttons'>
+          <div className='Div-Buttons End'>
             <button type="submit" className="submit-button" disabled={!validateForm()}> Gerar Relatório </button>
           </div>
 

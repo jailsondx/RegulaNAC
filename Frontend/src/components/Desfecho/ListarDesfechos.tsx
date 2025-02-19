@@ -11,7 +11,7 @@ import Desfecho from '../Desfecho/Desfecho';
 import TimeTracker from "../TimeTracker/TimeTracker.tsx";
 
 /*IMPORT INTERFACES*/
-import { RegulacaoData } from '../../interfaces/Regulacao.ts';
+import { RegulacaoAprovadaData } from '../../interfaces/Regulacao.ts';
 import { StatusRegulacaoData } from '../../interfaces/Status.ts';
 import { DadosPacienteData } from "../../interfaces/DadosPaciente.ts";
 
@@ -43,15 +43,17 @@ const initialForm: SearchForm = {
 
 const ListarDesfecho: React.FC = () => {
   const location = useLocation();
-  const [currentRegulacao, setCurrentRegulacao] = useState<RegulacaoData | null>(null);
   const [dadosPaciente, setDadosPaciente] = useState<DadosPacienteData | null>(null);
-  const [statusRegulacao, setStatusRegulacao] = useState<StatusRegulacaoData[]>([]);
-  const [filteredRegulacoes, setFilteredRegulacoes] = useState<RegulacaoData[]>([]);
+  const [currentRegulacao, setCurrentRegulacao] = useState<RegulacaoAprovadaData | null>(null);
   const [serverTime, setServerTime] = useState("");
   const [formData, setFormData] = useState<SearchForm>(initialForm);
 
   /*MODAIS*/
   const [ShowModalDesfecho, setShowModalDesfecho] = useState(false);
+
+  /*FILTROS*/
+  const [statusRegulacao, setStatusRegulacao] = useState<StatusRegulacaoData[]>([]);
+  const [filteredRegulacoes, setFilteredRegulacoes] = useState<RegulacaoAprovadaData[]>([]);
 
   /*PAGINAÇÃO*/
   const [currentPage, setCurrentPage] = useState(1);
@@ -115,7 +117,7 @@ const ListarDesfecho: React.FC = () => {
     }
   };
 
-  const handleOpenModalDesfecho = (regulacao: RegulacaoData) => {
+  const handleOpenModalDesfecho = (regulacao: RegulacaoAprovadaData) => {
     setCurrentRegulacao(regulacao);
 
     // Supondo que você já tenha todos os dados necessários na `regulacao` ou possa fazer algum processamento:
@@ -124,10 +126,13 @@ const ListarDesfecho: React.FC = () => {
       num_regulacao: regulacao.num_regulacao,
       num_prontuario: regulacao.num_prontuario,
       un_origem: regulacao.un_origem,
+      num_leito: regulacao.num_leito,
       un_destino: regulacao.un_destino,
       id_regulacao: regulacao.id_regulacao,
       nome_regulador_medico: regulacao.nome_regulador_medico, // Certifique-se de que este campo possui um valor válido
     };
+
+    console.log(dados);
 
     setDadosPaciente(dados);
     setShowModalDesfecho(true);
@@ -223,7 +228,7 @@ const ListarDesfecho: React.FC = () => {
               </div>
 
               {/* Terceira linha: Botão de Pesquisar */}
-              <div className="search-desfecho-line-button">
+              <div className="Div-Buttons Central">
                 <button type="submit" className="button">
                   Pesquisar
                 </button>

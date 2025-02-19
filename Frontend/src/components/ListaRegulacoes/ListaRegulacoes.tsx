@@ -4,6 +4,7 @@ import { AxiosError } from 'axios';
 import { LuFilter } from "react-icons/lu";
 import { useNavigate, useLocation } from 'react-router-dom';
 import { FcFullTrash, FcInspection } from "react-icons/fc";
+import { LuArrowDownWideNarrow, LuArrowUpWideNarrow } from "react-icons/lu";
 import { Snackbar, Alert } from '@mui/material';
 
 /*IMPORT INTERFACES*/
@@ -264,7 +265,7 @@ const ListaRegulacoes: React.FC = () => {
                 <tr>
                   <th onClick={() => handleSort("num_prontuario")}>
                     <span>
-                      <label>Pront.</label> <label>{sortConfig?.key === "num_prontuario" ? (sortConfig.direction === "asc" ? "🔼" : "🔽") : "↕"}</label>
+                      <label>Pront.</label> <label>{sortConfig?.key === "num_prontuario" ? (sortConfig.direction === "asc" ? <LuArrowUpWideNarrow /> : <LuArrowDownWideNarrow />) : "↕"}</label>
                     </span>
                   </th>
 

@@ -19,7 +19,7 @@ import './SetorOrigemDestino.css';
 /*IMPORT VARIAVEIS DE AMBIENTE*/
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
 
-interface PropsDadosPaciente {
+interface Props {
     dadosPaciente: DadosPacienteData;
     onClose: () => void; // Adicionado
     showSnackbar: (message: string, severity: 'success' | 'error' | 'info' | 'warning') => void; // Nova prop
@@ -27,14 +27,14 @@ interface PropsDadosPaciente {
 
 const initialFormData: DestinoData = {
     id_user: '',
-    un_destino: '', // Use o valor de un_destino recebido nas PropsDadosPaciente
+    un_destino: '', // Use o valor de un_destino recebido nas Props
     nome_colaborador: '',
     data_hora_comunicacao: '',
 };
 
 
 
-const SetorDestino: React.FC<PropsDadosPaciente> = ({ dadosPaciente, onClose, showSnackbar }) => {
+const SetorDestino: React.FC<Props> = ({ dadosPaciente, onClose, showSnackbar }) => {
     const [userData, setUserData] = useState<UserData | null>(null);
     const [formData, setFormData] = useState<DestinoData>({
         ...initialFormData, // Espalha os valores iniciais

@@ -131,7 +131,7 @@ a:hover {
   cursor: pointer;
 }
 
-button {
+button{
   border-radius: 4px;
   border: 1px solid transparent;
   padding: 0.6em 1.2em;
@@ -143,8 +143,25 @@ button {
   transition: border-color 0.25s;
 }
 
-button:hover {
+input::file-selector-button {
+  border-radius: 4px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.25s;
+  border-color: #49798a;
+}
+
+
+button:hover, input::file-selector-button:hover {
   border-color: #646cff;
+}
+
+input::file-selector-button:hover{
+  color: whitesmoke;
+  background-color: #49798a;
 }
 
 button:focus,
@@ -152,7 +169,7 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
-
+/*
 button {
   padding: 10px 20px;
   border: none;
@@ -161,10 +178,11 @@ button {
   transition: background-color 0.3s;
   margin-left: 10px;
 }
+  */
 
 button[type="button"]:hover {
   color: whitesmoke;
-  background-color: #0056b3;
+  background-color: #024059;
 }
 
 button[type="submit"] {
@@ -223,12 +241,36 @@ textarea {
   resize: none;
 }
 
+
 input,
 select {
   padding: 5px;
   margin: 3px;
   border-radius: 4px;
 }
+
+input{
+  width: 97%;
+}
+
+select {
+  width: 100%;
+  cursor: pointer;
+}
+
+input:focus, select:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+input.valid {
+  border-color: #28a745;
+}
+
+input.invalid {
+  border-color: #dc3545;
+}
+
 
 input[type=number]::-webkit-inner-spin-button {
   -webkit-appearance: none;
@@ -244,9 +286,6 @@ input:disabled {
   color: var(--text-color);
 }
 
-select {
-  cursor: pointer;
-}
 
 .Component {
   display: flex;
@@ -281,6 +320,7 @@ select {
   height: auto;
   min-height: 350px;
   padding: 20px;
+  padding-right: 40px;
   border: 2px solid var(--form-border);
   background-color: var(--form-bg-color);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
@@ -423,4 +463,28 @@ select {
 
 .Search-Input{
   width: 20dvw;
+}
+
+
+/*UPLOAD*/
+.upload{
+  padding: 10px 10px 10px 5px;/* Topo, direita, inferior, esquerda */
+
+  border: 2px solid #49798a;
+}
+
+
+/*DIV BUTTONS*/
+.Div-Buttons{
+  display: flex;
+  gap: 3%;
+  flex-direction: row;
+}
+
+.End{
+  justify-content: flex-end;
+}
+
+.Central{
+  justify-content: center;
 }
