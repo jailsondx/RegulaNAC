@@ -2,6 +2,7 @@ import { DBconnection } from "../Controller/connection.js"; // Importa apenas o 
 
 async function VerificaProntuario(num_prontuario) {
     const DBtable = 'regulacao';
+    const DBtable2 = 'regulacao_medico';
 
     try {
         // Inicie a conexão com o banco de dados
@@ -13,12 +14,23 @@ async function VerificaProntuario(num_prontuario) {
             [num_prontuario]
         );
 
-        connection.release(); // Libera a conexão
-
-        // Verifica se há um resultado
         if (rows.length > 0) {
-            return { success: true, message: "Regulação pendente em aberto", data: rows[0] };
+            const [rows2] = await connection.query(
+                `SELECT num_leito FROM ${DBtable2} WHERE id_regulacao = ? LIMIT 1`,
+                [rows[0].id_regulacao]
+            );
+
+            connection.release(); // Libera a conexão
+
+            // Combine os resultados das duas consultas em um único objeto
+            const result = {
+                ...rows[0],
+                num_leito: rows2.length > 0 ? rows2[0].num_leito : null
+            };
+
+            return { success: true, message: "Regulação pendente em aberto", data: result };
         } else {
+            connection.release(); // Libera a conexão
             return { success: true, message: "Nenhuma regulação pendente encontrada.", data: null };
         }
     } catch (error) {

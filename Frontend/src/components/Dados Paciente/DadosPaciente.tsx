@@ -1,5 +1,8 @@
 import React from "react";
 import { DadosPacienteData } from "../../interfaces/DadosPaciente";
+import { LuSquareUserRound } from "react-icons/lu";
+
+import './DadosPaciente.css';
 
 const DadosPaciente: React.FC<{ dadosPaciente: DadosPacienteData }> = ({ dadosPaciente }) => {
   const {
@@ -13,25 +16,35 @@ const DadosPaciente: React.FC<{ dadosPaciente: DadosPacienteData }> = ({ dadosPa
   } = dadosPaciente;
 
   return (
-    <div className="DadosPaciente-Border">
-      <label className="TitleDadosPaciente">Dados Paciente</label>
-      <div className="Div-DadosPaciente RegulacaoPaciente">
-        <label>Paciente: {nome_paciente}</label>
-        <span>
-          <label>Prontuário: {num_prontuario}</label>
-          <label>Regulação: {num_regulacao}</label>
-        </span>
+    <>
+      <div className="DadosPaciente-Border">
 
-        <label>Un. Origem: {un_origem}</label>
-        <span>
-          <label>Un. Destino: {un_destino}</label>
-          <label>Leito: {num_leito}</label>
-        </span>
+        <div className="Div-IconePaciente">
+          <LuSquareUserRound className="IconePaciente"/>
+        </div>
+
+        <div className="Div-DadosPaciente">
+          <label className="NomePaciente">{nome_paciente}</label>
+          <div className="InformacoesPaciente">
+            <span>
+              <label>Prontuário: {num_prontuario}</label>
+              <label>Regulação: {num_regulacao}</label>
+            </span>
+
+            <label>Un. Origem: {un_origem}</label>
+            <span>
+              <label>Un. Destino: {un_destino}</label>
+              <label>Leito: {num_leito}</label>
+            </span>
+          </div>
+          <div>
+            <label>Médico Regulador: {nome_regulador_medico}</label>
+          </div>
+        </div>
+
       </div>
-      <div className="Div-DadosMedico RegulacaoPaciente">
-        <label>Médico Regulador: {nome_regulador_medico}</label>
-      </div>
-    </div>
+    </>
+
   );
 };
 

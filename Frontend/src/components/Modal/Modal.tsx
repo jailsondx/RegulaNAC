@@ -18,7 +18,7 @@ const Modal: React.FC<ModalProps> = ({ show, onClose, children, title }) => {
             </div>
             
             <div className="modal-content">
-                <button className="modal-close" onClick={onClose}>&times;</button>
+                <button className="modal-close" onClick={onClose} title='Fechar Janela'>&times;</button>
                 <div className="modal-body">
                     {children}
                 </div>

@@ -44,6 +44,7 @@ export interface PartialUpdateRegulacaoData {
 export interface UpdateRegulacaoData extends PartialUpdateRegulacaoData {
   id_user: string;
   num_prontuario: number | null;
+  num_leito: number | null;
   link: string;
 }
 

@@ -32,6 +32,7 @@ const initialFormData: UpdateRegulacaoData = {
   num_prontuario: null,
   un_origem: '',
   un_destino: '',
+  num_leito: null,
   data_hora_solicitacao_02: '',
   link: '',
 };

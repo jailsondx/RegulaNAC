@@ -100,7 +100,7 @@ const Sidebar: React.FC = () => {
       <ul>
         <li><a onClick={() => setShowReportMenu(false)}><TiArrowBack className='Icon-Menu-Item' /><label className='textMenu-Item'>Voltar</label></a></li>
         <li><Link to="/RelatoriosRegulacao"><TiUpload className='Icon-Menu-Item' /><label className='textMenu-Item'>Relatórios R</label></Link></li>
-        <li><Link to="/RelatoriosGerencial"><TiUpload className='Icon-Menu-Item' /><label className='textMenu-Item'>Relatórios G</label></Link></li>
+        <li><Link to="/RelatoriosGerencial"><TiUpload className='Icon-Menu-Item' /><label className='textMenu-Item'>Relatório de Efetivação</label></Link></li>
       </ul>
     );
   };
