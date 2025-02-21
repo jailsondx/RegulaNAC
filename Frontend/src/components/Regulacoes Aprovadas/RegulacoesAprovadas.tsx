@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { Snackbar, Alert } from "@mui/material";
 import { LuFilter } from "react-icons/lu";
-import { FcHome, FcOrganization, FcOnlineSupport, FcOvertime, FcAbout } from "react-icons/fc";
 
 /*IMPORT INTERFACES*/
 import { UserData } from '../../interfaces/UserData';
@@ -17,11 +16,12 @@ import Transporte01 from '../Transporte/Transporte01';
 import Transporte02 from '../Transporte/Transporte02';
 import Desfecho from '../Desfecho/Desfecho';
 import Filtro from '../Filtro/Filtro';
+import TabelaRegulacoesAprovadas from '../Tabela de Regulacoes/TabelaRegulacoesAprovadas.tsx';
 
 /*IMPORT FUNCTIONS*/
-import { formatDateTimeToPtBr } from '../../functions/DateTimes';
 import { getUserData } from '../../functions/storageUtils';
-import { removerText } from "../../functions/RemoveText.ts";
+import { getDay, getMonth, getYear } from '../../functions/DateTimes.ts';
+
 
 
 /*IMPORT VARIAVEIS DE AMBIENTE*/
@@ -49,10 +49,15 @@ const RegulacoesAprovadas: React.FC = () => {
 
   /*ORDENAÇÃO*/
   const [sortConfig, setSortConfig] = useState<{ key: keyof RegulacaoAprovadaData; direction: "asc" | "desc" } | null>(null);
+  const [selectedColumn, setSelectedColumn] = useState<keyof RegulacaoAprovadaData | null>(null);
 
   /*PAGINAÇÃO*/
   const [currentPage, setCurrentPage] = useState(1);  // Página atual
   const [itemsPerPage] = useState(10);  // Número de itens por página
+  const indexOfLastRegulacao = currentPage * itemsPerPage;
+  const indexOfFirstRegulacao = indexOfLastRegulacao - itemsPerPage;
+  const currentRegulacoes = filteredRegulacoes.slice(indexOfFirstRegulacao, indexOfLastRegulacao);
+  const totalPages = Math.ceil(filteredRegulacoes.length / itemsPerPage);
 
   /*SNACKBAR*/
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -111,6 +116,51 @@ const RegulacoesAprovadas: React.FC = () => {
     setFilteredRegulacoes(filtered);
   }, [unidadeOrigem, unidadeDestino, searchTerm, regulacoes]);
 
+  //FUNÇÃO PARA BUSCAR O PDF
+  const fetchPDF = async (datetime: string, filename: string) => {
+      const year = getYear(datetime);
+      const month = getMonth(datetime);
+      const day = getDay(datetime);
+  
+      try {
+        const response = await axios.get(`${NODE_URL}/api/internal/upload/ViewPDF`, {
+          params: { year, month, day, filename },
+          responseType: 'blob',
+        });
+  
+        // Criar uma URL temporária para o PDF
+        const url = URL.createObjectURL(response.data);
+  
+        // Abrir o PDF em uma nova aba
+        window.open(url, '_blank');
+      } catch (error: unknown) {
+        // Verificar se o erro é uma instância de AxiosError
+        if (error instanceof AxiosError && error.response) {
+          const { status, data } = error.response;
+  
+          // Exemplo de tratamento de diferentes códigos de status usando switch case
+          switch (status) {
+            case 400:
+              showSnackbar(data?.message || 'Parâmetros inválidos. Verifique os dados.', 'error');
+              break;
+            case 404:
+              showSnackbar(data?.message || 'Arquivo PDF não encontrado.', 'error');
+              break;
+            case 500:
+              showSnackbar(data?.message || 'Erro no servidor ao buscar o arquivo.', 'error');
+              break;
+            default:
+              // Caso um erro desconhecido ocorra
+              showSnackbar(data?.message || 'Erro desconhecido. Tente novamente.', 'error');
+              break;
+          }
+        } else {
+          // Caso o erro não seja uma instância de AxiosError ou não tenha resposta, por exemplo, se o servidor não estiver acessível
+          showSnackbar('Erro na requisição. Tente novamente.', 'error');
+        }
+      }
+  };
+
   //CONFIGURA A ORDENAÇÃO
   const handleSort = (key: keyof RegulacaoAprovadaData) => {
     let direction: "asc" | "desc" = "asc";
@@ -127,18 +177,13 @@ const RegulacoesAprovadas: React.FC = () => {
     });
 
     setFilteredRegulacoes(sortedData);
+    setSelectedColumn(key);
   };
 
   //CONFIGURA A PAGINAÇÃO
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
   };
-
-  const indexOfLastRegulacao = currentPage * itemsPerPage;
-  const indexOfFirstRegulacao = indexOfLastRegulacao - itemsPerPage;
-  const currentRegulacoes = filteredRegulacoes.slice(indexOfFirstRegulacao, indexOfLastRegulacao);
-
-  const totalPages = Math.ceil(filteredRegulacoes.length / itemsPerPage);
 
   /*MODAIS*/
 
@@ -304,107 +349,19 @@ const RegulacoesAprovadas: React.FC = () => {
           )}
 
           <div>
-            <table className='Table-Regulacoes'>
-              <thead>
-                <tr>
-                  <th onClick={() => handleSort("num_prontuario")}>
-                    <span>
-                      <label>Pront.</label> <label>{sortConfig?.key === "num_prontuario" ? (sortConfig.direction === "asc" ? "🔼" : "🔽") : "↕"}</label>
-                    </span>
-                  </th>
-
-                  <th className="col-NomePaciente" onClick={() => handleSort("nome_paciente")}>
-                    <span>
-                      <label>Nome Paciente</label>
-                      <label>{sortConfig?.key === "nome_paciente" ? (sortConfig.direction === "asc" ? "🔼" : "🔽") : "↕"}</label>
-                    </span>
-                  </th>
-
-                  <th className="col-NumRegulacao" onClick={() => handleSort("num_regulacao")}>
-                    Num. Regulação
-                  </th>
-
-
-                  <th onClick={() => handleSort("un_origem")}>
-                    Un. Origem
-                  </th>
-
-                  <th onClick={() => handleSort("un_destino")}>
-                    <span>
-                      <label>Un. Destino</label>
-                      <label>{sortConfig?.key === "un_destino" ? (sortConfig.direction === "asc" ? "🔼" : "🔽") : "↕"}</label>
-                    </span>
-                  </th>
-
-                  <th>Nº Leito</th>
-                  <th>Médico Regulador</th>
-                  <th onClick={() => handleSort("data_hora_regulacao_medico")}>
-                    <span>
-                      <label>Data da Autorização</label>
-                      <label>{sortConfig?.key === "data_hora_regulacao_medico" ? (sortConfig.direction === "asc" ? "🔼" : "🔽") : "↕"}</label>
-                    </span>
-                  </th>
-                  <th>Fase</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                {currentRegulacoes.map(regulacao => (
-                  <tr key={regulacao.id_regulacao}>
-                    <td>{regulacao.num_prontuario}</td>
-                    <td className="td-NomePaciente">{regulacao.nome_paciente}</td>
-                    <td>{regulacao.num_regulacao}</td>
-                    <td>{regulacao.un_origem}</td>
-                    <td>{regulacao.un_destino}</td>
-                    <td>{regulacao.num_leito}</td>
-                    <td>{regulacao.nome_regulador_medico}</td>
-                    <td>{formatDateTimeToPtBr(regulacao.data_hora_regulacao_medico)}</td>
-                    <td>{removerText(regulacao.status_regulacao)}</td>
-
-                    {userData?.tipo !== "MEDICO" && (
-                      <td className="td-Icons">
-                        {regulacao.status_regulacao === "ABERTO - APROVADO - AGUARDANDO ORIGEM" && (
-                          <FcHome
-                            className="Icon Icons-Regulacao"
-                            onClick={() => handleOpenModalOrigem(regulacao)}
-                            title='Acionamento do Setor de Origem'
-                          />
-                        )}
-                        {regulacao.status_regulacao === "ABERTO - APROVADO - AGUARDANDO DESTINO" && (
-                          <FcOrganization
-                            className="Icon Icons-Regulacao"
-                            onClick={() => handleOpenModalDestino(regulacao)}
-                            title='Acionamento do Setor de Destino'
-                          />
-                        )}
-                        {regulacao.status_regulacao === "ABERTO - APROVADO - AGUARDANDO ACIONAMENTO TRANSPORTE" && (
-                          <FcOnlineSupport
-                            className="Icon Icons-Regulacao"
-                            onClick={() => handleOpenModalTransporte01(regulacao)}
-                            title='Acionamento do Transporte'
-                          />
-                        )}
-                        {regulacao.status_regulacao === "ABERTO - APROVADO - AGUARDANDO FINALIZACAO TRANSPORTE" && (
-                          <FcOvertime
-                            className="Icon Icons-Regulacao"
-                            onClick={() => handleOpenModalTransporte02(regulacao)}
-                            title='Finalização do Transporte'
-                          />
-                        )}
-                        {regulacao.status_regulacao === "ABERTO - APROVADO - AGUARDANDO DESFECHO" && (
-                          <FcAbout
-                            className="Icon Icons-Regulacao"
-                            onClick={() => handleOpenModalDesfecho(regulacao)}
-                            title='Desfecho'
-                          />
-                        )}
-
-                      </td>
-                    )}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <TabelaRegulacoesAprovadas
+            UserData={userData}
+            currentRegulacoes={currentRegulacoes}
+            selectedColumn={selectedColumn}
+            sortConfig={sortConfig}
+            handleSort={handleSort}
+            fetchPDF={fetchPDF}
+            handleOpenModalOrigem={handleOpenModalOrigem}
+            handleOpenModalDestino={handleOpenModalDestino}
+            handleOpenModalTransporte01={handleOpenModalTransporte01}
+            handleOpenModalTransporte02={handleOpenModalTransporte02}
+            handleOpenModalDesfecho={handleOpenModalDesfecho}
+          />
           </div>
         </div>
         <div className="Pagination">

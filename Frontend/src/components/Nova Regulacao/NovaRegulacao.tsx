@@ -4,6 +4,7 @@ import { AxiosError } from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Snackbar, Alert } from '@mui/material';
 import { FcCheckmark, FcLeave } from "react-icons/fc";
+import { TiBookmark } from "react-icons/ti";
 
 /*IMPORT INTERFACES*/
 import { NovaRegulacaoData } from '../../interfaces/Regulacao';
@@ -194,7 +195,7 @@ const NovaRegulacao: React.FC = () => {
       });
 
       // Resposta de sucesso
-      showSnackbar(response.data.message || 'Erro inesperado:', 'success');
+      showSnackbar(response.data.message || 'Erro inesperado:', 'error');
     } catch (error: unknown) {
       if (error instanceof AxiosError) {
         console.error('Erro ao enviar o arquivo:', error);
@@ -222,13 +223,14 @@ const NovaRegulacao: React.FC = () => {
         ...formData,
         id_user: userData?.id_user, // Use o operador de encadeamento opcional para evitar erros se `userData` for `null`
         nome_regulador_nac: userData?.nome,
+        data_hora_solicitacao_02: formData.data_hora_solicitacao_01
       };
 
       // Envia o formulário primeiro
       const response = await axios.post(`${NODE_URL}/api/internal/post/NovaRegulacao`, dataToSubmit);
 
-       // Verifica se num_regulacao é válido
-       if (dataToSubmit.num_regulacao != null) {
+      // Verifica se num_regulacao é válido
+      if (dataToSubmit.num_regulacao != null && dataToSubmit.data_hora_solicitacao_02 != null) {
         // Verifica se há arquivo e, caso haja, faz o upload
         if (file) {
           await uploadFile(dataToSubmit.data_hora_solicitacao_02, dataToSubmit.num_regulacao);
@@ -411,10 +413,10 @@ const NovaRegulacao: React.FC = () => {
 
       <div className="ComponentForm">
         <div className="Steps">
-          <div className={`Step ${currentStep === 1 ? 'active' : ''}`}>Paciente</div>
-          <div className={`Step ${currentStep === 2 ? 'active' : ''}`}>Localidades</div>
-          <div className={`Step ${currentStep === 3 ? 'active' : ''}`}>Regulação</div>
-          <div className={`Step ${currentStep === 4 ? 'active' : ''}`}>Confirmação</div>
+          <div className={`Step ${currentStep === 1 ? 'active' : ''}`}><TiBookmark />Paciente</div>
+          <div className={`Step ${currentStep === 2 ? 'active' : ''}`}><TiBookmark />Localidades</div>
+          <div className={`Step ${currentStep === 3 ? 'active' : ''}`}><TiBookmark />Regulação</div>
+          <div className={`Step ${currentStep === 4 ? 'active' : ''}`}><TiBookmark />Confirmação</div>
         </div>
         <form className="Form-NovaRegulacao" onSubmit={handleSubmit}>
           <div className="Form-NovaRegulacao-Inputs">
@@ -616,13 +618,14 @@ const NovaRegulacao: React.FC = () => {
             )}
 
           </div>
-          <div className="Div-Buttons End End">
+
+          <div className="Div-Buttons End">
             {currentStep > 1 && <button type="button" onClick={previousStep}>Voltar</button>}
             {currentStep < 4 && <button type="button" onClick={nextStep}>Avançar</button>}
             {currentStep === 4 && <button type="submit">Finalizar</button>}
           </div>
-        </form>
 
+        </form>
       </div>
 
       <Snackbar

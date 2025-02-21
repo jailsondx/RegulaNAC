@@ -23,6 +23,17 @@
     border: 5px solid #156573;
 }
 
+.Component-Login input{
+    border: 1px solid #156573;
+    width: 100%;
+    transition: border 0.3s ease;
+}
+
+.Component-Login input:focus{
+    border: 3px solid #156573;
+    outline: none;
+}
+
 .div-Logo{
     height: auto;
     width: 20dvw;

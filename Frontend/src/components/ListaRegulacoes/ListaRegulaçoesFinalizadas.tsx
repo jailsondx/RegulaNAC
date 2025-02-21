@@ -23,7 +23,7 @@ import './ListaRegulacoes.css';
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
 
 
-const ListaRegulacoes: React.FC = () => {
+const ListaRegulacoesFinalizadas: React.FC = () => {
   const [regulacoes, setRegulacoes] = useState<RegulacaoData[]>([]); // Tipo do estado
   const location = useLocation();
 
@@ -340,4 +340,4 @@ const ListaRegulacoes: React.FC = () => {
 };
 
 
-export default ListaRegulacoes;
+export default ListaRegulacoesFinalizadas;

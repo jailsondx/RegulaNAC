@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { TiBusinessCard, TiClipboard, TiThumbsUp, TiHeartHalfOutline, TiHomeOutline, TiUpload  } from "react-icons/ti";
-import { getUserData} from '../../functions/storageUtils';
+import { TiBusinessCard, TiClipboard, TiThumbsUp, TiHeartHalfOutline, TiHomeOutline, TiUpload, TiArrowBack } from "react-icons/ti";
+import { getUserData } from '../../functions/storageUtils';
 
 /*IMPORT INTERFACE*/
 import { UserData } from '../../interfaces/UserData';
@@ -15,6 +15,7 @@ const Sidebar: React.FC = () => {
   });
   const [userData, setUserData] = useState<UserData | null>(null);
   const [iconUser, setIconUser] = useState<string | null>(null);
+  const [showReportMenu, setShowReportMenu] = useState(false);
 
   useEffect(() => {
     document.body.className = theme === 'dark' ? 'dark-theme' : 'light-theme';
@@ -26,7 +27,6 @@ const Sidebar: React.FC = () => {
     setUserData(dataUser);
   }, []);
 
-  // Usando useEffect para setar a imagem do usuário baseado no tipo
   useEffect(() => {
     if (userData?.tipo === 'MEDICO') {
       setIconUser('/IconsUser/icon-medico.jpg');
@@ -35,16 +35,14 @@ const Sidebar: React.FC = () => {
     } else if (userData?.tipo === 'GERENCIA') {
       setIconUser('/IconsUser/icon-regulador.jpg');
     } else {
-      setIconUser('/IconsUser/icon-anonimous.png'); // Default ou outra imagem
+      setIconUser('/IconsUser/icon-anonimous.png');
     }
-  }, [userData]); // Atualiza sempre que userData mudar
+  }, [userData]);
 
   const toggleTheme = () => {
     setTheme((prevTheme) => (prevTheme === 'light' ? 'dark' : 'light'));
   };
 
-
-  // Renderiza os itens do menu de acordo com o tipo de usuário
   const renderMenuItems = () => {
     if (!userData) return null;
 
@@ -55,6 +53,7 @@ const Sidebar: React.FC = () => {
         <ul>
           <li> <Link to="/RegulacaoMedica"><TiHeartHalfOutline className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulação Médica</label></Link> </li>
           <li> <Link to="/RegulacoesAprovadas"><TiThumbsUp className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações Aprovadas</label></Link> </li>
+          <li> <a onClick={() => setShowReportMenu(true)}><TiUpload className='Icon-Menu-Item' /><label className='textMenu-Item'>Relatórios</label></a> </li>
         </ul>
       );
     }
@@ -62,14 +61,13 @@ const Sidebar: React.FC = () => {
     if (tipo === 'REGULADOR') {
       return (
         <>
-         <ul>
+          <ul>
             <li><Link to="/NovaRegulacao"><TiBusinessCard className='Icon-Menu-Item' /><label className='textMenu-Item'>Nova Regulação</label></Link></li>
             <li><Link to="/ListaRegulacoes"><TiClipboard className='Icon-Menu-Item' /><label className='textMenu-Item'>Lista de Regulações</label></Link></li>
             <li><Link to="/RegulacoesAprovadas"><TiThumbsUp className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações Aprovadas</label></Link></li>
-            <li><Link to="/Desfechos"><TiHomeOutline  className='Icon-Menu-Item' /><label className='textMenu-Item'>Gerar Desfecho</label></Link></li>
-            <li><Link to="/RelatoriosRegulacao"><TiUpload  className='Icon-Menu-Item' /><label className='textMenu-Item'>Relatorios R</label></Link></li>
-            <li><Link to="/RelatoriosGerencial"><TiUpload  className='Icon-Menu-Item' /><label className='textMenu-Item'>Relatorios G</label></Link></li>
-            <hr/>
+            <li><Link to="/Desfechos"><TiHomeOutline className='Icon-Menu-Item' /><label className='textMenu-Item'>Gerar Desfecho</label></Link></li>
+            <li> <a onClick={() => setShowReportMenu(true)}><TiUpload className='Icon-Menu-Item' /><label className='textMenu-Item'>Relatórios</label></a> </li>
+            <hr />
           </ul>
           <li><Link to="/ListaRegulacoes24"><TiClipboard className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações +24hrs</label></Link></li>
           <li><Link to="/Finalizadas"><TiClipboard className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações Finalizadas</label></Link></li>
@@ -77,7 +75,6 @@ const Sidebar: React.FC = () => {
       );
     }
 
-    // Adicione uma nova condição para GERENCIA visualizar tudo
     if (tipo === 'GERENCIA') {
       return (
         <>
@@ -85,10 +82,9 @@ const Sidebar: React.FC = () => {
             <li><Link to="/NovaRegulacao"><TiBusinessCard className='Icon-Menu-Item' /><label className='textMenu-Item'>Nova Regulação</label></Link></li>
             <li><Link to="/ListaRegulacoes"><TiClipboard className='Icon-Menu-Item' /><label className='textMenu-Item'>Lista de Regulações</label></Link></li>
             <li><Link to="/RegulacoesAprovadas"><TiThumbsUp className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações Aprovadas</label></Link></li>
-            <li><Link to="/Desfechos"><TiHomeOutline  className='Icon-Menu-Item' /><label className='textMenu-Item'>Gerar Desfecho</label></Link></li>
-            <li><Link to="/RelatoriosRegulacao"><TiUpload  className='Icon-Menu-Item' /><label className='textMenu-Item'>Relatorios R</label></Link></li>
-            <li><Link to="/RelatoriosGerencial"><TiUpload  className='Icon-Menu-Item' /><label className='textMenu-Item'>Relatorios G</label></Link></li>
-            <hr/>
+            <li><Link to="/Desfechos"><TiHomeOutline className='Icon-Menu-Item' /><label className='textMenu-Item'>Gerar Desfecho</label></Link></li>
+            <li> <a onClick={() => setShowReportMenu(true)}><TiUpload className='Icon-Menu-Item' /><label className='textMenu-Item'>Relatórios</label></a> </li>
+            <hr />
           </ul>
           <li><Link to="/ListaRegulacoes24"><TiClipboard className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações +24hrs</label></Link></li>
           <li> <Link to="/RegulacaoMedica"><TiHeartHalfOutline className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulação Médica</label></Link> </li>
@@ -96,7 +92,17 @@ const Sidebar: React.FC = () => {
       );
     }
 
-    return null; // Caso o tipo de usuário não seja reconhecido
+    return null;
+  };
+
+  const renderReportMenuItems = () => {
+    return (
+      <ul>
+        <li><a onClick={() => setShowReportMenu(false)}><TiArrowBack className='Icon-Menu-Item' /><label className='textMenu-Item'>Voltar</label></a></li>
+        <li><Link to="/RelatoriosRegulacao"><TiUpload className='Icon-Menu-Item' /><label className='textMenu-Item'>Relatórios R</label></Link></li>
+        <li><Link to="/RelatoriosGerencial"><TiUpload className='Icon-Menu-Item' /><label className='textMenu-Item'>Relatórios G</label></Link></li>
+      </ul>
+    );
   };
 
   return (
@@ -112,7 +118,7 @@ const Sidebar: React.FC = () => {
         </div>
 
         <ul>
-          {renderMenuItems()}
+          {showReportMenu ? renderReportMenuItems() : renderMenuItems()}
         </ul>
       </div>
 

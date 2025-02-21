@@ -3,9 +3,11 @@
   --component: #f9f9f9;
   --bg-color: #dcdde1;
   --text-color: #000000;
+
   --table-bg: #ecf0f1;
   --table-header-bg: #49798a;
-  --table-header-text-color: whitesmoke;
+  --table-header-selected: #024059;
+  --table-header-text-color: #b2bec3;
   --table-hover-bg: #c7ecee;
   --table-border: #49798a;
 
@@ -33,7 +35,8 @@
 
   --table-bg: #333333;
   --table-header-bg: #024059;
-  --table-header-text-color: whitesmoke;
+  --table-header-selected: #49798a;
+  --table-header-text-color: #b2bec3;
   --table-hover-bg: #555555;
   --table-border: snow;
 
@@ -378,6 +381,16 @@ input:disabled {
   width: 50%;
 }
 
+.clicked label{
+  cursor: pointer;
+}
+
+/* Estilo quando o título for selecionado */
+.selected {
+  background-color: var(--table-header-selected)!important; /* Cor de fundo ao ser clicado */
+  color: #fff!important; /* Cor do texto quando selecionado */
+}
+
 
 
 
@@ -468,7 +481,7 @@ input:disabled {
 
 /*UPLOAD*/
 .upload{
-  padding: 10px 10px 10px 5px;/* Topo, direita, inferior, esquerda */
+  padding: 1dvh 1dvw 1dvh 1dvw;/* Topo, direita, inferior, esquerda */
 
   border: 2px solid #49798a;
 }
