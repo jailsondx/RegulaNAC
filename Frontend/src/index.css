@@ -26,6 +26,9 @@
   --modal-close-bg-hover: #c7ecee;
 
   --border-form-search: #024059;
+
+  --step: #b2bec3;
+  --step-active: #024059;
 }
 
 .dark-theme {
@@ -54,6 +57,9 @@
   --modal-close-bg-hover: #555;
 
   --border-form-search: #49798a;
+
+  --step: #49798a;
+  --step-active: whitesmoke;
 }
 
 

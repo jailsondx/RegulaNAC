@@ -15,7 +15,7 @@
     text-align: center;
     justify-content: center;
     align-items: center;
-    color: #999;
+    color: var(--step);
     text-transform: uppercase;
     position: relative;
   }
@@ -29,12 +29,11 @@
     border: 2px solid #999;
     border-radius: 50%;
     background: #fff;
-    color: #999;
     margin-right: 5px;
   }
   
   .Step.active {
-    color: #49798a;
+    color: var(--step-active);
   }
   
   .Step.active::before {
