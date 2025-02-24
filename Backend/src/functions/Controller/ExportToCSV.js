@@ -56,7 +56,7 @@ async function exportarRelatorioCSVPaciente(dados) {
     }
 }
 
-async function exportarRelatorioCSVGerencial(dados) {
+async function exportarRelatorioCSVEfetivacao(dados) {
     try {
         if (dados.length === 0) {
             throw new Error('Nenhum dado disponível para exportação.');
@@ -83,4 +83,4 @@ async function exportarRelatorioCSVGerencial(dados) {
     }
 }
 
-export { exportarRelatorioCSVPaciente, exportarRelatorioCSVGerencial };
+export { exportarRelatorioCSVPaciente, exportarRelatorioCSVEfetivacao };

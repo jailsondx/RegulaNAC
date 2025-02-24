@@ -1,4 +1,4 @@
-import { exportarRelatorioCSVPaciente as handleCSVPaciente, exportarRelatorioCSVGerencial as handleCSVGerencial } from '../Controller/ExportToCSV.js';
+import { exportarRelatorioCSVPaciente as handleCSVPaciente, exportarRelatorioCSVEfetivacao as handleCSVEfetivacao } from '../Controller/ExportToCSV.js';
 import { DBconnection } from "../Controller/connection.js"; // Importa apenas o objeto DBconnection
 
 async function relatorioRegulacao(FormData) {
@@ -76,7 +76,7 @@ async function relatorioRegulacao(FormData) {
     }
 }
 
-async function relatorioGerencial(FormData) {
+async function relatorioEfetivacao(FormData) {
     const DBtableRegulacao = 'regulacao';
     const startDate = FormData.data_Solicitacao_Inicio;
     const endDate = FormData.data_Solicitacao_Fim;
@@ -149,15 +149,247 @@ async function relatorioGerencial(FormData) {
         // Ordenar os dados antes de exportar o CSV
         dadosParaCSV.sort((a, b) => a.un_destino.localeCompare(b.un_destino));
 
-        console.log('✅ Dados formatados para CSV:');
+        if(dadosParaCSV.length > 0){
+            console.log('✅ Dados formatados para CSV');
 
-        // 📂 Exportar os dados para CSV
-        const filePath = await handleCSVGerencial(dadosParaCSV);
-        return { success: true, filePath };
+            // 📂 Exportar os dados para CSV
+            const filePath = await handleCSVEfetivacao(dadosParaCSV);
+            return { success: true, filePath };
+        } else{
+            console.log('❌ Erro ao formatar dados para CSV: Dados Vazios');
+            return { success: false, message: "Dados vazios para a data informada." };
+        }
+        
+
+
     } catch (error) {
         console.error('❌ Erro ao carregar regulações:', error);
         return { success: false, message: "Erro ao carregar regulações.", error };
     }
 }
 
-export { relatorioRegulacao, relatorioGerencial };
+async function relatorioTempoEfetivacao(FormData) {
+    const DBtableRegulacao = 'regulacao';
+    const DBtableRegulacaoMedico = 'regulacao_medico';
+    const DBtableTransporte = 'transporte';
+    const startDate = FormData.data_Solicitacao_Inicio;
+    const endDate = FormData.data_Solicitacao_Fim;
+
+    try {
+        const connection = await DBconnection.getConnection();
+
+        // 🚀 1️⃣ Calcular a diferença de tempo entre 'data_hora_acionamento_medico' e 'data_hora_regulacao_medico'
+        const [rows_tempoAcMedicoxAuMedico] = await connection.query(`
+            SELECT 
+            r.un_destino, 
+            TIMESTAMPDIFF(MINUTE, MIN(r.data_hora_acionamento_medico), MIN(rm.data_hora_regulacao_medico)) AS tempo_AcMedicoxAuMedico
+            FROM ${DBtableRegulacao} r
+            JOIN ${DBtableRegulacaoMedico} rm ON r.id_regulacao = rm.id_regulacao
+            WHERE DATE(r.data_hora_acionamento_medico) BETWEEN ? AND ?
+            GROUP BY r.un_destino
+        `, [startDate, endDate]);
+
+        // 🚀 2️⃣ Calcular a diferença de tempo entre 'data_hora_regulacao_medico' e 'data_hora_chegada_destino' da tabela transporte
+        const [rows_tempoTrxAuMedico] = await connection.query(`
+            SELECT 
+            r.un_destino, 
+            TIMESTAMPDIFF(MINUTE, MIN(rm.data_hora_regulacao_medico), MIN(t.data_hora_chegada_destino)) AS tempo_tempoTrxAuMedico
+            FROM ${DBtableRegulacao} r
+            JOIN ${DBtableRegulacaoMedico} rm ON r.id_regulacao = rm.id_regulacao
+            JOIN ${DBtableTransporte} t ON r.id_regulacao = t.id_regulacao
+            WHERE DATE(rm.data_hora_regulacao_medico) BETWEEN ? AND ?
+            GROUP BY r.un_destino
+        `, [startDate, endDate]);
+
+        // 🚀 3️⃣ Calcular a diferença de tempo entre 'data_hora_solicitacao_01' e 'data_hora_chegada_destino'
+        const [rows_tempoTr1Sol] = await connection.query(`
+            SELECT 
+            r.un_destino, 
+            TIMESTAMPDIFF(MINUTE, MIN(r.data_hora_solicitacao_01), MIN(t.data_hora_chegada_destino)) AS tempo_tempoTr1Sol
+            FROM ${DBtableRegulacao} r
+            JOIN ${DBtableTransporte} t ON r.id_regulacao = t.id_regulacao
+            WHERE DATE(r.data_hora_solicitacao_01) BETWEEN ? AND ?
+            GROUP BY r.un_destino
+        `, [startDate, endDate]);
+
+
+        connection.release();
+
+        // 🚀 4️⃣ Categorizar os tempos de efetivação
+        const categoriasTempoAcMedicoxAuMedico = {
+            ate30min: 0,
+            entre30min1hora: 0,
+            entre1hora2horas: 0,
+            entre2horas6horas: 0,
+            maior6horas: 0
+        };
+
+        rows_tempoAcMedicoxAuMedico.forEach(row => {
+            const tempo = row.tempo_AcMedicoxAuMedico;
+            if (tempo <= 30) {
+            categoriasTempoAcMedicoxAuMedico.ate30min++;
+            } else if (tempo > 30 && tempo <= 60) {
+            categoriasTempoAcMedicoxAuMedico.entre30min1hora++;
+            } else if (tempo > 60 && tempo <= 120) {
+            categoriasTempoAcMedicoxAuMedico.entre1hora2horas++;
+            } else if (tempo > 120 && tempo <= 360) {
+            categoriasTempoAcMedicoxAuMedico.entre2horas6horas++;
+            } else {
+            categoriasTempoAcMedicoxAuMedico.maior6horas++;
+            }
+        });
+
+        console.log('Categorias de Tempo ACIONAMENTO MÉDICO X AUTORIZAÇÃO DA VAGA:', categoriasTempoAcMedicoxAuMedico);
+
+
+        // 🚀 4️⃣ Categorizar os tempos de efetivação para 'data_hora_regulacao_medico' e 'data_hora_chegada_destino'
+        const categoriasTempoTrxAuMedico = {
+            ate2horas: 0,
+            entre2horas6horas: 0,
+            entre6horas12horas: 0,
+            maior12horas: 0
+        };
+
+        rows_tempoTrxAuMedico.forEach(row => {
+            const tempo = row.tempo_tempoTrxAuMedico;
+            if (tempo <= 120) { // 120 minutos = 2 horas
+                categoriasTempoTrxAuMedico.ate2horas++;
+            } else if (tempo > 120 && tempo <= 360) { // 360 minutos = 6 horas
+                categoriasTempoTrxAuMedico.entre2horas6horas++;
+            } else if (tempo > 360 && tempo <= 720) { // 720 minutos = 12 horas
+                categoriasTempoTrxAuMedico.entre6horas12horas++;
+            } else {
+                categoriasTempoTrxAuMedico.maior12horas++;
+            }
+        });
+
+        console.log('Categorias de Tempo REGULAÇÃO MÉDICO X CHEGADA DESTINO:', categoriasTempoTrxAuMedico);
+
+
+        // 🚀 4️⃣ Categorizar os tempos de efetivação para 'data_hora_solicitacao_01' e 'data_hora_chegada_destino'
+        const categoriasTempoTr1Sol = {
+            ate24h: 0,
+            entre24h72h: 0,
+            maior72h: 0,
+        };
+
+        rows_tempoTr1Sol.forEach(row => {
+            const tempo = row.tempo_tempoTr1Sol;
+            if (tempo <= 1440) { // 1440 minutos = 24 horas
+            categoriasTempoTr1Sol.ate24h++;
+            } else if (tempo > 1440 && tempo <= 4320) { // 4320 minutos = 72 horas
+            categoriasTempoTr1Sol.entre24h72h++;
+            } else {
+            categoriasTempoTr1Sol.maior72h++;
+            }
+        });
+
+        // 🚀 🔄 **Garantir que todas as unidades de destino estejam presentes**
+        const unidadesDestino = new Set([
+            ...rows_tempoAcMedicoxAuMedico.map(row => row.un_destino),
+            ...rows_tempoTrxAuMedico.map(row => row.un_destino),
+            ...rows_tempoTr1Sol.map(row => row.un_destino)
+        ]);
+
+        // 🚀 🔄 **Transformar os dados para o formato correto**
+        const dadosParaCSV = [];
+
+        // Criando linhas individuais para cada unidade de destino e tipo de dado
+        unidadesDestino.forEach(unidade => {
+            dadosParaCSV.push({
+                un_destino: unidade,
+                especificacao: 'TEMPO ACIONAMENTO MÉDICO X AUTORIZAÇÃO DA VAGA (Até 30 Min)',
+                valor_absoluto: categoriasTempoAcMedicoxAuMedico.ate30min
+            });
+
+            dadosParaCSV.push({
+                un_destino: unidade,
+                especificacao: 'TEMPO ACIONAMENTO MÉDICO X AUTORIZAÇÃO DA VAGA (30 Min a 1h)',
+                valor_absoluto: categoriasTempoAcMedicoxAuMedico.entre30min1hora
+            });
+
+            dadosParaCSV.push({
+                un_destino: unidade,
+                especificacao: 'TEMPO ACIONAMENTO MÉDICO X AUTORIZAÇÃO DA VAGA (1h a 2h)',
+                valor_absoluto: categoriasTempoAcMedicoxAuMedico.entre1hora2horas
+            });
+
+            dadosParaCSV.push({
+                un_destino: unidade,
+                especificacao: 'TEMPO ACIONAMENTO MÉDICO X AUTORIZAÇÃO DA VAGA (2h a 6h)',
+                valor_absoluto: categoriasTempoAcMedicoxAuMedico.entre2horas6horas
+            });
+
+            dadosParaCSV.push({
+                un_destino: unidade,
+                especificacao: 'TEMPO ACIONAMENTO MÉDICO X AUTORIZAÇÃO DA VAGA (Mais de 6h)',
+                valor_absoluto: categoriasTempoAcMedicoxAuMedico.maior6horas
+            });
+
+            dadosParaCSV.push({
+                un_destino: unidade,
+                especificacao: 'TEMPO REGULAÇÃO MÉDICO X CHEGADA DESTINO (Até 2h)',
+                valor_absoluto: categoriasTempoTrxAuMedico.ate2horas
+            });
+            
+            dadosParaCSV.push({
+                un_destino: unidade,
+                especificacao: 'TEMPO REGULAÇÃO MÉDICO X CHEGADA DESTINO (2h a 6h)',
+                valor_absoluto: categoriasTempoTrxAuMedico.entre2horas6horas
+            });
+            
+            dadosParaCSV.push({
+                un_destino: unidade,
+                especificacao: 'TEMPO REGULAÇÃO MÉDICO X CHEGADA DESTINO (6h a 12h)',
+                valor_absoluto: categoriasTempoTrxAuMedico.entre6horas12horas
+            });
+            
+            dadosParaCSV.push({
+                un_destino: unidade,
+                especificacao: 'TEMPO REGULAÇÃO MÉDICO X CHEGADA DESTINO (Mais DE 12h)',
+                valor_absoluto: categoriasTempoTrxAuMedico.maior12horas
+            });
+
+            dadosParaCSV.push({
+                un_destino: unidade,
+                especificacao: 'PACIENTES TRANSFERIDOS ATÉ 24h DA 1ª SOLICITAÇÃO',
+                valor_absoluto: categoriasTempoTr1Sol.ate24h
+            });
+
+            dadosParaCSV.push({
+                un_destino: unidade,
+                especificacao: 'PACIENTES TRANSFERIDOS ENTRE 24h E 72h DA 1ª SOLICITAÇÃO',
+                valor_absoluto: categoriasTempoTr1Sol.entre24h72h
+            });
+
+            dadosParaCSV.push({
+                un_destino: unidade,
+                especificacao: 'PACIENTES TRANSFERIDOS APÓS 72h DA 1ª SOLICITAÇÃO',
+                valor_absoluto: categoriasTempoTr1Sol.maior72h
+            });
+        });
+
+        // Ordenar os dados antes de exportar o CSV
+        dadosParaCSV.sort((a, b) => a.un_destino.localeCompare(b.un_destino));
+
+        if(dadosParaCSV.length > 0){
+            console.log('✅ Dados formatados para CSV');
+
+            // 📂 Exportar os dados para CSV
+            const filePath = await handleCSVEfetivacao(dadosParaCSV);
+            return { success: true, filePath };
+        } else{
+            console.log('❌ Erro ao formatar dados para CSV: Dados Vazios');
+            return { success: false, message: "Dados vazios para a data informada." };
+        }
+        
+
+
+    } catch (error) {
+        console.error('❌ Erro ao carregar regulações:', error);
+        return { success: false, message: "Erro ao carregar regulações.", error };
+    }
+}
+
+
+export { relatorioRegulacao, relatorioEfetivacao, relatorioTempoEfetivacao };

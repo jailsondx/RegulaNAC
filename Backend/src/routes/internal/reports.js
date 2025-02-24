@@ -1,6 +1,6 @@
 import express from 'express';
 import { convertObjectToUpperCase } from '../../functions/Manipulation/ObjectUpperCase.js';
-import { relatorioRegulacao, relatorioGerencial } from '../../functions/SelectSQL/Relatorios.js';
+import { relatorioRegulacao, relatorioEfetivacao, relatorioTempoEfetivacao } from '../../functions/SelectSQL/Relatorios.js';
 
 const routerReport = express.Router();
 
@@ -24,24 +24,45 @@ routerReport.post('/', async (req, res) => {
   }
 });
 
-// Rota para relatório gerencial
-routerReport.post('/Gerencial', async (req, res) => {
+// Rota para relatório efetivacao
+routerReport.post('/Efetivacao', async (req, res) => {
   try {
     const formData = convertObjectToUpperCase(req.body); // Converte os dados para maiúsculas
 
-    const result = await relatorioGerencial(formData);
+    const result = await relatorioEfetivacao(formData);
 
     if (result.success && result.filePath) {
       handleDownload(res, result.filePath, 'RelatorioGerencial.csv');
     } else {
-      res.status(401).json({ message: 'Credenciais inválidas.', error: result.error });
+      res.status(500).json({ message:result.message, error: result.error });
     }
   } catch (error) {
     console.error('Erro no processamento:', error);
-  res.status(500).json({
-    message: 'Erro interno do servidor',
-    error: 'Erro desconhecido',
-  });
+    res.status(500).json({
+      message: 'Erro interno do servidor',
+      error: error instanceof Error ? error.message : 'Erro desconhecido',
+    });
+  }
+});
+
+// Rota para relatório efetivacao
+routerReport.post('/TempoEfetivacao', async (req, res) => {
+  try {
+    const formData = convertObjectToUpperCase(req.body); // Converte os dados para maiúsculas
+
+    const result = await relatorioTempoEfetivacao(formData);
+
+    if (result.success && result.filePath) {
+      handleDownload(res, result.filePath, 'RelatorioTempoEfetivação.csv');
+    } else {
+      res.status(500).json({ message:result.message, error: result.error });
+    }
+  } catch (error) {
+    console.error('Erro no processamento:', error);
+    res.status(500).json({
+      message: 'Erro interno do servidor',
+      error: error instanceof Error ? error.message : 'Erro desconhecido',
+    });
   }
 });
 

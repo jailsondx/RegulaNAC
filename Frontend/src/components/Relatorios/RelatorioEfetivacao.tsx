@@ -23,7 +23,7 @@ import './Relatorios.css';
 /*IMPORT VARIAVEIS DE AMBIENTE*/
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
 
-const Relatorios: React.FC = () => {
+const RelatorioEfetivacao: React.FC = () => {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [formData, setFormData] = useState<ReportData>({});
   const [showError, setShowError] = useState(false);
@@ -67,7 +67,9 @@ const Relatorios: React.FC = () => {
       };
 
       // Configura o axios para receber a resposta como um blob (arquivo)
-      const response = await axios.post(`${NODE_URL}/api/internal/report/Gerencial`, dataToSubmit)
+      const response = await axios.post(`${NODE_URL}/api/internal/report/Efetivacao`, dataToSubmit)
+
+      console.log(response);
 
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
@@ -86,8 +88,8 @@ const Relatorios: React.FC = () => {
       showSnackbar('Relatório gerado e download iniciado com sucesso!', 'success');
     } catch (error: unknown) {
       if (error instanceof AxiosError) {
-        console.error('Erro ao gerar o relatório:', error);
-        showSnackbar('Erro ao gerar o relatório.', 'error');
+        console.error(error.response?.data?.message || 'Erro ao gerar o relatório:', error);
+        showSnackbar(error.response?.data?.message || 'Erro ao gerar o relatório.', 'error');
       } else if (error instanceof Error) {
         // Se o erro for do tipo genérico `Error`, trate-o também
         console.error('Erro desconhecido:', error.message);
@@ -179,4 +181,4 @@ const Relatorios: React.FC = () => {
 };
 
 
-export default Relatorios;
+export default RelatorioEfetivacao;

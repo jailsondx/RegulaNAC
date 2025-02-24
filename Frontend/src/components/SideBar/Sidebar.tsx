@@ -87,6 +87,7 @@ const Sidebar: React.FC = () => {
             <hr />
           </ul>
           <li><Link to="/ListaRegulacoes24"><TiClipboard className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações +24hrs</label></Link></li>
+          <li><Link to="/Finalizadas"><TiClipboard className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações Finalizadas</label></Link></li>
           <li> <Link to="/RegulacaoMedica"><TiHeartHalfOutline className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulação Médica</label></Link> </li>
         </>
       );
@@ -100,7 +101,8 @@ const Sidebar: React.FC = () => {
       <ul>
         <li><a onClick={() => setShowReportMenu(false)}><TiArrowBack className='Icon-Menu-Item' /><label className='textMenu-Item'>Voltar</label></a></li>
         <li><Link to="/RelatoriosRegulacao"><TiUpload className='Icon-Menu-Item' /><label className='textMenu-Item'>Relatórios R</label></Link></li>
-        <li><Link to="/RelatoriosGerencial"><TiUpload className='Icon-Menu-Item' /><label className='textMenu-Item'>Relatório de Efetivação</label></Link></li>
+        <li><Link to="/RelatorioEfetivacao"><TiUpload className='Icon-Menu-Item' /><label className='textMenu-Item'>Relatório de Efetivação</label></Link></li>
+        <li><Link to="/RelatorioTempoEfetivacao"><TiUpload className='Icon-Menu-Item' /><label className='textMenu-Item'>Relatório de Tempo de Efetivação</label></Link></li>
       </ul>
     );
   };
