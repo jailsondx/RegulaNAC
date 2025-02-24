@@ -33,7 +33,7 @@ routerUpload.get('/ViewPDF', async (req, res) => {
   }
 
   // Caminho do arquivo
-  const filePath = path.join(__dirname, '../../uploadsReg/', year, month, day, filename);
+  const filePath = path.join(__dirname, '../../Upload/', year, month, day, filename);
 
   if (!fs.existsSync(filePath)) {
     return res.status(404).json({ message: 'Arquivo não encontrado' });

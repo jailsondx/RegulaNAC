@@ -16,7 +16,7 @@ const storage = multer.diskStorage({
     if (!year || !month || !day) {
       return cb(new Error('Dados de data não fornecidos.'), null);
     }
-    const uploadDir = path.join(__dirname, `../../uploadsReg/${year}/${month}/${day}`);
+    const uploadDir = path.join(__dirname, `../../Upload/${year}/${month}/${day}`);
     
     if (!fs.existsSync(uploadDir)) {
       fs.mkdirSync(uploadDir, { recursive: true });
@@ -43,7 +43,7 @@ async function uploadPDF(req, res) {
       return res.status(400).json({ message: 'Dados insuficientes na requisição.' });
     }
     
-    const fileUrl = `http://${NODE_URL}/uploadsReg/${year}/${month}/${day}/${req.file.filename}`;
+    const fileUrl = `http://${NODE_URL}/Upload/${year}/${month}/${day}/${req.file.filename}`;
     
     await UpdateLinkDOC(num_regulacao, req.file.filename);
     
@@ -57,7 +57,7 @@ async function uploadPDF(req, res) {
 const uploadMiddleware = upload.single('file');
 
 function viewPDF(year, month, day, filename) {
-  const filePath = path.join(__dirname, `../../uploadsReg/${year}/${month}/${day}/${filename}`);
+  const filePath = path.join(__dirname, `../../Upload/${year}/${month}/${day}/${filename}`);
   
   if (fs.existsSync(filePath)) {
     return filePath;
