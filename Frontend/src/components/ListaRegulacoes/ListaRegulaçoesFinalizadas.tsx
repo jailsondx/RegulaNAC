@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { AxiosError } from 'axios';
 import { LuFilter } from "react-icons/lu";
-import {  useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { Snackbar, Alert } from '@mui/material';
 
 /*IMPORT INTERFACES*/
@@ -10,12 +10,14 @@ import { RegulacaoData } from '../../interfaces/Regulacao';
 
 /*IMPORT COMPONENTS*/
 import Filtro from '../Filtro/Filtro';
+import TabelaRegulacoesFinalizadas from '../Tabela de Regulacoes/TabelaRegulacoesFinalizadas';
 
 /*IMPORT FUNCTIONS*/
 import { getDay, getMonth, getYear } from '../../functions/DateTimes';
 
 /*IMPORT CSS*/
 import './ListaRegulacoes.css';
+
 
 /*IMPORT JSON*/
 
@@ -37,9 +39,14 @@ const ListaRegulacoesFinalizadas: React.FC = () => {
   /*PAGINAÇÃO*/
   const [currentPage, setCurrentPage] = useState(1);  // Página atual
   const [itemsPerPage] = useState(10);  // Número de itens por página
+  const indexOfLastRegulacao = currentPage * itemsPerPage;
+  const indexOfFirstRegulacao = indexOfLastRegulacao - itemsPerPage;
+  const currentRegulacoes = filteredRegulacoes.slice(indexOfFirstRegulacao, indexOfLastRegulacao);
+  const totalPages = Math.ceil(filteredRegulacoes.length / itemsPerPage);
 
   /*ORDENAÇÃO*/
   const [sortConfig, setSortConfig] = useState<{ key: keyof RegulacaoData; direction: "asc" | "desc" } | null>(null);
+  const [selectedColumn, setSelectedColumn] = useState<keyof RegulacaoData | null>(null);
 
   /*SNACKBAR*/
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -85,7 +92,7 @@ const ListaRegulacoesFinalizadas: React.FC = () => {
       // Limpa o state da navegação após exibir
       location.state.snackbar = undefined;
     }
-  }, [location.state?.snackbar]);
+  }, [location.state]);
 
   //INICIALIZAÇÃO DOS FILTROS
   useEffect(() => {
@@ -161,12 +168,6 @@ const ListaRegulacoesFinalizadas: React.FC = () => {
     setCurrentPage(newPage);
   };
 
-  const indexOfLastRegulacao = currentPage * itemsPerPage;
-  const indexOfFirstRegulacao = indexOfLastRegulacao - itemsPerPage;
-  const currentRegulacoes = filteredRegulacoes.slice(indexOfFirstRegulacao, indexOfLastRegulacao);
-
-  const totalPages = Math.ceil(filteredRegulacoes.length / itemsPerPage);
-
   //CONFIGURA A ORDENAÇÃO
   const handleSort = (key: keyof RegulacaoData) => {
     let direction: "asc" | "desc" = "asc";
@@ -183,6 +184,7 @@ const ListaRegulacoesFinalizadas: React.FC = () => {
     });
 
     setFilteredRegulacoes(sortedData);
+    setSelectedColumn(key);
   };
 
   const showSnackbar = (
@@ -246,69 +248,13 @@ const ListaRegulacoesFinalizadas: React.FC = () => {
           )}
 
           <div>
-            <table className='Table-Regulacoes'>
-              <thead>
-                <tr>
-                <th onClick={() => handleSort("nome_regulador_nac")}>
-                    <span>
-                      <label>Regulador</label> <label>{sortConfig?.key === "nome_regulador_nac" ? (sortConfig.direction === "asc" ? "🔼" : "🔽") : "↕"}</label>
-                    </span>
-                  </th>
-
-                  <th onClick={() => handleSort("num_prontuario")}>
-                    <span>
-                      <label>Pront.</label> <label>{sortConfig?.key === "num_prontuario" ? (sortConfig.direction === "asc" ? "🔼" : "🔽") : "↕"}</label>
-                    </span>
-                  </th>
-
-                  <th className="col-NomePaciente" onClick={() => handleSort("nome_paciente")}>
-                    <span>
-                      <label>Nome Paciente</label>
-                      <label>{sortConfig?.key === "nome_paciente" ? (sortConfig.direction === "asc" ? "🔼" : "🔽") : "↕"}</label>
-                    </span>
-                  </th>
-
-                  <th className="col-NumRegulacao" onClick={() => handleSort("num_regulacao")}>
-                    Num. Regulação
-                  </th>
-
-                  <th onClick={() => handleSort("un_origem")}>
-                    Un. Origem
-                  </th>
-
-                  <th onClick={() => handleSort("un_destino")}>
-                    <span>
-                      <label>Un. Destino</label>
-                      <label>{sortConfig?.key === "un_destino" ? (sortConfig.direction === "asc" ? "🔼" : "🔽") : "↕"}</label>
-                    </span>
-                  </th>
-
-                  <th onClick={() => handleSort("desfecho")}>
-                    <span>
-                      <label>Desfecho</label>
-                      <label>{sortConfig?.key === "desfecho" ? (sortConfig.direction === "asc" ? "🔼" : "🔽") : "↕"}</label>
-                    </span>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {currentRegulacoes.map(regulacao => (
-                  <tr key={regulacao.id_regulacao}>
-                    <td>{regulacao.nome_regulador_nac}</td>
-                    <td>{regulacao.num_prontuario}</td>
-                    <td className="col-NomePaciente">
-                      <a onClick={() => fetchPDF(regulacao.data_hora_solicitacao_02, regulacao.link)}>
-                        {regulacao.nome_paciente}
-                      </a>
-                    </td>
-                    <td className="col-NumRegulacao">{regulacao.num_regulacao}</td>
-                    <td>{regulacao.un_origem}</td>
-                    <td>{regulacao.un_destino}</td>
-                    <td>{regulacao.desfecho}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <TabelaRegulacoesFinalizadas
+              currentRegulacoes={currentRegulacoes}
+              selectedColumn={selectedColumn}
+              sortConfig={sortConfig}
+              handleSort={handleSort}
+              fetchPDF={fetchPDF}
+            />
           </div>
 
         </div>
