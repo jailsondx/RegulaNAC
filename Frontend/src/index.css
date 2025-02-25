@@ -1,5 +1,8 @@
 /* Variáveis de Tema */
 .light-theme {
+  --sidebar-bg: #49798a;
+  --sidebar-iconUser-border: #F5F6FA;
+
   --component: #f9f9f9;
   --bg-color: #dcdde1;
   --text-color: #000000;
@@ -32,6 +35,9 @@
 }
 
 .dark-theme {
+  --sidebar-bg: #024059;
+  --sidebar-iconUser-border: #333333;
+
   --component: #292929;
   --bg-color: #2d3436;
   --text-color: whitesmoke;
@@ -178,16 +184,6 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
-/*
-button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  margin-left: 10px;
-}
-  */
 
 button[type="button"]:hover {
   color: whitesmoke;
@@ -256,6 +252,7 @@ select {
   padding: 5px;
   margin: 3px;
   border-radius: 4px;
+  border: 2px solid #ccc;
 }
 
 input{

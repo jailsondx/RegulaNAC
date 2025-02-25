@@ -1,51 +1,108 @@
+/* Responsividade para telas de até 480px (smartphones) */
+@media screen and (max-width: 600px) {
+   .div-esquerda{
+    display: none;
+    }
+    .div-direita{
+        width: 100%;
+    }
+  }
+
+  /* Responsividade para telas de até 1159px (tablets grandes) */
+@media screen and (min-width: 601px){
+    .div-esquerda{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 50%;
+    }
+    .div-direita{
+        width: 50%;
+    }
+  }
+
+
+  @keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+
 .Screen-Login{
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 100dvh;
     width: 100dvw;
-    background: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)),  url('BG/BG-LEITOS.jpg');
+    height: 100dvh;
+    background-color: #ececec;
+    color: whitesmoke;
+}
+
+.BG{
+    background-image: url('/BG/BG-LEITOS.jpg');
     background-size: cover;
 }
 
+.Circulo{
+    background-image: url('/Logo/Circulo.png');
+    background-size: cover;
+}
+
+
 .Component-Login{
-    border-radius: 50px;
-    padding: 5%;
-    background-color: whitesmoke;
-
-    /* From https://css.glass */
-    background: rgba(255, 255, 255, 0.28);
-    border-radius: 16px;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
-    backdrop-filter: blur(7.9px);
-    -webkit-backdrop-filter: blur(7.9px);
-    border: 5px solid #156573;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 40dvw;
+    height: 50dvh;
+    min-height: 200px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }
 
-.Component-Login input{
-    border: 1px solid #156573;
-    width: 100%;
-    transition: border 0.3s ease;
+.Component-Login .div-esquerda{
+    height: 100%;
+    background-color: aqua;
 }
 
-.Component-Login input:focus{
-    border: 3px solid #156573;
-    outline: none;
-}
-
-.div-Logo{
-    height: auto;
-    width: 20dvw;
-}
-
-.div-Submit{
+.Component-Login .div-direita{
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 5%;
+    height: 100%;
+    background-color: #024059;
 }
 
-.Component-Login input{
-    padding: 3%;
+.login-container{
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.Component-Login input[type="text"], input[type="password"]{
+    width: 90%;
+    height: 20px;
+    padding: 0.7dvw;
+    border-radius: 3px;
+    margin: 1px 0px 1px 0px; /*top right bottom left*/
+}
+
+.Component-Login button{
+    color: #024059;
+    background-color: whitesmoke;
+}
+
+.Component-Login button:hover{
+    color: whitesmoke;
+    background-color: #ff8900;
+}
+
+.Component-Login .Div-Buttons{
+    margin: 20px 0px 0px 0px; /*top right bottom left*/
 }

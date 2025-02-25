@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { Snackbar, Alert } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 import './Login.css';
@@ -11,6 +12,11 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+
+  /*SNACKBAR*/
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error' | 'info' | 'warning'>("success");
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,11 +41,27 @@ const Login: React.FC = () => {
       navigate('/home');
     } catch (err) {
       if (axios.isAxiosError(err) && err.response) {
-        setError(err.response.data.message || 'Erro ao realizar login.');
+        //setError(err.response.data.message || 'Erro ao realizar login.');
+        showSnackbar(err.response.data.message || 'Erro ao realizar login', 'error');
       } else {
-        setError('Erro inesperado. Tente novamente mais tarde.');
+        //setError('Erro inesperado. Tente novamente mais tarde.');
+        showSnackbar('Erro inesperado. Tente novamente mais tarde.', 'error');
       }
     }
+  };
+
+  /*SNACKBARS*/
+  const handleSnackbarClose = (): void => {
+    setSnackbarOpen(false);
+  };
+
+  const showSnackbar = (
+    message: string,
+    severity: 'success' | 'error' | 'info' | 'warning'
+  ): void => {
+    setSnackbarMessage(message);
+    setSnackbarSeverity(severity);
+    setSnackbarOpen(true);
   };
 
   return (
@@ -47,46 +69,63 @@ const Login: React.FC = () => {
       <div className='Screen-Login'>
         <div className='Component-Login'>
 
-          <div className='div-Logo'>
-            <img src='Logo/RegulaNACLogo.png' className='Logo'></img>
+          <div className='div-esquerda BG'>
+            <div className='Circulo'>
+              <img className='Logo' src='/Logo/RegulaNAC.png'></img>
+            </div>
           </div>
-          <div className="login-container">
-            <h1>Login</h1>
-            {error && <p className="error-message">{error}</p>}
-            <form onSubmit={handleLogin}>
-              <div>
-                <label htmlFor="username">Usuário:</label>
-                <input
-                  type="text"
-                  id="username"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  required
-                />
-              </div>
-              <div>
-                <label htmlFor="password">Senha:</label>
-                <input
-                  type="password"
-                  id="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-              </div>
-              <div className='div-Submit'>
-                <button type="submit">Entrar</button>
-              </div>
-            </form>
+
+          <div className='div-direita'>
+            <div className="login-container">
+              <h1>Login</h1>
+              {error && <p className="error-message">{error}</p>}
+              <form onSubmit={handleLogin}>
+                <div>
+                  <input
+                    type="text"
+                    id="username"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    placeholder='Username'
+                    required
+                    autoComplete='off'
+                  />
+                </div>
+                <div>
+                  <input
+                    type="password"
+                    id="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder='Password'
+                    required
+                  />
+                </div>
+                <div className='Div-Buttons Central'>
+                  <button type="submit">Entrar</button>
+                </div>
+              </form>
+            </div>
           </div>
 
         </div>
-
       </div>
 
-
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity={snackbarSeverity}
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </>
-
   );
 };
 

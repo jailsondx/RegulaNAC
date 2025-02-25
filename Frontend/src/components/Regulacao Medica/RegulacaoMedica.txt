@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { AxiosError } from 'axios';
 import { Snackbar, Alert } from "@mui/material";
+import { FcApproval, FcBadDecision } from "react-icons/fc";
 import { LuFilter } from "react-icons/lu";
 
 /*IMPORT INTERFACES*/
@@ -11,12 +12,13 @@ import { DadosPacienteData } from "../../interfaces/DadosPaciente.ts";
 /*IMPORT COMPONENTS*/
 import NovaRegulacaoMedicoAprovada from "./RegulacaoMedicaAprovada";
 import NovaRegulacaoMedicoNegada from "./RegulacaoMedicaNegada";
+import TimeTracker from "../TimeTracker/TimeTracker";
 import Filtro from '../Filtro/Filtro';
-import TabelaRegulacoes from '../Tabela de Regulacoes/TabelaRegulacoes';
 import Modal from "../Modal/Modal";
 
 /*IMPORT FUNCTIONS*/
 import { getDay, getMonth, getYear } from '../../functions/DateTimes.ts';
+import { formatDateToPtBr } from "../../functions/DateTimes.ts";
 
 /*IMPORT CSS*/
 import "./RegulacaoMedica.css";
@@ -31,7 +33,7 @@ const RegulacaoMedica: React.FC = () => {
   const [showModalDeny, setShowModalDeny] = useState(false);
   const [currentRegulacao, setCurrentRegulacao] = useState<RegulacaoData | null>(null);
   const [dadosPaciente, setDadosPaciente] = useState<DadosPacienteData | null>(null);
-  const [elapsedTime] = useState<string>(''); // Armazena o tempo decorrido
+  const [elapsedTime, setElapsedTime] = useState<string>(''); // Armazena o tempo decorrido
 
   /*FILTROS*/
   const [filteredRegulacoes, setFilteredRegulacoes] = useState<RegulacaoData[]>([]);
@@ -43,14 +45,6 @@ const RegulacaoMedica: React.FC = () => {
   /*PAGINAÇÃO*/
   const [currentPage, setCurrentPage] = useState(1);  // Página atual
   const [itemsPerPage] = useState(10);  // Número de itens por página
-  const indexOfLastRegulacao = currentPage * itemsPerPage;
-  const indexOfFirstRegulacao = indexOfLastRegulacao - itemsPerPage;
-  const currentRegulacoes = filteredRegulacoes.slice(indexOfFirstRegulacao, indexOfLastRegulacao);
-  const totalPages = Math.ceil(filteredRegulacoes.length / itemsPerPage);
-
-  /*ORDENAÇÃO*/
-  const [sortConfig, setSortConfig] = useState<{ key: keyof RegulacaoData; direction: "asc" | "desc" } | null>(null);
-  const [selectedColumn, setSelectedColumn] = useState<keyof RegulacaoData | null>(null);
 
   /*SNACKBAR*/
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -158,6 +152,11 @@ const RegulacaoMedica: React.FC = () => {
     }
   };
 
+  // Atualiza o tempo decorrido
+  const handleTimeUpdate = (time: string) => {
+    setElapsedTime(time); // Salva o tempo decorrido no estado
+  };
+
   const handleOpenModalApproved = (regulacao: RegulacaoData) => {
     setCurrentRegulacao(regulacao);
 
@@ -201,25 +200,6 @@ const RegulacaoMedica: React.FC = () => {
     //window.location.reload(); // Recarregar a página ao fechar o modal
   };
 
-  //CONFIGURA A ORDENAÇÃO
-  const handleSort = (key: keyof RegulacaoData) => {
-    let direction: "asc" | "desc" = "asc";
-    if (sortConfig?.key === key && sortConfig.direction === "asc") {
-      direction = "desc";
-    }
-    setSortConfig({ key, direction });
-
-    const sortedData = [...filteredRegulacoes].sort((a, b) => {
-      if (a[key] === null || b[key] === null) return 0; // Evita erros com valores null
-      if (a[key]! < b[key]!) return direction === "asc" ? -1 : 1;
-      if (a[key]! > b[key]!) return direction === "asc" ? 1 : -1;
-      return 0;
-    });
-
-    setFilteredRegulacoes(sortedData);
-    setSelectedColumn(key);
-  };
-
   const handleSnackbarClose = (): void => {
     setSnackbarOpen(false);
   };
@@ -237,6 +217,12 @@ const RegulacaoMedica: React.FC = () => {
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
   };
+
+  const indexOfLastRegulacao = currentPage * itemsPerPage;
+  const indexOfFirstRegulacao = indexOfLastRegulacao - itemsPerPage;
+  const currentRegulacoes = filteredRegulacoes.slice(indexOfFirstRegulacao, indexOfLastRegulacao);
+
+  const totalPages = Math.ceil(filteredRegulacoes.length / itemsPerPage);
 
   return (
     <>
@@ -284,17 +270,53 @@ const RegulacaoMedica: React.FC = () => {
           )}
 
           <div>
-            <TabelaRegulacoes
-              currentRegulacoes={currentRegulacoes}
-              selectedColumn={selectedColumn}
-              sortConfig={sortConfig}
-              handleSort={handleSort}
-              fetchPDF={fetchPDF}
-              serverTime={serverTime}
-              handleOpenModalApproved={handleOpenModalApproved}
-              handleOpenModalDeny={handleOpenModalDeny}
-              IconOpcoes="medico"
-            />
+            <table className="Table-Regulacoes">
+              <thead>
+                <tr>
+                  <th>Pront.</th>
+                  <th className="col-NomePaciente">Nome Paciente</th>
+                  <th className="col-NumIdade">Id.</th>
+                  <th>Nasc.</th>
+                  <th className="col-NumRegulacao">Regulação</th>
+                  <th>Un. Origem</th>
+                  <th>Un. Destino</th>
+                  <th className="col-Prioridade">Prio.</th>
+                  <th>Acionamento Médico</th>
+                  <th>Tempo de Espera</th>
+                  <th>Aprovação</th>
+                </tr>
+              </thead>
+              <tbody>
+                {currentRegulacoes.map((regulacao) => (
+                  <tr key={regulacao.id_regulacao}>
+                    <td>{regulacao.num_prontuario}</td>
+                    <td className="col-NomePaciente">
+                      <a onClick={() => fetchPDF(regulacao.data_hora_solicitacao_02, regulacao.link)}>
+                        {regulacao.nome_paciente}
+                      </a>
+                    </td>
+                    <td className="col-NumIdade">{regulacao.num_idade}</td>
+                    <td>{formatDateToPtBr(regulacao.data_nascimento)}</td>
+                    <td className="col-NumRegulacao">{regulacao.num_regulacao}</td>
+                    <td>{regulacao.un_origem}</td>
+                    <td>{regulacao.un_destino}</td>
+                    <td className="col-Prioridade">{regulacao.prioridade}</td>
+                    <td>{new Date(regulacao.data_hora_acionamento_medico).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</td>
+                    <td className="td-TempoEspera">
+                      <TimeTracker
+                        startTime={regulacao.data_hora_acionamento_medico}
+                        serverTime={serverTime}
+                        onTimeUpdate={handleTimeUpdate}
+                      />
+                    </td>
+                    <td className="td-Icons">
+                      <FcApproval className="Icon Icons-Regulacao" onClick={() => handleOpenModalApproved(regulacao)} title="Aprovar" />
+                      <FcBadDecision className="Icon Icons-Regulacao" onClick={() => handleOpenModalDeny(regulacao)} title="Negar" />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
 
           {showModalApproved && currentRegulacao && dadosPaciente && (

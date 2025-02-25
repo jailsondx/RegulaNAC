@@ -92,8 +92,9 @@ const TabelaRegulacoesAprovadas: React.FC<TabelaRegulacoesAprovadasProps> = ({
             </span>
           </th>
 
-          <th>Fase</th>
-          <th></th>
+          {UserData?.tipo !== "MEDICO" && (
+            <th>Fase</th>
+          )}
         </tr>
       </thead>
       <tbody>
