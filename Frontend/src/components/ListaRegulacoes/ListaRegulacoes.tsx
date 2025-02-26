@@ -266,7 +266,6 @@ const ListaRegulacoes: React.FC = () => {
               handleSort={handleSort}
               fetchPDF={fetchPDF}
               serverTime={serverTime}
-              handleAtualizarRegulacao={() => { }}
               IconOpcoes='normais'
             />
           </div>

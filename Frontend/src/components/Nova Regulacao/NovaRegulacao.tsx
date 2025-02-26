@@ -462,6 +462,7 @@ const NovaRegulacao: React.FC = () => {
                       name="data_nascimento"
                       value={formData.data_nascimento}
                       onChange={handleChange}
+                      max="2099-12-31" // Restringe anos superiores a 2199
                       required
                     />
                   </div>

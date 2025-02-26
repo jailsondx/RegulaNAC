@@ -6,6 +6,7 @@ import { VerificaRegulacao } from '../../functions/SelectSQL/VerificaRegulacao.j
 import ListaMedicos from '../../functions/SelectSQL/ListaMedicos.js';
 import PesquisaPaciente from '../../functions/SelectSQL/PesquisaPaciente.js';
 import ListaRegulacoesFinalizadas from '../../functions/SelectSQL/ListaRegulacoesFinalizadas.js';
+import VerificaID from '../../functions/SelectSQL/VerificaID.js';
 
 const routerGet = express.Router();
 
@@ -46,6 +47,16 @@ routerGet.get('/ListaRegulacoesPendentes24', async (req, res) => {
 routerGet.get('/ListaRegulacoesAprovadas', async (req, res) => {
   try {
     const result = await ListaRegulacoesAprovadas();
+    handleResponse(res, result);
+  } catch (error) {
+    handleError(res, error);
+  }
+});
+
+routerGet.get('/VerificaID', async (req, res) => {
+  try {
+    const { id_regulacao } = req.query;
+    const result = await VerificaID(id_regulacao);
     handleResponse(res, result);
   } catch (error) {
     handleError(res, error);

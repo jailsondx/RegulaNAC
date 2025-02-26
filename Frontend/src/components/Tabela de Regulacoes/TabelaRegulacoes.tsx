@@ -3,6 +3,7 @@ import { LuArrowDownWideNarrow, LuArrowUpNarrowWide  } from "react-icons/lu";
 import { FcFullTrash, FcInspection, FcLeave, FcApproval, FcBadDecision } from "react-icons/fc";
 import TimeTracker from "../TimeTracker/TimeTracker";
 import { RegulacaoData } from '../../interfaces/Regulacao';
+import { useNavigate } from 'react-router-dom';
 
 interface TabelaRegulacoesProps {
   currentRegulacoes: RegulacaoData[];
@@ -29,6 +30,19 @@ const TabelaRegulacoes: React.FC<TabelaRegulacoesProps> = ({
   handleOpenModalDeny,
   IconOpcoes
 }) => {
+  const navigate = useNavigate();
+
+  const handleEditarRegulacao = (id_regulacao: number): void => {
+    if (!id_regulacao) {
+      alert('Prontuário é obrigatório para atualizar a regulação');
+      return;
+    }
+    // Enviando dados de forma oculta
+    navigate('/EditaRegulacao', {
+      state: { id_regulacao },
+    });
+  };
+
   return (
     <table className='Table-Regulacoes'>
       <thead>
@@ -122,7 +136,7 @@ const TabelaRegulacoes: React.FC<TabelaRegulacoesProps> = ({
             <td className='td-Icons'>
                 {IconOpcoes === 'normais' && (
                 <>
-                  <FcInspection className='Icon Icons-Regulacao' onClick={() => handleOpenModalApproved && handleOpenModalApproved(regulacao)} title='Aprovar Regulação' />
+                  <FcInspection className='Icon Icons-Regulacao' onClick={() => handleEditarRegulacao && handleEditarRegulacao(regulacao.id_regulacao)} title='Editar Regulação' />
                   <FcFullTrash className='Icon Icons-Regulacao' onClick={() => handleOpenModalDeny && handleOpenModalDeny(regulacao)} title='Negar Regulação' />
                 </>
                 )}

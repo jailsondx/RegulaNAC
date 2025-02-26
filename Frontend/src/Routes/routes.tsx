@@ -19,6 +19,7 @@ import ListaRegulacoesFinalizadas from '../components/ListaRegulacoes/ListaRegul
 import RelatoriosRegulacao from '../components/Relatorios/RelatoriosRegulacao';
 import RelatorioEfetivacao from '../components/Relatorios/RelatorioEfetivacao';
 import RelatorioTempoEfetivacao from '../components/Relatorios/RelatorioTempoEfetivacao';
+import EditaRegulacao from '../components/Edita Regulacao/EditaRegulacao';
 
 // Layout para rotas protegidas com o Sidebar
 const ProtectedLayout: React.FC = () => {
@@ -54,6 +55,7 @@ const Rotas: React.FC = () => {
           <Route path="ListaRegulacoes24" element={<ListaRegulacoes24 />} />
           <Route path="NovaRegulacao" element={<NovaRegulacao />} />
           <Route path="AtualizaRegulacao" element={<AtualizaRegulacao />} />
+          <Route path="EditaRegulacao" element={<EditaRegulacao />} />
           <Route path="RegulacaoMedica" element={<RegulacaMedica />} />
           <Route path="RegulacoesAprovadas" element={<RegulacoesAprovadas />} />
           <Route path="Desfechos" element={<ListarDesfecho />} />

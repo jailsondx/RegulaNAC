@@ -50,6 +50,22 @@ export interface UpdateRegulacaoData extends PartialUpdateRegulacaoData {
 
 
 
+/*EDIT REGULACAO*/
+export interface EditRegulacaoData {
+  num_prontuario: number | null;
+  nome_paciente: string;
+  data_nascimento: string;
+  num_idade: number | null;
+  prioridade?: string | null;
+  num_regulacao: number | null;
+  nome_regulador_medico: string;
+  data_hora_solicitacao_02: string;
+  link: string;
+}
+
+export interface UpdateEditRegulacaoData extends EditRegulacaoData {
+  id_user: string;
+}
 
 
 
