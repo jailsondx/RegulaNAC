@@ -9,8 +9,8 @@ import NovaRegulacao from '../components/Nova Regulacao/NovaRegulacao';
 import ListaRegulacoes from '../components/ListaRegulacoes/ListaRegulacoes';
 import RegulacaMedica from '../components/Regulacao Medica/RegulacaoMedica';
 import AtualizaRegulacao from '../components/Atualiza Regulacao/AtualizaRegulacao';
-import Cadastro from '../components/Cadastro/Cadastro';
-import Login from '../components/Login/Login';
+import Cadastro from '../components/Usuarios/Cadastro/Cadastro';
+import Login from '../components/Usuarios/Login/Login';
 import PageNotFound from './page404';
 import RegulacoesAprovadas from '../components/Regulacoes Aprovadas/RegulacoesAprovadas';
 import ListaRegulacoes24 from '../components/ListaRegulacoes/ListaRegulacoes+24';
@@ -20,6 +20,7 @@ import RelatoriosRegulacao from '../components/Relatorios/RelatoriosRegulacao';
 import RelatorioEfetivacao from '../components/Relatorios/RelatorioEfetivacao';
 import RelatorioTempoEfetivacao from '../components/Relatorios/RelatorioTempoEfetivacao';
 import EditaRegulacao from '../components/Edita Regulacao/EditaRegulacao';
+import UpdateSenha from '../components/Usuarios/Update Senha/UpdateSenha';
 
 // Layout para rotas protegidas com o Sidebar
 const ProtectedLayout: React.FC = () => {
@@ -39,7 +40,8 @@ const Rotas: React.FC = () => {
       <Routes>
         {/* Página de Login - Sem Sidebar */}
         <Route path="/login" element={<Login />} />
-        <Route path="/cadastro" element={<Cadastro />} />
+        <Route path="/register" element={<Cadastro />} />
+        <Route path="/updatepassword" element={<UpdateSenha />} />
 
         {/* Rotas protegidas com Sidebar */}
         <Route

@@ -14,20 +14,29 @@ async function LoginUser(login, password) {
         connection.release(); // Libera a conexão
 
         // Verifica se o usuário foi encontrado
-        if (rows.length > 0) {
-            const user = rows[0];
+        if (rows.length === 0) {
+            return { success: false, message: "Usuário não encontrado." };
+        }
 
-            // Verifica se a senha fornecida bate com a senha armazenada
-            const isPasswordValid = await bcrypt.compare(password, user.senha); // Usando bcrypt para comparar as senhas
+        const user = rows[0];
 
-            if (isPasswordValid) {
-                console.log("✅ Usuario Logado:", login);
-                return { success: true, message: "Login realizado com sucesso.", data: user };
+        // Verifica se é o primeiro acesso
+        if (user.primeiroAcesso === true || user.primeiroAcesso === 1) {
+            if (password === 'ISGH') {
+                return { success: 200, message: "Redefina sua senha pessoal", data: user.login };
             } else {
                 return { success: false, message: "Credenciais inválidas." };
             }
+        }
+
+        // Verifica se a senha fornecida bate com a senha armazenada
+        const isPasswordValid = await bcrypt.compare(password, user.senha); // Usando bcrypt para comparar as senhas
+
+        if (isPasswordValid) {
+            console.log("✅ Usuario Logado:", login);
+            return { success: true, message: "Login realizado com sucesso.", data: user };
         } else {
-            return { success: false, message: "Usuário não encontrado." };
+            return { success: false, message: "Credenciais inválidas." };
         }
     } catch (error) {
         console.error("❌ Erro ao verificar usuário:", error);

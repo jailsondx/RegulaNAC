@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Snackbar, Alert } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
-import './Login.css';
+import '../Usuarios.css';
 
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
 
@@ -12,12 +12,21 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
 
   /*SNACKBAR*/
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error' | 'info' | 'warning'>("success");
 
+  /*CARREGA A SNACKBAR STATE DO UPDATE SENHA*/
+  useEffect(() => {
+    if (location.state?.snackbarMessage && location.state?.snackbarSeverity) {
+      showSnackbar(location.state.snackbarMessage, location.state.snackbarSeverity);
+    }
+  }, [location.state]);
+
+  /*REQUISIÇÃO DE LOGIN*/
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -31,17 +40,22 @@ const Login: React.FC = () => {
       //const success = response.data.success;
       const { id_user, login, nome, tipo } = response.data.data;
 
-      // Salvar dados no sessionStorage
-      sessionStorage.setItem('id_user', id_user);
-      sessionStorage.setItem('login', login);
-      sessionStorage.setItem('nome', nome);
-      sessionStorage.setItem('tipo', tipo);
+      if (response.data.message === 'Redefina sua senha pessoal') {
+        //navigate(`/updatepassword?login=${response.data.data}`);
+        navigate('/updatepassword', { state: { login: response.data.data } });
+      } else {
+        // Salvar dados no sessionStorage
+        sessionStorage.setItem('id_user', id_user);
+        sessionStorage.setItem('login', login);
+        sessionStorage.setItem('nome', nome);
+        sessionStorage.setItem('tipo', tipo);
 
-      // Redirecionar para a rota /home
-      navigate('/home');
+        // Redirecionar para a rota /home
+        navigate('/home');
+      }
+
     } catch (err) {
       if (axios.isAxiosError(err) && err.response) {
-        //setError(err.response.data.message || 'Erro ao realizar login.');
         showSnackbar(err.response.data.message || 'Erro ao realizar login', 'error');
       } else {
         //setError('Erro inesperado. Tente novamente mais tarde.');

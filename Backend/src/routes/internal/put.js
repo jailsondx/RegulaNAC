@@ -3,6 +3,7 @@ import { convertObjectToUpperCase } from '../../functions/Manipulation/ObjectUpp
 import AtualizaRegulacao from '../../functions/UpdateSQL/AtualizaRegulacao.js';
 import updateTransporte from '../../functions/UpdateSQL/Transporte.js';
 import EditaRegulacao from '../../functions/UpdateSQL/EditaRegulacao.js';
+import UpdateSenha from '../../functions/UpdateSQL/UpdateSenhaUser.js';
 
 const routerPut = express.Router();
 
@@ -10,6 +11,20 @@ const routerPut = express.Router();
 routerPut.use(express.json());
 
 // Rotas
+routerPut.put('/UpdateSenha', async (req, res) => {
+  try {
+    const formData = convertObjectToUpperCase(req.body);
+    const result = await UpdateSenha(formData);
+    handleResponse(res, result);
+  } catch (error) {
+    console.error('Erro no processamento:', error);
+  res.status(500).json({
+    message: 'Erro interno do servidor',
+    error: 'Erro desconhecido',
+  });
+  }
+});
+
 routerPut.put('/AtualizaRegulacao', async (req, res) => {
   try {
     const formData = req.body; // Corpo da requisição
@@ -37,7 +52,6 @@ routerPut.put('/EditaRegulacao', async (req, res) => {
   });
   }
 });
-
 
 routerPut.put('/Transporte', async (req, res) => {
   try {

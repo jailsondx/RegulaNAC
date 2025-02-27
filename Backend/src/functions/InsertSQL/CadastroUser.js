@@ -5,20 +5,57 @@ async function CadastroUser(FormData) {
     const DBtable = 'usuarios';
 
     try {
+        // Validação do CPF
+        if (!/^\d{11}$/.test(FormData.cpf)) {
+            return { success: false, message: "CPF deve ter exatamente 11 dígitos." };
+        }
+
+        if(FormData.tipo === 'MEDICO'){
+            FormData.login = FormData.login+'CRM'
+        }
+
+        // Inicie a conexão com o banco de dados
+        const connection = await DBconnection.getConnection();
+
+        // Verifica se o login já existe
+        const [loginRows] = await connection.query(
+            `SELECT COUNT(*) as count FROM ${DBtable} WHERE login = ?`,
+            [FormData.login]
+        );
+        if (loginRows[0].count > 0) {
+            connection.release();
+            return { success: false, message: "Login já existe." };
+        }
+
+        // Verifica se o CPF já existe
+        const [cpfRows] = await connection.query(
+            `SELECT COUNT(*) as count FROM ${DBtable} WHERE cpf = ?`,
+            [FormData.cpf]
+        );
+        if (cpfRows[0].count > 0) {
+            connection.release();
+            return { success: false, message: "CPF já existe." };
+        }
+
+        if (FormData.primeiroAcesso === true) {
+            FormData.senha = 'ISGH';
+        }
+
         // Criptografa a senha antes de salvar no banco
         const saltRounds = 10; // Define o número de rounds para o hash
         const hashedPassword = await bcrypt.hash(FormData.senha, saltRounds);
 
         // Cria um novo objeto para não modificar o original
-        const userData = { ...FormData, senha: hashedPassword };
-
-        // Inicie a conexão com o banco de dados
-        const connection = await DBconnection.getConnection();
+        const userData = { 
+            ...FormData, 
+            senha: hashedPassword,
+            ativo: 1
+        };
 
         // Insere os dados no banco de dados
         const [result] = await connection.query(
-            `INSERT INTO ${DBtable} (login, senha, nome) VALUES (?, ?, ?)`,
-            [userData.login, userData.senha, userData.nome]
+            `INSERT INTO ${DBtable} SET ?`,
+            userData
         );
 
         connection.release(); // Libera a conexão

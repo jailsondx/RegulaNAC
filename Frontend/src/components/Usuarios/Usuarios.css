@@ -85,7 +85,9 @@
     padding: 20px;
 }
 
-.Component-Login input[type="text"], input[type="password"]{
+.Component-Login input[type="text"],
+.Component-Login input[type="password"],
+.Component-Login input[type="number"] {
     width: 90%;
     height: 20px;
     padding: 0.7dvw;

@@ -53,7 +53,6 @@ const Sidebar: React.FC = () => {
         <ul>
           <li> <Link to="/RegulacaoMedica"><TiHeartHalfOutline className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulação Médica</label></Link> </li>
           <li> <Link to="/RegulacoesAprovadas"><TiThumbsUp className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações Aprovadas</label></Link> </li>
-          <li> <a onClick={() => setShowReportMenu(true)}><TiUpload className='Icon-Menu-Item' /><label className='textMenu-Item'>Relatórios</label></a> </li>
         </ul>
       );
     }

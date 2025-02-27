@@ -110,7 +110,7 @@ const TabelaRegulacoes: React.FC<TabelaRegulacoesProps> = ({
             </span>
           </th>
 
-          <th>Tempo de Espera</th>
+          <th title='Tempo de Espera calculado com base no tempo do acionamento médico'>Tempo de Espera</th>
           <th>Editar</th>
         </tr>
       </thead>
@@ -130,7 +130,7 @@ const TabelaRegulacoes: React.FC<TabelaRegulacoesProps> = ({
             <td className="col-Prioridade">{regulacao.prioridade}</td>
             <td>{new Date(regulacao.data_hora_solicitacao_02).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</td>
             <td>{new Date(regulacao.data_hora_acionamento_medico).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</td>
-            <td className='td-TempoEspera'>
+            <td className='td-TempoEspera' title='Tempo de Espera calculado com base no tempo do acionamento médico'>
               <TimeTracker startTime={regulacao.data_hora_acionamento_medico} serverTime={serverTime} />
             </td>
             <td className='td-Icons'>

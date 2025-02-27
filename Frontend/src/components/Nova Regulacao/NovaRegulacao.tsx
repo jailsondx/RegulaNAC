@@ -3,8 +3,9 @@ import axios from 'axios';
 import { AxiosError } from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Snackbar, Alert } from '@mui/material';
-import { FcCheckmark, FcLeave } from "react-icons/fc";
+import { FcOk, FcLeave } from "react-icons/fc";
 import { TiBookmark } from "react-icons/ti";
+import { FaSearch } from "react-icons/fa";
 
 /*IMPORT INTERFACES*/
 import { NovaRegulacaoData } from '../../interfaces/Regulacao';
@@ -307,6 +308,52 @@ const NovaRegulacao: React.FC = () => {
     }
   };
 
+  const handleVerificaProntuarioAutoComplete = async (numProntuario: number): Promise<void> => {
+    if (!numProntuario) {
+      //setSnackbar({ open: true, message: 'Prontuário é obrigatório', severity: 'info' });
+      setShowAtualizarButton(false);
+      return;
+    }
+
+    try {
+      const response = await axios.get(`${NODE_URL}/api/internal/get/VerificaProntuarioAutoComplete`, {
+        params: { num_prontuario: numProntuario },
+      });
+
+      const status = response.status;
+      const nomePaciente = response.data.data.nome_paciente;
+      const dataNascimento = response.data.data.data_nascimento;
+      const idade = response.data.data.num_idade;
+
+      if (status === 200) {
+              // Atualizando o estado corretamente
+      setFormData((prevData) => ({
+        ...prevData, // Mantém os outros campos inalterados
+        nome_paciente: nomePaciente, // Atualiza o nome do paciente
+        data_nascimento: dataNascimento.split("T")[0], // Atualiza a data de nascimento
+        num_idade: idade, // Atualiza a idade
+      }));
+      }
+
+    } catch (error: unknown) {
+      if (error instanceof AxiosError) {
+        console.error(error.response?.data?.message || 'Erro ao verificar prontuário.', error);
+        showSnackbar(error.response?.data?.message || 'Erro ao verificar prontuário.', 'error');
+        setShowAtualizarButton(false);
+      } else if (error instanceof Error) {
+        // Se o erro for do tipo genérico `Error`, trate-o também
+        console.error('Erro desconhecido:', error.message);
+        showSnackbar('Erro desconhecido:', 'error');
+        setShowAtualizarButton(false);
+      } else {
+        // Caso o erro seja de um tipo inesperado
+        console.error('Erro inesperado:', error);
+        showSnackbar('Erro inesperado:', 'error');
+        setShowAtualizarButton(false);
+      }
+    }
+  };
+
   const handleVerificaRegulacao = async (numRegulacao: number): Promise<void> => {
     if (!numRegulacao) {
       //setSnackbar({ open: true, message: 'Nº de Regulação é obrigatório', severity: 'info' });
@@ -444,7 +491,12 @@ const NovaRegulacao: React.FC = () => {
                         onChange={handleChange}
                         required
                       />
-                      {iconStatusProntOk && (<FcCheckmark className='Icon-Status-NovaRegulacao' title='Prontuário OK' />)} {iconStatusProntDeny && (<FcLeave className='Icon-Status-NovaRegulacao' title='Prontuário com Pendência' />)}
+                      <button className='MicroButtonInput' 
+                        onClick={() => handleVerificaProntuarioAutoComplete(Number(formData.num_prontuario))} 
+                        title='Verifica Pré Cadastro'>
+                        <FaSearch />
+                      </button>
+                      {iconStatusProntOk && (<FcOk className='Icon-Status-NovaRegulacao' title='Prontuário OK' />)} {iconStatusProntDeny && (<FcLeave className='Icon-Status-NovaRegulacao' title='Prontuário com Pendência' />)}
                       {showAtualizarButton && (
                         <button type="button" className='btn button-warning' onClick={handleAtualizarRegulacao}>
                           Atualizar Regulação
@@ -563,7 +615,7 @@ const NovaRegulacao: React.FC = () => {
                         onChange={handleChange}
                         required
 
-                      />{iconStatusRegOk && (<FcCheckmark className='Icon-Status-NovaRegulacao' />)} {iconStatusRegDeny && (<FcLeave className='Icon-Status-NovaRegulacao' />)}
+                      />{iconStatusRegOk && (<FcOk className='Icon-Status-NovaRegulacao' />)} {iconStatusRegDeny && (<FcLeave className='Icon-Status-NovaRegulacao' />)}
                     </span>
 
 

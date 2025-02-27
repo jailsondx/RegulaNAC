@@ -1,12 +1,13 @@
 import express from 'express';
 import { ListaRegulacoesPendentes, ListaRegulacoesPendentes24 } from '../../functions/SelectSQL/ListaRegulacoesPendentes.js';
 import ListaRegulacoesAprovadas from '../../functions/SelectSQL/ListaRegulacoesAprovadas.js';
-import VerificaProntuario from '../../functions/SelectSQL/VerificaProntuario.js';
+import {VerificaProntuario, VerificaProntuarioAutoComplete} from '../../functions/SelectSQL/VerificaProntuario.js';
 import { VerificaRegulacao } from '../../functions/SelectSQL/VerificaRegulacao.js';
 import ListaMedicos from '../../functions/SelectSQL/ListaMedicos.js';
 import PesquisaPaciente from '../../functions/SelectSQL/PesquisaPaciente.js';
 import ListaRegulacoesFinalizadas from '../../functions/SelectSQL/ListaRegulacoesFinalizadas.js';
 import VerificaID from '../../functions/SelectSQL/VerificaID.js';
+
 
 const routerGet = express.Router();
 
@@ -67,6 +68,17 @@ routerGet.get('/VerificaProntuario', async (req, res) => {
   try {
     const { num_prontuario } = req.query;
     const result = await VerificaProntuario(num_prontuario);
+    handleResponse(res, result);
+  } catch (error) {
+    handleError(res, error);
+  }
+});
+
+routerGet.get('/VerificaProntuarioAutoComplete', async (req, res) => {
+  try {
+    const { num_prontuario } = req.query;
+    const result = await VerificaProntuarioAutoComplete(num_prontuario);
+    console.log(result);
     handleResponse(res, result);
   } catch (error) {
     handleError(res, error);

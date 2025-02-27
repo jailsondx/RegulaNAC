@@ -25,8 +25,8 @@
   }
 }
 
-/* Responsividade para telas de até 480px (smartphones) */
-@media screen and (max-width: 500px) {
+/* Responsividade para telas de até 550px (smartphones) */
+@media screen and (max-width: 550px) {
   .sidebar {
     display: flex;
     width: 5dvw;

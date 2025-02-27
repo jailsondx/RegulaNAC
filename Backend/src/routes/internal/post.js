@@ -19,6 +19,7 @@ routerPost.post('/Login', async (req, res) => {
   try {
     const { username, password } = convertObjectToUpperCase(req.body);
     const result = await LoginUser(username, password);
+    //res.status(200).json({ message: result.message, statusCode: result.statusCode, data: result.data });
     handleResponse(res, result);
   } catch (error) {
     console.error('Erro no processamento:', error);

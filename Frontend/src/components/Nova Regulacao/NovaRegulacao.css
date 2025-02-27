@@ -87,11 +87,14 @@
     justify-content: left;
     gap: 10%;
   }
-  
-
 
   .div-VerificarProntuario{
     display: flex;
+  }
+
+  .MicroButtonInput{
+    margin-right: 1dvw;
+    padding: 5px;
   }
   
   /* Validation Messages */
