@@ -1,6 +1,7 @@
 import React, { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 import axios from 'axios';
 import { AxiosError } from 'axios';
+import { TiBookmark } from "react-icons/ti";
 
 /*IMPORT COMPONENTS*/
 import DadosPaciente from '../Dados Paciente/DadosPaciente';
@@ -12,6 +13,10 @@ import { getUserData } from '../../functions/storageUtils';
 import { UserData } from '../../interfaces/UserData';
 import { DadosPacienteData } from '../../interfaces/DadosPaciente';
 import { TransporteDatesData } from '../../interfaces/Transporte';
+import { AtrasoLeitoOptions } from '../../interfaces/Transporte';
+
+/*IMPORT JSON*/
+import atrasoleito from '../../JSON/atraso.json';
 
 /*IMPORT CSS*/
 import './Transporte.css';
@@ -39,11 +44,17 @@ const Transporte02: React.FC<Props> = ({ dadosPaciente, onClose, showSnackbar })
     const [currentStep, setCurrentStep] = useState<number>(1);
     const [observacao, setObservacao] = useState<string>('');
     const [diferencaHoras, setDiferencaHoras] = useState<number>(0);
+    const [optionsAtrasoLeito, setOptionsAtrasoLeito] = useState<AtrasoLeitoOptions[]>([]);
 
     // Pega dados do Session Storage
     useEffect(() => {
         const data = getUserData();
         setUserData(data);
+    }, []);
+
+    // CARREGA OS DADOS JSON
+    useEffect(() => {
+        setOptionsAtrasoLeito(atrasoleito);
     }, []);
 
     // Calcula a diferença entre os horários
@@ -123,8 +134,9 @@ const Transporte02: React.FC<Props> = ({ dadosPaciente, onClose, showSnackbar })
             </div>
 
             <div className="Steps">
-                <div className={`Step ${currentStep === 1 ? 'active' : ''}`}>Transporte Origem</div>
-                <div className={`Step ${currentStep === 2 ? 'active' : ''}`}>Transporte Destino</div>
+                <div className={`Step ${currentStep === 1 ? 'active' : ''}`}><TiBookmark />Transporte Origem</div>
+                <div className={`Step ${currentStep === 2 ? 'active' : ''}`}><TiBookmark />Transporte Destino</div>
+                <div className={`Step ${currentStep === 3 ? 'active' : ''}`}><TiBookmark />Liberação do Leito</div>
             </div>
 
             <form onSubmit={handleSubmit}>
@@ -158,52 +170,58 @@ const Transporte02: React.FC<Props> = ({ dadosPaciente, onClose, showSnackbar })
                     )}
 
                     {currentStep === 2 && (
-                        <div className="StepContent2">
-                            <div>
-                                <div className="Transporte-line">
-                                    <label>Hora da liberação do leito:</label>
-                                    <input
-                                        type="datetime-local"
-                                        name="data_hora_liberacao_leito"
-                                        className="data_hora_transporte"
-                                        value={formData.data_hora_liberacao_leito}
-                                        onChange={handleChange}
-                                        required
-                                    />
-                                </div>
-                                <div className="Transporte-line">
-                                    <label>Chegada do Paciente no Setor de Destino:</label>
-                                    <input
-                                        type="datetime-local"
-                                        name="data_hora_chegada_destino"
-                                        className="data_hora_transporte"
-                                        value={formData.data_hora_chegada_destino}
-                                        onChange={handleChange}
-                                        required
-                                    />
-                                </div>
+                        <div className="StepContentTransporte">
+                            <div className="Transporte-line">
+                                <label>Chegada do Paciente no Setor de Destino:</label>
+                                <input
+                                    type="datetime-local"
+                                    name="data_hora_chegada_destino"
+                                    className="data_hora_transporte"
+                                    value={formData.data_hora_chegada_destino}
+                                    onChange={handleChange}
+                                    required
+                                />
+                            </div>
+                        </div>
+                    )}
+
+                    {currentStep === 3 && (
+                        <div className="StepContentTransporte">
+                            <div className="Transporte-line">
+                                <label>Hora da liberação do leito:</label>
+                                <input
+                                    type="datetime-local"
+                                    name="data_hora_liberacao_leito"
+                                    className="data_hora_transporte"
+                                    value={formData.data_hora_liberacao_leito}
+                                    onChange={handleChange}
+                                    required
+                                />
                             </div>
 
-                            <div>
-                                <div className="Transporte-line">
-                                    <label>Observação:</label>
-                                    <textarea
-                                        name="observacao"
-                                        value={observacao}
-                                        onChange={(e) => setObservacao(e.target.value)}
-                                        placeholder="Observação obrigatório caso o tempo seja maior do que 2h"
-                                        required={diferencaHoras >= 2} // Torna obrigatório se a diferença ≥ 2h
-                                    />
-                                </div>
+                            <div className="Transporte-line">
+                                <label>Observação: Obrigatório caso o tempo de ocupação do leito for maior que 2h</label>
+                                <select
+                                    name="observacao"
+                                    value={observacao}
+                                    onChange={(e) => setObservacao(e.target.value)}
+                                    required={diferencaHoras >= 2} // Torna obrigatório se a diferença ≥ 2h
+                                >
+                                    <option value="">Selecione o Motivo</option>
+                                    {optionsAtrasoLeito.map((option) => (
+                                        <option key={option.value} value={option.value}>
+                                            {option.label}
+                                        </option>
+                                    ))}
+                                </select>
                             </div>
-
                         </div>
                     )}
                 </div>
                 <div className="Div-Buttons End">
                     {currentStep > 1 && <button type="button" onClick={previousStep}>Voltar</button>}
-                    {currentStep < 2 && <button type="button" onClick={nextStep}>Avançar</button>}
-                    {currentStep === 2 && <button type="submit">Finalizar</button>}
+                    {currentStep < 3 && <button type="button" onClick={nextStep}>Avançar</button>}
+                    {currentStep === 3 && <button type="submit">Finalizar</button>}
                 </div>
             </form>
         </>

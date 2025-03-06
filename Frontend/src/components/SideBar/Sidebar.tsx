@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { TiBusinessCard, TiClipboard, TiThumbsUp, TiHeartHalfOutline, TiHomeOutline, TiUpload, TiArrowBack } from "react-icons/ti";
+import { TiExportOutline, TiBusinessCard, TiClipboard, TiThumbsUp, TiHeartHalfOutline, TiHomeOutline, TiUpload, TiArrowBack } from "react-icons/ti";
 import { getUserData } from '../../functions/storageUtils';
 
 /*IMPORT INTERFACE*/
@@ -53,7 +53,10 @@ const Sidebar: React.FC = () => {
         <ul>
           <li> <Link to="/RegulacaoMedica"><TiHeartHalfOutline className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulação Médica</label></Link> </li>
           <li> <Link to="/RegulacoesAprovadas"><TiThumbsUp className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações Aprovadas</label></Link> </li>
+          <hr />
+          <li> <Link to="/Login"><TiExportOutline className='Icon-Menu-Item' /><label className='textMenu-Item'>Sair</label></Link></li>
         </ul>
+
       );
     }
 
@@ -70,6 +73,8 @@ const Sidebar: React.FC = () => {
           </ul>
           <li><Link to="/ListaRegulacoes24"><TiClipboard className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações +24hrs</label></Link></li>
           <li><Link to="/Finalizadas"><TiClipboard className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações Finalizadas</label></Link></li>
+          <hr />
+          <li> <Link to="/Login"><TiExportOutline className='Icon-Menu-Item' /><label className='textMenu-Item'>Sair</label></Link></li>
         </>
       );
     }
@@ -87,7 +92,9 @@ const Sidebar: React.FC = () => {
           </ul>
           <li><Link to="/ListaRegulacoes24"><TiClipboard className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações +24hrs</label></Link></li>
           <li><Link to="/Finalizadas"><TiClipboard className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações Finalizadas</label></Link></li>
-          <li> <Link to="/RegulacaoMedica"><TiHeartHalfOutline className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulação Médica</label></Link> </li>
+          <li> <Link to="/RegulacaoMedica"><TiHeartHalfOutline className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulação Médica</label></Link></li>
+          <hr />
+          <li> <Link to="/Login"><TiExportOutline className='Icon-Menu-Item' /><label className='textMenu-Item'>Sair</label></Link></li>
         </>
       );
     }
@@ -109,7 +116,7 @@ const Sidebar: React.FC = () => {
   return (
     <div className="sidebar">
       <div className="sidebar-sup">
-        <label className='sidebar-Title'>RegulaNAC</label>
+        <label className='sidebar-Title'> RegulaNAC </label>
         <div className='inf-user'>
           <img className="IconUser" src={iconUser || '/IconsUser/default-icon.png'} alt="User Icon" />
           <p>

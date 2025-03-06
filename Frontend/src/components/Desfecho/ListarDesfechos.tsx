@@ -3,20 +3,20 @@ import axios from 'axios';
 import { AxiosError } from 'axios';
 import { useLocation } from 'react-router-dom';
 import { Snackbar, Alert } from '@mui/material';
-import { FcNews } from "react-icons/fc";
 
 /*IMPORT COMPONENTS*/
 import Modal from '../Modal/Modal';
 import Desfecho from '../Desfecho/Desfecho';
-import TimeTracker from "../TimeTracker/TimeTracker.tsx";
+import TabelaRegulacoes from '../Tabela de Regulacoes/TabelaRegulacoes';
 
 /*IMPORT INTERFACES*/
 import { RegulacaoAprovadaData } from '../../interfaces/Regulacao.ts';
 import { StatusRegulacaoData } from '../../interfaces/Status.ts';
 import { DadosPacienteData } from "../../interfaces/DadosPaciente.ts";
+import { RegulacaoData } from '../../interfaces/Regulacao';
 
 /*IMPORT FUNCTIONS*/
-import { removerText } from "../../functions/RemoveText.ts";
+import { getDay, getMonth, getYear } from '../../functions/DateTimes';
 
 /*IMPORT CSS*/
 import './Desfecho.css';
@@ -59,6 +59,10 @@ const ListarDesfecho: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(5);
 
+  /*ORDENAÇÃO*/
+  const [sortConfig, setSortConfig] = useState<{ key: keyof RegulacaoData; direction: "asc" | "desc" } | null>(null);
+  const [selectedColumn, setSelectedColumn] = useState<keyof RegulacaoData | null>(null);
+
   /*SNACKBAR*/
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -82,6 +86,69 @@ const ListarDesfecho: React.FC = () => {
     }
   }, [location.state?.snackbar]);
 
+  //FUNÇÃO PARA BUSCAR O PDF
+  const fetchPDF = async (datetime: string, filename: string) => {
+    const year = getYear(datetime);
+    const month = getMonth(datetime);
+    const day = getDay(datetime);
+
+    try {
+      const response = await axios.get(`${NODE_URL}/api/internal/upload/ViewPDF`, {
+        params: { year, month, day, filename },
+        responseType: 'blob',
+      });
+
+      // Criar uma URL temporária para o PDF
+      const url = URL.createObjectURL(response.data);
+
+      // Abrir o PDF em uma nova aba
+      window.open(url, '_blank');
+    } catch (error: unknown) {
+      // Verificar se o erro é uma instância de AxiosError
+      if (error instanceof AxiosError && error.response) {
+        const { status, data } = error.response;
+
+        // Exemplo de tratamento de diferentes códigos de status usando switch case
+        switch (status) {
+          case 400:
+            showSnackbar(data?.message || 'Parâmetros inválidos. Verifique os dados.', 'error');
+            break;
+          case 404:
+            showSnackbar(data?.message || 'Arquivo PDF não encontrado.', 'error');
+            break;
+          case 500:
+            showSnackbar(data?.message || 'Erro no servidor ao buscar o arquivo.', 'error');
+            break;
+          default:
+            // Caso um erro desconhecido ocorra
+            showSnackbar(data?.message || 'Erro desconhecido. Tente novamente.', 'error');
+            break;
+        }
+      } else {
+        // Caso o erro não seja uma instância de AxiosError ou não tenha resposta, por exemplo, se o servidor não estiver acessível
+        showSnackbar('Erro na requisição. Tente novamente.', 'error');
+      }
+    }
+  };
+
+  //CONFIGURA A ORDENAÇÃO
+  const handleSort = (key: keyof RegulacaoData) => {
+    let direction: "asc" | "desc" = "asc";
+    if (sortConfig?.key === key && sortConfig.direction === "asc") {
+      direction = "desc";
+    }
+    setSortConfig({ key, direction });
+
+    const sortedData = [...filteredRegulacoes].sort((a, b) => {
+      if (a[key] === null || b[key] === null) return 0; // Evita erros com valores null
+      if (a[key]! < b[key]!) return direction === "asc" ? -1 : 1;
+      if (a[key]! > b[key]!) return direction === "asc" ? 1 : -1;
+      return 0;
+    });
+
+    setFilteredRegulacoes(sortedData);
+    setSelectedColumn(key);
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -131,8 +198,6 @@ const ListarDesfecho: React.FC = () => {
       id_regulacao: regulacao.id_regulacao,
       nome_regulador_medico: regulacao.nome_regulador_medico, // Certifique-se de que este campo possui um valor válido
     };
-
-    console.log(dados);
 
     setDadosPaciente(dados);
     setShowModalDesfecho(true);
@@ -241,44 +306,18 @@ const ListarDesfecho: React.FC = () => {
 
           {/* Tabela de Regulações */}
           <div>
-            <table className='Table-Regulacoes'>
-              <thead>
-                <tr>
-                  <th>Regulador NAC</th>
-                  <th>Pront.</th>
-                  <th>Nome Paciente</th>
-                  <th>Num. Regulação</th>
-                  <th>Un. Origem</th>
-                  <th>Un. Destino</th>
-                  <th>Tempo de Espera</th>
-                  <th>Fase</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                {currentRegulacoes.map(regulacao => (
-                  <tr key={regulacao.id_regulacao}>
-                    <td>{regulacao.nome_regulador_nac}</td>
-                    <td>{regulacao.num_prontuario}</td>
-                    <td className="td-NomePaciente">{regulacao.nome_paciente}</td>
-                    <td>{regulacao.num_regulacao}</td>
-                    <td>{regulacao.un_origem}</td>
-                    <td>{regulacao.un_destino}</td>
-                    <td className='td-TempoEspera'>
-                      <TimeTracker startTime={regulacao.data_hora_solicitacao_02} serverTime={serverTime} />
-                    </td>
-                    <td>{removerText(regulacao.status_regulacao)}</td>
-                    <td className='td-Icons'>
-                      <FcNews
-                        className='Icon Icons-Regulacao'
-                        onClick={() => handleOpenModalDesfecho(regulacao)}
-                        title='Forçar Desfecho' />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <TabelaRegulacoes
+              currentRegulacoes={currentRegulacoes}
+              selectedColumn={selectedColumn}
+              sortConfig={sortConfig}
+              handleSort={handleSort}
+              fetchPDF={fetchPDF}
+              serverTime={serverTime}
+              handleOpenModalDesfecho={handleOpenModalDesfecho}
+              IconOpcoes='desfecho'
+            />
           </div>
+
         </div>
         <div className="Pagination">
           <button className='button-pagination' onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>Anterior</button>

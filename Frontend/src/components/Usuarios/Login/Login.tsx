@@ -3,7 +3,12 @@ import axios from 'axios';
 import { Snackbar, Alert } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 
+/*IMPORT FUNCTIONS*/
+
+
+/*IMPORT CSS*/
 import '../Usuarios.css';
+import { clearSessionStorage } from '../../../functions/storageUtils';
 
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
 
@@ -25,6 +30,12 @@ const Login: React.FC = () => {
       showSnackbar(location.state.snackbarMessage, location.state.snackbarSeverity);
     }
   }, [location.state]);
+
+  /*ESVAZIA A SEASSONSTORAGE QUANDO O COMPONENTE É CARREGADO*/
+  useEffect(() => {
+    clearSessionStorage();
+    console.log('Sessão Vazia');
+  })
 
   /*REQUISIÇÃO DE LOGIN*/
   const handleLogin = async (e: React.FormEvent) => {
@@ -90,7 +101,11 @@ const Login: React.FC = () => {
           </div>
 
           <div className='div-direita'>
+
             <div className="login-container">
+              <div className='Mobile'>
+                <img className='Logo' src='/Logo/RegulaNAC-Logo2.png'></img>
+              </div>
               <h1>Login</h1>
               {error && <p className="error-message">{error}</p>}
               <form onSubmit={handleLogin}>

@@ -15,20 +15,15 @@
     margin-bottom: 20px;
 }
 
+.Transporte-line select{
+    max-width: 100%;
+}
+
 .data_hora_transporte{
     width: 50%;
 }
 
-.StepContent2{
+.StepContentTransporte{
     display: flex;
-    justify-content: space-between;
-    width: 100%;
-}
-
-.StepContent2 input{
-    width: 130%;
-}
-
-.StepContent2 textarea{
-    width: 15dvw;
+    flex-direction: column;
 }

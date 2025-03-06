@@ -52,7 +52,6 @@
     background-size: cover;
 }
 
-
 .Component-Login{
     display: flex;
     flex-direction: row;
@@ -68,7 +67,6 @@
 
 .Component-Login .div-esquerda{
     height: 100%;
-    background-color: aqua;
 }
 
 .Component-Login .div-direita{

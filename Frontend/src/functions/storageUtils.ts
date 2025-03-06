@@ -18,3 +18,10 @@ export function getUserData(): UserData | null {
     return null;
   }
 }
+
+export function clearSessionStorage() {
+  sessionStorage.removeItem("id_user");
+  sessionStorage.removeItem("login");
+  sessionStorage.removeItem("nome");
+  sessionStorage.removeItem("tipo");
+}

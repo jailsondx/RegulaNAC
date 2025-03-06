@@ -1,5 +1,6 @@
 export function removerText(input: string): string {
-    const prefixo = "ABERTO - APROVADO - ";
+    //const prefixo = "ABERTO - APROVADO - ";
+    const prefixo = "ABERTO - ";
     
     // Verifica se a string começa com o prefixo e o remove
     if (input.startsWith(prefixo)) {

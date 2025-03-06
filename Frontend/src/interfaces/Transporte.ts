@@ -24,5 +24,10 @@ export interface TransporteDatesData {
   data_hora_saida_origem: string;
   data_hora_liberacao_leito: string;
   data_hora_chegada_destino: string;
-  observacao: string;
+  observacao?: string;
+}
+
+export interface AtrasoLeitoOptions{
+  value: string;
+  label: string;
 }

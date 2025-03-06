@@ -74,6 +74,9 @@
   body{
     font-size: 12px;
   }
+  .Mobile{
+    display: none;
+  }
 }
 
 /* Responsividade para telas de até 1159px (tablets) */
@@ -84,6 +87,9 @@
   .Component {
     margin-left: 50px;
   }
+  .Mobile{
+    display: none;
+  }
 }
 
 /* Responsividade para telas de até 1159px (tablets grandes) */
@@ -93,6 +99,9 @@
   }
   .Component {
     margin-left: 200px;
+  }
+  .Mobile{
+    display: none;
   }
 }
 
@@ -109,6 +118,10 @@
   }
   .ComponentForm, .Title-Form{
     margin-left: 0px;
+  }
+
+  .Mobile{
+    display: flex;
   }
 }
 
@@ -393,10 +406,6 @@ input:disabled {
   background-color: var(--table-hover-bg);
 }
 
-.OLDcol-NomePaciente {
-  width: 50%;
-}
-
 .clicked label{
   cursor: pointer;
 }
@@ -416,7 +425,7 @@ input:disabled {
   justify-content: space-around;
   align-items: center;
 
-  width: 20%;
+  width: 90%;
   min-width: 70px;
 
   height: 100%;
