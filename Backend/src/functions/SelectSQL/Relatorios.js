@@ -149,17 +149,17 @@ async function relatorioEfetivacao(FormData) {
         // Ordenar os dados antes de exportar o CSV
         dadosParaCSV.sort((a, b) => a.un_destino.localeCompare(b.un_destino));
 
-        if(dadosParaCSV.length > 0){
+        if (dadosParaCSV.length > 0) {
             console.log('✅ Dados formatados para CSV');
 
             // 📂 Exportar os dados para CSV
             const filePath = await handleCSVEfetivacao(dadosParaCSV);
             return { success: true, filePath };
-        } else{
+        } else {
             console.log('❌ Erro ao formatar dados para CSV: Dados Vazios');
             return { success: false, message: "Dados vazios para a data informada." };
         }
-        
+
 
 
     } catch (error) {
@@ -202,15 +202,26 @@ async function relatorioTempoEfetivacao(FormData) {
         `, [startDate, endDate]);
 
         // 🚀 3️⃣ Calcular a diferença de tempo entre 'data_hora_solicitacao_01' e 'data_hora_chegada_destino'
-        const [rows_tempoTr1Sol] = await connection.query(`
+        const [rows_tempoTrxSol01] = await connection.query(`
             SELECT 
             r.un_destino, 
-            TIMESTAMPDIFF(MINUTE, MIN(r.data_hora_solicitacao_01), MIN(t.data_hora_chegada_destino)) AS tempo_tempoTr1Sol
+            TIMESTAMPDIFF(MINUTE, MIN(r.data_hora_solicitacao_01), MIN(t.data_hora_chegada_destino)) AS tempo_tempoTrxSol01
             FROM ${DBtableRegulacao} r
             JOIN ${DBtableTransporte} t ON r.id_regulacao = t.id_regulacao
             WHERE DATE(r.data_hora_solicitacao_01) BETWEEN ? AND ?
             GROUP BY r.un_destino
         `, [startDate, endDate]);
+
+        // 🚀 4️⃣ Calcular a diferença de tempo entre 'data_hora_liberacao_leito' e 'data_hora_chegada_destino'
+        const [rows_tempoTrxLibLeito] = await connection.query(`
+                    SELECT 
+                    r.un_destino, 
+                    TIMESTAMPDIFF(MINUTE, MIN(t.data_hora_liberacao_leito), MIN(t.data_hora_chegada_destino)) AS tempo_tempoTrxLibLeito
+                    FROM ${DBtableRegulacao} r
+                    JOIN ${DBtableTransporte} t ON r.id_regulacao = t.id_regulacao
+                    WHERE DATE(r.data_hora_solicitacao_01) BETWEEN ? AND ?
+                    GROUP BY r.un_destino
+                `, [startDate, endDate]);
 
 
         connection.release();
@@ -227,15 +238,15 @@ async function relatorioTempoEfetivacao(FormData) {
         rows_tempoAcMedicoxAuMedico.forEach(row => {
             const tempo = row.tempo_AcMedicoxAuMedico;
             if (tempo <= 30) {
-            categoriasTempoAcMedicoxAuMedico.ate30min++;
+                categoriasTempoAcMedicoxAuMedico.ate30min++;
             } else if (tempo > 30 && tempo <= 60) {
-            categoriasTempoAcMedicoxAuMedico.entre30min1hora++;
+                categoriasTempoAcMedicoxAuMedico.entre30min1hora++;
             } else if (tempo > 60 && tempo <= 120) {
-            categoriasTempoAcMedicoxAuMedico.entre1hora2horas++;
+                categoriasTempoAcMedicoxAuMedico.entre1hora2horas++;
             } else if (tempo > 120 && tempo <= 360) {
-            categoriasTempoAcMedicoxAuMedico.entre2horas6horas++;
+                categoriasTempoAcMedicoxAuMedico.entre2horas6horas++;
             } else {
-            categoriasTempoAcMedicoxAuMedico.maior6horas++;
+                categoriasTempoAcMedicoxAuMedico.maior6horas++;
             }
         });
 
@@ -267,20 +278,35 @@ async function relatorioTempoEfetivacao(FormData) {
 
 
         // 🚀 4️⃣ Categorizar os tempos de efetivação para 'data_hora_solicitacao_01' e 'data_hora_chegada_destino'
-        const categoriasTempoTr1Sol = {
+        const categoriasTempoTrxSol01 = {
             ate24h: 0,
             entre24h72h: 0,
             maior72h: 0,
         };
 
-        rows_tempoTr1Sol.forEach(row => {
-            const tempo = row.tempo_tempoTr1Sol;
+        rows_tempoTrxSol01.forEach(row => {
+            const tempo = row.tempo_tempoTrxSol01;
             if (tempo <= 1440) { // 1440 minutos = 24 horas
-            categoriasTempoTr1Sol.ate24h++;
+                categoriasTempoTrxSol01.ate24h++;
             } else if (tempo > 1440 && tempo <= 4320) { // 4320 minutos = 72 horas
-            categoriasTempoTr1Sol.entre24h72h++;
+                categoriasTempoTrxSol01.entre24h72h++;
             } else {
-            categoriasTempoTr1Sol.maior72h++;
+                categoriasTempoTrxSol01.maior72h++;
+            }
+        });
+
+        // 🚀 4️⃣ Categorizar os tempos de efetivação para 'data_hora_liberacao_leito' e 'data_hora_chegada_destino'
+        const categoriasTempoTrxLibLeito = {
+            ate2h: 0,
+            maior2h: 0,
+        };
+
+        rows_tempoTrxLibLeito.forEach(row => {
+            const tempo = row.tempo_tempoTrxLibLeito;
+            if (tempo <= 120) { // 1440 minutos = 24 horas
+                categoriasTempoTrxLibLeito.ate2h++;
+            } else if (tempo > 120) { // 4320 minutos = 72 horas
+                categoriasTempoTrxLibLeito.maior2h++;
             }
         });
 
@@ -288,7 +314,8 @@ async function relatorioTempoEfetivacao(FormData) {
         const unidadesDestino = new Set([
             ...rows_tempoAcMedicoxAuMedico.map(row => row.un_destino),
             ...rows_tempoTrxAuMedico.map(row => row.un_destino),
-            ...rows_tempoTr1Sol.map(row => row.un_destino)
+            ...rows_tempoTrxSol01.map(row => row.un_destino),
+            ...rows_tempoTrxLibLeito.map(row => row.un_destino)
         ]);
 
         // 🚀 🔄 **Transformar os dados para o formato correto**
@@ -298,91 +325,103 @@ async function relatorioTempoEfetivacao(FormData) {
         unidadesDestino.forEach(unidade => {
             dadosParaCSV.push({
                 un_destino: unidade,
-                especificacao: 'TEMPO ACIONAMENTO MÉDICO X AUTORIZAÇÃO DA VAGA (Até 30 Min)',
+                especificacao: 'ACIONAMENTO MÉDICO X AUTORIZAÇÃO DA VAGA ATÉ 0h30',
                 valor_absoluto: categoriasTempoAcMedicoxAuMedico.ate30min
             });
 
             dadosParaCSV.push({
                 un_destino: unidade,
-                especificacao: 'TEMPO ACIONAMENTO MÉDICO X AUTORIZAÇÃO DA VAGA (30 Min a 1h)',
+                especificacao: 'ACIONAMENTO MÉDICO X AUTORIZAÇÃO DA VAGA 0h30 a 1h',
                 valor_absoluto: categoriasTempoAcMedicoxAuMedico.entre30min1hora
             });
 
             dadosParaCSV.push({
                 un_destino: unidade,
-                especificacao: 'TEMPO ACIONAMENTO MÉDICO X AUTORIZAÇÃO DA VAGA (1h a 2h)',
+                especificacao: 'ACIONAMENTO MÉDICO X AUTORIZAÇÃO DA VAGA 1h a 2h',
                 valor_absoluto: categoriasTempoAcMedicoxAuMedico.entre1hora2horas
             });
 
             dadosParaCSV.push({
                 un_destino: unidade,
-                especificacao: 'TEMPO ACIONAMENTO MÉDICO X AUTORIZAÇÃO DA VAGA (2h a 6h)',
+                especificacao: 'ACIONAMENTO MÉDICO X AUTORIZAÇÃO DA VAGA 2h a 6h',
                 valor_absoluto: categoriasTempoAcMedicoxAuMedico.entre2horas6horas
             });
 
             dadosParaCSV.push({
                 un_destino: unidade,
-                especificacao: 'TEMPO ACIONAMENTO MÉDICO X AUTORIZAÇÃO DA VAGA (Mais de 6h)',
+                especificacao: 'ACIONAMENTO MÉDICO X AUTORIZAÇÃO DA VAGA 6h',
                 valor_absoluto: categoriasTempoAcMedicoxAuMedico.maior6horas
             });
 
             dadosParaCSV.push({
                 un_destino: unidade,
-                especificacao: 'TEMPO REGULAÇÃO MÉDICO X CHEGADA DESTINO (Até 2h)',
+                especificacao: 'TRANSFERENCIA CONCLUÍDA X AUTORIZAÇÃO DA VAGA ATÉ 2h',
                 valor_absoluto: categoriasTempoTrxAuMedico.ate2horas
             });
-            
+
             dadosParaCSV.push({
                 un_destino: unidade,
-                especificacao: 'TEMPO REGULAÇÃO MÉDICO X CHEGADA DESTINO (2h a 6h)',
+                especificacao: 'TRANSFERENCIA CONCLUÍDA X AUTORIZAÇÃO DA VAGA 2h a 6h',
                 valor_absoluto: categoriasTempoTrxAuMedico.entre2horas6horas
             });
-            
+
             dadosParaCSV.push({
                 un_destino: unidade,
-                especificacao: 'TEMPO REGULAÇÃO MÉDICO X CHEGADA DESTINO (6h a 12h)',
+                especificacao: 'TRANSFERENCIA CONCLUÍDA X AUTORIZAÇÃO DA VAGA 6h a 12h',
                 valor_absoluto: categoriasTempoTrxAuMedico.entre6horas12horas
             });
-            
+
             dadosParaCSV.push({
                 un_destino: unidade,
-                especificacao: 'TEMPO REGULAÇÃO MÉDICO X CHEGADA DESTINO (Mais DE 12h)',
+                especificacao: 'TRANSFERENCIA CONCLUÍDA X AUTORIZAÇÃO DA VAGA ATÉ 12h ',
                 valor_absoluto: categoriasTempoTrxAuMedico.maior12horas
             });
 
             dadosParaCSV.push({
                 un_destino: unidade,
                 especificacao: 'PACIENTES TRANSFERIDOS ATÉ 24h DA 1ª SOLICITAÇÃO',
-                valor_absoluto: categoriasTempoTr1Sol.ate24h
+                valor_absoluto: categoriasTempoTrxSol01.ate24h
             });
 
             dadosParaCSV.push({
                 un_destino: unidade,
                 especificacao: 'PACIENTES TRANSFERIDOS ENTRE 24h E 72h DA 1ª SOLICITAÇÃO',
-                valor_absoluto: categoriasTempoTr1Sol.entre24h72h
+                valor_absoluto: categoriasTempoTrxSol01.entre24h72h
             });
 
             dadosParaCSV.push({
                 un_destino: unidade,
                 especificacao: 'PACIENTES TRANSFERIDOS APÓS 72h DA 1ª SOLICITAÇÃO',
-                valor_absoluto: categoriasTempoTr1Sol.maior72h
+                valor_absoluto: categoriasTempoTrxSol01.maior72h
+            });
+
+            dadosParaCSV.push({
+                un_destino: unidade,
+                especificacao: 'PACIENTES TRANSFERIDOS ATÉ 2h DA LIBERAÇÃO DO LEITO',
+                valor_absoluto: categoriasTempoTrxLibLeito.ate2h
+            });
+
+            dadosParaCSV.push({
+                un_destino: unidade,
+                especificacao: 'PACIENTES TRANSFERIDOS ACIMA DE 2h DA LIBERAÇÃO DO LEITO',
+                valor_absoluto: categoriasTempoTrxLibLeito.maior2h
             });
         });
 
         // Ordenar os dados antes de exportar o CSV
         dadosParaCSV.sort((a, b) => a.un_destino.localeCompare(b.un_destino));
 
-        if(dadosParaCSV.length > 0){
+        if (dadosParaCSV.length > 0) {
             console.log('✅ Dados formatados para CSV');
 
             // 📂 Exportar os dados para CSV
             const filePath = await handleCSVEfetivacao(dadosParaCSV);
             return { success: true, filePath };
-        } else{
+        } else {
             console.log('❌ Erro ao formatar dados para CSV: Dados Vazios');
             return { success: false, message: "Dados vazios para a data informada." };
         }
-        
+
 
 
     } catch (error) {
