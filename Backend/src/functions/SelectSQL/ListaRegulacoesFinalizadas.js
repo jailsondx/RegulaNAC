@@ -2,6 +2,7 @@ import { DBconnection } from "../Controller/connection.js";
 
 async function ListaRegulacoesFinalizadas() {
     const DBtable = "regulacao";
+    const DBtableRegulacaoMedico = "regulacao_medico";
     const DBtableDesfecho = "desfecho";
     const DBtableUsuarios = "usuarios";
 
@@ -11,9 +12,18 @@ async function ListaRegulacoesFinalizadas() {
 
         // Execute a query para selecionar os registros da tabela regulacao
         const [rows] = await connection.query(`
-            SELECT * 
-            FROM ${DBtable}
-            WHERE status_regulacao LIKE ?
+            SELECT 
+                r.id_regulacao, 
+                r.nome_regulador_nac, 
+                r.num_prontuario, 
+                r.nome_paciente, 
+                r.num_regulacao, 
+                r.un_origem, 
+                r.un_destino, 
+                rm.nome_regulador_medico
+            FROM ${DBtable} r
+            JOIN ${DBtableRegulacaoMedico} rm ON r.id_regulacao = rm.id_regulacao
+            WHERE r.status_regulacao LIKE ?
         `, ["FECHADO"]);
 
         // Adicione os desfechos relacionados

@@ -74,7 +74,7 @@ const RelatorioEfetivacao: React.FC = () => {
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', `Relatorio.csv`); // Nome do arquivo que será baixado
+      link.setAttribute('download', `Relatorio de Efetivacao.csv`); // Nome do arquivo que será baixado
       document.body.appendChild(link);
       link.click();
 
@@ -120,7 +120,7 @@ const RelatorioEfetivacao: React.FC = () => {
   return (
     <>
       <div>
-        <label className='Title-Form'>Gerar relatório Gerencial</label>
+        <label className='Title-Form'>Gerar relatório de efetivação</label>
       </div>
 
       <div className="ComponentForm">

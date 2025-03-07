@@ -344,6 +344,7 @@ input:disabled {
 .ComponentForm {
   width: 35dvw;
   min-width: 300px;
+  max-width: 600px;
   height: auto;
   min-height: 350px;
   padding: 20px;

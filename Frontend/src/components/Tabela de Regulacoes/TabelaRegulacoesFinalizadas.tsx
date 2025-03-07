@@ -35,6 +35,13 @@ const TabelaRegulacoesFinalizadas: React.FC<TabelaRegulacoesProps> = ({
             </span>
           </th>
 
+          <th className={`col-NomeRegMedico clicked${selectedColumn === "nome_regulador_medico" ? " selected" : ""}`} onClick={() => handleSort("nome_regulador_medico")}>
+            <span>
+              <label>Médico Regulador</label>
+              <label>{sortConfig?.key === "nome_regulador_medico" ? (sortConfig.direction === "asc" ? <LuArrowUpNarrowWide /> : <LuArrowDownWideNarrow />) : ""}</label>
+            </span>
+          </th>
+
           <th className={`col-NumProntuario clicked${selectedColumn === "num_prontuario" ? " selected" : ""}`} onClick={() => handleSort("num_prontuario")}>
             <span>
               <label>Pront.</label>
@@ -84,6 +91,7 @@ const TabelaRegulacoesFinalizadas: React.FC<TabelaRegulacoesProps> = ({
           <tr key={regulacao.id_regulacao}>
             <td>{regulacao.nome_regulador_nac}</td>
             <td>{regulacao.regulador_final}</td>
+            <td>{regulacao.nome_regulador_medico}</td>
             <td>{regulacao.num_prontuario}</td>
             <td>
               <a onClick={() => fetchPDF(regulacao.data_hora_solicitacao_02, regulacao.link)}>

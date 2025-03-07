@@ -3,4 +3,5 @@
     flex-direction: column;
     gap: 30px;
     height: 35dvh;
+    max-height: 270px;
 }

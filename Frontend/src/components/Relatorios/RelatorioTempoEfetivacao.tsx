@@ -120,7 +120,7 @@ const RelatorioTempoEfetivacao: React.FC = () => {
   return (
     <>
       <div>
-        <label className='Title-Form'>Gerar Relatório de Tempo de Efeticação</label>
+        <label className='Title-Form'>Gerar Relatório de Tempo de Efetivação</label>
       </div>
 
       <div className="ComponentForm">
