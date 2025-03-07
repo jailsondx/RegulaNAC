@@ -5,24 +5,24 @@ import { AxiosError } from 'axios';
 import { Snackbar, Alert } from '@mui/material';
 
 /*IMPORT INTERFACES*/
-import { DadosPacienteData } from "../../interfaces/DadosPaciente.ts";
-import { UpdateRegulacaoData, PartialUpdateRegulacaoData } from '../../interfaces/Regulacao';
-import { UnidadeData } from '../../interfaces/Unidade.ts';
-import { UserData } from '../../interfaces/UserData';
+import { DadosPacienteData } from "../../../interfaces/DadosPaciente.ts";
+import { UpdateRegulacaoData, PartialUpdateRegulacaoData } from '../../../interfaces/Regulacao.ts';
+import { UnidadeData } from '../../../interfaces/Unidade.ts';
+import { UserData } from '../../../interfaces/UserData.ts';
 
 /*IMPORT COMPONENTS*/
-import DadosPaciente from '../Dados Paciente/DadosPaciente';
+import DadosPaciente from '../../Dados Paciente/DadosPaciente.tsx';
 
 /*IMPORT FUNCTIONS*/
-import { getUserData } from '../../functions/storageUtils';
-import { getDay, getMonth, getYear } from '../../functions/DateTimes';
+import { getUserData } from '../../../functions/storageUtils.ts';
+import { getDay, getMonth, getYear } from '../../../functions/DateTimes.ts';
 
 /*IMPORT CSS*/
 import './AtualizarRegulacao.css';
 
 /*IMPORT JSON*/
-import un_origem from '../../JSON/un_origem.json';
-import un_destino from '../../JSON/un_destino.json';
+import un_origem from '../../../JSON/un_origem.json';
+import un_destino from '../../../JSON/un_destino.json';
 
 /*IMPORT VARIAVEIS DE AMBIENTE*/
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;

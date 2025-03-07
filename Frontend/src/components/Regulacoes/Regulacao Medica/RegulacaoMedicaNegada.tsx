@@ -3,48 +3,45 @@ import axios from 'axios';
 import { AxiosError } from 'axios';
 
 /*IMPORT COMPONENTS*/
-import DadosPaciente from '../Dados Paciente/DadosPaciente';
+import DadosPaciente from '../../Dados Paciente/DadosPaciente';
 
 /*IMPORT INTERFACES*/
-import { UserData } from '../../interfaces/UserData';
-import { DadosPacienteData } from '../../interfaces/DadosPaciente';
-import { RegulacaoMedicoData } from '../../interfaces/Regulacao';
+import { UserData } from '../../../interfaces/UserData';
+import { DadosPacienteData } from '../../../interfaces/DadosPaciente';
+import { RegulacaoMedicoData } from '../../../interfaces/Regulacao';
 
 /*IMPORT FUNCTIONS*/
-import { getUserData } from '../../functions/storageUtils';
+import { getUserData } from '../../../functions/storageUtils';
 
 /*IMPORT VARIAVEIS DE AMBIENTE*/
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
 
 interface Props {
   dadosPaciente: DadosPacienteData;
-  tempoEspera: string; // Tempo de espero pelo TimeTracker
   onClose: () => void; // Função de fechado Modal + Snackbar status
   showSnackbar: (message: string, severity: 'success' | 'error' | 'info' | 'warning') => void; // valores para controle do snackbar
 }
 
+
 const initialFormData: RegulacaoMedicoData = {
   id_user: '',
-  vaga_autorizada: true,
+  vaga_autorizada: false,
   num_leito: '',
-  extra: false,
   justificativa_neg: '',
   nome_regulador_medico: '',
   data_hora_regulacao_medico: '',
   justificativa_tempo30: '',
 };
 
-const NovaRegulacaoMedicoAprovada: React.FC<Props> = ({ dadosPaciente, tempoEspera, onClose, showSnackbar }) => {
+const NovaRegulacaoMedicoNegada: React.FC<Props> = ({ dadosPaciente, onClose, showSnackbar }) => {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [formData, setFormData] = useState<RegulacaoMedicoData>(initialFormData);
-
 
   //Pega dados do SeassonStorage User
   useEffect(() => {
     const data = getUserData();
     setUserData(data);
   }, []);
-
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>): void => {
     const { name, value, type } = e.target;
@@ -58,15 +55,8 @@ const NovaRegulacaoMedicoAprovada: React.FC<Props> = ({ dadosPaciente, tempoEspe
 
   const validateForm = (): boolean => {
     // Valida número do leito
-    if (!formData.num_leito) {
-      showSnackbar('O campo "Número do Leito" é obrigatório.', 'error');
-      return false;
-    }
-
-    // Verifica o tempo e se a justificativa é necessária
-    const [hours, minutes] = tempoEspera.split(/h|m/).map(Number);
-    if ((hours > 0 || minutes >= 30) && !formData.justificativa_tempo30?.trim()) {
-      showSnackbar('Para tempos de espera acima de 30 minutos, a Justificativa é obrigatória.', 'info');
+    if (!formData.justificativa_neg) {
+      showSnackbar('O campo "Justificativa" é obrigatório.', 'error');
       return false;
     }
     return true;
@@ -79,28 +69,22 @@ const NovaRegulacaoMedicoAprovada: React.FC<Props> = ({ dadosPaciente, tempoEspe
     try {
       const dataToSubmit = {
         ...formData,
-        id_user: userData?.id_user,
+        id_user: userData?.id_user, // Use o operador de encadeamento opcional para evitar erros se `userData` for `null`
         id_regulacao: dadosPaciente.id_regulacao,
         nome_regulador_medico: userData?.nome,
       };
 
       const response = await axios.post(`${NODE_URL}/api/internal/post/RegulacaoMedico`, dataToSubmit);
 
-      if (response.status == 200) {
-        // Mensagem com base na resposta da API
-        showSnackbar(
-          response.data?.message || 'Regulação Médica - Aprovada com Sucesso!',
-          'success'
-        );
-        onClose(); // Fecha o modal
-      } else {
-        // Mensagem com base na resposta da API
-        showSnackbar(
-          response.data?.message || 'Regulação Médica - Aprovada: Erro!',
-          'error'
-        );
-      }
+      // Verifica o status e exibe a mensagem de sucesso
+      showSnackbar(
+        response.data?.message || 'Regulação médica cadastrada com sucesso!',
+        'success'
+      );
 
+      if (onClose) {
+        onClose(); // Fecha o modal
+      }
     } catch (error: unknown) {
       // Verifique se o erro é uma instância de AxiosError antes de acessar propriedades específicas
       if (error instanceof AxiosError) {
@@ -119,39 +103,17 @@ const NovaRegulacaoMedicoAprovada: React.FC<Props> = ({ dadosPaciente, tempoEspe
     }
   };
 
+
   return (
     <div>
       <div>
         <DadosPaciente dadosPaciente={dadosPaciente} />
       </div>
 
+
       <form onSubmit={handleSubmit}>
         <div className='Div-RegulacaoMedica-AprovadaNegada'>
-          <div className='div-Leito'>
-            <div className='num_leito'>
-              <label>Nº do Leito:</label>
-              <input
-                type="number"
-                name="num_leito"
-                className='num_leito'
-                value={formData.num_leito ?? ''}
-                onChange={handleChange}
-                required
-              />
-              </div>
-              <div className="extra">
-                <span>Extra?</span>
-                <input
-                  type="checkbox"
-                  id="extraCheckbox"
-                  name="extra"
-                  checked={formData.extra}
-                  onChange={handleChange}
-                />
-                <label htmlFor="extraCheckbox"></label>
-              </div>
-          </div>
-          
+
           <div className='nome_regulador_medico'>
             <label>Médico:</label>
             <input
@@ -166,17 +128,20 @@ const NovaRegulacaoMedicoAprovada: React.FC<Props> = ({ dadosPaciente, tempoEspe
         </div>
 
         <div className='justificativa'>
-          <label>Justificativa de Tempo +30min:</label>
+          <label>Justificativa de Negação:</label>
           <textarea
-            name="justificativa_tempo30"
-            value={formData.justificativa_tempo30}
+            name="justificativa_neg"
+            value={formData.justificativa_neg}
             onChange={handleChange}
+            required
           />
         </div>
-        <button type="submit">Autorizar</button>
+
+
+        <button type="submit" className='button-red'>Negar</button>
       </form>
     </div>
   );
 };
 
-export default NovaRegulacaoMedicoAprovada;
+export default NovaRegulacaoMedicoNegada;

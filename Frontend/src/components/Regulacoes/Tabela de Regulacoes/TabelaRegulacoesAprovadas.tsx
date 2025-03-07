@@ -1,8 +1,8 @@
 import React from 'react';
 import { LuArrowDownWideNarrow, LuArrowUpNarrowWide  } from "react-icons/lu";
 import { FcHome, FcOrganization, FcOnlineSupport, FcOvertime, FcAbout } from "react-icons/fc";
-import { RegulacaoAprovadaData } from '../../interfaces/Regulacao';
-import { UserData } from '../../interfaces/UserData';
+import { RegulacaoAprovadaData } from '../../../interfaces/Regulacao';
+import { UserData } from '../../../interfaces/UserData';
 
 interface TabelaRegulacoesAprovadasProps {
   UserData: UserData | null;

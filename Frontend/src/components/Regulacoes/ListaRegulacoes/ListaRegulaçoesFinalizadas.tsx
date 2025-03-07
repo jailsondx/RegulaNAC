@@ -2,32 +2,32 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { AxiosError } from 'axios';
 import { LuFilter } from "react-icons/lu";
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { Snackbar, Alert } from '@mui/material';
 
 /*IMPORT INTERFACES*/
-import { RegulacaoData } from '../../interfaces/Regulacao';
+import { RegulacaoData } from '../../../interfaces/Regulacao';
 
 /*IMPORT COMPONENTS*/
-import TabelaRegulacoes from '../Tabela de Regulacoes/TabelaRegulacoes';
-import Filtro from '../Filtro/Filtro';
+import Filtro from '../../Filtro/Filtro';
+import TabelaRegulacoesFinalizadas from '../Tabela de Regulacoes/TabelaRegulacoesFinalizadas';
 
 /*IMPORT FUNCTIONS*/
-import { getDay, getMonth, getYear } from '../../functions/DateTimes';
+import { getDay, getMonth, getYear } from '../../../functions/DateTimes';
 
 /*IMPORT CSS*/
 import './ListaRegulacoes.css';
+
 
 /*IMPORT JSON*/
 
 /*IMPORT VARIAVEIS DE AMBIENTE*/
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
 
-const ListaRegulacoes: React.FC = () => {
-  const [serverTime, setServerTime] = useState("");
+
+const ListaRegulacoesFinalizadas: React.FC = () => {
   const [regulacoes, setRegulacoes] = useState<RegulacaoData[]>([]); // Tipo do estado
   const location = useLocation();
-  const navigate = useNavigate();
 
   /*FILTROS*/
   const [unidadeOrigem, setUnidadeOrigem] = useState('');
@@ -55,13 +55,12 @@ const ListaRegulacoes: React.FC = () => {
 
   //CHAMADA DE API PARA GERAR A LISTA DE REGULAÇÕES
   useEffect(() => {
-    const fetchRegulacoes = async () => {
+    async function fetchRegulacoes() {
       try {
-        const response = await axios.get(`${NODE_URL}/api/internal/get/ListaRegulacoesPendentes24`);
+        const response = await axios.get(`${NODE_URL}/api/internal/get/ListaRegulacoesFinalizadas`);
 
         if (response.data && Array.isArray(response.data.data)) {
           setRegulacoes(response.data.data);
-          setServerTime(response.data.serverTime); // Hora atual do servidor em formato ISO
           setFilteredRegulacoes(response.data.data);
         } else {
           console.error('Dados inesperados:', response.data);
@@ -77,13 +76,12 @@ const ListaRegulacoes: React.FC = () => {
           setRegulacoes([]); // Garante que regulacoes seja sempre um array
         }
       }
-
-    };
+    }
 
     fetchRegulacoes();
   }, []);
 
-  //MOSTRA SNACKBAR APÓS AÇÃO
+  // Snackbar vindo de navegação
   useEffect(() => {
     if (location.state?.snackbar) {
       showSnackbar(
@@ -120,7 +118,7 @@ const ListaRegulacoes: React.FC = () => {
     setFilteredRegulacoes(filtered);
   }, [unidadeOrigem, unidadeDestino, searchTerm, regulacoes]);
 
-  //FUNÇÃO PARA BUSCAR O PDF
+
   const fetchPDF = async (datetime: string, filename: string) => {
     const year = getYear(datetime);
     const month = getMonth(datetime);
@@ -165,18 +163,6 @@ const ListaRegulacoes: React.FC = () => {
     }
   };
 
-  //FUNÇÃO PARA ATUALIZAR REGULAÇÃO
-  const handleAtualizarRegulacao = (regulacao: RegulacaoData): void => {
-    if (!regulacao.num_prontuario) {
-      showSnackbar('Prontuário é obrigatório para atualizar a regulação', 'warning');
-      return;
-    }
-    // Enviando dados de forma oculta
-    navigate('/AtualizaRegulacao', {
-      state: { num_prontuario: regulacao.num_prontuario }, // Passa o prontuário da regulação específica
-    });
-  };
-
   //CONFIGURA A PAGINAÇÃO
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
@@ -201,12 +187,6 @@ const ListaRegulacoes: React.FC = () => {
     setSelectedColumn(key);
   };
 
-  //CHAMA A ROTA DE NOVA REGULAÇÃO
-  const NovaRegulacao = () => {
-    navigate('/NovaRegulacao');
-  }
-
-  //EXIBE O SNACKBAR
   const showSnackbar = (
     message: string,
     severity: 'success' | 'error' | 'info' | 'warning'
@@ -216,7 +196,7 @@ const ListaRegulacoes: React.FC = () => {
     setSnackbarOpen(true);
   };
 
-  //FECHA O SNACKBAR
+  // Fecha o Snackbar
   const handleSnackbarClose = (): void => {
     setSnackbarOpen(false);
   };
@@ -229,9 +209,8 @@ const ListaRegulacoes: React.FC = () => {
 
           <div className="Header-ListaRegulaçoes">
             <label className="Title-Tabela">
-              Lista de Regulações +24hrs<LuFilter className='Icon' onClick={() => setShowFilters(!showFilters)} title='Filtros' />
+              Regulações Finalizadas<LuFilter className='Icon' onClick={() => setShowFilters(!showFilters)} title='Filtros' />
             </label>
-            <button type="button" onClick={NovaRegulacao}>+ Nova Regulação</button>
           </div>
 
           {showFilters && (
@@ -269,15 +248,12 @@ const ListaRegulacoes: React.FC = () => {
           )}
 
           <div>
-            <TabelaRegulacoes
+            <TabelaRegulacoesFinalizadas
               currentRegulacoes={currentRegulacoes}
               selectedColumn={selectedColumn}
               sortConfig={sortConfig}
               handleSort={handleSort}
               fetchPDF={fetchPDF}
-              serverTime={serverTime}
-              handleAtualizarRegulacao={handleAtualizarRegulacao}
-              IconOpcoes='expiradas'
             />
           </div>
 
@@ -310,4 +286,4 @@ const ListaRegulacoes: React.FC = () => {
 };
 
 
-export default ListaRegulacoes;
+export default ListaRegulacoesFinalizadas;

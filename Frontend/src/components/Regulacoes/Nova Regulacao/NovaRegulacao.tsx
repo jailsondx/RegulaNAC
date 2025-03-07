@@ -8,24 +8,24 @@ import { TiBookmark } from "react-icons/ti";
 import { FaSearch } from "react-icons/fa";
 
 /*IMPORT INTERFACES*/
-import { NovaRegulacaoData } from '../../interfaces/Regulacao';
-import { UserData } from '../../interfaces/UserData';
-import { UnidadeData } from '../../interfaces/Unidade';
+import { NovaRegulacaoData } from '../../../interfaces/Regulacao';
+import { UserData } from '../../../interfaces/UserData';
+import { UnidadeData } from '../../../interfaces/Unidade';
 
 /*IMPORT COMPONENTS*/
 
 /*IMPORT FUNCTIONS*/
-import { formatDateTimeToPtBr } from '../../functions/DateTimes';
-import { getUserData } from '../../functions/storageUtils';
-import { calcularIdade } from '../../functions/CalcularIdade';
-import { getDay, getMonth, getYear } from '../../functions/DateTimes';
+import { formatDateTimeToPtBr } from '../../../functions/DateTimes';
+import { getUserData } from '../../../functions/storageUtils';
+import { calcularIdade } from '../../../functions/CalcularIdade';
+import { getDay, getMonth, getYear } from '../../../functions/DateTimes';
 
 /*IMPORT CSS*/
 import './NovaRegulacao.css';
 
 /*IMPORT JSON*/
-import un_origem from '../../JSON/un_origem.json';
-import un_destino from '../../JSON/un_destino.json';
+import un_origem from '../../../JSON/un_origem.json';
+import un_destino from '../../../JSON/un_destino.json';
 
 /*IMPORT VARIAVEIS DE AMBIENTE*/
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;

@@ -1,12 +1,12 @@
 import React from 'react';
 import { LuArrowDownWideNarrow, LuArrowUpNarrowWide } from "react-icons/lu";
 import { FcFullTrash, FcInspection, FcExpired, FcApproval, FcBadDecision, FcNews } from "react-icons/fc";
-import TimeTracker from "../TimeTracker/TimeTracker";
-import { RegulacaoData, RegulacaoAprovadaData } from '../../interfaces/Regulacao';
+import TimeTracker from "../../TimeTracker/TimeTracker.tsx";
+import { RegulacaoData, RegulacaoAprovadaData } from '../../../interfaces/Regulacao.ts';
 import { useNavigate } from 'react-router-dom';
 
 /*IMPORT FUNCTION*/
-import { removerText } from "../../functions/RemoveText.ts";
+import { removerText } from "../../../functions/RemoveText.ts";
 
 interface TabelaRegulacoesProps {
   currentRegulacoes: RegulacaoData[];

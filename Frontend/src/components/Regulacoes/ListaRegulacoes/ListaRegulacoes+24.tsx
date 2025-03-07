@@ -6,14 +6,14 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Snackbar, Alert } from '@mui/material';
 
 /*IMPORT INTERFACES*/
-import { RegulacaoData } from '../../interfaces/Regulacao';
+import { RegulacaoData } from '../../../interfaces/Regulacao';
 
 /*IMPORT COMPONENTS*/
-import Filtro from '../Filtro/Filtro';
 import TabelaRegulacoes from '../Tabela de Regulacoes/TabelaRegulacoes';
+import Filtro from '../../Filtro/Filtro';
 
 /*IMPORT FUNCTIONS*/
-import { getDay, getMonth, getYear } from '../../functions/DateTimes';
+import { getDay, getMonth, getYear } from '../../../functions/DateTimes';
 
 /*IMPORT CSS*/
 import './ListaRegulacoes.css';
@@ -57,7 +57,7 @@ const ListaRegulacoes: React.FC = () => {
   useEffect(() => {
     const fetchRegulacoes = async () => {
       try {
-        const response = await axios.get(`${NODE_URL}/api/internal/get/ListaRegulacoesPendentes`);
+        const response = await axios.get(`${NODE_URL}/api/internal/get/ListaRegulacoesPendentes24`);
 
         if (response.data && Array.isArray(response.data.data)) {
           setRegulacoes(response.data.data);
@@ -67,17 +67,15 @@ const ListaRegulacoes: React.FC = () => {
           console.error('Dados inesperados:', response.data);
         }
       } catch (error: unknown) {
-        // Verifica se o erro é uma instância de AxiosError
+        // Verifica se o erro é uma instância de AxiosError (caso você esteja lidando com erros de rede)
         if (error instanceof AxiosError) {
-          // Se o erro tiver uma resposta, você pode tratar a mensagem de erro (caso haja)
-          console.error('Erro ao carregar regulações:', error.response?.data?.message || error.message);
+          console.error('Erro ao carregar regulações:', error.response?.data);
+          setRegulacoes([]); // Garante que regulacoes seja sempre um array
         } else {
-          // Caso o erro não seja um AxiosError, loga a mensagem do erro genérico
+          // Caso o erro não seja um AxiosError ou seja de outro tipo
           console.error('Erro desconhecido ao carregar regulações:', error);
+          setRegulacoes([]); // Garante que regulacoes seja sempre um array
         }
-
-        // Garante que regulacoes seja sempre um array vazio em caso de erro
-        setRegulacoes([]);
       }
 
     };
@@ -167,6 +165,18 @@ const ListaRegulacoes: React.FC = () => {
     }
   };
 
+  //FUNÇÃO PARA ATUALIZAR REGULAÇÃO
+  const handleAtualizarRegulacao = (regulacao: RegulacaoData): void => {
+    if (!regulacao.num_prontuario) {
+      showSnackbar('Prontuário é obrigatório para atualizar a regulação', 'warning');
+      return;
+    }
+    // Enviando dados de forma oculta
+    navigate('/AtualizaRegulacao', {
+      state: { num_prontuario: regulacao.num_prontuario }, // Passa o prontuário da regulação específica
+    });
+  };
+
   //CONFIGURA A PAGINAÇÃO
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
@@ -219,7 +229,7 @@ const ListaRegulacoes: React.FC = () => {
 
           <div className="Header-ListaRegulaçoes">
             <label className="Title-Tabela">
-              Lista de Regulações <LuFilter className='Icon' onClick={() => setShowFilters(!showFilters)} title='Filtros' />
+              Lista de Regulações +24hrs<LuFilter className='Icon' onClick={() => setShowFilters(!showFilters)} title='Filtros' />
             </label>
             <button type="button" onClick={NovaRegulacao}>+ Nova Regulação</button>
           </div>
@@ -266,7 +276,8 @@ const ListaRegulacoes: React.FC = () => {
               handleSort={handleSort}
               fetchPDF={fetchPDF}
               serverTime={serverTime}
-              IconOpcoes='normais'
+              handleAtualizarRegulacao={handleAtualizarRegulacao}
+              IconOpcoes='expiradas'
             />
           </div>
 

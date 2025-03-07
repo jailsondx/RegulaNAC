@@ -5,16 +5,16 @@ import { AxiosError } from 'axios';
 import { Snackbar, Alert } from '@mui/material';
 
 /*IMPORT INTERFACES*/
-import { DadosPacienteData } from "../../interfaces/DadosPaciente.ts";
-import { UpdateEditRegulacaoData, EditRegulacaoData } from '../../interfaces/Regulacao.ts';
-import { UserData } from '../../interfaces/UserData.ts';
+import { DadosPacienteData } from "../../../interfaces/DadosPaciente.ts";
+import { UpdateEditRegulacaoData, EditRegulacaoData } from '../../../interfaces/Regulacao.ts';
+import { UserData } from '../../../interfaces/UserData.ts';
 
 /*IMPORT COMPONENTS*/
-import DadosPaciente from '../Dados Paciente/DadosPaciente.tsx';
+import DadosPaciente from '../../Dados Paciente/DadosPaciente.tsx';
 
 /*IMPORT FUNCTIONS*/
-import { getUserData } from '../../functions/storageUtils.ts';
-import { calcularIdade } from '../../functions/CalcularIdade';
+import { getUserData } from '../../../functions/storageUtils.ts';
+import { calcularIdade } from '../../../functions/CalcularIdade.ts';
 
 /*IMPORT CSS*/
 import './EditaRegulacao.css';

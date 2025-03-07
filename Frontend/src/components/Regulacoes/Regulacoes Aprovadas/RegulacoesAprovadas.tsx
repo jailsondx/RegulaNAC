@@ -4,23 +4,23 @@ import { Snackbar, Alert } from "@mui/material";
 import { LuFilter } from "react-icons/lu";
 
 /*IMPORT INTERFACES*/
-import { UserData } from '../../interfaces/UserData';
-import { RegulacaoAprovadaData } from '../../interfaces/Regulacao';
-import { DadosPacienteData } from "../../interfaces/DadosPaciente.ts";
+import { UserData } from '../../../interfaces/UserData.ts';
+import { RegulacaoAprovadaData } from '../../../interfaces/Regulacao.ts';
+import { DadosPacienteData } from "../../../interfaces/DadosPaciente.ts";
 
 /*IMPORT COMPONENTS*/
-import Modal from '../Modal/Modal';
-import SetorOrigem from '../Setor Origem e Destino/SetorOrigem';
-import SetorDestino from '../Setor Origem e Destino/SetorDestino';
-import Transporte01 from '../Transporte/Transporte01';
-import Transporte02 from '../Transporte/Transporte02';
-import Desfecho from '../Desfecho/Desfecho';
-import Filtro from '../Filtro/Filtro';
+import Modal from '../../Modal/Modal.tsx';
+import SetorOrigem from '../../Setor Origem e Destino/SetorOrigem.tsx';
+import SetorDestino from '../../Setor Origem e Destino/SetorDestino.tsx';
+import Transporte01 from '../../Transporte/Transporte01.tsx';
+import Transporte02 from '../../Transporte/Transporte02.tsx';
+import Desfecho from '../../Desfecho/Desfecho.tsx';
+import Filtro from '../../Filtro/Filtro.tsx';
 import TabelaRegulacoesAprovadas from '../Tabela de Regulacoes/TabelaRegulacoesAprovadas.tsx';
 
 /*IMPORT FUNCTIONS*/
-import { getUserData } from '../../functions/storageUtils';
-import { getDay, getMonth, getYear } from '../../functions/DateTimes.ts';
+import { getUserData } from '../../../functions/storageUtils.ts';
+import { getDay, getMonth, getYear } from '../../../functions/DateTimes.ts';
 
 
 
