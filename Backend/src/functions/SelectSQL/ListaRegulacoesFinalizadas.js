@@ -19,7 +19,8 @@ async function ListaRegulacoesFinalizadas() {
                 r.nome_paciente, 
                 r.num_regulacao, 
                 r.un_origem, 
-                r.un_destino, 
+                r.un_destino,
+                r.link, 
                 rm.nome_regulador_medico
             FROM ${DBtable} r
             JOIN ${DBtableRegulacaoMedico} rm ON r.id_regulacao = rm.id_regulacao

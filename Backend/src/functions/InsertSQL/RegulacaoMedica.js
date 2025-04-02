@@ -6,7 +6,7 @@ async function RegulacaoMedica(FormData) {
     const DBtable = "regulacao_medico";
     const DBtableUsuarios = "usuarios";
     const NovoStatusApproved = "ABERTO - APROVADO - AGUARDANDO ORIGEM";
-    const NovoStatusDeny = "ABERTO - NEGADO";
+    const NovoStatusDeny = "NEGADO";
 
     try {
         // Inicia a conexão com o banco de dados

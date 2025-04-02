@@ -308,6 +308,7 @@ const RegulacoesAprovadas: React.FC = () => {
     <>
       <div className='Component'>
         <div className='Component-Table'>
+          
           <div className='Header-ListaRegulaçoes'>
             <label className='Title-Tabela'>
               Regulações Aprovadas <LuFilter className='Icon' onClick={() => setShowFilters(!showFilters)} title='Filtros' />

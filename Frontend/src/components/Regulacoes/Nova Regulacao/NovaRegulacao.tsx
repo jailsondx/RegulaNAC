@@ -246,6 +246,8 @@ const NovaRegulacao: React.FC = () => {
 
       // Limpeza de dados após o sucesso
       setFormData(initialFormData);
+      setIconStatusProntOk(false);
+      setIconStatusProntDeny(false);
       setFile(null); // Reseta o arquivo após o envio
       setCurrentStep(1); // Reinicia o passo no processo, caso haja
 

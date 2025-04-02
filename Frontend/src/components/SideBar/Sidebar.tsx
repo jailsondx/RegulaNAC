@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { TiExportOutline, TiBusinessCard, TiClipboard, TiThumbsUp, TiHeartHalfOutline, TiHomeOutline, TiUpload, TiArrowBack } from "react-icons/ti";
+import { TiExportOutline, TiBusinessCard, TiClipboard, TiThumbsUp, TiThumbsDown, TiHeartHalfOutline, TiHomeOutline, TiUpload, TiArrowBack } from "react-icons/ti";
 import { getUserData } from '../../functions/storageUtils';
 
 /*IMPORT INTERFACE*/
@@ -67,8 +67,8 @@ const Sidebar: React.FC = () => {
             <li><Link to="/NovaRegulacao"><TiBusinessCard className='Icon-Menu-Item' /><label className='textMenu-Item'>Nova Regulação</label></Link></li>
             <li><Link to="/ListaRegulacoes"><TiClipboard className='Icon-Menu-Item' /><label className='textMenu-Item'>Lista de Regulações</label></Link></li>
             <li><Link to="/RegulacoesAprovadas"><TiThumbsUp className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações Aprovadas</label></Link></li>
+            <li><Link to="/RegulacoesNegadas"><TiThumbsDown className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações Negadas</label></Link></li>
             <li><Link to="/Desfechos"><TiHomeOutline className='Icon-Menu-Item' /><label className='textMenu-Item'>Gerar Desfecho</label></Link></li>
-            <li> <a onClick={() => setShowReportMenu(true)}><TiUpload className='Icon-Menu-Item' /><label className='textMenu-Item'>Relatórios</label></a> </li>
             <hr />
           </ul>
           <li><Link to="/ListaRegulacoes24"><TiClipboard className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações +24hrs</label></Link></li>
@@ -86,13 +86,15 @@ const Sidebar: React.FC = () => {
             <li><Link to="/NovaRegulacao"><TiBusinessCard className='Icon-Menu-Item' /><label className='textMenu-Item'>Nova Regulação</label></Link></li>
             <li><Link to="/ListaRegulacoes"><TiClipboard className='Icon-Menu-Item' /><label className='textMenu-Item'>Lista de Regulações</label></Link></li>
             <li><Link to="/RegulacoesAprovadas"><TiThumbsUp className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações Aprovadas</label></Link></li>
+            <li><Link to="/RegulacoesNegadas"><TiThumbsDown className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações Negadas</label></Link></li>
             <li><Link to="/Desfechos"><TiHomeOutline className='Icon-Menu-Item' /><label className='textMenu-Item'>Gerar Desfecho</label></Link></li>
-            <li> <a onClick={() => setShowReportMenu(true)}><TiUpload className='Icon-Menu-Item' /><label className='textMenu-Item'>Relatórios</label></a> </li>
+            <li> <a onClick={() => setShowReportMenu(true)}><TiUpload className='Icon-Menu-Item' /><label className='textMenu-Item'>Relatórios</label></a></li>
             <hr />
           </ul>
           <li><Link to="/ListaRegulacoes24"><TiClipboard className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações +24hrs</label></Link></li>
           <li><Link to="/Finalizadas"><TiClipboard className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações Finalizadas</label></Link></li>
           <li> <Link to="/RegulacaoMedica"><TiHeartHalfOutline className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulação Médica</label></Link></li>
+          <li> <Link to="/Register"><TiHeartHalfOutline className='Icon-Menu-Item' /><label className='textMenu-Item'>Cadastro</label></Link></li>
           <hr />
           <li> <Link to="/Login"><TiExportOutline className='Icon-Menu-Item' /><label className='textMenu-Item'>Sair</label></Link></li>
         </>

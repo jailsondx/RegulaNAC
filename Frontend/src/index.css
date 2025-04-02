@@ -407,6 +407,10 @@ input:disabled {
   background-color: var(--table-hover-bg);
 }
 
+.col-Text{
+  max-width: 200px;
+}
+
 .clicked label{
   cursor: pointer;
 }
