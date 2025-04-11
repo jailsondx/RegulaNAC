@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 import { Snackbar, Alert } from "@mui/material";
 import { LuFilter } from "react-icons/lu";
 
@@ -20,9 +20,9 @@ import TabelaRegulacoesAprovadas from '../Tabela de Regulacoes/TabelaRegulacoesA
 
 /*IMPORT FUNCTIONS*/
 import { getUserData } from '../../../functions/storageUtils.ts';
-import { getDay, getMonth, getYear } from '../../../functions/DateTimes.ts';
 
-
+/*IMPORT UTILS*/
+import { fetchPDF } from '../../../Utils/fetchPDF';
 
 /*IMPORT VARIAVEIS DE AMBIENTE*/
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
@@ -71,7 +71,6 @@ const RegulacoesAprovadas: React.FC = () => {
 
       if (response.data && Array.isArray(response.data.data)) {
         setRegulacoes(response.data.data);
-        console.log(response.data);
       } else {
         console.error('Dados inesperados:', response.data);
       }
@@ -117,48 +116,8 @@ const RegulacoesAprovadas: React.FC = () => {
   }, [unidadeOrigem, unidadeDestino, searchTerm, regulacoes]);
 
   //FUNÇÃO PARA BUSCAR O PDF
-  const fetchPDF = async (datetime: string, filename: string) => {
-      const year = getYear(datetime);
-      const month = getMonth(datetime);
-      const day = getDay(datetime);
-  
-      try {
-        const response = await axios.get(`${NODE_URL}/api/internal/upload/ViewPDF`, {
-          params: { year, month, day, filename },
-          responseType: 'blob',
-        });
-  
-        // Criar uma URL temporária para o PDF
-        const url = URL.createObjectURL(response.data);
-  
-        // Abrir o PDF em uma nova aba
-        window.open(url, '_blank');
-      } catch (error: unknown) {
-        // Verificar se o erro é uma instância de AxiosError
-        if (error instanceof AxiosError && error.response) {
-          const { status, data } = error.response;
-  
-          // Exemplo de tratamento de diferentes códigos de status usando switch case
-          switch (status) {
-            case 400:
-              showSnackbar(data?.message || 'Parâmetros inválidos. Verifique os dados.', 'error');
-              break;
-            case 404:
-              showSnackbar(data?.message || 'Arquivo PDF não encontrado.', 'error');
-              break;
-            case 500:
-              showSnackbar(data?.message || 'Erro no servidor ao buscar o arquivo.', 'error');
-              break;
-            default:
-              // Caso um erro desconhecido ocorra
-              showSnackbar(data?.message || 'Erro desconhecido. Tente novamente.', 'error');
-              break;
-          }
-        } else {
-          // Caso o erro não seja uma instância de AxiosError ou não tenha resposta, por exemplo, se o servidor não estiver acessível
-          showSnackbar('Erro na requisição. Tente novamente.', 'error');
-        }
-      }
+  const handleFetchPDF = (datetime: string, filename: string) => {
+    fetchPDF(datetime, filename, showSnackbar);
   };
 
   //CONFIGURA A ORDENAÇÃO
@@ -199,9 +158,6 @@ const RegulacoesAprovadas: React.FC = () => {
       id_regulacao: regulacao.id_regulacao,
       nome_regulador_medico: regulacao.nome_regulador_medico, // Certifique-se de que este campo possui um valor válido
     };
-
-    console.log(dados);
-
     setDadosPaciente(dados);
     setShowModalOrigem(true);
   };
@@ -356,7 +312,7 @@ const RegulacoesAprovadas: React.FC = () => {
             selectedColumn={selectedColumn}
             sortConfig={sortConfig}
             handleSort={handleSort}
-            fetchPDF={fetchPDF}
+            fetchPDF={handleFetchPDF}
             handleOpenModalOrigem={handleOpenModalOrigem}
             handleOpenModalDestino={handleOpenModalDestino}
             handleOpenModalTransporte01={handleOpenModalTransporte01}

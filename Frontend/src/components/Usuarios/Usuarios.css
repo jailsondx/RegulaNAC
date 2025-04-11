@@ -43,14 +43,16 @@
 }
 
 .BG{
-    background-image: url('/BG/BG-LEITOS.jpg');
+    background-image: url('/BG/hrn_fachada_aerea20.png');
     background-size: cover;
 }
 
+/*
 .Circulo{
-    background-image: url('/Logo/Circulo.png');
+    background-image: url('/Logo/RegulaNAC-IA.png');
     background-size: cover;
 }
+    */
 
 .Component-Login{
     display: flex;

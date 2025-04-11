@@ -157,14 +157,25 @@ const TabelaRegulacoes: React.FC<TabelaRegulacoesProps> = ({
                   <FcFullTrash className='Icon Icons-Regulacao' onClick={() => handleOpenModalDeny && handleOpenModalDeny(regulacao)} title='Negar Regulação' />
                 </>
               )}
+              
               {IconOpcoes === 'expiradas' && (
-                <FcExpired className='Icon Icons-Regulacao' onClick={() => handleAtualizarRegulacao && handleAtualizarRegulacao(regulacao)} title='Atualizar/Renovar Regulação' />
+                <>
+                  <FcExpired 
+                    className='Icon Icons-Regulacao' 
+                    onClick={() => handleAtualizarRegulacao && handleAtualizarRegulacao(regulacao)} 
+                    title='Atualizar/Renovar Regulação'
+                  />
+                </>
+
               )}
               {IconOpcoes === 'desfecho' && (
-                <>
-                  <FcNews className="Icon Icons-Regulacao" onClick={() => handleOpenModalDesfecho && handleOpenModalDesfecho(regulacao as RegulacaoAprovadaData)} title="Aprovar" />
-                </>
+                  <FcNews 
+                    className="Icon Icons-Regulacao" 
+                    onClick={() => handleOpenModalDesfecho && handleOpenModalDesfecho(regulacao as RegulacaoAprovadaData)} 
+                    title="Aprovar" 
+                  />
               )}
+              
               {IconOpcoes === 'medico' && (
                 <>
                   <FcApproval className="Icon Icons-Regulacao" onClick={() => handleOpenModalApproved && handleOpenModalApproved(regulacao)} title="Aprovar" />

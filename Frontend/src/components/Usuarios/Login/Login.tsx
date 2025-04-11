@@ -96,7 +96,7 @@ const Login: React.FC = () => {
 
           <div className='div-esquerda BG'>
             <div className='Circulo'>
-              <img className='Logo' src='/Logo/RegulaNAC.png'></img>
+              <img className='Logo' src='/Logo/RegulaNAC-IA.png'></img>
             </div>
           </div>
 

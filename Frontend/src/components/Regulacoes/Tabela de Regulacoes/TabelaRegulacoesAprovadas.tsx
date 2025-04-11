@@ -113,43 +113,44 @@ const TabelaRegulacoesAprovadas: React.FC<TabelaRegulacoesAprovadasProps> = ({
             <td>{regulacao.nome_regulador_medico}</td>
             <td>{new Date(regulacao.data_hora_regulacao_medico).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</td>
             {UserData?.tipo !== "MEDICO" && (
-              <td className="td-Icons">
-                {regulacao.status_regulacao === "ABERTO - APROVADO - AGUARDANDO ORIGEM" && (
-                  <FcHome
-                    className="Icon Icons-Regulacao"
-                    onClick={() => handleOpenModalOrigem(regulacao)}
-                    title='Acionamento do Setor de Origem'
-                  />
-                )}
-                {regulacao.status_regulacao === "ABERTO - APROVADO - AGUARDANDO DESTINO" && (
-                  <FcOrganization
-                    className="Icon Icons-Regulacao"
-                    onClick={() => handleOpenModalDestino(regulacao)}
-                    title='Acionamento do Setor de Destino'
-                  />
-                )}
-                {regulacao.status_regulacao === "ABERTO - APROVADO - AGUARDANDO ACIONAMENTO TRANSPORTE" && (
-                  <FcOnlineSupport
-                    className="Icon Icons-Regulacao"
-                    onClick={() => handleOpenModalTransporte01(regulacao)}
-                    title='Acionamento do Transporte'
-                  />
-                )}
-                {regulacao.status_regulacao === "ABERTO - APROVADO - AGUARDANDO FINALIZACAO TRANSPORTE" && (
-                  <FcOvertime
-                    className="Icon Icons-Regulacao"
-                    onClick={() => handleOpenModalTransporte02(regulacao)}
-                    title='Finalização do Transporte'
-                  />
-                )}
-                {regulacao.status_regulacao === "ABERTO - APROVADO - AGUARDANDO DESFECHO" && (
-                  <FcAbout
-                    className="Icon Icons-Regulacao"
-                    onClick={() => handleOpenModalDesfecho(regulacao)}
-                    title='Desfecho'
-                  />
-                )}
-
+              <td>
+                <label className="td-Icons">
+                  {regulacao.status_regulacao === "ABERTO - APROVADO - AGUARDANDO ORIGEM" && (
+                    <FcHome
+                      className="Icon Icons-Regulacao"
+                      onClick={() => handleOpenModalOrigem(regulacao)}
+                      title='Acionamento do Setor de Origem'
+                    />
+                  )}
+                  {regulacao.status_regulacao === "ABERTO - APROVADO - AGUARDANDO DESTINO" && (
+                    <FcOrganization
+                      className="Icon Icons-Regulacao"
+                      onClick={() => handleOpenModalDestino(regulacao)}
+                      title='Acionamento do Setor de Destino'
+                    />
+                  )}
+                  {regulacao.status_regulacao === "ABERTO - APROVADO - AGUARDANDO ACIONAMENTO TRANSPORTE" && (
+                    <FcOnlineSupport
+                      className="Icon Icons-Regulacao"
+                      onClick={() => handleOpenModalTransporte01(regulacao)}
+                      title='Acionamento do Transporte'
+                    />
+                  )}
+                  {regulacao.status_regulacao === "ABERTO - APROVADO - AGUARDANDO FINALIZACAO TRANSPORTE" && (
+                    <FcOvertime
+                      className="Icon Icons-Regulacao"
+                      onClick={() => handleOpenModalTransporte02(regulacao)}
+                      title='Finalização do Transporte'
+                    />
+                  )}
+                  {regulacao.status_regulacao === "ABERTO - APROVADO - AGUARDANDO DESFECHO" && (
+                    <FcAbout
+                      className="Icon Icons-Regulacao"
+                      onClick={() => handleOpenModalDesfecho(regulacao)}
+                      title='Desfecho'
+                    />
+                  )}
+                </label>
               </td>
             )}
           </tr>

@@ -2,33 +2,37 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { AxiosError } from 'axios';
 import { LuFilter } from "react-icons/lu";
-import { useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Snackbar, Alert } from '@mui/material';
 
 /*IMPORT INTERFACES*/
+import { UserData } from '../../../interfaces/UserData.ts';
 import { RegulacaoData } from '../../../interfaces/Regulacao';
 
 /*IMPORT COMPONENTS*/
-import Filtro from '../../Filtro/Filtro';
 import TabelaRegulacoesNegadas from '../Tabela de Regulacoes/TabelaRegulacoesNegadas';
+import Filtro from '../../Filtro/Filtro';
 
 /*IMPORT FUNCTIONS*/
-import { getDay, getMonth, getYear } from '../../../functions/DateTimes';
+import { getUserData } from '../../../functions/storageUtils.ts';
 
 /*IMPORT CSS*/
 import './ListaRegulacoes.css';
 
-
-
 /*IMPORT JSON*/
+
+/*IMPORT UTILS*/
+import { atualizarRegulacao } from '../../../Utils/handleAtualizarRegulacao';
+import { fetchPDF } from '../../../Utils/fetchPDF';
 
 /*IMPORT VARIAVEIS DE AMBIENTE*/
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
 
-
 const ListaRegulacoesNegadas: React.FC = () => {
+  const [userData, setUserData] = useState<UserData | null>(null);
   const [regulacoes, setRegulacoes] = useState<RegulacaoData[]>([]); // Tipo do estado
   const location = useLocation();
+  const navigate = useNavigate();
 
   /*FILTROS*/
   const [unidadeOrigem, setUnidadeOrigem] = useState('');
@@ -56,7 +60,7 @@ const ListaRegulacoesNegadas: React.FC = () => {
 
   //CHAMADA DE API PARA GERAR A LISTA DE REGULAÇÕES
   useEffect(() => {
-    async function fetchRegulacoes() {
+    const fetchRegulacoes = async () => {
       try {
         const response = await axios.get(`${NODE_URL}/api/internal/get/ListaRegulacoesNegadas`);
 
@@ -77,12 +81,19 @@ const ListaRegulacoesNegadas: React.FC = () => {
           setRegulacoes([]); // Garante que regulacoes seja sempre um array
         }
       }
-    }
+
+    };
 
     fetchRegulacoes();
   }, []);
 
-  // Snackbar vindo de navegação
+  //Pega dados do SeassonStorage User
+  useEffect(() => {
+    const data = getUserData();
+    setUserData(data);
+  }, []);
+
+  //MOSTRA SNACKBAR APÓS AÇÃO
   useEffect(() => {
     if (location.state?.snackbar) {
       showSnackbar(
@@ -119,53 +130,15 @@ const ListaRegulacoesNegadas: React.FC = () => {
     setFilteredRegulacoes(filtered);
   }, [unidadeOrigem, unidadeDestino, searchTerm, regulacoes]);
 
-
   //FUNÇÃO PARA BUSCAR O PDF
-  const fetchPDF = async (datetime: string, filename: string) => {
-    const year = getYear(datetime);
-    const month = getMonth(datetime);
-    const day = getDay(datetime);
+  const handleFetchPDF = (datetime: string, filename: string) => {
+    fetchPDF(datetime, filename, showSnackbar);
+  };
 
-    console.log('Buscando PDF:', year, month, day, filename);
-
-    try {
-      const response = await axios.get(`${NODE_URL}/api/internal/upload/ViewPDF`, {
-        params: { year, month, day, filename },
-        responseType: 'blob',
-      });
-
-      // Criar uma URL temporária para o PDF
-      const url = URL.createObjectURL(response.data);
-
-      // Abrir o PDF em uma nova aba
-      window.open(url, '_blank');
-    } catch (error: unknown) {
-      // Verificar se o erro é uma instância de AxiosError
-      if (error instanceof AxiosError && error.response) {
-        const { status, data } = error.response;
-
-        // Exemplo de tratamento de diferentes códigos de status usando switch case
-        switch (status) {
-          case 400:
-            showSnackbar(data?.message || 'Parâmetros inválidos. Verifique os dados.', 'error');
-            break;
-          case 404:
-            showSnackbar(data?.message || 'Arquivo PDF não encontrado.', 'error');
-            break;
-          case 500:
-            showSnackbar(data?.message || 'Erro no servidor ao buscar o arquivo.', 'error');
-            break;
-          default:
-            // Caso um erro desconhecido ocorra
-            showSnackbar(data?.message || 'Erro desconhecido. Tente novamente.', 'error');
-            break;
-        }
-      } else {
-        // Caso o erro não seja uma instância de AxiosError ou não tenha resposta, por exemplo, se o servidor não estiver acessível
-        showSnackbar('Erro na requisição. Tente novamente.', 'error');
-      }
-    }
-};
+  //FUNÇÃO PARA ATUALIZAR REGULAÇÃO
+  const handleClick_atualizarRegulacao = (regulacao: RegulacaoData) => {
+    atualizarRegulacao(regulacao, navigate, showSnackbar);
+  };
 
   //CONFIGURA A PAGINAÇÃO
   const handlePageChange = (newPage: number) => {
@@ -191,6 +164,7 @@ const ListaRegulacoesNegadas: React.FC = () => {
     setSelectedColumn(key);
   };
 
+  //EXIBE O SNACKBAR
   const showSnackbar = (
     message: string,
     severity: 'success' | 'error' | 'info' | 'warning'
@@ -200,7 +174,7 @@ const ListaRegulacoesNegadas: React.FC = () => {
     setSnackbarOpen(true);
   };
 
-  // Fecha o Snackbar
+  //FECHA O SNACKBAR
   const handleSnackbarClose = (): void => {
     setSnackbarOpen(false);
   };
@@ -213,7 +187,7 @@ const ListaRegulacoesNegadas: React.FC = () => {
 
           <div className="Header-ListaRegulaçoes">
             <label className="Title-Tabela">
-              Regulações Negadas<LuFilter className='Icon' onClick={() => setShowFilters(!showFilters)} title='Filtros' />
+              Lista de Regulações Negadas <LuFilter className='Icon' onClick={() => setShowFilters(!showFilters)} title='Filtros' />
             </label>
           </div>
 
@@ -253,11 +227,13 @@ const ListaRegulacoesNegadas: React.FC = () => {
 
           <div>
             <TabelaRegulacoesNegadas
+              UserData={userData}
               currentRegulacoes={currentRegulacoes}
               selectedColumn={selectedColumn}
               sortConfig={sortConfig}
               handleSort={handleSort}
-              fetchPDF={fetchPDF}
+              fetchPDF={handleFetchPDF}
+              handleAtualizarRegulacao={handleClick_atualizarRegulacao}
             />
           </div>
 

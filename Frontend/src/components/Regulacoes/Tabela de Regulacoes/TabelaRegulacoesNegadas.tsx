@@ -1,14 +1,20 @@
 import React from 'react';
 import { LuArrowDownWideNarrow, LuArrowUpNarrowWide } from "react-icons/lu";
+import { FcExpired } from "react-icons/fc";
 import { RegulacaoData } from '../../../interfaces/Regulacao';
 import { formatDateTimeToPtBr } from '../../../functions/DateTimes';
 
+/*INTERFACES*/
+import { UserData } from '../../../interfaces/UserData';
+
 interface TabelaRegulacoesProps {
+  UserData: UserData | null;
   currentRegulacoes: RegulacaoData[];
   selectedColumn: keyof RegulacaoData | null;
   sortConfig: { key: keyof RegulacaoData; direction: "asc" | "desc" } | null;
   handleSort: (key: keyof RegulacaoData) => void;
   fetchPDF: (datetime: string, filename: string) => void;
+  handleAtualizarRegulacao?: (regulacao: RegulacaoData) => void;
 }
 
 const TabelaRegulacoesNegadas: React.FC<TabelaRegulacoesProps> = ({
@@ -17,19 +23,12 @@ const TabelaRegulacoesNegadas: React.FC<TabelaRegulacoesProps> = ({
   sortConfig,
   handleSort,
   fetchPDF,
+  handleAtualizarRegulacao,
 }) => {
   return (
     <table className='Table-Regulacoes'>
       <thead>
         <tr>
-
-          <th className={`col-NomePaciente clicked${selectedColumn === "nome_paciente" ? " selected" : ""}`} onClick={() => handleSort("nome_paciente")}>
-            <span>
-              <label>Nome Paciente</label>
-              <label>{sortConfig?.key === "nome_paciente" ? (sortConfig.direction === "asc" ? <LuArrowUpNarrowWide /> : <LuArrowDownWideNarrow />) : ""}</label>
-            </span>
-          </th>
-
           <th className={`col-NumProntuario clicked${selectedColumn === "num_prontuario" ? " selected" : ""}`} onClick={() => handleSort("num_prontuario")}>
             <span>
               <label>Pront.</label>
@@ -37,7 +36,12 @@ const TabelaRegulacoesNegadas: React.FC<TabelaRegulacoesProps> = ({
             </span>
           </th>
 
-
+          <th className={`col-NomePaciente clicked${selectedColumn === "nome_paciente" ? " selected" : ""}`} onClick={() => handleSort("nome_paciente")}>
+            <span>
+              <label>Nome Paciente</label>
+              <label>{sortConfig?.key === "nome_paciente" ? (sortConfig.direction === "asc" ? <LuArrowUpNarrowWide /> : <LuArrowDownWideNarrow />) : ""}</label>
+            </span>
+          </th>
 
           <th className={`col-NumRegulacao clicked${selectedColumn === "num_regulacao" ? " selected" : ""}`} onClick={() => handleSort("num_regulacao")}>
             <span>
@@ -69,7 +73,7 @@ const TabelaRegulacoesNegadas: React.FC<TabelaRegulacoesProps> = ({
 
           <th className={`col-Desfecho clicked${selectedColumn === "data_hora_solicitacao_02" ? " selected" : ""}`} onClick={() => handleSort("data_hora_solicitacao_02")}>
             <span>
-              <label>Data Sol.</label>
+              <label>Data Solicitação</label>
               <label>{sortConfig?.key === "data_hora_solicitacao_02" ? (sortConfig.direction === "asc" ? <LuArrowUpNarrowWide /> : <LuArrowDownWideNarrow />) : ""}</label>
             </span>
           </th>
@@ -81,23 +85,35 @@ const TabelaRegulacoesNegadas: React.FC<TabelaRegulacoesProps> = ({
             </span>
           </th>
 
+          <th>Renovar</th>
+
         </tr>
       </thead>
       <tbody>
         {currentRegulacoes.map(regulacao => (
           <tr key={regulacao.id_regulacao}>
+            <td>{regulacao.num_prontuario}</td>
             <td>
               <a onClick={() => fetchPDF(regulacao.data_hora_solicitacao_02, regulacao.link)}>
                 {regulacao.nome_paciente}
               </a>
             </td>
-            <td>{regulacao.num_prontuario}</td>
             <td>{regulacao.num_regulacao}</td>
             <td>{regulacao.un_origem}</td>
             <td>{regulacao.un_destino}</td>
             <td>{regulacao.nome_regulador_medico}</td>
             <td>{formatDateTimeToPtBr(regulacao.data_hora_solicitacao_02)}</td>
             <td className='col-Text'>{regulacao.justificativa_neg}</td>
+            <td>
+              <label className="td-Icons">
+                <FcExpired 
+                  className='Icon Icons-Regulacao' 
+                  onClick={() => handleAtualizarRegulacao && handleAtualizarRegulacao(regulacao)} 
+                  title='Atualizar/Renovar Regulação' 
+                />
+              </label>
+
+            </td>
           </tr>
         ))}
       </tbody>

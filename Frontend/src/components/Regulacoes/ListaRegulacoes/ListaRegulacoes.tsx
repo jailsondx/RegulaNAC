@@ -13,12 +13,15 @@ import Filtro from '../../Filtro/Filtro';
 import TabelaRegulacoes from '../Tabela de Regulacoes/TabelaRegulacoes';
 
 /*IMPORT FUNCTIONS*/
-import { getDay, getMonth, getYear } from '../../../functions/DateTimes';
+
 
 /*IMPORT CSS*/
 import './ListaRegulacoes.css';
 
 /*IMPORT JSON*/
+
+/*IMPORT UTILS*/
+import { fetchPDF } from '../../../Utils/fetchPDF';
 
 /*IMPORT VARIAVEIS DE AMBIENTE*/
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
@@ -123,48 +126,8 @@ const ListaRegulacoes: React.FC = () => {
   }, [unidadeOrigem, unidadeDestino, searchTerm, regulacoes]);
 
   //FUNÇÃO PARA BUSCAR O PDF
-  const fetchPDF = async (datetime: string, filename: string) => {
-    const year = getYear(datetime);
-    const month = getMonth(datetime);
-    const day = getDay(datetime);
-
-    try {
-      const response = await axios.get(`${NODE_URL}/api/internal/upload/ViewPDF`, {
-        params: { year, month, day, filename },
-        responseType: 'blob',
-      });
-
-      // Criar uma URL temporária para o PDF
-      const url = URL.createObjectURL(response.data);
-
-      // Abrir o PDF em uma nova aba
-      window.open(url, '_blank');
-    } catch (error: unknown) {
-      // Verificar se o erro é uma instância de AxiosError
-      if (error instanceof AxiosError && error.response) {
-        const { status, data } = error.response;
-
-        // Exemplo de tratamento de diferentes códigos de status usando switch case
-        switch (status) {
-          case 400:
-            showSnackbar(data?.message || 'Parâmetros inválidos. Verifique os dados.', 'error');
-            break;
-          case 404:
-            showSnackbar(data?.message || 'Arquivo PDF não encontrado.', 'error');
-            break;
-          case 500:
-            showSnackbar(data?.message || 'Erro no servidor ao buscar o arquivo.', 'error');
-            break;
-          default:
-            // Caso um erro desconhecido ocorra
-            showSnackbar(data?.message || 'Erro desconhecido. Tente novamente.', 'error');
-            break;
-        }
-      } else {
-        // Caso o erro não seja uma instância de AxiosError ou não tenha resposta, por exemplo, se o servidor não estiver acessível
-        showSnackbar('Erro na requisição. Tente novamente.', 'error');
-      }
-    }
+  const handleFetchPDF = (datetime: string, filename: string) => {
+    fetchPDF(datetime, filename, showSnackbar);
   };
 
   //CONFIGURA A PAGINAÇÃO
@@ -264,7 +227,7 @@ const ListaRegulacoes: React.FC = () => {
               selectedColumn={selectedColumn}
               sortConfig={sortConfig}
               handleSort={handleSort}
-              fetchPDF={fetchPDF}
+              fetchPDF={handleFetchPDF}
               serverTime={serverTime}
               IconOpcoes='normais'
             />

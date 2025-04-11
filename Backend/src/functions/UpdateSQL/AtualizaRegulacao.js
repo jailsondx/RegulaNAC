@@ -4,7 +4,8 @@ import VerificaStatus from "../Checked/VerificaStatus.js";
 async function AtualizaRegulacao(FormData) {
     const DBtable = 'regulacao';
     const DBtableUsuarios = 'usuarios';
-    const StatusAtual = 'ABERTO - AGUARDANDO AVALIACAO';
+    const StatusAtual = ['ABERTO - AGUARDANDO AVALIACAO','NEGADO'];
+    const novoStatus = 'ABERTO - AGUARDANDO AVALIACAO'
     const msgError = 'Regulação não pode ser atualizada; Status atual é: ';
 
     let connection;
@@ -54,7 +55,14 @@ async function AtualizaRegulacao(FormData) {
 
         await connection.query(`
             UPDATE ${DBtable} 
-            SET id_user = ?, un_origem = ?, un_destino = ?, data_hora_solicitacao_02 = ?, nome_regulador_nac = ?, qtd_solicitacoes = ?
+            SET 
+                id_user = ?, 
+                un_origem = ?, 
+                un_destino = ?, 
+                data_hora_solicitacao_02 = ?, 
+                nome_regulador_nac = ?, 
+                qtd_solicitacoes = ?, 
+                status_regulacao = ?
             WHERE id_regulacao = ?`, [
                 FormData.id_user, 
                 FormData.un_origem, 
@@ -62,7 +70,8 @@ async function AtualizaRegulacao(FormData) {
                 FormData.data_hora_solicitacao_02,
                 FormData.nome_regulador_nac,
                 qtdSolicitacoes + 1, // Incrementa a quantidade de solicitações
-                FormData.id_regulacao
+                novoStatus,
+                FormData.id_regulacao,
             ]);
 
         connection.release();

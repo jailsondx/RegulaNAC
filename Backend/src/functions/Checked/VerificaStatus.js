@@ -21,7 +21,8 @@ async function VerificaStatus(id_regulacao, status, msgError) {
 
         const currentStatus = rowsRegulacaoStatus[0].status_regulacao;
 
-        if (currentStatus !== status) {
+        if (!status.includes(currentStatus)) {
+            // Se o status atual não for um dos status permitidos, retorna erro
             console.error(`Regulação não pode ser atualizada: Status atual é '${currentStatus}'`);
             return {
                 success: false,

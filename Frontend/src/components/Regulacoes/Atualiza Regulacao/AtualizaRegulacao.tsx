@@ -80,7 +80,6 @@ const AtualizaRegulacao: React.FC = () => {
         });
         const data = response.data.data || null;
         setDadosPaciente(data);
-        console.log(data);
 
         if (data) {
           // Preenche os campos do formulário com os dados recebidos
@@ -251,7 +250,7 @@ const AtualizaRegulacao: React.FC = () => {
   return (
     <div>
       <div>
-        <label className="Title-Form">Atualizar Regulação</label>
+        <label className="Title-Form">Atualizar/Renovar Regulação</label>
       </div>
       {dadosPaciente ? (
         <form onSubmit={handleSubmit} className="ComponentForm">

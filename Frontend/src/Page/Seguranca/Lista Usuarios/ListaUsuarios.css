@@ -1,0 +1,55 @@
+.lista-usuarios-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+    background-color: #f9f9f9;
+    min-height: 70vh;
+  }
+  
+  .lista-usuarios-title {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 1.5rem;
+  }
+  
+  .loading-message,
+  .error-message {
+    font-size: 1.2rem;
+    color: #555;
+  }
+  
+  .error-message {
+    color: #d9534f;
+  }
+  
+  .usuarios-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  .usuarios-table th,
+  .usuarios-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .usuarios-table th {
+    background-color: #007bff;
+    color: #fff;
+    font-weight: bold;
+  }
+  
+  .usuarios-table tr:hover {
+    background-color: #f1f1f1;
+  }
+  
+  .usuarios-table td {
+    color: #333;
+  }

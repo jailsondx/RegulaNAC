@@ -9,18 +9,16 @@ import NovaRegulacao from '../components/Regulacoes/Nova Regulacao/NovaRegulacao
 import ListaRegulacoes from '../components/Regulacoes/ListaRegulacoes/ListaRegulacoes';
 import RegulacaMedica from '../components/Regulacoes/Regulacao Medica/RegulacaoMedica';
 import AtualizaRegulacao from '../components/Regulacoes/Atualiza Regulacao/AtualizaRegulacao';
-import Cadastro from '../components/Usuarios/Cadastro/Cadastro';
 import Login from '../components/Usuarios/Login/Login';
 import PageNotFound from './page404';
 import RegulacoesAprovadas from '../components/Regulacoes/ListaRegulacoes/ListaRegulacoesAprovadas';
-import ListaRegulacoes24 from '../components/Regulacoes/ListaRegulacoes/ListaRegulacoes+24';
+import ListaRegulacoes24hrs from '../components/Regulacoes/ListaRegulacoes/ListaRegulacoes+24';
 import ListarDesfecho from '../components/Desfecho/ListarDesfechos';
 import ListaRegulacoesFinalizadas from '../components/Regulacoes/ListaRegulacoes/ListaRegulacoesFinalizadas';
 import RelatoriosRegulacao from '../components/Relatorios/RelatoriosRegulacao';
 import RelatorioEfetivacao from '../components/Relatorios/RelatorioEfetivacao';
 import RelatorioTempoEfetivacao from '../components/Relatorios/RelatorioTempoEfetivacao';
 import EditaRegulacao from '../components/Regulacoes/Edita Regulacao/EditaRegulacao';
-import UpdateSenha from '../components/Usuarios/Update Senha/UpdateSenha';
 import ListaRegulacoesNegadas from '../components/Regulacoes/ListaRegulacoes/ListaRegulacoesNegadas';
 
 // Layout para rotas protegidas com o Sidebar
@@ -41,8 +39,14 @@ const Rotas: React.FC = () => {
       <Routes>
         {/* Página de Login - Sem Sidebar */}
         <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Cadastro />} />
-        <Route path="/updatepassword" element={<UpdateSenha />} />
+
+        {/* Rotas protegidas sem Sidebar */}
+        <Route
+          element={
+            <PrivateRoute element={<div className="app-container"><Outlet /></div>} />
+          }
+        >
+        </Route>
 
         {/* Rotas protegidas com Sidebar */}
         <Route
@@ -55,7 +59,7 @@ const Rotas: React.FC = () => {
         >
           <Route path="home" element={<Home title="RegulaNAC Pagina Inicial" />} />
           <Route path="ListaRegulacoes" element={<ListaRegulacoes />} />
-          <Route path="ListaRegulacoes24" element={<ListaRegulacoes24 />} />
+          <Route path="ListaRegulacoes24" element={<ListaRegulacoes24hrs />} />
           <Route path="NovaRegulacao" element={<NovaRegulacao />} />
           <Route path="AtualizaRegulacao" element={<AtualizaRegulacao />} />
           <Route path="EditaRegulacao" element={<EditaRegulacao />} />

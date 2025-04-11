@@ -4,7 +4,7 @@ export interface FormCadastro{
     cpf: string;
     senha: string;
     primeiroAcesso: boolean;
-    tipo: 'REGULADOR' | 'MEDICO' | 'GERENCIA';
+    tipo?: '' | 'REGULADOR' | 'MEDICO' | 'GERENCIA';
 }
 
 export interface UpdateSenhaData{

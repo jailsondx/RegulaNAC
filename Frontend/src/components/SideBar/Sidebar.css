@@ -7,6 +7,12 @@
   .textMenu-Item{
     display: flex;
   }
+  .IconUser {
+    width: 20%;
+    height: 20%;
+    min-width: 50px;
+    min-height: 50px;
+  }
 }
 
 /* Responsividade para telas de até 1024px (tablets) */
@@ -23,6 +29,15 @@
   .textMenu-Item{
     font-size: 10px;
   }
+  .inf-user{
+    flex-direction: column;
+  }
+  .IconUser {
+    width: 20%;
+    height: 20%;
+    min-width: 50px;
+    min-height: 50px;
+  }
 }
 
 /* Responsividade para telas de até 550px (smartphones) */
@@ -34,6 +49,12 @@
   }
   .textMenu-Item{
     display: none;
+  }
+  .IconUser{
+    width: 20%;
+    height: 20%;
+    min-width: 20px;
+    min-height: 20px;
   }
 }
 
@@ -54,6 +75,8 @@
 .sidebar-Title{
   display: flex;
   justify-content: center;
+  align-items: center;
+  text-align: center;
   width: 100%;
   font-size: 1.5dvw;
   margin: 20px 0px 20px 0px; /*top, direita, bottom, esquerda*/
@@ -104,13 +127,20 @@
   width: 100%;
 }
 
+/*USER SECTION*/
+.inf-user{
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
 
 .IconUser {
-  width: 50%;
-  height: auto;
-  border-radius: 50%;  /* Torna a imagem redonda */
-  object-fit: cover;   /* Garante que a imagem cubra a área sem distorcer */
-  border: 7px solid var(--sidebar-iconUser-border);
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--light-text);
 }
 
 
@@ -122,33 +152,23 @@
   width: 100%;
 }
 
-.inf-user{
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-
 .sidebar-inf{
   display: flex;
-  flex-direction: column;
-  justify-content: center;
   align-items: center;
-  width: 100%;
-  margin-bottom: 5dvh;
+  justify-content: space-between;
+  padding: 15px;
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
 }
 
 
 /*MUDANÇA DE TEMA*/
 .slider {
-  width: 5.5dvw;
-  min-width: 50px;
-  max-width: 100px;
-  height: 30px;
-  background-color: #ccc;
-  border-radius: 30px;
   position: relative;
+  width: 50px;
+  height: 24px;
+  background-color: #ccc;
+  border-radius: 12px;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
@@ -178,7 +198,7 @@
 }
 
 .slider.dark .slider__ball {
-  left: 3.6dvw; /* Move a bolinha para a direita no tema escuro */
+  left: 1.2dvw; /* Move a bolinha para a direita no tema escuro */
   background-color: white; /* Bolinha branca no tema escuro */
 }
 
