@@ -1,0 +1,24 @@
+.modal-input{
+    min-height: 20dvh;
+}
+
+.modal-input input, .modal-input select{
+    width: 95%;
+}
+
+.modal-input-line{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.modal-input-line2{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: left;
+    gap: 5%;
+}

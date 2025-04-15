@@ -20,6 +20,9 @@ import { getUserData } from '../../../functions/storageUtils';
 import { calcularIdade } from '../../../functions/CalcularIdade';
 import { getDay, getMonth, getYear } from '../../../functions/DateTimes';
 
+/*IMPORT UTILS*/
+import { useSocket } from '../../../Utils/useSocket';
+
 /*IMPORT CSS*/
 import './NovaRegulacao.css';
 
@@ -52,6 +55,8 @@ const initialFormData: NovaRegulacaoData = {
 
 const NovaRegulacao: React.FC = () => {
   const [userData, setUserData] = useState<UserData | null>(null);
+  const userUsername = userData?.login || ''; // Nome do usuário
+  const userTipo = userData?.tipo || ''; // Tipo de usuário
   const [file, setFile] = useState<File | null>(null);
   const [unidadesOrigem, setUnidadesOrigem] = useState<UnidadeData[]>([]);
   const [unidadesDestino, setUnidadesDestino] = useState<UnidadeData[]>([]);
@@ -109,6 +114,12 @@ const NovaRegulacao: React.FC = () => {
     setUserData(data);
   }, []);
 
+  //Função para fazer o envio de mensagem para o socket
+  const { enviarMensagem } = useSocket(userUsername, userTipo, (mensagem) => {
+    showSnackbar(mensagem, 'info');
+  });  
+
+  
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>): void => {
     const { name, value, type } = e.target;
     setFormData((prevState) => ({
@@ -454,10 +465,15 @@ const NovaRegulacao: React.FC = () => {
   };
 
 
+
+
   return (
     <>
       <div>
         <label className='Title-Form'>Nova Regulação</label>
+        <button onClick={() => enviarMensagem('Nova Regulaçao Solicitada')}>
+          Enviar para Médicos
+        </button>
       </div>
 
       <div className="ComponentForm">
@@ -642,6 +658,7 @@ const NovaRegulacao: React.FC = () => {
                     type="datetime-local"
                     name="data_hora_acionamento_medico"
                     value={formData.data_hora_acionamento_medico}
+                    min={formData.data_hora_solicitacao_01}
                     onChange={handleChange}
                     required
                   />

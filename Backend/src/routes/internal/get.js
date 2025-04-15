@@ -8,6 +8,7 @@ import PesquisaPaciente from '../../functions/SelectSQL/PesquisaPaciente.js';
 import ListaRegulacoesFinalizadas from '../../functions/SelectSQL/ListaRegulacoesFinalizadas.js';
 import ListaRegulacoesNegadas from '../../functions/SelectSQL/ListaRegulacoesNegadas.js';
 import VerificaID from '../../functions/SelectSQL/VerificaID.js';
+import RecebeHoraLeito from '../../functions/SelectSQL/RecebeHoraLeito.js';
 
 
 
@@ -126,6 +127,21 @@ routerGet.get('/PesquisaPaciente', async (req, res) => {
     handleError(res, error);
   }
 });
+
+routerGet.get('/RecebeHoraLeito', async (req, res) => {
+  const { idRegulacao } = req.query;
+
+  try {
+    const serverTime = new Date().toISOString();
+    const result = await RecebeHoraLeito(idRegulacao);
+
+    handleResponse(res, result, serverTime);
+  } catch (error) {
+    handleError(res, error);
+  }
+});
+
+
 
 // Métodos auxiliares para padronizar respostas e erros
 const handleResponse = (res, result, serverTime) => {

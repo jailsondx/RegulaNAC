@@ -10,11 +10,10 @@ import { getUserData } from '../../functions/storageUtils';
 /*IMPORT INTERFACES*/
 import { UserData } from '../../interfaces/UserData';
 import { DadosPacienteData } from '../../interfaces/DadosPaciente';
-import { DesfechoData, DesfechoOptions, CriticidadeOptions } from '../../interfaces/Desfecho';
+import { DesfechoData, DesfechoOptions } from '../../interfaces/Desfecho';
 
 /*IMPORT JSON*/
 import desfecho from '../../JSON/desfecho.json';
-import criticidade from '../../JSON/criticidade.json';
 import desfechoCancelado from '../../JSON/desfechoCancelado.json'; // JSON com as opções do segundo select
 
 /*IMPORT VARIAVEIS DE AMBIENTE*/
@@ -31,7 +30,6 @@ const initialFormData: DesfechoData = {
     id_user: '',
     id_regulacao: null,
     desfecho: '',
-    criticidade: '',
     forcado: false,
     fastmedic: false,
 };
@@ -41,16 +39,14 @@ const Desfecho: React.FC<Props> = ({ dadosPaciente, forcado, onClose, showSnackb
     const [formData, setFormData] = useState<DesfechoData>({ ...initialFormData, forcado });
     const [desfechoCanceladoSelecionado, setDesfechoCanceladoSelecionado] = useState<string>(''); // Estado do segundo select
     const [optionsDesfecho, setOptionsDesfecho] = useState<DesfechoOptions[]>([]);
-    const [optionsCriticidade, setOptionsCriticidade] = useState<CriticidadeOptions[]>([]);
     const [optionsDesfechoCancelado, setOptionsDesfechoCancelado] = useState<DesfechoOptions[]>([]);
 
     useEffect(() => {
         setUserData(getUserData());
         setOptionsDesfecho(desfecho);
-        setOptionsCriticidade(criticidade);
         setOptionsDesfechoCancelado(desfechoCancelado);
         console.log(dadosPaciente);
-    }, []);
+    }, [dadosPaciente]);
 
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>): void => {
         const { name, value, type } = e.target;
@@ -80,10 +76,6 @@ const Desfecho: React.FC<Props> = ({ dadosPaciente, forcado, onClose, showSnackb
         }
         if (formData.desfecho === 'CANCELADO' && !desfechoCanceladoSelecionado) {
             showSnackbar('O motivo do cancelamento é obrigatório!', 'warning');
-            return false;
-        }
-        if (!formData.criticidade.trim()) {
-            showSnackbar('Criticidade é obrigatória!', 'warning');
             return false;
         }
         return true;
@@ -160,26 +152,6 @@ const Desfecho: React.FC<Props> = ({ dadosPaciente, forcado, onClose, showSnackb
                             </div>
                         )}
                     </div>
-                   
-
-                    
-                        <div className="Desfecho-line">
-                            <label>Criticidade:</label>
-                            <select 
-                                name="criticidade" 
-                                value={formData.criticidade} 
-                                onChange={handleChange} 
-                                required
-                            >
-                                <option value="">Selecione Criticidade</option>
-                                {optionsCriticidade.map((option) => (
-                                    <option key={option.value} value={option.value}>
-                                        {option.label}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                    
                 </div>
 
                 <p>*O desfecho irá encerrar essa regulação, essa ação não pode ser desfeita.</p>

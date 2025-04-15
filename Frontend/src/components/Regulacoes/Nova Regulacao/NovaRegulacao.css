@@ -20,6 +20,7 @@
     position: relative;
   }
   
+  /*
   .Step::before {
     content: attr(data-step);
     display: inline-block;
@@ -31,6 +32,7 @@
     background: #fff;
     margin-right: 5px;
   }
+    */
   
   .Step.active {
     color: var(--step-active);

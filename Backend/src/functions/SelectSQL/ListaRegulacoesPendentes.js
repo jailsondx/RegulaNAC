@@ -37,9 +37,8 @@ async function ListaRegulacoesPendentes24() {
         const [rows] = await connection.query(`
             SELECT * 
             FROM ${DBtable}
-            WHERE status_regulacao = ?
-            AND TIMESTAMPDIFF(HOUR, data_hora_solicitacao_02, ?) >= 24
-        `, ["ABERTO - AGUARDANDO AVALIACAO", getCurrentTimestamp()]);
+            WHERE TIMESTAMPDIFF(HOUR, data_hora_solicitacao_02, ?) >= 24
+        `, [getCurrentTimestamp()]);
 
         connection.release(); // Libera a conexão
 

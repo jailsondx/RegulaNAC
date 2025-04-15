@@ -17,12 +17,13 @@ export interface TransporteData {
   id_user: string;
   nome_colaborador: string;
   data_hora_acionamento: string;
+  data_hora_liberacao_leito: string;
+  criticidade: string;
 }
 
 export interface TransporteDatesData {
   data_hora_chegada_origem: string;
   data_hora_saida_origem: string;
-  data_hora_liberacao_leito: string;
   data_hora_chegada_destino: string;
   observacao?: string;
 }
