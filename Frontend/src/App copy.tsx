@@ -8,7 +8,7 @@ import SocketListenerProvider from './Utils/SocketListenerProvider';
 
 // opcional: som de notificação
 const playNotificationSound = () => {
-  const audio = new Audio('/Sounds/notification.wav');
+  const audio = new Audio('/sounds/notification.wav');
   audio.play().catch((e) => console.error('Erro ao tocar som:', e));
 };
 
@@ -40,10 +40,12 @@ function App() {
     showSnackbarSocket(mensagem, 'warning');
   };
 
+  if (!userData) return null; // ou redireciona/login
+
   return (
     <SocketListenerProvider
-      username={userData?.login || ''}
-      tipo={userData?.tipo || ''}
+      username={userData.login}
+      tipo={userData.tipo}
       onMessage={handleSocketMessage}
     >
       <div className="App">

@@ -494,7 +494,7 @@ input:disabled {
   display: flex;
   gap: 3%;
   flex-direction: row;
-  margin: 10px 0px 100px 0px; /*top, direita, bottom, esquerda*/
+  margin: 10px 0px 10px 0px; /*top, direita, bottom, esquerda*/
 }
 
 .End{

@@ -13,6 +13,9 @@ import { RegulacaoMedicoData } from '../../../interfaces/Regulacao';
 /*IMPORT FUNCTIONS*/
 import { getUserData } from '../../../functions/storageUtils';
 
+/*IMPORT CSS*/
+import '../../Modal/Modal-Inputs.css';
+
 /*IMPORT VARIAVEIS DE AMBIENTE*/
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
 
@@ -126,8 +129,8 @@ const NovaRegulacaoMedicoAprovada: React.FC<Props> = ({ dadosPaciente, tempoEspe
       </div>
 
       <form onSubmit={handleSubmit}>
-        <div className='Div-RegulacaoMedica-AprovadaNegada'>
-          <div className='div-Leito'>
+        <div className='modal-input'>
+          <div className='modal-input-line2'>
             <div className='num_leito'>
               <label>Nº do Leito:</label>
               <input
@@ -138,41 +141,43 @@ const NovaRegulacaoMedicoAprovada: React.FC<Props> = ({ dadosPaciente, tempoEspe
                 onChange={handleChange}
                 required
               />
-              </div>
-              <div className="extra">
-                <span>Extra?</span>
-                <input
-                  type="checkbox"
-                  id="extraCheckbox"
-                  name="extra"
-                  checked={formData.extra}
-                  onChange={handleChange}
-                />
-                <label htmlFor="extraCheckbox"></label>
-              </div>
+            </div>
+            <div className="extra">
+              <span>Extra?</span>
+              <input
+                type="checkbox"
+                id="extraCheckbox"
+                name="extra"
+                checked={formData.extra}
+                onChange={handleChange}
+              />
+              <label htmlFor="extraCheckbox"></label>
+            </div>
+
+            <div className='nome_regulador_medico'>
+              <label>Médico:</label>
+              <input
+                type="text"
+                name="nome_regulador_medico"
+                value={userData?.nome}
+                onChange={handleChange}
+                required
+                disabled
+              />
+            </div>
           </div>
-          
-          <div className='nome_regulador_medico'>
-            <label>Médico:</label>
-            <input
-              type="text"
-              name="nome_regulador_medico"
-              value={userData?.nome}
+          <div className="modal-input-line">
+            <label>Justificativa de Tempo +30min:</label>
+            <textarea
+              className="modal-input-textarea"
+              name="justificativa_tempo30"
+              value={formData.justificativa_tempo30}
               onChange={handleChange}
-              required
-              disabled
             />
           </div>
         </div>
 
-        <div className='justificativa'>
-          <label>Justificativa de Tempo +30min:</label>
-          <textarea
-            name="justificativa_tempo30"
-            value={formData.justificativa_tempo30}
-            onChange={handleChange}
-          />
-        </div>
+
         <button type="submit">Autorizar</button>
       </form>
     </div>

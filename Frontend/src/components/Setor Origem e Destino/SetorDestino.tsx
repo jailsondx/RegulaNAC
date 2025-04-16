@@ -14,7 +14,7 @@ import { DadosPacienteData } from '../../interfaces/DadosPaciente';
 import { DestinoData } from '../../interfaces/Transporte';
 
 /*IMPORT CSS*/
-import './SetorOrigemDestino.css';
+import '../Modal/Modal-Inputs.css';
 
 /*IMPORT VARIAVEIS DE AMBIENTE*/
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
@@ -124,32 +124,28 @@ const SetorDestino: React.FC<Props> = ({ dadosPaciente, onClose, showSnackbar })
             </div>
 
             <form onSubmit={handleSubmit}>
-                <div className='div-SetorOrigemDestino'>
-                    <div className='subdiv-SetorOrigemDestino'>
-                        <div className="SetorOrigemDestino-line">
-                            <label>Nome do Colaborador que recebeu a comunicação:</label>
-                            <input
-                                type="text"
-                                name="nome_colaborador"
-                                value={formData.nome_colaborador ?? ''}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
+                <div className='modal-input'>
+                    <div className="modal-input-line">
+                        <label>Nome do Colaborador que recebeu a comunicação:</label>
+                        <input
+                            type="text"
+                            name="nome_colaborador"
+                            value={formData.nome_colaborador ?? ''}
+                            onChange={handleChange}
+                            required
+                        />
                     </div>
 
-                    <div className='subdiv-SetorOrigemDestino'>
-                        <div className="SetorOrigemDestino-line">
-                            <label>Data e Hora do Acionamento:</label>
-                            <input
-                                type="datetime-local"
-                                name="data_hora_comunicacao"
-                                className="SetorOrigemDestino-line-input-2"
-                                value={formData.data_hora_comunicacao}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
+                    <div className="modal-input-line">
+                        <label>Data e Hora do Acionamento:</label>
+                        <input
+                            type="datetime-local"
+                            name="data_hora_comunicacao"
+                            className='input-dateTime'
+                            value={formData.data_hora_comunicacao}
+                            onChange={handleChange}
+                            required
+                        />
                     </div>
                 </div>
                 <button type="submit">Cadastrar Destino</button>

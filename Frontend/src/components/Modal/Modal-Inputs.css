@@ -12,10 +12,17 @@
 
 input[type='datetime-local']{
     width: 97%;
+    max-width: 250px;
+}
+
+.input-dateTime{
+    
 }
 
 .modal-input-textarea{
-    height: 1px;
+    height: 100%;
+    min-height: 50px;
+    width: 100%;
     border-radius: 5px;
 }
 
@@ -32,6 +39,10 @@ input[type='datetime-local']{
     display: flex;
     flex-direction: row;
     width: 100%;
-    justify-content: left;
+    justify-content: space-between;
     gap: 5%;
+}
+
+.modal-input-line, .modal-input-line2 label{
+    display: flex;
 }

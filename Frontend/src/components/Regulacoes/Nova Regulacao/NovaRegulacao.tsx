@@ -73,9 +73,9 @@ const NovaRegulacao: React.FC = () => {
   const [showAtualizarButton, setShowAtualizarButton] = useState<boolean>(false);
 
   //VERIFICAÇÃO DE UN ORIGEM
-  const requiredUnidadesOBS = ['COI', 'COIII', 'COII']; // ou só 'UTI', 'COI' se quiser verificar por "começa com"
-  const isValueOrigemOBS = requiredUnidadesOBS.includes(formData.un_origem);
-  const requiredUnidadesPED = ['UTI PED']; // ou só 'UTI', 'COI' se quiser verificar por "começa com"
+  //const requiredUnidadesOBS = ['COI', 'COII', 'COII']; // ou só 'UTI', 'COI' se quiser verificar por "começa com"
+  //const isValueOrigemOBS = requiredUnidadesOBS.includes(formData.un_origem);
+  const requiredUnidadesPED = ['UTI I', 'UTI II', 'UTI III', 'UTI IV']; // ou só 'UTI', 'COI' se quiser verificar por "começa com"
   const isValueOrigemPED = requiredUnidadesPED.includes(formData.un_origem);
 
 
@@ -180,9 +180,6 @@ const NovaRegulacao: React.FC = () => {
         break;
       case isValueOrigemPED && !(formData.prioridade?.trim() || ''):
         invalidField = 'Prioridade é obrigatório.';
-        break;
-      case !isValueOrigemOBS && !file:
-        invalidField = 'Anexo PDF da Regulação é obrigatório.';
         break;
       default:
         break;
@@ -488,6 +485,10 @@ const NovaRegulacao: React.FC = () => {
       <div>
         <label className='Title-Form'>Nova Regulação</label>
         
+        <button onClick={() => enviarMensagem('Nova Regulaçao Solicitadas: ' + formData.num_regulacao)}>
+          Enviar para Médicos
+        </button>
+        
       </div>
       <div className="ComponentForm">
         <form className="Form-NovaRegulacao" onSubmit={handleSubmit}>
@@ -527,7 +528,6 @@ const NovaRegulacao: React.FC = () => {
               <Passo4
                 formData={formData}
                 handleFileChange={handleFileChange}
-                isValueOrigemOBS={isValueOrigemOBS}
               />
             )}
           </div>

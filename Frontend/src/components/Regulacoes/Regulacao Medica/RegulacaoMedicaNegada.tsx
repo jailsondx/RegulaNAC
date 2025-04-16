@@ -112,9 +112,9 @@ const NovaRegulacaoMedicoNegada: React.FC<Props> = ({ dadosPaciente, onClose, sh
 
 
       <form onSubmit={handleSubmit}>
-        <div className='Div-RegulacaoMedica-AprovadaNegada'>
+        <div className="modal-input">
 
-          <div className='nome_regulador_medico'>
+          <div className="modal-input-line">
             <label>Médico:</label>
             <input
               type="text"
@@ -125,18 +125,18 @@ const NovaRegulacaoMedicoNegada: React.FC<Props> = ({ dadosPaciente, onClose, sh
               disabled
             />
           </div>
-        </div>
 
-        <div className='justificativa'>
-          <label>Justificativa de Negação:</label>
-          <textarea
-            name="justificativa_neg"
-            value={formData.justificativa_neg}
-            onChange={handleChange}
-            required
-          />
-        </div>
+          <div className="modal-input-line">
+            <label>Justificativa de Negação:</label>
+            <textarea
+              className="modal-input-textarea"
+              value={formData.justificativa_neg}
+              onChange={handleChange}
+              required
+            />
+          </div>
 
+        </div>
 
         <button type="submit" className='button-red'>Negar</button>
       </form>

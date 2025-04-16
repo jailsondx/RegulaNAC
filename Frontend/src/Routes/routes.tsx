@@ -37,32 +37,30 @@ const Rotas: React.FC = () => {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Página de Login - Sem Sidebar */}
+
+        {/* 🔓 Rota pública - Login */}
         <Route path="/login" element={<Login />} />
 
-        {/* Rotas protegidas sem Sidebar */}
+        {/* 🔐 Rota protegida sem Sidebar (caso precise) */}
         <Route
-          element={
-            <PrivateRoute element={<div className="app-container"><Outlet /></div>} />
-          }
+          element={<PrivateRoute element={<Outlet />} />}
         >
+          {/* ...rotas protegidas sem Sidebar (opcional) */}
         </Route>
 
-        {/* Rotas protegidas com Sidebar */}
+        {/* 🔐 Rota protegida com Sidebar (layout completo) */}
         <Route
           path="/"
-          element={
-            <div className="app-container">
-              <PrivateRoute element={<ProtectedLayout />} />
-            </div>
-          }
+          element={<PrivateRoute element={<ProtectedLayout />} />}
         >
-          <Route path="home" element={<Home title="RegulaNAC Pagina Inicial" />} />
-          <Route path="ListaRegulacoes" element={<ListaRegulacoes />} />
-          <Route path="ListaRegulacoes24" element={<ListaRegulacoes24hrs />} />
+          {/* Essas são todas as páginas protegidas */}
+          <Route path="home" element={<Home title="Bem Vindo ao RegulaNAC" />} />
           <Route path="NovaRegulacao" element={<NovaRegulacao />} />
           <Route path="AtualizaRegulacao" element={<AtualizaRegulacao />} />
           <Route path="EditaRegulacao" element={<EditaRegulacao />} />
+          <Route path="ListaRegulacoes" element={<ListaRegulacoes />} />
+          <Route path="ListaRegulacoes24" element={<ListaRegulacoes24hrs />} />
+          <Route path="NovaRegulacao" element={<NovaRegulacao />} />
           <Route path="RegulacaoMedica" element={<RegulacaMedica />} />
           <Route path="RegulacoesAprovadas" element={<RegulacoesAprovadas />} />
           <Route path="RegulacoesNegadas" element={<ListaRegulacoesNegadas />} />
@@ -73,10 +71,12 @@ const Rotas: React.FC = () => {
           <Route path="RelatorioTempoEfetivacao" element={<RelatorioTempoEfetivacao />} />
         </Route>
 
-        {/* Página 404 - Página não encontrada */}
+        {/* 🧨 Página 404 */}
         <Route path="*" element={<PageNotFound />} />
+
       </Routes>
     </BrowserRouter>
+
   );
 };
 

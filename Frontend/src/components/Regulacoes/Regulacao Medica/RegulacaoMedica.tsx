@@ -5,7 +5,6 @@ import { Snackbar, Alert } from "@mui/material";
 import { LuFilter } from "react-icons/lu";
 
 /*IMPORT INTERFACES*/
-import { UserData } from "../../../interfaces/UserData.ts";
 import { RegulacaoData } from '../../../interfaces/Regulacao.ts';
 import { DadosPacienteData } from "../../../interfaces/DadosPaciente.ts";
 
@@ -18,10 +17,8 @@ import Modal from "../../Modal/Modal.tsx";
 
 /*IMPORT FUNCTIONS*/
 import { getDay, getMonth, getYear } from '../../../functions/DateTimes.ts';
-import { getUserData } from '../../../functions/storageUtils';
 
 /*IMPORT UTILS*/
-import { useSocket } from '../../../Utils/useSocket';
 
 /*IMPORT CSS*/
 import "./RegulacaoMedica.css";
@@ -30,9 +27,6 @@ import "./RegulacaoMedica.css";
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
 
 const RegulacaoMedica: React.FC = () => {
-  const [userData, setUserData] = useState<UserData | null>(null);
-  const userUsername = userData?.login || ''; // Nome do usuário
-  const userTipo = userData?.tipo || ''; // Tipo de usuário
   const [serverTime, setServerTime] = useState("");
   const [regulacoes, setRegulacoes] = useState<RegulacaoData[]>([]);
   const [showModalApproved, setShowModalApproved] = useState(false);
@@ -61,10 +55,7 @@ const RegulacaoMedica: React.FC = () => {
   const [selectedColumn, setSelectedColumn] = useState<keyof RegulacaoData | null>(null);
 
   /*SNACKBAR*/
-  const vertical = 'top';
-  const horizontal = 'left';
   const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarOpenSocket, setSnackbarOpenSocket] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error' | 'info' | 'warning'>('success');
 
@@ -123,17 +114,6 @@ const RegulacaoMedica: React.FC = () => {
 
     setFilteredRegulacoes(filtered);
   }, [unidadeOrigem, unidadeDestino, searchTerm, regulacoes]);
-
-  //Pega dados do SeassonStorage User
-  useEffect(() => {
-    const data = getUserData();
-    setUserData(data);
-  }, []);
-
-  //Função para fazer o envio de mensagem para o socket
-  useSocket(userUsername, userTipo, (mensagem) => {
-    showSnackbarSocket(mensagem, 'warning');
-  });  
 
   const fetchPDF = async (datetime: string, filename: string) => {
     const year = getYear(datetime);
@@ -246,7 +226,6 @@ const RegulacaoMedica: React.FC = () => {
   //SNACKBAR
   const handleSnackbarClose = (): void => {
     setSnackbarOpen(false);
-    setSnackbarOpenSocket(false);
   };
 
   const showSnackbar = (
@@ -256,15 +235,6 @@ const RegulacaoMedica: React.FC = () => {
     setSnackbarMessage(message);
     setSnackbarSeverity(severity);
     setSnackbarOpen(true);
-  };
-
-  const showSnackbarSocket = (
-    message: string,
-    severity: 'success' | 'error' | 'info' | 'warning'
-  ): void => {
-    setSnackbarMessage(message);
-    setSnackbarSeverity(severity);
-    setSnackbarOpenSocket(true);
   };
 
   //CONFIGURA A PAGINAÇÃO
@@ -380,21 +350,6 @@ const RegulacaoMedica: React.FC = () => {
         <Alert
           onClose={handleSnackbarClose}
           severity={snackbarSeverity}
-          sx={{ width: "100%" }}
-        >
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
-
-      <Snackbar
-        anchorOrigin={{ vertical, horizontal }}
-        open={snackbarOpenSocket}
-        onClose={handleSnackbarClose}
-      >
-        <Alert
-          onClose={handleSnackbarClose}
-          severity={snackbarSeverity}
-          variant="filled"
           sx={{ width: "100%" }}
         >
           {snackbarMessage}

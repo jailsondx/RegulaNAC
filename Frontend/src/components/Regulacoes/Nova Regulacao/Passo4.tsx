@@ -7,7 +7,6 @@ import { NovaRegulacaoData } from '../../../interfaces/Regulacao';
 interface Props {
     formData: NovaRegulacaoData;
     handleFileChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-    isValueOrigemOBS: boolean;
 }
 
 export const Passo4: React.FC<Props> = ({
