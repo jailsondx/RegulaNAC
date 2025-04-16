@@ -8,6 +8,7 @@ import DadosPaciente from '../Dados Paciente/DadosPaciente';
 
 /*IMPORT FUNCTIONS*/
 import { getUserData } from '../../functions/storageUtils';
+import { formatDateTimeToPtBr } from '../../functions/DateTimes';
 
 /*IMPORT INTERFACES*/
 import { UserData } from '../../interfaces/UserData';
@@ -19,8 +20,7 @@ import { AtrasoLeitoOptions } from '../../interfaces/Transporte';
 import atrasoleito from '../../JSON/atraso.json';
 
 /*IMPORT CSS*/
-import './Transporte.css';
-import { formatDateTimeToPtBr } from '../../functions/DateTimes';
+import '../Modal/Modal-Inputs.css';
 
 /*IMPORT VARIAVEIS DE AMBIENTE*/
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
@@ -35,7 +35,7 @@ const initialFormData: TransporteDatesData = {
     data_hora_chegada_origem: '',
     data_hora_saida_origem: '',
     data_hora_chegada_destino: '',
-    observacao: ''
+    justificativa_atraso_leito: ''
 };
 
 const Transporte02: React.FC<Props> = ({ dadosPaciente, onClose, showSnackbar }) => {
@@ -43,7 +43,7 @@ const Transporte02: React.FC<Props> = ({ dadosPaciente, onClose, showSnackbar })
     const [formData, setFormData] = useState<TransporteDatesData>(initialFormData);
     const [horaLeito, setHoraLeito] = useState<string>('');
     const [currentStep, setCurrentStep] = useState<number>(1);
-    const [observacao, setObservacao] = useState<string>('');
+    const [justificativa_atraso_leito, setJustificaticaAtrasoLeito] = useState<string>('');
     const [diferencaHoras, setDiferencaHoras] = useState<number>(0);
     const [optionsAtrasoLeito, setOptionsAtrasoLeito] = useState<AtrasoLeitoOptions[]>([]);
 
@@ -113,7 +113,7 @@ const Transporte02: React.FC<Props> = ({ dadosPaciente, onClose, showSnackbar })
             return false;
         }
 
-        if (diferencaHoras >= 2 && !observacao.trim()) {
+        if (diferencaHoras >= 2 && !justificativa_atraso_leito.trim()) {
             showSnackbar('A observação é obrigatória quando a diferença entre os horários é igual ou maior a 2 horas.', 'warning');
             return false;
         }
@@ -128,7 +128,7 @@ const Transporte02: React.FC<Props> = ({ dadosPaciente, onClose, showSnackbar })
         try {
             const dataToSubmit = {
                 ...formData,
-                observacao: diferencaHoras >= 2 ? observacao : null, // Inclui a observação apenas se necessário
+                justificativa_atraso_leito: diferencaHoras >= 2 ? justificativa_atraso_leito : null, // Inclui a observação apenas se necessário
                 id_user: userData?.id_user,
                 id_regulacao: dadosPaciente.id_regulacao,
             };
@@ -187,12 +187,11 @@ const Transporte02: React.FC<Props> = ({ dadosPaciente, onClose, showSnackbar })
                                 />
                             </div>
 
-                            <div className="Transporte-line">
+                            <div className="modal-input-line">
                                 <label>Saída do Técnico do Setor de Origem:</label>
                                 <input
                                     type="datetime-local"
                                     name="data_hora_saida_origem"
-                                    className="data_hora_transporte"
                                     value={formData.data_hora_saida_origem}
                                     onChange={handleChange}
                                     required
@@ -202,13 +201,12 @@ const Transporte02: React.FC<Props> = ({ dadosPaciente, onClose, showSnackbar })
                     )}
 
                     {currentStep === 2 && (
-                        <div className="StepContentTransporte">
-                            <div className="Transporte-line">
+                        <div className="StepContent">
+                            <div className="modal-input-line">
                                 <label>Chegada do Paciente no Setor de Destino:</label>
                                 <input
                                     type="datetime-local"
                                     name="data_hora_chegada_destino"
-                                    className="data_hora_transporte"
                                     value={formData.data_hora_chegada_destino}
                                     onChange={handleChange}
                                     required
@@ -218,14 +216,14 @@ const Transporte02: React.FC<Props> = ({ dadosPaciente, onClose, showSnackbar })
                     )}
 
                     {currentStep === 3 && (
-                        <div className="StepContentTransporte">
-                            <div className="Transporte-line">
+                        <div className="StepContent">
+                            <div className="modal-input-line">
                                 <label>Hora de Liberação do Leito: {formatDateTimeToPtBr(horaLeito)}</label>
                                 <label><p>Motivo do Atraso: Obrigatório caso o tempo de ocupação do leito for maior que 2h</p></label>
                                 <select
-                                    name="observacao"
-                                    value={observacao}
-                                    onChange={(e) => setObservacao(e.target.value)}
+                                    name="justificativa_atraso_leito"
+                                    value={justificativa_atraso_leito}
+                                    onChange={(e) => setJustificaticaAtrasoLeito(e.target.value)}
                                     required={diferencaHoras >= 2} // Torna obrigatório se a diferença ≥ 2h
                                 >
                                     <option value="">Selecione o Motivo</option>
@@ -236,6 +234,22 @@ const Transporte02: React.FC<Props> = ({ dadosPaciente, onClose, showSnackbar })
                                     ))}
                                 </select>
                             </div>
+
+                            {/* Mostra textarea se o motivo for "outro" */}
+                            {justificativa_atraso_leito === 'ATRASO NA PREPARAÇÃO DO LEITO' && (
+                                <div className="modal-input-line">
+                                    <label>Descreva o motivo do atraso:</label>
+                                    <textarea
+                                        className="modal-input-textarea"
+                                        name="observacao"
+                                        value={formData.observacao}
+                                        onChange={handleChange}
+                                        placeholder="Descreva o motivo..."
+                                        required
+                                    />
+                                </div>
+                            )}
+
                         </div>
                     )}
                 </div>

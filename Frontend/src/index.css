@@ -269,7 +269,7 @@ select {
 }
 
 input{
-  width: 97%;
+  width: 100%;
   text-transform: uppercase;
 }
 
@@ -310,6 +310,15 @@ input:disabled {
 
 
 
+/*REQUIRE BORDER*/
+.requireBorder{
+  border: 1px solid red;
+}
+
+
+
+
+/*COMPONENTE*/
 .Component {
   display: flex;
   flex-direction: column;
@@ -345,7 +354,7 @@ input:disabled {
   width: 35dvw;
   min-width: 300px;
   max-width: 600px;
-  height: auto;
+  height: 40dvh;
   min-height: 350px;
   padding: 20px;
   padding-right: 40px;
@@ -485,6 +494,7 @@ input:disabled {
   display: flex;
   gap: 3%;
   flex-direction: row;
+  margin: 10px 0px 100px 0px; /*top, direita, bottom, esquerda*/
 }
 
 .End{

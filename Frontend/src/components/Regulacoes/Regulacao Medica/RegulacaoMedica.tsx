@@ -132,7 +132,7 @@ const RegulacaoMedica: React.FC = () => {
 
   //Função para fazer o envio de mensagem para o socket
   useSocket(userUsername, userTipo, (mensagem) => {
-    showSnackbarSocket(mensagem, 'info');
+    showSnackbarSocket(mensagem, 'warning');
   });  
 
   const fetchPDF = async (datetime: string, filename: string) => {
@@ -180,6 +180,7 @@ const RegulacaoMedica: React.FC = () => {
     }
   };
 
+  //MODAL
   const handleOpenModalApproved = (regulacao: RegulacaoData) => {
     setCurrentRegulacao(regulacao);
 
@@ -242,6 +243,7 @@ const RegulacaoMedica: React.FC = () => {
     setSelectedColumn(key);
   };
 
+  //SNACKBAR
   const handleSnackbarClose = (): void => {
     setSnackbarOpen(false);
     setSnackbarOpenSocket(false);

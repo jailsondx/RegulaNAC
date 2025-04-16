@@ -3,6 +3,9 @@ import axios from 'axios';
 import { AxiosError } from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Snackbar, Alert } from '@mui/material';
+import { FcOk, FcLeave } from "react-icons/fc";
+import { TiBookmark } from "react-icons/ti";
+import { FaSearch } from "react-icons/fa";
 
 /*IMPORT INTERFACES*/
 import { NovaRegulacaoData } from '../../../interfaces/Regulacao';
@@ -10,13 +13,9 @@ import { UserData } from '../../../interfaces/UserData';
 import { UnidadeData } from '../../../interfaces/Unidade';
 
 /*IMPORT COMPONENTS*/
-import { ProgressBar } from './progressbar';
-import { Passo1 } from './Passo1';
-import { Passo2 } from './Passo2';
-import { Passo3 } from './Passo3';
-import { Passo4 } from './Passo4';
 
 /*IMPORT FUNCTIONS*/
+import { formatDateTimeToPtBr } from '../../../functions/DateTimes';
 import { getUserData } from '../../../functions/storageUtils';
 import { calcularIdade } from '../../../functions/CalcularIdade';
 import { getDay, getMonth, getYear } from '../../../functions/DateTimes';
@@ -30,7 +29,6 @@ import './NovaRegulacao.css';
 /*IMPORT JSON*/
 import un_origem from '../../../JSON/un_origem.json';
 import un_destino from '../../../JSON/un_destino.json';
-
 
 /*IMPORT VARIAVEIS DE AMBIENTE*/
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
@@ -126,9 +124,9 @@ const NovaRegulacao: React.FC = () => {
   //Função para fazer o envio de mensagem para o socket
   const { enviarMensagem } = useSocket(userUsername, userTipo, (mensagem) => {
     showSnackbar(mensagem, 'warning');
-  });
+  });  
 
-
+  
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>): void => {
     const { name, value, type } = e.target;
     setFormData((prevState) => ({
@@ -215,7 +213,7 @@ const NovaRegulacao: React.FC = () => {
     formData.append('file', file!);
     formData.append('num_regulacao', numRegulacao.toString()); // Adicionando num_regulacao no corpo da requisição
 
-    console.log('UPLOAD', formData);
+    console.log('UPLOAD',formData);
 
     try {
       const response = await axios.post(`${NODE_URL}/api/internal/upload/uploadPDF`, formData, {
@@ -358,13 +356,13 @@ const NovaRegulacao: React.FC = () => {
       const idade = response.data.data.num_idade;
 
       if (status === 200) {
-        // Atualizando o estado corretamente
-        setFormData((prevData) => ({
-          ...prevData, // Mantém os outros campos inalterados
-          nome_paciente: nomePaciente, // Atualiza o nome do paciente
-          data_nascimento: dataNascimento.split("T")[0], // Atualiza a data de nascimento
-          num_idade: idade, // Atualiza a idade
-        }));
+              // Atualizando o estado corretamente
+      setFormData((prevData) => ({
+        ...prevData, // Mantém os outros campos inalterados
+        nome_paciente: nomePaciente, // Atualiza o nome do paciente
+        data_nascimento: dataNascimento.split("T")[0], // Atualiza a data de nascimento
+        num_idade: idade, // Atualiza a idade
+      }));
       }
 
     } catch (error: unknown) {
@@ -487,60 +485,239 @@ const NovaRegulacao: React.FC = () => {
     <>
       <div>
         <label className='Title-Form'>Nova Regulação</label>
-        
+        <button onClick={() => enviarMensagem('Nova Regulaçao Solicitadas: ' + formData.num_regulacao)}>
+          Enviar para Médicos
+        </button>
       </div>
+
       <div className="ComponentForm">
+        <div className="Steps">
+          <div className={`Step ${currentStep === 1 ? 'active' : ''}`}><TiBookmark />Paciente</div>
+          <div className={`Step ${currentStep === 2 ? 'active' : ''}`}><TiBookmark />Localidades</div>
+          <div className={`Step ${currentStep === 3 ? 'active' : ''}`}><TiBookmark />Regulação</div>
+          <div className={`Step ${currentStep === 4 ? 'active' : ''}`}><TiBookmark />Confirmação</div>
+        </div>
         <form className="Form-NovaRegulacao" onSubmit={handleSubmit}>
-          <ProgressBar currentStep={currentStep} />
           <div className="Form-NovaRegulacao-Inputs">
             {currentStep === 1 && (
-              <Passo1
-                formData={formData}
-                handleChange={handleChange}
-                handleVerificaProntuarioAutoComplete={handleVerificaProntuarioAutoComplete}
-                handleAtualizarRegulacao={handleAtualizarRegulacao}
-                iconStatusProntOk={iconStatusProntOk}
-                iconStatusProntDeny={iconStatusProntDeny}
-                showAtualizarButton={showAtualizarButton}
-              />
+              <div className="StepContent">
+                <div className="line-StepContent">
+                  <label>Nome do Paciente:</label>
+                  <input
+                    type="text"
+                    name="nome_paciente"
+                    value={formData.nome_paciente}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+
+                <div className="line-StepContent">
+                  <label>Prontuário:</label>
+                  <div className='div-AtualizarRegulacao'>
+                    <span className='spanInput-line-StepContent'>
+                      <input
+                        type="number"
+                        name="num_prontuario"
+                        value={formData.num_prontuario ?? ''}
+                        onChange={handleChange}
+                        required
+                      />
+                      <button className='MicroButtonInput' 
+                        onClick={() => handleVerificaProntuarioAutoComplete(Number(formData.num_prontuario))} 
+                        title='Verifica Pré Cadastro'>
+                        <FaSearch />
+                      </button>
+                      {iconStatusProntOk && (<FcOk className='Icon-Status-NovaRegulacao' title='Prontuário OK' />)} {iconStatusProntDeny && (<FcLeave className='Icon-Status-NovaRegulacao' title='Prontuário com Pendência' />)}
+                      {showAtualizarButton && (
+                        <button type="button" className='btn button-warning' onClick={handleAtualizarRegulacao}>
+                          Atualizar Regulação
+                        </button>
+                      )}
+                    </span>
+                  </div>
+                </div>
+
+                <div className='line-StepContent-2'>
+                  <div className="line-StepContent-sub">
+                    <label>Data Nascimento:</label>
+                    <input
+                      type="date"
+                      name="data_nascimento"
+                      value={formData.data_nascimento}
+                      onChange={handleChange}
+                      max="2099-12-31" // Restringe anos superiores a 2199
+                      required
+                    />
+                  </div>
+
+                  <div className="line-StepContent-sub">
+                    <label>Idade:</label>
+                    <input
+                      type="number"
+                      name="num_idade"
+                      value={formData.num_idade ?? ''}
+                      onChange={handleChange}
+                      disabled
+                      required
+                    />
+                  </div>
+                </div>
+
+
+              </div>
             )}
+
             {currentStep === 2 && (
-              <Passo2
-                formData={formData}
-                handleChange={handleChange}
-                unidadesOrigem={unidadesOrigem}
-                unidadesDestino={unidadesDestino}
-              />
+              <div className="StepContent">
+                <div className="line-StepContent">
+                  <label>Unidade Origem:</label>
+                  <select
+                    name="un_origem"
+                    value={formData.un_origem}
+                    onChange={handleChange}
+                    required
+                  >
+                    <option value="">Selecione uma unidade</option>
+                    {unidadesOrigem.map((unidadeOrigem) => (
+                      <option key={unidadeOrigem.value} value={unidadeOrigem.value}>
+                        {unidadeOrigem.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="line-StepContent">
+                  <label>Unidade Destino:</label>
+                  <select
+                    name="un_destino"
+                    value={formData.un_destino}
+                    onChange={handleChange}
+                    required
+                  >
+                    <option value="">Selecione uma unidade</option>
+                    {unidadesDestino.map((unidadeDestino) => (
+                      <option key={unidadeDestino.value} value={unidadeDestino.value}>
+                        {unidadeDestino.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="line-StepContent">
+                  <label>Data e Hora da 1ª Solicitação:</label>
+                  <input
+                    type="datetime-local"
+                    name="data_hora_solicitacao_01"
+                    value={formData.data_hora_solicitacao_01}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+              </div>
             )}
+
             {currentStep === 3 && (
-              <Passo3
-                formData={formData}
-                handleChange={handleChange}
-                handleSelectChange_medico={handleSelectChange_medico}
-                medicos={medicos}
-                isValueOrigemPED={isValueOrigemPED}
-                iconStatusRegOk={iconStatusRegOk}
-                iconStatusRegDeny={iconStatusRegDeny}
-              />
+              <div className="StepContent">
+                <div className="line-StepContent">
+                  <label>Nome do Médico Regulador:</label>
+                  <select
+                    name="nome_regulador_medico"
+                    value={formData.nome_regulador_medico}
+                    onChange={handleSelectChange_medico}
+                    required
+                  >
+                    <option value="" disabled> Selecione um médico </option>
+                    {medicos.map((medico, index) => (
+                      <option key={index} value={medico}>
+                        {medico}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="line-StepContent-2">
+                  <div className="line-StepContent-sub">
+                    <label>Nº Regulação:</label>
+                    <span className='spanInput-line-StepContent'>
+                      <input
+                        type="number"
+                        name="num_regulacao"
+                        value={formData.num_regulacao ?? ''}
+                        onChange={handleChange}
+                        required
+
+                      />{iconStatusRegOk && (<FcOk className='Icon-Status-NovaRegulacao' />)} {iconStatusRegDeny && (<FcLeave className='Icon-Status-NovaRegulacao' />)}
+                    </span>
+                  </div>
+
+                  <div className="line-StepContent-sub">
+                    <label>Prioridade:</label>
+                    <input
+                      type="text"
+                      name="prioridade"
+                      value={formData.prioridade ?? ''}
+                      onChange={handleChange}
+                      className={isValueOrigemPED ? 'requireBorder' : ''}
+                      required={isValueOrigemPED}
+                    />
+                  </div>
+                </div>
+
+
+
+                <div className="line-StepContent">
+                  <label>Data e Hora do Acionamento do Médico:</label>
+                  <input
+                    type="datetime-local"
+                    name="data_hora_acionamento_medico"
+                    value={formData.data_hora_acionamento_medico}
+                    min={formData.data_hora_solicitacao_01}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+              </div>
             )}
+
             {currentStep === 4 && (
-              <Passo4
-                formData={formData}
-                handleFileChange={handleFileChange}
-                isValueOrigemOBS={isValueOrigemOBS}
-              />
+              <div className="StepContent">
+                <label>Confira as informações antes de finalizar:</label>
+                <ul>
+                  <li><strong>Nome do Paciente:</strong> {formData.nome_paciente}</li>
+                  <li><strong>Prontuário:</strong> {formData.num_prontuario}</li>
+                  <li><strong>Idade:</strong> {formData.num_idade} Anos</li>
+                  <li><strong>Unidade Origem:</strong> {formData.un_origem}</li>
+                  <li><strong>Unidade Destino:</strong> {formData.un_destino}</li>
+                  <li><strong>Data Hora 1ª Solicitação:</strong> {formatDateTimeToPtBr(formData.data_hora_solicitacao_01)}</li>
+                  <li><strong>Prioridade:</strong> {formData.prioridade}</li>
+                  <li><strong>Nº Regulação:</strong> {formData.num_regulacao}</li>
+                  <li><strong>Nome do Médico Regulador:</strong> {formData.nome_regulador_medico}</li>
+                  <li><strong>Data Hora Acionamento Médico:</strong> {formatDateTimeToPtBr(formData.data_hora_acionamento_medico)}</li>
+                </ul>
+
+                <div className="line-StepContent upload">
+                  <label>Enviar PDF da Regulação:</label>
+                  <input 
+                    type="file" 
+                    accept="application/pdf" 
+                    onChange={handleFileChange} 
+                    required={!isValueOrigemOBS}
+                  />
+                </div>
+              </div>
             )}
+
           </div>
 
-          {/* Botões ficam fora dos subcomponentes */}
           <div className="Div-Buttons End">
             {currentStep > 1 && <button type="button" onClick={previousStep}>Voltar</button>}
             {currentStep < 4 && <button type="button" onClick={nextStep}>Avançar</button>}
             {currentStep === 4 && <button type="submit">Finalizar</button>}
           </div>
+
         </form>
       </div>
-
 
       <Snackbar
         open={snackbarOpen}

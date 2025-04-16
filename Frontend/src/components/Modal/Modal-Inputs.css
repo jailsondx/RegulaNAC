@@ -2,8 +2,21 @@
     min-height: 20dvh;
 }
 
-.modal-input input, .modal-input select{
-    width: 95%;
+.modal-input input, .modal-input select, .modal-input textarea{
+    width: 99%;
+}
+
+.modal-input textarea{
+    height: 100%;
+}
+
+input[type='datetime-local']{
+    width: 97%;
+}
+
+.modal-input-textarea{
+    height: 1px;
+    border-radius: 5px;
 }
 
 .modal-input-line{

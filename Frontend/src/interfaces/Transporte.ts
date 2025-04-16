@@ -25,6 +25,7 @@ export interface TransporteDatesData {
   data_hora_chegada_origem: string;
   data_hora_saida_origem: string;
   data_hora_chegada_destino: string;
+  justificativa_atraso_leito?: string;
   observacao?: string;
 }
 
