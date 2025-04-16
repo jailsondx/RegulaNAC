@@ -32,7 +32,7 @@ const Sidebar: React.FC = () => {
   useEffect(() => {
     if (userData?.tipo === 'MEDICO') {
       setIconUser('/IconsUser/icon-medico.jpg');
-    } else if (userData?.tipo === 'REGULADOR') {
+    } else if (userData?.tipo === 'AUX. NAC') {
       setIconUser('/IconsUser/icon-regulador-2.jpg');
     } else if (userData?.tipo === 'GERENCIA') {
       setIconUser('/IconsUser/icon-regulador.jpg');
@@ -62,7 +62,7 @@ const Sidebar: React.FC = () => {
       );
     }
 
-    if (tipo === 'REGULADOR') {
+    if (tipo === 'AUX. NAC') {
       return (
         <>
           <ul>

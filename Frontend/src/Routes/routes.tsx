@@ -20,6 +20,7 @@ import RelatorioEfetivacao from '../components/Relatorios/RelatorioEfetivacao';
 import RelatorioTempoEfetivacao from '../components/Relatorios/RelatorioTempoEfetivacao';
 import EditaRegulacao from '../components/Regulacoes/Edita Regulacao/EditaRegulacao';
 import ListaRegulacoesNegadas from '../components/Regulacoes/ListaRegulacoes/ListaRegulacoesNegadas';
+import UpdateSenha from '../components/Usuarios/Update Senha/UpdateSenha';
 
 // Layout para rotas protegidas com o Sidebar
 const ProtectedLayout: React.FC = () => {
@@ -40,6 +41,7 @@ const Rotas: React.FC = () => {
 
         {/* 🔓 Rota pública - Login */}
         <Route path="/login" element={<Login />} />
+        <Route path="/updatepassword" element={<UpdateSenha />} />
 
         {/* 🔐 Rota protegida sem Sidebar (caso precise) */}
         <Route
