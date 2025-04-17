@@ -10,7 +10,7 @@ import { UserData } from '../../../interfaces/UserData';
 import { UnidadeData } from '../../../interfaces/Unidade';
 
 /*IMPORT COMPONENTS*/
-import { ProgressBar } from './progressbar';
+import { ProgressBar } from './ProgressBar';
 import { Passo1 } from './Passo1';
 import { Passo2 } from './Passo2';
 import { Passo3 } from './Passo3';

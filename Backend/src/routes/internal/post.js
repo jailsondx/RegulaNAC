@@ -58,6 +58,21 @@ routerPost.post('/NovaRegulacao', async (req, res) => {
   }
 });
 
+routerPost.post('/NovaRegulacao/Externa/ObstetricaVinculada', async (req, res) => {
+  try {
+    const formData = convertObjectToUpperCase(req.body);
+    //const result = await NovaRegulacao(formData);
+    console.log('Dados recebidos:', formData);
+    handleResponse(res, result);
+  } catch (error) {
+    console.error('Erro no processamento:', error);
+  res.status(500).json({
+    message: 'Erro interno do servidor',
+    error: 'Erro desconhecido',
+  });
+  }
+});
+
 routerPost.post('/RegulacaoMedico', async (req, res) => {
   try {
     const formData = convertObjectToUpperCase(req.body);

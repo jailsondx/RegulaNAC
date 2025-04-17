@@ -44,20 +44,7 @@
     background: #007bff;
   }
   
-  /* Form Section */
-  .Form-NovaRegulacao {
-    display: flex;
-    flex-direction: column;
-    height: 45dvh;
-    max-height: 330px;
-  }
-
-  .Form-NovaRegulacao-Inputs{
-    height: 45dvh;
-    min-height: 270px;
-  }
-
-
+ 
   .line-StepContent input[type="number"]{
     width: 42%;
   }

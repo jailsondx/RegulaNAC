@@ -12,7 +12,7 @@ export const useSocket = (username: string, tipo: string, onMessage: (mensagem: 
 
     if(tipo === 'MEDICO'){
         sala = 'Medicos';
-    } else if (tipo === 'NAC' || tipo === 'AUX. NAC' || tipo === 'GERENCIA'){
+    } else if (tipo === 'NAC' || tipo === 'AUX. ADMINISTRATIVO' || tipo === 'GERENCIA'){
         sala = 'NAC';
     }
 

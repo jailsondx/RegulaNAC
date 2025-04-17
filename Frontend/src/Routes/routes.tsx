@@ -21,6 +21,7 @@ import RelatorioTempoEfetivacao from '../components/Relatorios/RelatorioTempoEfe
 import EditaRegulacao from '../components/Regulacoes/Edita Regulacao/EditaRegulacao';
 import ListaRegulacoesNegadas from '../components/Regulacoes/ListaRegulacoes/ListaRegulacoesNegadas';
 import UpdateSenha from '../components/Usuarios/Update Senha/UpdateSenha';
+import Page_Obstetrica from '../Pages/Nova Regulação/Regulação Externa/Page_Obstetrica';
 
 // Layout para rotas protegidas com o Sidebar
 const ProtectedLayout: React.FC = () => {
@@ -60,14 +61,21 @@ const Rotas: React.FC = () => {
           <Route path="NovaRegulacao" element={<NovaRegulacao />} />
           <Route path="AtualizaRegulacao" element={<AtualizaRegulacao />} />
           <Route path="EditaRegulacao" element={<EditaRegulacao />} />
+
+          <Route path="RegulacaoExObstetrica" element={<Page_Obstetrica />} />
+
           <Route path="ListaRegulacoes" element={<ListaRegulacoes />} />
           <Route path="ListaRegulacoes24" element={<ListaRegulacoes24hrs />} />
-          <Route path="NovaRegulacao" element={<NovaRegulacao />} />
+
           <Route path="RegulacaoMedica" element={<RegulacaMedica />} />
           <Route path="RegulacoesAprovadas" element={<RegulacoesAprovadas />} />
           <Route path="RegulacoesNegadas" element={<ListaRegulacoesNegadas />} />
+
           <Route path="Desfechos" element={<ListarDesfecho />} />
           <Route path="Finalizadas" element={<ListaRegulacoesFinalizadas />} />
+          <Route path="ListaRegulacoes/:id" element={<ListaRegulacoes />} />
+
+          {/* Relatórios */}
           <Route path="RelatoriosRegulacao" element={<RelatoriosRegulacao />} />
           <Route path="RelatorioEfetivacao" element={<RelatorioEfetivacao />} />
           <Route path="RelatorioTempoEfetivacao" element={<RelatorioTempoEfetivacao />} />

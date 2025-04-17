@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { TiExportOutline, TiBusinessCard, TiClipboard, TiThumbsUp, TiThumbsDown, TiHeartHalfOutline, TiHomeOutline, TiUpload, TiArrowBack } from "react-icons/ti";
+import {
+  TiExportOutline, TiBusinessCard, TiClipboard, TiThumbsUp, TiThumbsDown,
+  TiHeartHalfOutline, TiHomeOutline, TiUpload, TiArrowBack
+} from "react-icons/ti";
 
-/*IMPORT UTILS*/
 import { getUserData } from '../../functions/storageUtils';
-
-/*IMPORT INTERFACE*/
 import { UserData } from '../../interfaces/UserData';
-
-/*IMPORT CSS*/
 import './Sidebar.css';
 
 const Sidebar: React.FC = () => {
@@ -18,6 +16,7 @@ const Sidebar: React.FC = () => {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [iconUser, setIconUser] = useState<string | null>(null);
   const [showReportMenu, setShowReportMenu] = useState(false);
+  const [showExternalMenu, setShowExternalMenu] = useState(false);
 
   useEffect(() => {
     document.body.className = theme === 'dark' ? 'dark-theme' : 'light-theme';
@@ -32,7 +31,7 @@ const Sidebar: React.FC = () => {
   useEffect(() => {
     if (userData?.tipo === 'MEDICO') {
       setIconUser('/IconsUser/icon-medico.jpg');
-    } else if (userData?.tipo === 'AUX. NAC') {
+    } else if (userData?.tipo === 'AUX. ADMINISTRATIVO') {
       setIconUser('/IconsUser/icon-regulador-2.jpg');
     } else if (userData?.tipo === 'GERENCIA') {
       setIconUser('/IconsUser/icon-regulador.jpg');
@@ -52,31 +51,36 @@ const Sidebar: React.FC = () => {
 
     if (tipo === 'MEDICO') {
       return (
-        <ul>
-          <li> <Link to="/RegulacaoMedica"><TiHeartHalfOutline className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulação Médica</label></Link> </li>
-          <li> <Link to="/RegulacoesAprovadas"><TiThumbsUp className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações Aprovadas</label></Link> </li>
+        <>
+          <li><Link to="/RegulacaoMedica"><TiHeartHalfOutline className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulação Médica</label></Link></li>
+          <li><Link to="/RegulacoesAprovadas"><TiThumbsUp className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações Aprovadas</label></Link></li>
           <hr />
-          <li> <Link to="/Login"><TiExportOutline className='Icon-Menu-Item' /><label className='textMenu-Item'>Sair</label></Link></li>
-        </ul>
-
+          <li><Link to="/Login"><TiExportOutline className='Icon-Menu-Item' /><label className='textMenu-Item'>Sair</label></Link></li>
+        </>
       );
     }
 
-    if (tipo === 'AUX. NAC') {
+    if (tipo === 'AUX. ADMINISTRATIVO') {
       return (
         <>
-          <ul>
-            <li><Link to="/NovaRegulacao"><TiBusinessCard className='Icon-Menu-Item' /><label className='textMenu-Item'>Nova Regulação</label></Link></li>
-            <li><Link to="/ListaRegulacoes"><TiClipboard className='Icon-Menu-Item' /><label className='textMenu-Item'>Lista de Regulações</label></Link></li>
-            <li><Link to="/RegulacoesAprovadas"><TiThumbsUp className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações Aprovadas</label></Link></li>
-            <li><Link to="/RegulacoesNegadas"><TiThumbsDown className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações Negadas</label></Link></li>
-            <li><Link to="/Desfechos"><TiHomeOutline className='Icon-Menu-Item' /><label className='textMenu-Item'>Gerar Desfecho</label></Link></li>
-            <hr />
-          </ul>
+          <li><Link to="/NovaRegulacao"><TiBusinessCard className='Icon-Menu-Item' /><label className='textMenu-Item'>Nova Regulação</label></Link></li>
+          <li>
+            <a onClick={() => {
+              setShowExternalMenu(true);
+              setShowReportMenu(false);
+            }}>
+              <TiUpload className='Icon-Menu-Item' /><label className='textMenu-Item'>Solicitações de Origem Externa</label>
+            </a>
+          </li>
+          <li><Link to="/ListaRegulacoes"><TiClipboard className='Icon-Menu-Item' /><label className='textMenu-Item'>Lista de Regulações</label></Link></li>
+          <li><Link to="/RegulacoesAprovadas"><TiThumbsUp className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações Aprovadas</label></Link></li>
+          <li><Link to="/RegulacoesNegadas"><TiThumbsDown className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações Negadas</label></Link></li>
+          <li><Link to="/Desfechos"><TiHomeOutline className='Icon-Menu-Item' /><label className='textMenu-Item'>Gerar Desfecho</label></Link></li>
+          <hr />
           <li><Link to="/ListaRegulacoes24"><TiClipboard className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações +24hrs</label></Link></li>
           <li><Link to="/Finalizadas"><TiClipboard className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações Finalizadas</label></Link></li>
           <hr />
-          <li> <Link to="/Login"><TiExportOutline className='Icon-Menu-Item' /><label className='textMenu-Item'>Sair</label></Link></li>
+          <li><Link to="/Login"><TiExportOutline className='Icon-Menu-Item' /><label className='textMenu-Item'>Sair</label></Link></li>
         </>
       );
     }
@@ -84,20 +88,33 @@ const Sidebar: React.FC = () => {
     if (tipo === 'GERENCIA') {
       return (
         <>
-          <ul>
-            <li><Link to="/NovaRegulacao"><TiBusinessCard className='Icon-Menu-Item' /><label className='textMenu-Item'>Nova Regulação</label></Link></li>
-            <li><Link to="/ListaRegulacoes"><TiClipboard className='Icon-Menu-Item' /><label className='textMenu-Item'>Lista de Regulações</label></Link></li>
-            <li><Link to="/RegulacoesAprovadas"><TiThumbsUp className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações Aprovadas</label></Link></li>
-            <li><Link to="/RegulacoesNegadas"><TiThumbsDown className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações Negadas</label></Link></li>
-            <li><Link to="/Desfechos"><TiHomeOutline className='Icon-Menu-Item' /><label className='textMenu-Item'>Gerar Desfecho</label></Link></li>
-            <li> <a onClick={() => setShowReportMenu(true)}><TiUpload className='Icon-Menu-Item' /><label className='textMenu-Item'>Relatórios</label></a> </li>
-            <hr />
-          </ul>
+          <li><Link to="/NovaRegulacao"><TiBusinessCard className='Icon-Menu-Item' /><label className='textMenu-Item'>Nova Regulação</label></Link></li>
+          <li>
+            <a onClick={() => {
+              setShowExternalMenu(true);
+              setShowReportMenu(false);
+            }}>
+              <TiUpload className='Icon-Menu-Item' /><label className='textMenu-Item'>Solicitações de Origem Externa</label>
+            </a>
+          </li>
+          <li><Link to="/ListaRegulacoes"><TiClipboard className='Icon-Menu-Item' /><label className='textMenu-Item'>Lista de Regulações</label></Link></li>
+          <li><Link to="/RegulacoesAprovadas"><TiThumbsUp className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações Aprovadas</label></Link></li>
+          <li><Link to="/RegulacoesNegadas"><TiThumbsDown className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações Negadas</label></Link></li>
+          <li><Link to="/Desfechos"><TiHomeOutline className='Icon-Menu-Item' /><label className='textMenu-Item'>Gerar Desfecho</label></Link></li>
+          <li>
+            <a onClick={() => {
+              setShowReportMenu(true);
+              setShowExternalMenu(false);
+            }}>
+              <TiUpload className='Icon-Menu-Item' /><label className='textMenu-Item'>Relatórios</label>
+            </a>
+          </li>
+          <hr />
           <li><Link to="/ListaRegulacoes24"><TiClipboard className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações +24hrs</label></Link></li>
           <li><Link to="/Finalizadas"><TiClipboard className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações Finalizadas</label></Link></li>
           <li><Link to="/RegulacaoMedica"><TiHeartHalfOutline className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulação Médica</label></Link></li>
           <hr />
-          <li> <Link to="/Login"><TiExportOutline className='Icon-Menu-Item' /><label className='textMenu-Item'>Sair</label></Link></li>
+          <li><Link to="/Login"><TiExportOutline className='Icon-Menu-Item' /><label className='textMenu-Item'>Sair</label></Link></li>
         </>
       );
     }
@@ -107,12 +124,23 @@ const Sidebar: React.FC = () => {
 
   const renderReportMenuItems = () => {
     return (
-      <ul>
+      <>
         <li><a onClick={() => setShowReportMenu(false)}><TiArrowBack className='Icon-Menu-Item' /><label className='textMenu-Item'>Voltar</label></a></li>
         <li><Link to="/RelatoriosRegulacao"><TiUpload className='Icon-Menu-Item' /><label className='textMenu-Item'>EM DESENVOLVIMENTO</label></Link></li>
         <li><Link to="/RelatorioEfetivacao"><TiUpload className='Icon-Menu-Item' /><label className='textMenu-Item'>Relatório de Efetivação</label></Link></li>
         <li><Link to="/RelatorioTempoEfetivacao"><TiUpload className='Icon-Menu-Item' /><label className='textMenu-Item'>Relatório de Tempo de Efetivação</label></Link></li>
-      </ul>
+      </>
+    );
+  };
+
+  const renderExternalMenuItems = () => {
+    return (
+      <>
+        <li><a onClick={() => setShowExternalMenu(false)}><TiArrowBack className='Icon-Menu-Item' /><label className='textMenu-Item'>Voltar</label></a></li>
+        <li><Link to="/RegulacaoExObstetrica"><TiUpload className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulação Obstétrica</label></Link></li>
+        <li><Link to="/RegulacaoExAVC"><TiUpload className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulação AVC</label></Link></li>
+        <li><Link to="/RegulacaoExNeurocirurgia"><TiUpload className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulação Neurocirurgia</label></Link></li>
+      </>
     );
   };
 
@@ -129,7 +157,13 @@ const Sidebar: React.FC = () => {
         </div>
 
         <ul>
-          {showReportMenu ? renderReportMenuItems() : renderMenuItems()}
+          {
+            showReportMenu
+              ? renderReportMenuItems()
+              : showExternalMenu
+                ? renderExternalMenuItems()
+                : renderMenuItems()
+          }
         </ul>
       </div>
 
