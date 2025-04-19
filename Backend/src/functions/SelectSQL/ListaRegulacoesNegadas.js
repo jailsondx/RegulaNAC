@@ -12,7 +12,7 @@ async function ListaRegulacoesNegadas() {
         const [rows] = await connection.query(`
             SELECT 
                 r.id_regulacao, 
-                r.nome_regulador_nac, 
+                r.nome_responsavel_nac, 
                 r.num_prontuario, 
                 r.nome_paciente, 
                 r.num_regulacao, 

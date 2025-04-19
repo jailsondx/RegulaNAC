@@ -219,7 +219,7 @@ const Relatorios: React.FC = () => {
           <label>Regulador NAC:</label>
           <input
             type="text"
-            name="nome_regulador_nac"
+            name="nome_responsavel_nac"
             onChange={handleChange}
             className="form-input"
             placeholder="Digite o regulador NAC"

@@ -9,7 +9,7 @@ import { Snackbar, Alert } from '@mui/material';
 import { RegulacaoData } from '../../../interfaces/Regulacao';
 
 /*IMPORT COMPONENTS*/
-import TabelaRegulacoes from '../Tabela de Regulacoes/TabelaRegulacoes';
+import TabelaRegulacoes from '../Tabela de Regulacoes/Internas/TabelaRegulacoesInternas';
 import Filtro from '../../Filtro/Filtro';
 
 /*IMPORT FUNCTIONS*/

@@ -7,7 +7,7 @@ import { Snackbar, Alert } from '@mui/material';
 /*IMPORT COMPONENTS*/
 import Modal from '../Modal/Modal';
 import Desfecho from '../Desfecho/Desfecho';
-import TabelaRegulacoes from '../Regulacoes/Tabela de Regulacoes/TabelaRegulacoes.tsx';
+import TabelaRegulacoes from '../Regulacoes/Tabela de Regulacoes/Internas/TabelaRegulacoesInternas.tsx';
 
 /*IMPORT INTERFACES*/
 import { RegulacaoAprovadaData } from '../../interfaces/Regulacao.ts';

@@ -52,9 +52,9 @@ async function relatorioRegulacao(FormData) {
         }
 
         // Filtra pelo nome do regulador NAC (usando LIKE para busca parcial)
-        if (FormData.nome_regulador_nac) {
-            query += " AND r.nome_regulador_nac LIKE ?";
-            queryParams.push(`%${FormData.nome_regulador_nac}%`);
+        if (FormData.nome_responsavel_nac) {
+            query += " AND r.nome_responsavel_nac LIKE ?";
+            queryParams.push(`%${FormData.nome_responsavel_nac}%`);
         }
 
         // Filtra pelo nome do regulador médico (usando LIKE para busca parcial)

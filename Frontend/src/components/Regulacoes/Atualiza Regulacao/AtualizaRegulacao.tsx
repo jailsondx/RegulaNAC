@@ -201,7 +201,7 @@ const AtualizaRegulacao: React.FC = () => {
         ...formData,
         id_user: userData?.id_user, // ID do usuário logado
         id_regulacao: dadosPaciente?.id_regulacao, // ID da regulação a ser atualizada
-        nome_regulador_nac: userData?.nome, // Nome do regulador NAC
+        nome_responsavel_nac: userData?.nome, // Nome do regulador NAC
         num_prontuario: numProntuario, // Número do prontuário
         num_regulacao: dadosPaciente?.num_regulacao, // Número da regulação
       };

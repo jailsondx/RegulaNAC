@@ -3,10 +3,10 @@ import { FcOk, FcLeave } from 'react-icons/fc';
 
 
 /*IMPORT INTERFACES*/
-import { Vinculada } from '../../../../../interfaces/RegulacaoExtena';
+import { RegulacaoObstetrica } from '../../../../interfaces/RegulacaoExtena';
 
 interface Props {
-    formData: Vinculada;
+    formData: RegulacaoObstetrica;
     handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     handleVerificaProntuarioAutoComplete: (pront: number) => void;
     handleAtualizarRegulacao: () => void;

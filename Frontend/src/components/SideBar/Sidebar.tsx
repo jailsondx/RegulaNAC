@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
   TiExportOutline, TiBusinessCard, TiClipboard, TiThumbsUp, TiThumbsDown,
-  TiHeartHalfOutline, TiHomeOutline, TiUpload, TiArrowBack
+  TiHeartHalfOutline, TiHomeOutline, TiUpload, TiArrowBack, TiContacts 
 } from "react-icons/ti";
 
 import { getUserData } from '../../functions/storageUtils';
@@ -52,7 +52,8 @@ const Sidebar: React.FC = () => {
     if (tipo === 'MEDICO') {
       return (
         <>
-          <li><Link to="/RegulacaoMedica"><TiHeartHalfOutline className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulação Médica</label></Link></li>
+          <li><Link to="/RegulacaoMedicaInterna"><TiHeartHalfOutline className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulação Médica Interna</label></Link></li>
+          <li><Link to="/RegulacaoMedicaExterna"><TiHeartHalfOutline className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulação Médica Externa</label></Link></li>
           <li><Link to="/RegulacoesAprovadas"><TiThumbsUp className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações Aprovadas</label></Link></li>
           <hr />
           <li><Link to="/Login"><TiExportOutline className='Icon-Menu-Item' /><label className='textMenu-Item'>Sair</label></Link></li>
@@ -69,7 +70,7 @@ const Sidebar: React.FC = () => {
               setShowExternalMenu(true);
               setShowReportMenu(false);
             }}>
-              <TiUpload className='Icon-Menu-Item' /><label className='textMenu-Item'>Solicitações de Origem Externa</label>
+              <TiContacts className='Icon-Menu-Item' /><label className='textMenu-Item'>Solicitações de Origem Externa</label>
             </a>
           </li>
           <li><Link to="/ListaRegulacoes"><TiClipboard className='Icon-Menu-Item' /><label className='textMenu-Item'>Lista de Regulações</label></Link></li>
@@ -94,7 +95,7 @@ const Sidebar: React.FC = () => {
               setShowExternalMenu(true);
               setShowReportMenu(false);
             }}>
-              <TiUpload className='Icon-Menu-Item' /><label className='textMenu-Item'>Solicitações de Origem Externa</label>
+              <TiContacts className='Icon-Menu-Item' /><label className='textMenu-Item'>Solicitações de Origem Externa</label>
             </a>
           </li>
           <li><Link to="/ListaRegulacoes"><TiClipboard className='Icon-Menu-Item' /><label className='textMenu-Item'>Lista de Regulações</label></Link></li>
@@ -112,7 +113,8 @@ const Sidebar: React.FC = () => {
           <hr />
           <li><Link to="/ListaRegulacoes24"><TiClipboard className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações +24hrs</label></Link></li>
           <li><Link to="/Finalizadas"><TiClipboard className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações Finalizadas</label></Link></li>
-          <li><Link to="/RegulacaoMedica"><TiHeartHalfOutline className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulação Médica</label></Link></li>
+          <li><Link to="/RegulacaoMedicaInterna"><TiHeartHalfOutline className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulação Médica Interna</label></Link></li>
+          <li><Link to="/RegulacaoMedicaExterna"><TiHeartHalfOutline className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulação Médica Externa</label></Link></li>
           <hr />
           <li><Link to="/Login"><TiExportOutline className='Icon-Menu-Item' /><label className='textMenu-Item'>Sair</label></Link></li>
         </>

@@ -354,7 +354,7 @@ input:disabled {
   width: 35dvw;
   min-width: 300px;
   max-width: 600px;
-  height: 40dvh;
+  height: auto;
   min-height: 350px;
   padding: 20px;
   padding-right: 40px;
@@ -365,7 +365,7 @@ input:disabled {
 }
 
  /* Form Section */
- .Form-NovaRegulacao {
+ .Form-NovaRegulacao{
   display: flex;
   flex-direction: column;
   height: 45dvh;

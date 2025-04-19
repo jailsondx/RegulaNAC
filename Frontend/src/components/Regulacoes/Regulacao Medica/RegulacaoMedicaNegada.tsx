@@ -129,6 +129,7 @@ const NovaRegulacaoMedicoNegada: React.FC<Props> = ({ dadosPaciente, onClose, sh
           <div className="modal-input-line">
             <label>Justificativa de Negação:</label>
             <textarea
+              name="justificativa_neg"
               className="modal-input-textarea"
               value={formData.justificativa_neg}
               onChange={handleChange}

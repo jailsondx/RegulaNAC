@@ -10,7 +10,7 @@ import { RegulacaoData } from '../../../interfaces/Regulacao';
 
 /*IMPORT COMPONENTS*/
 import Filtro from '../../Filtro/Filtro';
-import TabelaRegulacoes from '../Tabela de Regulacoes/TabelaRegulacoes';
+import TabelaRegulacoes from '../Tabela de Regulacoes/Internas/TabelaRegulacoesInternas';
 
 /*IMPORT FUNCTIONS*/
 

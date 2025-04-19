@@ -1,12 +1,12 @@
 import React from 'react';
 import { LuArrowDownWideNarrow, LuArrowUpNarrowWide } from "react-icons/lu";
 import { FcFullTrash, FcInspection, FcExpired, FcApproval, FcBadDecision, FcNews } from "react-icons/fc";
-import TimeTracker from "../../TimeTracker/TimeTracker.tsx";
-import { RegulacaoData, RegulacaoAprovadaData } from '../../../interfaces/Regulacao.ts';
+import TimeTracker from "../../../TimeTracker/TimeTracker.tsx";
+import { RegulacaoData, RegulacaoAprovadaData } from '../../../../interfaces/Regulacao.ts';
 import { useNavigate } from 'react-router-dom';
 
 /*IMPORT FUNCTION*/
-import { removerText } from "../../../functions/RemoveText.ts";
+import { removerText } from "../../../../functions/RemoveText.ts";
 
 interface TabelaRegulacoesProps {
   currentRegulacoes: RegulacaoData[];
@@ -22,7 +22,7 @@ interface TabelaRegulacoesProps {
   IconOpcoes: 'normais' | 'expiradas' | 'medico' | 'desfecho';
 }
 
-const TabelaRegulacoes: React.FC<TabelaRegulacoesProps> = ({
+const TabelaRegulacoesInternas: React.FC<TabelaRegulacoesProps> = ({
   currentRegulacoes,
   selectedColumn,
   sortConfig,
@@ -190,4 +190,4 @@ const TabelaRegulacoes: React.FC<TabelaRegulacoesProps> = ({
   );
 };
 
-export default TabelaRegulacoes;
+export default TabelaRegulacoesInternas;

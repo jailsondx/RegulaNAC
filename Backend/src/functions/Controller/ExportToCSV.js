@@ -25,7 +25,7 @@ async function exportarRelatorioCSVPaciente(dados) {
         const csvWriter = createCsvWriter({
             path: filePath,
             header: [
-                { id: 'nome_regulador_nac', title: 'Regulador NAC' },
+                { id: 'nome_responsavel_nac', title: 'Regulador NAC' },
                 { id: 'nome_paciente', title: 'Nome do Paciente' },
                 { id: 'num_prontuario', title: 'Número Prontuário' },
                 { id: 'num_regulacao', title: 'Número Regulação' },

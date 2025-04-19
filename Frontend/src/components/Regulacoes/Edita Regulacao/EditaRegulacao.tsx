@@ -192,7 +192,7 @@ const EditaRegulacao: React.FC = () => {
         data_nascimento: formData.data_nascimento.split("T")[0], //Converte a data para o formato yyyy-mm-dd
         id_user: userData?.id_user, // ID do usuário logado
         id_regulacao: idRegulacao, // ID da regulação a ser atualizada
-        nome_regulador_nac: userData?.nome, // Nome do regulador NAC
+        nome_responsavel_nac: userData?.nome, // Nome do regulador NAC
       };
 
       const response = await axios.put(`${NODE_URL}/api/internal/put/EditaRegulacao`, dataToSubmit);

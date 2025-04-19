@@ -8,7 +8,7 @@ interface UnidadeOption {
 import { NovaRegulacaoData } from '../../../interfaces/Regulacao';
 
 interface Props {
-    formData: NovaRegulacaoData;
+  formData: NovaRegulacaoData;
   handleChange: (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
   unidadesOrigem: UnidadeOption[];
   unidadesDestino: UnidadeOption[];

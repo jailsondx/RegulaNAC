@@ -60,7 +60,7 @@ async function AtualizaRegulacao(FormData) {
                 un_origem = ?, 
                 un_destino = ?, 
                 data_hora_solicitacao_02 = ?, 
-                nome_regulador_nac = ?, 
+                nome_responsavel_nac = ?, 
                 qtd_solicitacoes = ?, 
                 status_regulacao = ?
             WHERE id_regulacao = ?`, [
@@ -68,7 +68,7 @@ async function AtualizaRegulacao(FormData) {
                 FormData.un_origem, 
                 FormData.un_destino, 
                 FormData.data_hora_solicitacao_02,
-                FormData.nome_regulador_nac,
+                FormData.nome_responsavel_nac,
                 qtdSolicitacoes + 1, // Incrementa a quantidade de solicitações
                 novoStatus,
                 FormData.id_regulacao,

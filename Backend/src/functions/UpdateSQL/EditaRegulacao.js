@@ -48,7 +48,7 @@ async function EditaRegulacao(FormData) {
                 num_idade = ?, 
                 num_regulacao = ?, 
                 prioridade = ?, 
-                nome_regulador_nac = ?, 
+                nome_responsavel_nac = ?, 
                 nome_regulador_medico = ? 
             WHERE id_regulacao = ?`, 
             [
@@ -59,7 +59,7 @@ async function EditaRegulacao(FormData) {
                 FormData.num_idade,
                 FormData.num_regulacao,
                 FormData.prioridade,
-                FormData.nome_regulador_nac,
+                FormData.nome_responsavel_nac,
                 FormData.nome_regulador_medico,
                 FormData.id_regulacao
             ]);

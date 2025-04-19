@@ -9,7 +9,7 @@ interface Props {
     handleChange: (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
     handleSelectChange_medico: (event: React.ChangeEvent<HTMLSelectElement>) => void;
     medicos: string[];
-    isValueOrigemPED: boolean;
+    isValueDestino: boolean;
     iconStatusRegOk: boolean;
     iconStatusRegDeny: boolean;
 }
@@ -19,7 +19,7 @@ export const Passo3: React.FC<Props> = ({
     handleChange,
     handleSelectChange_medico,
     medicos,
-    isValueOrigemPED,
+    isValueDestino,
     iconStatusRegOk,
     iconStatusRegDeny
 }) => {
@@ -63,8 +63,8 @@ export const Passo3: React.FC<Props> = ({
                         name="prioridade"
                         value={formData.prioridade ?? ''}
                         onChange={handleChange}
-                        className={isValueOrigemPED ? 'requireBorder' : ''}
-                        required={isValueOrigemPED}
+                        className={isValueDestino ? 'requireBorder' : ''}
+                        required={isValueDestino}
                     />
                 </div>
             </div>

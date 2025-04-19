@@ -5,9 +5,9 @@ import { BrowserRouter, Route, Routes, Outlet } from 'react-router-dom';
 import PrivateRoute from './privateRoutes';
 import Sidebar from '../components/SideBar/Sidebar';
 import Home from '../components/home/home';
-import NovaRegulacao from '../components/Regulacoes/Nova Regulacao/NovaRegulacao';
 import ListaRegulacoes from '../components/Regulacoes/ListaRegulacoes/ListaRegulacoes';
-import RegulacaMedica from '../components/Regulacoes/Regulacao Medica/RegulacaoMedica';
+import RegulacaoMedicaInterna from '../components/Regulacoes/Regulacao Medica/RegulacaoMedicaInterna';
+import RegulacaoMedicaExterna from '../components/Regulacoes/Regulacao Medica/RegulacaoMedicaExterna';
 import AtualizaRegulacao from '../components/Regulacoes/Atualiza Regulacao/AtualizaRegulacao';
 import Login from '../components/Usuarios/Login/Login';
 import PageNotFound from './page404';
@@ -22,6 +22,7 @@ import EditaRegulacao from '../components/Regulacoes/Edita Regulacao/EditaRegula
 import ListaRegulacoesNegadas from '../components/Regulacoes/ListaRegulacoes/ListaRegulacoesNegadas';
 import UpdateSenha from '../components/Usuarios/Update Senha/UpdateSenha';
 import Page_Obstetrica from '../Pages/Nova Regulação/Regulação Externa/Page_Obstetrica';
+import Page_NovaRegulacao from '../Pages/Nova Regulação/Regulaçao Interna/Page_NovaRegulacao';
 
 // Layout para rotas protegidas com o Sidebar
 const ProtectedLayout: React.FC = () => {
@@ -58,7 +59,7 @@ const Rotas: React.FC = () => {
         >
           {/* Essas são todas as páginas protegidas */}
           <Route path="home" element={<Home title="Bem Vindo ao RegulaNAC" />} />
-          <Route path="NovaRegulacao" element={<NovaRegulacao />} />
+          <Route path="NovaRegulacao" element={<Page_NovaRegulacao />} />
           <Route path="AtualizaRegulacao" element={<AtualizaRegulacao />} />
           <Route path="EditaRegulacao" element={<EditaRegulacao />} />
 
@@ -67,7 +68,8 @@ const Rotas: React.FC = () => {
           <Route path="ListaRegulacoes" element={<ListaRegulacoes />} />
           <Route path="ListaRegulacoes24" element={<ListaRegulacoes24hrs />} />
 
-          <Route path="RegulacaoMedica" element={<RegulacaMedica />} />
+          <Route path="RegulacaoMedicaInterna" element={<RegulacaoMedicaInterna />} />
+          <Route path="RegulacaoMedicaExterna" element={<RegulacaoMedicaExterna />} />
           <Route path="RegulacoesAprovadas" element={<RegulacoesAprovadas />} />
           <Route path="RegulacoesNegadas" element={<ListaRegulacoesNegadas />} />
 

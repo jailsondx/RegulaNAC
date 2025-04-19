@@ -12,7 +12,7 @@ export interface NovaRegulacaoData {
   data_hora_solicitacao_01: string;
   data_hora_solicitacao_02: string;
   qtd_solicitacoes: number | null;
-  nome_regulador_nac: string;
+  nome_responsavel_nac: string;
   num_regulacao: number | null;
   nome_regulador_medico: string;
   data_hora_acionamento_medico: string;

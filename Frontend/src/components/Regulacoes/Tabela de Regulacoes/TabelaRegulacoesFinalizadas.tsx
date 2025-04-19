@@ -21,10 +21,10 @@ const TabelaRegulacoesFinalizadas: React.FC<TabelaRegulacoesProps> = ({
     <table className='Table-Regulacoes'>
       <thead>
         <tr>
-          <th className={`col-NomeRegNac clicked${selectedColumn === "nome_regulador_nac" ? " selected" : ""}`} onClick={() => handleSort("nome_regulador_nac")}>
+          <th className={`col-NomeRegNac clicked${selectedColumn === "nome_responsavel_nac" ? " selected" : ""}`} onClick={() => handleSort("nome_responsavel_nac")}>
             <span>
               <label>Regulador de Cadastro</label>
-              <label>{sortConfig?.key === "nome_regulador_nac" ? (sortConfig.direction === "asc" ? <LuArrowUpNarrowWide /> : <LuArrowDownWideNarrow />) : ""}</label>
+              <label>{sortConfig?.key === "nome_responsavel_nac" ? (sortConfig.direction === "asc" ? <LuArrowUpNarrowWide /> : <LuArrowDownWideNarrow />) : ""}</label>
             </span>
           </th>
 
@@ -89,7 +89,7 @@ const TabelaRegulacoesFinalizadas: React.FC<TabelaRegulacoesProps> = ({
       <tbody>
         {currentRegulacoes.map(regulacao => (
           <tr key={regulacao.id_regulacao}>
-            <td>{regulacao.nome_regulador_nac}</td>
+            <td>{regulacao.nome_responsavel_nac}</td>
             <td>{regulacao.regulador_final}</td>
             <td>{regulacao.nome_regulador_medico}</td>
             <td>{regulacao.num_prontuario}</td>

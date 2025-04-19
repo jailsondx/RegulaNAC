@@ -47,7 +47,7 @@ const initialFormData: NovaRegulacaoData = {
   data_hora_solicitacao_01: '',
   data_hora_solicitacao_02: '',
   qtd_solicitacoes: 1,
-  nome_regulador_nac: '',
+  nome_responsavel_nac: '',
   num_regulacao: null,
   nome_regulador_medico: '',
   data_hora_acionamento_medico: '',
@@ -75,8 +75,8 @@ const NovaRegulacao: React.FC = () => {
   //VERIFICAÇÃO DE UN ORIGEM
   //const requiredUnidadesOBS = ['COI', 'COII', 'COII']; // ou só 'UTI', 'COI' se quiser verificar por "começa com"
   //const isValueOrigemOBS = requiredUnidadesOBS.includes(formData.un_origem);
-  const requiredUnidadesPED = ['UTI I', 'UTI II', 'UTI III', 'UTI IV']; // ou só 'UTI', 'COI' se quiser verificar por "começa com"
-  const isValueOrigemPED = requiredUnidadesPED.includes(formData.un_origem);
+  const requiredUnidades = ['UTI I', 'UTI II', 'UTI III', 'UTI IV']; // ou só 'UTI', 'COI' se quiser verificar por "começa com"
+  const isValueDestino = requiredUnidades.includes(formData.un_destino);
 
 
   /*SNACKBAR*/
@@ -178,7 +178,7 @@ const NovaRegulacao: React.FC = () => {
       case !formData.data_hora_acionamento_medico.trim():
         invalidField = 'Date e Hora do Acionamendo Médico é obrigatória.';
         break;
-      case isValueOrigemPED && !(formData.prioridade?.trim() || ''):
+      case isValueDestino && !(formData.prioridade?.trim() || ''):
         invalidField = 'Prioridade é obrigatório.';
         break;
       default:
@@ -248,7 +248,7 @@ const NovaRegulacao: React.FC = () => {
       const dataToSubmit = {
         ...formData,
         id_user: userData?.id_user, // Use o operador de encadeamento opcional para evitar erros se `userData` for `null`
-        nome_regulador_nac: userData?.nome,
+        nome_responsavel_nac: userData?.nome,
         data_hora_solicitacao_02: formData.data_hora_solicitacao_01
       };
 
@@ -519,7 +519,7 @@ const NovaRegulacao: React.FC = () => {
                 handleChange={handleChange}
                 handleSelectChange_medico={handleSelectChange_medico}
                 medicos={medicos}
-                isValueOrigemPED={isValueOrigemPED}
+                isValueDestino={isValueDestino}
                 iconStatusRegOk={iconStatusRegOk}
                 iconStatusRegDeny={iconStatusRegDeny}
               />

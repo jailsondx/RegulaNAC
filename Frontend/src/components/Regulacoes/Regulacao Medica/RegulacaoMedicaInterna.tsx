@@ -12,7 +12,7 @@ import { DadosPacienteData } from "../../../interfaces/DadosPaciente.ts";
 import NovaRegulacaoMedicoAprovada from "./RegulacaoMedicaAprovada.tsx";
 import NovaRegulacaoMedicoNegada from "./RegulacaoMedicaNegada.tsx";
 import Filtro from '../../Filtro/Filtro.tsx';
-import TabelaRegulacoes from '../Tabela de Regulacoes/TabelaRegulacoes.tsx';
+import TabelaRegulacoes from '../Tabela de Regulacoes/Internas/TabelaRegulacoesInternas.tsx';
 import Modal from "../../Modal/Modal.tsx";
 
 /*IMPORT FUNCTIONS*/
@@ -26,7 +26,7 @@ import "./RegulacaoMedica.css";
 /*IMPORT VARIAVEIS DE AMBIENTE*/
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
 
-const RegulacaoMedica: React.FC = () => {
+const RegulacaoMedicaInterna: React.FC = () => {
   const [serverTime, setServerTime] = useState("");
   const [regulacoes, setRegulacoes] = useState<RegulacaoData[]>([]);
   const [showModalApproved, setShowModalApproved] = useState(false);
@@ -249,7 +249,7 @@ const RegulacaoMedica: React.FC = () => {
 
           <div className="Header-ListaRegulaçoes">
             <label className="Title-Tabela">
-              Regulações Pendentes <LuFilter className='Icon' onClick={() => setShowFilters(!showFilters)} title='Filtros' />
+              Regulações Internas Pendentes <LuFilter className='Icon' onClick={() => setShowFilters(!showFilters)} title='Filtros' />
             </label>
           </div>
 
@@ -360,4 +360,4 @@ const RegulacaoMedica: React.FC = () => {
   );
 };
 
-export default RegulacaoMedica;
+export default RegulacaoMedicaInterna;
