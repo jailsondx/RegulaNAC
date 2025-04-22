@@ -2,7 +2,7 @@ import { FaSearch } from 'react-icons/fa';
 import { FcOk, FcLeave } from 'react-icons/fc';
 
 /*IMPORT INTERFACES*/
-import { NovaRegulacaoData } from '../../../interfaces/Regulacao';
+import { NovaRegulacaoData } from '../../../../interfaces/Regulacao';
 
 interface Props {
     formData: NovaRegulacaoData;

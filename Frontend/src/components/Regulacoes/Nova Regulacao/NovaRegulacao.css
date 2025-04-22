@@ -55,14 +55,6 @@
     margin-bottom: 20px;
   }
 
-  .line-StepContent-sub{
-    width: 100%;
-  }
-
-  .line-StepContent-sub input{
-    width: 94%;
-  }
-
   .line-StepContent input[type='datetime-local']{
     width: 50%;
   }
@@ -76,6 +68,15 @@
     width: 100%;
     justify-content: left;
     gap: 10%;
+  }
+
+    .line-StepContent-sub{
+    width: 100%;
+  }
+
+  .line-StepContent-sub input{
+    width: 94%;
+    max-width: 250px;
   }
 
   .div-VerificarProntuario{

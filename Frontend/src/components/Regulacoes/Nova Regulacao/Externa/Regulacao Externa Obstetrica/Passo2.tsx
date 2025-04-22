@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { FcOk, FcLeave } from 'react-icons/fc';
 
 /*IMPORT INTERFACES*/
-import { NovaRegulacaoExterna } from '../../../../interfaces/RegulacaoExtena';
+import { NovaRegulacaoExterna } from '../../../../../interfaces/RegulacaoExtena';
 
 interface Props {
   formData: NovaRegulacaoExterna;
@@ -104,7 +104,8 @@ export const Passo2: React.FC<Props> = ({
           </span>
         </div>
 
-        <div className="line-StepContent-sub">
+        {formData.un_origem === 'VINCULADAS' && (
+          <div className="line-StepContent-sub">
           <label>Data e Hora de Chegada:</label>
           <input
             type="datetime-local"
@@ -114,6 +115,8 @@ export const Passo2: React.FC<Props> = ({
             required
           />
         </div>
+        )}
+
       </div>
 
     </div>

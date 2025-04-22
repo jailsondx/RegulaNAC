@@ -10,13 +10,17 @@ import { Passo2 } from './Passo2';
 import { Passo3 } from './Passo3';
 
 /*IMPORT INTERFACES*/
-import { UserData } from '../../../../interfaces/UserData';
-import { NovaRegulacaoExterna } from '../../../../interfaces/RegulacaoExtena';
+import { UserData } from '../../../../../interfaces/UserData';
+import { NovaRegulacaoExterna } from '../../../../../interfaces/RegulacaoExtena';
 
 /*IMPORT FUNCTIONS*/
-import { calcularIdade } from '../../../../functions/CalcularIdade';
+import { calcularIdade } from '../../../../../functions/CalcularIdade';
 import { ProgressBar } from './ProgressBar';
-import { getUserData } from '../../../../functions/storageUtils';
+import { getUserData } from '../../../../../functions/storageUtils';
+import { getDay, getMonth, getYear } from '../../../../../functions/DateTimes';
+
+/*CSS*/
+import '../../NovaRegulacao.css';
 
 
 /*IMPORT VARIAVEIS DE AMBIENTE*/
@@ -46,6 +50,7 @@ const RegulacaoExObstetrica: React.FC = () => {
     //const userUsername = userData?.login || ''; // Nome do usuário
     //const userTipo = userData?.tipo || ''; // Tipo de usuário
     const [formData, setFormData] = useState<NovaRegulacaoExterna>(initialFormData);
+    const [file, setFile] = useState<File | null>(null);
     const [medicos, setMedicos] = useState<string[]>([]); // Lista de médicos da API
     const navigate = useNavigate();
     const [iconStatusProntOk, setIconStatusProntOk] = useState<boolean>(false);
@@ -96,23 +101,54 @@ const RegulacaoExObstetrica: React.FC = () => {
     const validateForm = (): boolean => {
         let invalidField: string | null = null;
 
-        // Identificar o campo inválido
-        switch (true) {
-            case !formData.nome_paciente.trim():
-                invalidField = 'O nome do paciente é obrigatório.';
-                break;
-            case !formData.num_prontuario:
-                invalidField = 'Prontuário é obrigatório.';
-                break;
-            case formData.num_idade === null:
-                invalidField = 'Idade é obrigatória.';
-                break;
-            case !formData.num_regulacao:
-                invalidField = 'O número da regulação é obrigatório.';
-                break;
-            default:
-                break;
+        if(formData.un_origem === 'CRESUS') {
+            // Identificar o campo inválido
+            switch (true) {
+                case !formData.nome_paciente.trim():
+                    invalidField = 'O nome do paciente é obrigatório.';
+                    break;
+                case !formData.num_prontuario:
+                    invalidField = 'Prontuário é obrigatório.';
+                    break;
+                case formData.num_idade === null:
+                    invalidField = 'Idade é obrigatória.';
+                    break;
+                case !formData.nome_regulador_medico:
+                    invalidField = 'O nome do médico é obrigatório.';
+                    break;
+                case !formData.data_hora_acionamento_medico:
+                    invalidField = 'O acionamento médico é obrigatório.';
+                    break;
+                case !formData.num_regulacao:
+                    invalidField = 'O número da regulação é obrigatório.';
+                    break;
+                default:
+                    break;
+            }
+        } else if(formData.un_origem === 'VINCULADAS'){
+            // Identificar o campo inválido
+            switch (true) {
+                case !formData.nome_paciente.trim():
+                    invalidField = 'O nome do paciente é obrigatório.';
+                    break;
+                case !formData.num_prontuario:
+                    invalidField = 'Prontuário é obrigatório.';
+                    break;
+                case formData.num_idade === null:
+                    invalidField = 'Idade é obrigatória.';
+                    break;
+                case !formData.data_hora_chegada:
+                    invalidField = 'Data e Hora da Chegada da paciente é obrigatório.';
+                    break;
+                case !formData.num_regulacao:
+                    invalidField = 'O número da regulação é obrigatório.';
+                    break;
+                default:
+                    break;
+            }
         }
+
+       
 
         // Exibir erro ou retornar sucesso
         if (invalidField) {
@@ -120,6 +156,51 @@ const RegulacaoExObstetrica: React.FC = () => {
             return false;
         }
         return true;
+    };
+
+    //Handle para capturar o arquivo PDF
+    const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files.length > 0) {
+          setFile(e.target.files[0]);
+        }
+    };
+    
+    const uploadFile = async (datetime: string, numRegulacao: number) => {
+        const year = getYear(datetime);
+        const month = getMonth(datetime);
+        const day = getDay(datetime);
+    
+        const formData = new FormData();
+        formData.append('year', year);
+        formData.append('month', month);
+        formData.append('day', day);
+        formData.append('file', file!);
+        formData.append('num_regulacao', numRegulacao.toString()); // Adicionando num_regulacao no corpo da requisição
+    
+        console.log('UPLOAD', formData);
+    
+        try {
+          const response = await axios.post(`${NODE_URL}/api/internal/upload/uploadPDF`, formData, {
+            params: { numRegulacao }, // Passando numRegulacao através de params
+            headers: { 'Content-Type': 'multipart/form-data' },
+          });
+    
+          // Resposta de sucesso
+          showSnackbar(response.data.message || 'Erro inesperado:', 'error');
+        } catch (error: unknown) {
+          if (error instanceof AxiosError) {
+            console.error('Erro ao enviar o arquivo:', error);
+            showSnackbar('Erro ao enviar o arquivo:', 'error');
+          } else if (error instanceof Error) {
+            // Se o erro for do tipo genérico `Error`, trate-o também
+            console.error('Erro desconhecido:', error.message);
+            showSnackbar('Erro desconhecido:', 'error');
+          } else {
+            // Caso o erro seja de um tipo inesperado
+            console.error('Erro inesperado:', error);
+            showSnackbar('Erro inesperado:', 'error');
+          }
+        }
     };
 
     const handleSubmit = async (e: FormEvent): Promise<void> => {
@@ -133,11 +214,23 @@ const RegulacaoExObstetrica: React.FC = () => {
                 ...formData,
                 id_user: userData?.id_user, // Use o operador de encadeamento opcional para evitar erros se `userData` for `null`
                 nome_responsavel_nac: userData?.nome,
-                data_hora_solicitacao_02: formData.data_hora_solicitacao_01
+                data_hora_solicitacao_01: formData.data_hora_acionamento_medico,
+                data_hora_solicitacao_02: formData.data_hora_acionamento_medico
             };
 
             // Envia o formulário primeiro
             const response = await axios.post(`${NODE_URL}/api/internal/post/NovaRegulacao/Externa/ObstetricaVinculada`, dataToSubmit);
+
+            // Verifica se num_regulacao é válido
+            if (dataToSubmit.num_regulacao != null) {
+                // Verifica se há arquivo e, caso haja, faz o upload
+                if (dataToSubmit.un_origem === 'CRESUS' && file) {
+                await uploadFile(dataToSubmit.data_hora_solicitacao_02, dataToSubmit.num_regulacao);
+                }
+            } else {
+                console.error('Número de regulação inválido.');
+                // Opcional: mostrar uma mensagem para o usuário
+            }
 
 
             // Se tudo ocorrer bem, exibe a resposta
@@ -412,6 +505,7 @@ const RegulacaoExObstetrica: React.FC = () => {
                         {currentStep === 3 && (
                             <Passo3
                                 formData={formData}
+                                handleFileChange={handleFileChange}
                             />
                         )}
                     </div>

@@ -3,7 +3,7 @@ import { FcOk, FcLeave } from 'react-icons/fc';
 
 
 /*IMPORT INTERFACES*/
-import { RegulacaoObstetrica } from '../../../../interfaces/RegulacaoExtena';
+import { RegulacaoObstetrica } from '../../../../../interfaces/RegulacaoExtena';
 
 interface Props {
     formData: RegulacaoObstetrica;

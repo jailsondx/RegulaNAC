@@ -65,6 +65,11 @@ const Sidebar: React.FC = () => {
       return (
         <>
           <li><Link to="/NovaRegulacao"><TiBusinessCard className='Icon-Menu-Item' /><label className='textMenu-Item'>Nova Regulação</label></Link></li>
+          <li><Link to="/ListaRegulacoes"><TiClipboard className='Icon-Menu-Item' /><label className='textMenu-Item'>Lista de Regulações</label></Link></li>
+          <li><Link to="/RegulacoesAprovadas"><TiThumbsUp className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações Aprovadas</label></Link></li>
+          <li><Link to="/RegulacoesNegadas"><TiThumbsDown className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações Negadas</label></Link></li>
+          <li><Link to="/Desfechos"><TiHomeOutline className='Icon-Menu-Item' /><label className='textMenu-Item'>Gerar Desfecho</label></Link></li>
+          <hr />
           <li>
             <a onClick={() => {
               setShowExternalMenu(true);
@@ -73,10 +78,6 @@ const Sidebar: React.FC = () => {
               <TiContacts className='Icon-Menu-Item' /><label className='textMenu-Item'>Solicitações de Origem Externa</label>
             </a>
           </li>
-          <li><Link to="/ListaRegulacoes"><TiClipboard className='Icon-Menu-Item' /><label className='textMenu-Item'>Lista de Regulações</label></Link></li>
-          <li><Link to="/RegulacoesAprovadas"><TiThumbsUp className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações Aprovadas</label></Link></li>
-          <li><Link to="/RegulacoesNegadas"><TiThumbsDown className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações Negadas</label></Link></li>
-          <li><Link to="/Desfechos"><TiHomeOutline className='Icon-Menu-Item' /><label className='textMenu-Item'>Gerar Desfecho</label></Link></li>
           <hr />
           <li><Link to="/ListaRegulacoes24"><TiClipboard className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações +24hrs</label></Link></li>
           <li><Link to="/Finalizadas"><TiClipboard className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações Finalizadas</label></Link></li>
@@ -90,14 +91,6 @@ const Sidebar: React.FC = () => {
       return (
         <>
           <li><Link to="/NovaRegulacao"><TiBusinessCard className='Icon-Menu-Item' /><label className='textMenu-Item'>Nova Regulação</label></Link></li>
-          <li>
-            <a onClick={() => {
-              setShowExternalMenu(true);
-              setShowReportMenu(false);
-            }}>
-              <TiContacts className='Icon-Menu-Item' /><label className='textMenu-Item'>Solicitações de Origem Externa</label>
-            </a>
-          </li>
           <li><Link to="/ListaRegulacoes"><TiClipboard className='Icon-Menu-Item' /><label className='textMenu-Item'>Lista de Regulações</label></Link></li>
           <li><Link to="/RegulacoesAprovadas"><TiThumbsUp className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações Aprovadas</label></Link></li>
           <li><Link to="/RegulacoesNegadas"><TiThumbsDown className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações Negadas</label></Link></li>
@@ -108,6 +101,15 @@ const Sidebar: React.FC = () => {
               setShowExternalMenu(false);
             }}>
               <TiUpload className='Icon-Menu-Item' /><label className='textMenu-Item'>Relatórios</label>
+            </a>
+          </li>
+          <hr />
+          <li>
+            <a onClick={() => {
+              setShowExternalMenu(true);
+              setShowReportMenu(false);
+            }}>
+              <TiContacts className='Icon-Menu-Item' /><label className='textMenu-Item'>Solicitações de Origem Externa</label>
             </a>
           </li>
           <hr />

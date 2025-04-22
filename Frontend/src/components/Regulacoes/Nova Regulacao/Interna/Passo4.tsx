@@ -1,8 +1,8 @@
 import React from 'react';
-import { formatDateTimeToPtBr } from '../../../functions/DateTimes';
+import { formatDateTimeToPtBr } from '../../../../functions/DateTimes';
 
 /*IMPORT INTERFACES*/
-import { NovaRegulacaoData } from '../../../interfaces/Regulacao';
+import { NovaRegulacaoData } from '../../../../interfaces/Regulacao';
 
 interface Props {
     formData: NovaRegulacaoData;

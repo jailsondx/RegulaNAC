@@ -1,5 +1,5 @@
 import React from 'react';
-import RegulacaoExObstetrica from '../../../components/Regulacoes/Regulacao Externa/Regulacao Externa Obstetrica/RegulacaoExObstetrica';
+import RegulacaoExObstetrica from '../../../components/Regulacoes/Nova Regulacao/Externa/Regulacao Externa Obstetrica/RegulacaoExObstetrica';
 
 
 const Page_Obstetrica: React.FC = () => {

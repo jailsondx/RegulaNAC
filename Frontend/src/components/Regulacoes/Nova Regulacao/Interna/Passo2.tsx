@@ -5,7 +5,7 @@ interface UnidadeOption {
   label: string;
 }
 /*IMPORT INTERFACES*/
-import { NovaRegulacaoData } from '../../../interfaces/Regulacao';
+import { NovaRegulacaoData } from '../../../../interfaces/Regulacao';
 
 interface Props {
   formData: NovaRegulacaoData;

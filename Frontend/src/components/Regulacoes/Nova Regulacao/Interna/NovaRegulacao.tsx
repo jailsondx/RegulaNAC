@@ -5,9 +5,9 @@ import { useNavigate } from 'react-router-dom';
 import { Snackbar, Alert } from '@mui/material';
 
 /*IMPORT INTERFACES*/
-import { NovaRegulacaoData } from '../../../interfaces/Regulacao';
-import { UserData } from '../../../interfaces/UserData';
-import { UnidadeData } from '../../../interfaces/Unidade';
+import { NovaRegulacaoData } from '../../../../interfaces/Regulacao';
+import { UserData } from '../../../../interfaces/UserData';
+import { UnidadeData } from '../../../../interfaces/Unidade';
 
 /*IMPORT COMPONENTS*/
 import { ProgressBar } from './ProgressBar';
@@ -17,19 +17,19 @@ import { Passo3 } from './Passo3';
 import { Passo4 } from './Passo4';
 
 /*IMPORT FUNCTIONS*/
-import { getUserData } from '../../../functions/storageUtils';
-import { calcularIdade } from '../../../functions/CalcularIdade';
-import { getDay, getMonth, getYear } from '../../../functions/DateTimes';
+import { getUserData } from '../../../../functions/storageUtils';
+import { calcularIdade } from '../../../../functions/CalcularIdade';
+import { getDay, getMonth, getYear } from '../../../../functions/DateTimes';
 
 /*IMPORT UTILS*/
-import { useSocket } from '../../../Utils/useSocket';
+import { useSocket } from '../../../../Utils/useSocket';
 
 /*IMPORT CSS*/
-import './NovaRegulacao.css';
+import '../NovaRegulacao.css';
 
 /*IMPORT JSON*/
-import un_origem from '../../../JSON/un_origem.json';
-import un_destino from '../../../JSON/un_destino.json';
+import un_origem from '../../../../JSON/un_origem.json';
+import un_destino from '../../../../JSON/un_destino.json';
 
 
 /*IMPORT VARIAVEIS DE AMBIENTE*/
