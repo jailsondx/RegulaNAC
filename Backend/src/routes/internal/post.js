@@ -9,6 +9,7 @@ import Desfecho from '../../functions/InsertSQL/Desfecho.js';
 import LoginUser from '../../functions/SelectSQL/LoginUser.js';
 import CadastroUser from '../../functions/InsertSQL/CadastroUser.js';
 import Transporte from '../../functions/InsertSQL/Transporte.js';
+import { Externa_NovaRegulacao_Obstetrica } from '../../functions/InsertSQL/Externas/Externa_NovaRegulacao.js';
 
 const routerPost = express.Router();
 
@@ -58,10 +59,10 @@ routerPost.post('/NovaRegulacao', async (req, res) => {
   }
 });
 
-routerPost.post('/NovaRegulacao/Externa/ObstetricaVinculada', async (req, res) => {
+routerPost.post('/NovaRegulacao/Externa/Obstetrica', async (req, res) => {
   try {
     const formData = convertObjectToUpperCase(req.body);
-    //const result = await NovaRegulacao(formData);
+    const result = await Externa_NovaRegulacao_Obstetrica(formData);
     console.log('Dados recebidos:', formData);
     handleResponse(res, result);
   } catch (error) {

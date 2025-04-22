@@ -42,12 +42,14 @@ async function uploadPDF(req, res) {
     if (!num_regulacao || !year || !month || !day) {
       return res.status(400).json({ message: 'Dados insuficientes na requisição.' });
     }
+
+    const nomePDF = req.file.filename;
+    const fileUrl = `http://${NODE_URL}/Upload/${year}/${month}/${day}/${nomePDF}`;
     
-    const fileUrl = `http://${NODE_URL}/Upload/${year}/${month}/${day}/${req.file.filename}`;
     
-    await UpdateLinkDOC(num_regulacao, req.file.filename);
+    //await UpdateLinkDOC(num_regulacao, req.file.filename);
     
-    return res.json({ message: 'Upload realizado com sucesso', fileUrl });
+    return res.json({ message: 'Upload realizado com sucesso', fileUrl, filename: nomePDF });
   } catch (error) {
     console.error('Erro durante o upload:', error);
     return res.status(500).json({ message: 'Erro interno no servidor. Tente novamente mais tarde.' });

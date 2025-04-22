@@ -36,10 +36,10 @@ const initialFormData: NovaRegulacaoExterna = {
     un_origem: '',
     nome_regulador_medico: '',
     num_regulacao: null,
-    data_hora_solicitacao_01: '',
-    data_hora_solicitacao_02: '',
-    data_hora_acionamento_medico: '',
-    data_hora_chegada: '',
+    data_hora_solicitacao_01: null,
+    data_hora_solicitacao_02: null,
+    data_hora_acionamento_medico: null,
+    data_hora_chegada: null,
     qtd_solicitacoes: 1,
     status_regulacao: '',
     link: '',
@@ -169,97 +169,87 @@ const RegulacaoExObstetrica: React.FC = () => {
         const year = getYear(datetime);
         const month = getMonth(datetime);
         const day = getDay(datetime);
-    
-        const formData = new FormData();
-        formData.append('year', year);
-        formData.append('month', month);
-        formData.append('day', day);
-        formData.append('file', file!);
-        formData.append('num_regulacao', numRegulacao.toString()); // Adicionando num_regulacao no corpo da requisição
-    
-        console.log('UPLOAD', formData);
-    
+      
+        const formDataUpload = new FormData();
+        formDataUpload.append('year', year);
+        formDataUpload.append('month', month);
+        formDataUpload.append('day', day);
+        formDataUpload.append('file', file!);
+        formDataUpload.append('num_regulacao', numRegulacao.toString());
+      
         try {
-          const response = await axios.post(`${NODE_URL}/api/internal/upload/uploadPDF`, formData, {
-            params: { numRegulacao }, // Passando numRegulacao através de params
+          const response = await axios.post(`${NODE_URL}/api/internal/upload/uploadPDF`, formDataUpload, {
             headers: { 'Content-Type': 'multipart/form-data' },
           });
-    
-          // Resposta de sucesso
-          showSnackbar(response.data.message || 'Erro inesperado:', 'error');
+      
+          showSnackbar('Arquivo enviado com sucesso.', 'success');
+          return response.data.filename;
         } catch (error: unknown) {
           if (error instanceof AxiosError) {
             console.error('Erro ao enviar o arquivo:', error);
-            showSnackbar('Erro ao enviar o arquivo:', 'error');
+            showSnackbar(error.response?.data?.message || 'Erro ao enviar o arquivo.', 'error');
           } else if (error instanceof Error) {
-            // Se o erro for do tipo genérico `Error`, trate-o também
             console.error('Erro desconhecido:', error.message);
-            showSnackbar('Erro desconhecido:', 'error');
+            showSnackbar('Erro desconhecido ao enviar o arquivo.', 'error');
           } else {
-            // Caso o erro seja de um tipo inesperado
             console.error('Erro inesperado:', error);
-            showSnackbar('Erro inesperado:', 'error');
+            showSnackbar('Erro inesperado ao enviar o arquivo.', 'error');
+          }
+          return null;
+        }
+    };
+      
+    const handleSubmit = async (e: FormEvent): Promise<void> => {
+        e.preventDefault();
+      
+        if (!validateForm()) return;
+      
+        try {
+          let uploadedFilename = '';
+      
+          // Se for CRESUS e tiver arquivo para upload
+          if (formData.num_regulacao && formData.un_origem === 'CRESUS' && file) {
+            uploadedFilename = await uploadFile(formData.data_hora_acionamento_medico || '', formData.num_regulacao) || '';
+          }
+      
+          const dataToSubmit = {
+            ...formData,
+            id_user: userData?.id_user,
+            nome_responsavel_nac: userData?.nome,
+            data_hora_solicitacao_01: formData.data_hora_acionamento_medico,
+            data_hora_solicitacao_02: formData.data_hora_acionamento_medico,
+            link: uploadedFilename || null,
+          };
+      
+          const response = await axios.post(
+            `${NODE_URL}/api/internal/post/NovaRegulacao/Externa/Obstetrica`,
+            dataToSubmit
+          );
+      
+          showSnackbar(response.data.message || 'Regulação inserida com sucesso.', 'success');
+          
+          //enviarMensagem(`Nova Regulação Solicitada: ${formData.num_regulacao}`);
+      
+          // Limpar dados após sucesso
+          setFormData(initialFormData);
+          setIconStatusProntOk(false);
+          setIconStatusProntDeny(false);
+          setCurrentStep(1);
+      
+        } catch (error: unknown) {
+          if (error instanceof AxiosError) {
+            console.error(error.response?.data?.message || 'Erro ao cadastrar regulação.', error);
+            showSnackbar(error.response?.data?.message || 'Erro ao cadastrar regulação.', 'error');
+          } else if (error instanceof Error) {
+            console.error('Erro desconhecido:', error.message);
+            showSnackbar('Erro desconhecido ao cadastrar regulação.', 'error');
+          } else {
+            console.error('Erro inesperado:', error);
+            showSnackbar('Erro inesperado ao cadastrar regulação.', 'error');
           }
         }
     };
-
-    const handleSubmit = async (e: FormEvent): Promise<void> => {
-        e.preventDefault();
-
-        // Valida o formulário primeiro
-        if (!validateForm()) return;
-
-        try {
-            const dataToSubmit = {
-                ...formData,
-                id_user: userData?.id_user, // Use o operador de encadeamento opcional para evitar erros se `userData` for `null`
-                nome_responsavel_nac: userData?.nome,
-                data_hora_solicitacao_01: formData.data_hora_acionamento_medico,
-                data_hora_solicitacao_02: formData.data_hora_acionamento_medico
-            };
-
-            // Envia o formulário primeiro
-            const response = await axios.post(`${NODE_URL}/api/internal/post/NovaRegulacao/Externa/ObstetricaVinculada`, dataToSubmit);
-
-            // Verifica se num_regulacao é válido
-            if (dataToSubmit.num_regulacao != null) {
-                // Verifica se há arquivo e, caso haja, faz o upload
-                if (dataToSubmit.un_origem === 'CRESUS' && file) {
-                await uploadFile(dataToSubmit.data_hora_solicitacao_02, dataToSubmit.num_regulacao);
-                }
-            } else {
-                console.error('Número de regulação inválido.');
-                // Opcional: mostrar uma mensagem para o usuário
-            }
-
-
-            // Se tudo ocorrer bem, exibe a resposta
-            showSnackbar(response.data.message || 'Regulaçao Inserida:', 'success');
-            // Se tudo ocorrer bem, exibe a resposta
-            //enviarMensagem('Nova Regulaçao Solicitadas: ' + formData.num_regulacao);
-
-            // Limpeza de dados após o sucesso
-            setFormData(initialFormData);
-            setIconStatusProntOk(false);
-            setIconStatusProntDeny(false);
-            setCurrentStep(1); // Reinicia o passo no processo, caso haja
-
-        } catch (error: unknown) {
-            if (error instanceof AxiosError) {
-                console.error(error.response?.data?.message || 'Erro ao cadastrar regulação. Por favor, tente novamente.', error);
-                showSnackbar(error.response?.data?.message || 'Erro ao cadastrar regulação. Por favor, tente novamente.', 'error');
-            } else if (error instanceof Error) {
-                // Se o erro for do tipo genérico `Error`, trate-o também
-                console.error('Erro desconhecido:', error.message);
-                showSnackbar('Erro desconhecido:', 'error');
-            } else {
-                // Caso o erro seja de um tipo inesperado
-                console.error('Erro inesperado:', error);
-                showSnackbar('Erro inesperado:', 'error');
-            }
-        }
-    };
-
+      
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>): void => {
         const { name, value, type } = e.target;
         setFormData((prevState) => ({
