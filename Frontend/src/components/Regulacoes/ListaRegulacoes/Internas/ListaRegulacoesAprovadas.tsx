@@ -1,33 +1,36 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Snackbar, Alert } from "@mui/material";
-import { LuFilter } from "react-icons/lu";
 
 /*IMPORT INTERFACES*/
-import { UserData } from '../../../interfaces/UserData.ts';
-import { RegulacaoAprovadaData } from '../../../interfaces/Regulacao.ts';
-import { DadosPacienteData } from "../../../interfaces/DadosPaciente.ts";
+import { UserData } from '../../../../interfaces/UserData.ts';
+import { RegulacaoAprovadaData } from '../../../../interfaces/Regulacao.ts';
+import { DadosPacienteData } from "../../../../interfaces/DadosPaciente.ts";
 
 /*IMPORT COMPONENTS*/
-import Modal from '../../Modal/Modal.tsx';
-import SetorOrigem from '../../Setor Origem e Destino/SetorOrigem.tsx';
-import SetorDestino from '../../Setor Origem e Destino/SetorDestino.tsx';
-import Transporte01 from '../../Transporte/Transporte01.tsx';
-import Transporte02 from '../../Transporte/Transporte02.tsx';
-import Desfecho from '../../Desfecho/Desfecho.tsx';
-import Filtro from '../../Filtro/Filtro.tsx';
-import TabelaRegulacoesAprovadas from '../Tabela de Regulacoes/TabelaRegulacoesAprovadas.tsx';
+import Modal from '../../../Modal/Modal.tsx';
+import HeaderFiltroInterno from '../../../Header/Header_Lista_Interna';
+import SetorOrigem from '../../../Setor Origem e Destino/SetorOrigem.tsx';
+import SetorDestino from '../../../Setor Origem e Destino/SetorDestino.tsx';
+import Transporte01 from '../../../Transporte/Transporte01.tsx';
+import Transporte02 from '../../../Transporte/Transporte02.tsx';
+import Desfecho from '../../../Desfecho/Desfecho.tsx';
+import TabelaRegulacoesAprovadas from '../../Tabela de Regulacoes/TabelaRegulacoesAprovadas.tsx';
 
 /*IMPORT FUNCTIONS*/
-import { getUserData } from '../../../functions/storageUtils.ts';
+import { getUserData } from '../../../../functions/storageUtils.ts';
 
 /*IMPORT UTILS*/
-import { fetchPDF } from '../../../Utils/fetchPDF';
+import { fetchPDF } from '../../../../Utils/fetchPDF.ts';
 
 /*IMPORT VARIAVEIS DE AMBIENTE*/
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
 
-const RegulacoesAprovadas: React.FC = () => {
+interface Props {
+  title: string;
+}
+
+const RegulacoesAprovadas: React.FC<Props> = ({ title }) => {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [regulacoes, setRegulacoes] = useState<RegulacaoAprovadaData[]>([]); // Tipo do estado
   const [dadosPaciente, setDadosPaciente] = useState<DadosPacienteData | null>(null);
@@ -45,7 +48,6 @@ const RegulacoesAprovadas: React.FC = () => {
   const [unidadeDestino, setUnidadeDestino] = useState('');
   const [filteredRegulacoes, setFilteredRegulacoes] = useState<RegulacaoAprovadaData[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [showFilters, setShowFilters] = useState(false); // Controle da exibição dos filtros
 
   /*ORDENAÇÃO*/
   const [sortConfig, setSortConfig] = useState<{ key: keyof RegulacaoAprovadaData; direction: "asc" | "desc" } | null>(null);
@@ -265,45 +267,16 @@ const RegulacoesAprovadas: React.FC = () => {
       <div className='Component'>
         <div className='Component-Table'>
           
-          <div className='Header-ListaRegulaçoes'>
-            <label className='Title-Tabela'>
-              Regulações Aprovadas <LuFilter className='Icon' onClick={() => setShowFilters(!showFilters)} title='Filtros' />
-            </label>
-          </div>
-
-          {showFilters && (
-            <div className="Filtro-Container">
-              <input
-                type="text"
-                placeholder="Buscar por Nome, Prontuário ou Regulação"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="Search-Input"
-              />
-              <Filtro
-                filtros={[
-                  {
-                    label: 'Unidade Origem',
-                    value: unidadeOrigem,
-                    options: [...new Set(regulacoes.map((r) => r.un_origem).filter(Boolean))],
-                    onChange: setUnidadeOrigem,
-                  },
-                  {
-                    label: 'Unidade Destino',
-                    value: unidadeDestino,
-                    options: [...new Set(regulacoes.map((r) => r.un_destino).filter(Boolean))],
-                    onChange: setUnidadeDestino,
-                  },
-                ]}
-                onClear={() => {
-                  setUnidadeOrigem('');
-                  setUnidadeDestino('');
-                  setSearchTerm('');
-                }}
-              />
-
-            </div>
-          )}
+        <HeaderFiltroInterno
+            title={title}
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            unidadeDestino={unidadeDestino}
+            setUnidadeDestino={setUnidadeDestino}
+            unidadeOrigem={unidadeOrigem}
+            setUnidadeOrigem={setUnidadeOrigem}
+            regulacoes={regulacoes}
+          />
 
           <div>
           <TabelaRegulacoesAprovadas

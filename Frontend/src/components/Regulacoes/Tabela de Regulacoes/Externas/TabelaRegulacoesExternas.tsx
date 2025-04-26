@@ -6,8 +6,12 @@ import { RegulacaoAprovadaData } from '../../../../interfaces/Regulacao.ts';
 import { RegulacaoExternaData } from '../../../../interfaces/RegulacaoExtena.ts';
 import { useNavigate } from 'react-router-dom';
 
+/*IMPORT INTERFACE*/
+import { UserData } from '../../../../interfaces/UserData.ts';
+
 /*IMPORT FUNCTION*/
 import { removerText } from "../../../../functions/RemoveText.ts";
+
 
 interface TabelaRegulacoesProps {
   currentRegulacoes: RegulacaoExternaData[];
@@ -21,6 +25,7 @@ interface TabelaRegulacoesProps {
   handleOpenModalDeny?: (regulacao: RegulacaoExternaData) => void;
   handleOpenModalDesfecho?: (regulacao: RegulacaoAprovadaData) => void;
   IconOpcoes: 'normais' | 'expiradas' | 'medico' | 'desfecho';
+  UserData: UserData;
 }
 
 const TabelaRegulacoesExternas: React.FC<TabelaRegulacoesProps> = ({
@@ -34,10 +39,12 @@ const TabelaRegulacoesExternas: React.FC<TabelaRegulacoesProps> = ({
   handleOpenModalApproved,
   handleOpenModalDeny,
   //handleOpenModalDesfecho,
-  IconOpcoes
+  IconOpcoes,
+  UserData
 }) => {
   const navigate = useNavigate();
 
+  
   const handleEditarRegulacao = (id_regulacao: number): void => {
     if (!id_regulacao) {
       alert('Prontuário é obrigatório para atualizar a regulação');
@@ -48,6 +55,7 @@ const TabelaRegulacoesExternas: React.FC<TabelaRegulacoesProps> = ({
       state: { id_regulacao },
     });
   };
+  
 
   return (
     <table className='Table-Regulacoes'>
@@ -102,15 +110,16 @@ const TabelaRegulacoesExternas: React.FC<TabelaRegulacoesProps> = ({
             </span>
           </th>
 
-          <th title='Tempo de Espera calculado com base no tempo do acionamento médico'>Tempo de Espera</th>
-
           {IconOpcoes === 'desfecho' && (
             <>
               <th>Fase</th>
             </>
           )}
-          
-          <th>Editar</th>
+
+          {IconOpcoes === 'normais' && UserData.tipo === 'GERENCIA' && (
+            <th>Editar</th>
+          )}
+
         </tr>
       </thead>
       <tbody>
@@ -118,52 +127,69 @@ const TabelaRegulacoesExternas: React.FC<TabelaRegulacoesProps> = ({
           <tr key={regulacao.id_regulacao}>
             <td>{regulacao.num_prontuario}</td>
             <td className="col-NomePaciente">
-              <a onClick={() => fetchPDF(regulacao.data_hora_solicitacao_02, regulacao.link || '')}>
+              <a onClick={() => fetchPDF(regulacao.data_hora_solicitacao_02 ?? '', regulacao.link || '')}>
                 {regulacao.nome_paciente}
               </a>
             </td>
             <td className="col-NumIdade">{regulacao.num_idade} Anos</td>
             <td className="col-NumRegulacao">{regulacao.num_regulacao}</td>
+            <td className="col-Vinculo">{regulacao.vinculo}</td>
             <td>{regulacao.un_origem}</td>
-            <td>{new Date(regulacao.data_hora_solicitacao_02).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</td>
+            <td>{new Date(regulacao.data_hora_solicitacao_02 ?? '').toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</td>
             {IconOpcoes === 'desfecho' && (
               <>
                 <td>{removerText(regulacao.status_regulacao)}</td>
               </>
             )}
-            <td className='td-Icons'>
-              {IconOpcoes === 'normais' && (
-                <>
-                  <FcInspection className='Icon Icons-Regulacao' onClick={() => handleEditarRegulacao && handleEditarRegulacao(regulacao.id_regulacao)} title='Editar Regulação' />
-                  <FcFullTrash className='Icon Icons-Regulacao' onClick={() => handleOpenModalDeny && handleOpenModalDeny(regulacao)} title='Negar Regulação' />
-                </>
-              )}
-              
-              {IconOpcoes === 'expiradas' && (
-                <>
-                  <FcExpired 
-                    className='Icon Icons-Regulacao' 
-                    onClick={() => handleAtualizarRegulacao && handleAtualizarRegulacao(regulacao)} 
-                    title='Atualizar/Renovar Regulação'
-                  />
-                </>
 
-              )}
-              {IconOpcoes === 'desfecho' && (
-                  <FcNews 
-                    className="Icon Icons-Regulacao" 
-                    //onClick={() => handleOpenModalDesfecho && handleOpenModalDesfecho(regulacao as RegulacaoAprovadaData)} 
-                    title="Aprovar" 
-                  />
-              )}
-              
-              {IconOpcoes === 'medico' && (
-                <>
-                  <FcApproval className="Icon Icons-Regulacao" onClick={() => handleOpenModalApproved && handleOpenModalApproved(regulacao)} title="Aprovar" />
-                  <FcBadDecision className="Icon Icons-Regulacao" onClick={() => handleOpenModalDeny && handleOpenModalDeny(regulacao)} title="Negar" />
-                </>
-              )}
-            </td>
+            {IconOpcoes === 'normais' && UserData.tipo === 'GERENCIA' && (
+              <>
+                <td>
+                  <label className="td-Icons">
+                    <FcInspection className='Icon Icons-Regulacao' onClick={() => handleEditarRegulacao && handleEditarRegulacao(regulacao.id_regulacao)} title='Editar Regulação' />
+                    <FcFullTrash className='Icon Icons-Regulacao' onClick={() => handleOpenModalDeny && handleOpenModalDeny(regulacao)} title='Apagar Regulação' />
+                  </label>
+                </td>
+              </>
+            )}
+
+            {IconOpcoes === 'expiradas' && (
+              <>
+                <td>
+                  <label className="td-Icons">
+                    <FcExpired
+                      className='Icon Icons-Regulacao'
+                      onClick={() => handleAtualizarRegulacao && handleAtualizarRegulacao(regulacao)}
+                      title='Atualizar/Renovar Regulação'
+                    />
+                  </label></td>
+              </>
+
+            )}
+            
+            {IconOpcoes === 'desfecho' && (
+              <>
+                <td>
+                  <label className="td-Icons">
+                    <FcNews
+                      className="Icon Icons-Regulacao"
+                      //onClick={() => handleOpenModalDesfecho && handleOpenModalDesfecho(regulacao as RegulacaoAprovadaData)} 
+                      title="Aprovar"
+                    />
+                  </label></td>
+              </>
+            )}
+
+            {IconOpcoes === 'medico' && (
+              <>
+                <td>
+                  <label className="td-Icons">
+                    <FcApproval className="Icon Icons-Regulacao" onClick={() => handleOpenModalApproved && handleOpenModalApproved(regulacao)} title="Aprovar" />
+                    <FcBadDecision className="Icon Icons-Regulacao" onClick={() => handleOpenModalDeny && handleOpenModalDeny(regulacao)} title="Negar" />
+                  </label></td>
+              </>
+            )}
+
           </tr>
         ))}
       </tbody>

@@ -20,7 +20,17 @@ routerGet.use(express.json());
 // Rotas
 routerGet.get('/ListaRegulacoesPendentes', async (req, res) => {
   try {
-    const result = await ListaRegulacoesPendentes();
+    const result = await ListaRegulacoesPendentes('Interna');
+    const serverTime = new Date().toISOString();
+    handleResponse(res, result , serverTime);
+  } catch (error) {
+    handleError(res, error);
+  }
+});
+
+routerGet.get('/Externa/ListaRegulacoesPendentes', async (req, res) => {
+  try {
+    const result = await ListaRegulacoesPendentes('Externa');
     const serverTime = new Date().toISOString();
     handleResponse(res, result , serverTime);
   } catch (error) {

@@ -28,7 +28,7 @@ const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
 
 const initialFormData: NovaRegulacaoExterna = {
     id_user: null,
-    vinculo: 'Externa Obstetrica',
+    vinculo: 'Externa AVC',
     nome_paciente: '',
     num_prontuario: null,
     data_nascimento: '',
@@ -45,7 +45,7 @@ const initialFormData: NovaRegulacaoExterna = {
     link: '',
 };
 
-const RegulacaoExObstetrica: React.FC = () => {
+const RegulacaoExAVC: React.FC = () => {
     const [userData, setUserData] = useState<UserData | null>(null);
     //const userUsername = userData?.login || ''; // Nome do usuário
     //const userTipo = userData?.tipo || ''; // Tipo de usuário
@@ -125,7 +125,7 @@ const RegulacaoExObstetrica: React.FC = () => {
                 default:
                     break;
             }
-        } else if(formData.un_origem === 'VINCULADAS'){
+        } else if(formData.un_origem === 'SAMU' || formData.un_origem === 'NEURORRADIO') {
             // Identificar o campo inválido
             switch (true) {
                 case !formData.nome_paciente.trim():
@@ -460,7 +460,7 @@ const RegulacaoExObstetrica: React.FC = () => {
     return (
         <>
             <div>
-                <label className='Title-Form'>Nova Regulação Externa Obstétrica</label>
+                <label className='Title-Form'>Nova Regulação Externa AVC</label>
             </div>
             <div className='ComponentForm'>
                 <div>
@@ -529,4 +529,4 @@ const RegulacaoExObstetrica: React.FC = () => {
 };
 
 
-export default RegulacaoExObstetrica;
+export default RegulacaoExAVC;

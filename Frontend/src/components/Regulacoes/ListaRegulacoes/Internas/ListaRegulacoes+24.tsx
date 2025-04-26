@@ -1,35 +1,36 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { AxiosError } from 'axios';
-import { LuFilter } from "react-icons/lu";
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Snackbar, Alert } from '@mui/material';
 
 /*IMPORT INTERFACES*/
-import { UserData } from '../../../interfaces/UserData.ts';
-import { RegulacaoData } from '../../../interfaces/Regulacao';
+import { RegulacaoData } from '../../../../interfaces/Regulacao';
 
 /*IMPORT COMPONENTS*/
-import TabelaRegulacoesNegadas from '../Tabela de Regulacoes/TabelaRegulacoesNegadas';
-import Filtro from '../../Filtro/Filtro';
+import HeaderFiltroInterno from '../../../Header/Header_Lista_Interna';
+import TabelaRegulacoes from '../../Tabela de Regulacoes/Internas/TabelaRegulacoesInternas';
 
 /*IMPORT FUNCTIONS*/
-import { getUserData } from '../../../functions/storageUtils.ts';
 
 /*IMPORT CSS*/
-import './ListaRegulacoes.css';
+import '../ListaRegulacoes.css';
 
 /*IMPORT JSON*/
 
 /*IMPORT UTILS*/
-import { atualizarRegulacao } from '../../../Utils/handleAtualizarRegulacao';
-import { fetchPDF } from '../../../Utils/fetchPDF';
+import { atualizarRegulacao } from '../../../../Utils/handleAtualizarRegulacao';
+import { fetchPDF } from '../../../../Utils/fetchPDF';
 
 /*IMPORT VARIAVEIS DE AMBIENTE*/
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
 
-const ListaRegulacoesNegadas: React.FC = () => {
-  const [userData, setUserData] = useState<UserData | null>(null);
+interface Props {
+  title: string;
+}
+
+const ListaRegulacoes24hrs: React.FC<Props> = ({ title }) => {
+  const [serverTime, setServerTime] = useState("");
   const [regulacoes, setRegulacoes] = useState<RegulacaoData[]>([]); // Tipo do estado
   const location = useLocation();
   const navigate = useNavigate();
@@ -39,7 +40,6 @@ const ListaRegulacoesNegadas: React.FC = () => {
   const [unidadeDestino, setUnidadeDestino] = useState('');
   const [filteredRegulacoes, setFilteredRegulacoes] = useState<RegulacaoData[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [showFilters, setShowFilters] = useState(false); // Controle da exibição dos filtros
 
   /*PAGINAÇÃO*/
   const [currentPage, setCurrentPage] = useState(1);  // Página atual
@@ -62,10 +62,11 @@ const ListaRegulacoesNegadas: React.FC = () => {
   useEffect(() => {
     const fetchRegulacoes = async () => {
       try {
-        const response = await axios.get(`${NODE_URL}/api/internal/get/ListaRegulacoesNegadas`);
+        const response = await axios.get(`${NODE_URL}/api/internal/get/ListaRegulacoesPendentes24`);
 
         if (response.data && Array.isArray(response.data.data)) {
           setRegulacoes(response.data.data);
+          setServerTime(response.data.serverTime); // Hora atual do servidor em formato ISO
           setFilteredRegulacoes(response.data.data);
         } else {
           console.error('Dados inesperados:', response.data);
@@ -85,12 +86,6 @@ const ListaRegulacoesNegadas: React.FC = () => {
     };
 
     fetchRegulacoes();
-  }, []);
-
-  //Pega dados do SeassonStorage User
-  useEffect(() => {
-    const data = getUserData();
-    setUserData(data);
   }, []);
 
   //MOSTRA SNACKBAR APÓS AÇÃO
@@ -179,61 +174,32 @@ const ListaRegulacoesNegadas: React.FC = () => {
     setSnackbarOpen(false);
   };
 
-
   return (
     <>
       <div className='Component'>
         <div className='Component-Table'>
 
-          <div className="Header-ListaRegulaçoes">
-            <label className="Title-Tabela">
-              Lista de Regulações Negadas <LuFilter className='Icon' onClick={() => setShowFilters(!showFilters)} title='Filtros' />
-            </label>
-          </div>
-
-          {showFilters && (
-            <div className="Filtro-Container">
-              <input
-                type="text"
-                placeholder="Buscar por Nome, Prontuário ou Regulação"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="Search-Input"
-              />
-              <Filtro
-                filtros={[
-                  {
-                    label: 'Unidade Origem',
-                    value: unidadeOrigem,
-                    options: [...new Set(regulacoes.map((r) => r.un_origem).filter(Boolean))],
-                    onChange: setUnidadeOrigem,
-                  },
-                  {
-                    label: 'Unidade Destino',
-                    value: unidadeDestino,
-                    options: [...new Set(regulacoes.map((r) => r.un_destino).filter(Boolean))],
-                    onChange: setUnidadeDestino,
-                  },
-                ]}
-                onClear={() => {
-                  setUnidadeOrigem('');
-                  setUnidadeDestino('');
-                  setSearchTerm('');
-                }}
-              />
-
-            </div>
-          )}
+          <HeaderFiltroInterno
+            title={title}
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            unidadeDestino={unidadeDestino}
+            setUnidadeDestino={setUnidadeDestino}
+            unidadeOrigem={unidadeOrigem}
+            setUnidadeOrigem={setUnidadeOrigem}
+            regulacoes={regulacoes}
+          />
 
           <div>
-            <TabelaRegulacoesNegadas
-              UserData={userData}
+            <TabelaRegulacoes
               currentRegulacoes={currentRegulacoes}
               selectedColumn={selectedColumn}
               sortConfig={sortConfig}
               handleSort={handleSort}
               fetchPDF={handleFetchPDF}
+              serverTime={serverTime}
               handleAtualizarRegulacao={handleClick_atualizarRegulacao}
+              IconOpcoes='expiradas'
             />
           </div>
 
@@ -266,4 +232,4 @@ const ListaRegulacoesNegadas: React.FC = () => {
 };
 
 
-export default ListaRegulacoesNegadas;
+export default ListaRegulacoes24hrs;

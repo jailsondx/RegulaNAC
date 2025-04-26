@@ -54,7 +54,8 @@ export const Passo2: React.FC<Props> = ({
         >
           <option value="">Selecione uma unidade</option>
           <option value="CRESUS">CRESUS</option>
-          <option value="VINCULADAS">VINCULADAS</option>
+          <option value="SAMU">SAMU</option>
+          <option value="NEURORRADIO">NEURORRADIO</option>
         </select>
       </div>
 
@@ -104,7 +105,7 @@ export const Passo2: React.FC<Props> = ({
           </span>
         </div>
 
-        {formData.un_origem === 'VINCULADAS' && (
+        {(formData.un_origem === 'SAMU' || formData.un_origem === 'NEURORRADIO') && (
           <div className="line-StepContent-sub">
           <label>Data e Hora de Chegada:</label>
           <input

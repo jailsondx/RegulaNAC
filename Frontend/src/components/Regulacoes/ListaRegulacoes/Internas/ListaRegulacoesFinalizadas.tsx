@@ -1,32 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { AxiosError } from 'axios';
-import { LuFilter } from "react-icons/lu";
 import { useLocation } from 'react-router-dom';
 import { Snackbar, Alert } from '@mui/material';
 
 /*IMPORT INTERFACES*/
-import { RegulacaoData } from '../../../interfaces/Regulacao';
+import { RegulacaoData } from '../../../../interfaces/Regulacao';
 
 /*IMPORT COMPONENTS*/
-import Filtro from '../../Filtro/Filtro';
-import TabelaRegulacoesFinalizadas from '../Tabela de Regulacoes/TabelaRegulacoesFinalizadas';
+import HeaderFiltroInterno from '../../../Header/Header_Lista_Interna';
+import TabelaRegulacoesFinalizadas from '../../Tabela de Regulacoes/TabelaRegulacoesFinalizadas';
 
 /*IMPORT FUNCTIONS*/
 
 /*IMPORT CSS*/
-import './ListaRegulacoes.css';
+import '../ListaRegulacoes.css';
 
 /*IMPORT JSON*/
 
 /*IMPORT UTILS*/
-import { fetchPDF } from '../../../Utils/fetchPDF';
+import { fetchPDF } from '../../../../Utils/fetchPDF';
 
 /*IMPORT VARIAVEIS DE AMBIENTE*/
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
 
+interface Props {
+  title: string;
+}
 
-const ListaRegulacoesFinalizadas: React.FC = () => {
+const ListaRegulacoesFinalizadas: React.FC<Props> = ({ title }) => {
   const [regulacoes, setRegulacoes] = useState<RegulacaoData[]>([]); // Tipo do estado
   const location = useLocation();
 
@@ -35,7 +37,6 @@ const ListaRegulacoesFinalizadas: React.FC = () => {
   const [unidadeDestino, setUnidadeDestino] = useState('');
   const [filteredRegulacoes, setFilteredRegulacoes] = useState<RegulacaoData[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [showFilters, setShowFilters] = useState(false); // Controle da exibição dos filtros
 
   /*PAGINAÇÃO*/
   const [currentPage, setCurrentPage] = useState(1);  // Página atual
@@ -169,45 +170,16 @@ const ListaRegulacoesFinalizadas: React.FC = () => {
       <div className='Component'>
         <div className='Component-Table'>
 
-          <div className="Header-ListaRegulaçoes">
-            <label className="Title-Tabela">
-              Regulações Finalizadas<LuFilter className='Icon' onClick={() => setShowFilters(!showFilters)} title='Filtros' />
-            </label>
-          </div>
-
-          {showFilters && (
-            <div className="Filtro-Container">
-              <input
-                type="text"
-                placeholder="Buscar por Nome, Prontuário ou Regulação"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="Search-Input"
-              />
-              <Filtro
-                filtros={[
-                  {
-                    label: 'Unidade Origem',
-                    value: unidadeOrigem,
-                    options: [...new Set(regulacoes.map((r) => r.un_origem).filter(Boolean))],
-                    onChange: setUnidadeOrigem,
-                  },
-                  {
-                    label: 'Unidade Destino',
-                    value: unidadeDestino,
-                    options: [...new Set(regulacoes.map((r) => r.un_destino).filter(Boolean))],
-                    onChange: setUnidadeDestino,
-                  },
-                ]}
-                onClear={() => {
-                  setUnidadeOrigem('');
-                  setUnidadeDestino('');
-                  setSearchTerm('');
-                }}
-              />
-
-            </div>
-          )}
+        <HeaderFiltroInterno
+            title={title}
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            unidadeDestino={unidadeDestino}
+            setUnidadeDestino={setUnidadeDestino}
+            unidadeOrigem={unidadeOrigem}
+            setUnidadeOrigem={setUnidadeOrigem}
+            regulacoes={regulacoes}
+          />
 
           <div>
             <TabelaRegulacoesFinalizadas

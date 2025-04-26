@@ -119,7 +119,7 @@ const EditaRegulacao: React.FC = () => {
   // Carrega a lista de médicos ao montar o componente
   useEffect(() => {
 
-    const fetchMedicos = async () => {
+  const fetchMedicos = async () => {
       try {
         const response = await axios.get(`${NODE_URL}/api/internal/get/ListaMedicos`);
         const nomes_medicos_list = response.data.data;
@@ -140,7 +140,7 @@ const EditaRegulacao: React.FC = () => {
       }
     };
 
-    fetchMedicos();
+  fetchMedicos();
   }, []);
 
   // Busca os dados do usuário do sessionStorage ao carregar o componente

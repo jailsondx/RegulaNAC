@@ -57,7 +57,7 @@ export const Passo2: React.FC<Props> = ({
       </div>
 
       <div className="line-StepContent">
-        <label>Data e Hora da 1ª Solicitação:</label>
+        <label>Data e Hora da Solicitação:</label>
         <input
           type="datetime-local"
           name="data_hora_solicitacao_01"

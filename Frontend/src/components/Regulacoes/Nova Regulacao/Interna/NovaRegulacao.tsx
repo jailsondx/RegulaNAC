@@ -75,7 +75,7 @@ const NovaRegulacao: React.FC = () => {
   //VERIFICAÇÃO DE UN ORIGEM
   //const requiredUnidadesOBS = ['COI', 'COII', 'COII']; // ou só 'UTI', 'COI' se quiser verificar por "começa com"
   //const isValueOrigemOBS = requiredUnidadesOBS.includes(formData.un_origem);
-  const requiredUnidades = ['UTI I', 'UTI II', 'UTI III', 'UTI IV']; // ou só 'UTI', 'COI' se quiser verificar por "começa com"
+  const requiredUnidades = ['UTI I', 'UTI II', 'UTI III', 'UTI IV', 'UTI PED']; // ou só 'UTI', 'COI' se quiser verificar por "começa com"
   const isValueDestino = requiredUnidades.includes(formData.un_destino);
 
 
@@ -204,19 +204,19 @@ const NovaRegulacao: React.FC = () => {
     const year = getYear(datetime);
     const month = getMonth(datetime);
     const day = getDay(datetime);
-  
+
     const formDataUpload = new FormData();
     formDataUpload.append('year', year);
     formDataUpload.append('month', month);
     formDataUpload.append('day', day);
     formDataUpload.append('file', file!);
     formDataUpload.append('num_regulacao', numRegulacao.toString());
-  
+
     try {
       const response = await axios.post(`${NODE_URL}/api/internal/upload/uploadPDF`, formDataUpload, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
-  
+
       showSnackbar('Arquivo enviado com sucesso.', 'success');
       return response.data.filename;
     } catch (error: unknown) {
@@ -233,20 +233,20 @@ const NovaRegulacao: React.FC = () => {
       return null;
     }
   };
-  
+
   const handleSubmit = async (e: FormEvent): Promise<void> => {
     e.preventDefault();
-  
+
     if (!validateForm()) return;
-  
+
     try {
       let uploadedFilename = '';
-  
+
       // Se for CRESUS e tiver arquivo para upload
       if (formData.num_regulacao && file) {
         uploadedFilename = await uploadFile(formData.data_hora_solicitacao_01 || '', formData.num_regulacao);
       }
-  
+
       const dataToSubmit = {
         ...formData,
         id_user: userData?.id_user,
@@ -254,22 +254,21 @@ const NovaRegulacao: React.FC = () => {
         data_hora_solicitacao_02: formData.data_hora_solicitacao_01,
         link: uploadedFilename || null,
       };
-  
+
       const response = await axios.post(
         `${NODE_URL}/api/internal/post/NovaRegulacao`,
         dataToSubmit
       );
-  
+
       showSnackbar(response.data.message || 'Regulação inserida com sucesso.', 'success');
-      
-      //enviarMensagem(`Nova Regulação Solicitada: ${formData.num_regulacao}`);
-  
+      enviarMensagem('Nova Regulação Solicitada: ' + formData.num_regulacao);
+
       // Limpar dados após sucesso
       setFormData(initialFormData);
       setIconStatusProntOk(false);
       setIconStatusProntDeny(false);
       setCurrentStep(1);
-  
+
     } catch (error: unknown) {
       if (error instanceof AxiosError) {
         console.error(error.response?.data?.message || 'Erro ao cadastrar regulação.', error);
@@ -474,15 +473,14 @@ const NovaRegulacao: React.FC = () => {
     <>
       <div>
         <label className='Title-Form'>Nova Regulação</label>
-        
-        <button onClick={() => enviarMensagem('Nova Regulaçao Solicitadas: ' + formData.num_regulacao)}>
-          Enviar para Médicos
-        </button>
-        
       </div>
+      
       <div className="ComponentForm">
-        <form className="Form-NovaRegulacao" onSubmit={handleSubmit}>
+        <div>
           <ProgressBar currentStep={currentStep} />
+        </div>
+
+        <form className="Form-NovaRegulacao" onSubmit={handleSubmit}>
           <div className="Form-NovaRegulacao-Inputs">
             {currentStep === 1 && (
               <Passo1

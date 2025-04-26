@@ -58,14 +58,18 @@ export const Passo3: React.FC<Props> = ({
 
                 <div className="line-StepContent-sub">
                     <label>Prioridade:</label>
-                    <input
-                        type="text"
+                    <select
                         name="prioridade"
                         value={formData.prioridade ?? ''}
                         onChange={handleChange}
                         className={isValueDestino ? 'requireBorder' : ''}
                         required={isValueDestino}
-                    />
+                    >
+                        <option value="" disabled>Selecione a prioridade</option>
+                        {Array.from({ length: 10 }, (_, i) => `P${i + 1}`).map((prioridade) => (
+                            <option key={prioridade} value={prioridade}>{prioridade}</option>
+                        ))}
+                    </select>
                 </div>
             </div>
 

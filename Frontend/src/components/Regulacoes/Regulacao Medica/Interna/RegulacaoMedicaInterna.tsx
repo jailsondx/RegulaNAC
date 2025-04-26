@@ -2,31 +2,35 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { AxiosError } from 'axios';
 import { Snackbar, Alert } from "@mui/material";
-import { LuFilter } from "react-icons/lu";
 
 /*IMPORT INTERFACES*/
-import { RegulacaoData } from '../../../interfaces/Regulacao.ts';
-import { DadosPacienteData } from "../../../interfaces/DadosPaciente.ts";
+import { RegulacaoData } from '../../../../interfaces/Regulacao.ts';
+import { DadosPacienteData } from "../../../../interfaces/DadosPaciente.ts";
 
 /*IMPORT COMPONENTS*/
+import HeaderFiltroInterno from "../../../Header/Header_Lista_Interna.tsx";
 import NovaRegulacaoMedicoAprovada from "./RegulacaoMedicaAprovada.tsx";
 import NovaRegulacaoMedicoNegada from "./RegulacaoMedicaNegada.tsx";
-import Filtro from '../../Filtro/Filtro.tsx';
-import TabelaRegulacoes from '../Tabela de Regulacoes/Internas/TabelaRegulacoesInternas.tsx';
-import Modal from "../../Modal/Modal.tsx";
+
+import TabelaRegulacoes from '../../Tabela de Regulacoes/Internas/TabelaRegulacoesInternas.tsx';
+import Modal from "../../../Modal/Modal.tsx";
 
 /*IMPORT FUNCTIONS*/
-import { getDay, getMonth, getYear } from '../../../functions/DateTimes.ts';
+import { getDay, getMonth, getYear } from '../../../../functions/DateTimes.ts';
 
 /*IMPORT UTILS*/
 
 /*IMPORT CSS*/
-import "./RegulacaoMedica.css";
+import "../RegulacaoMedica.css";
 
 /*IMPORT VARIAVEIS DE AMBIENTE*/
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
 
-const RegulacaoMedicaInterna: React.FC = () => {
+interface Props {
+  title: string;
+}
+
+const RegulacaoMedicaInterna: React.FC<Props> = ({ title }) => {
   const [serverTime, setServerTime] = useState("");
   const [regulacoes, setRegulacoes] = useState<RegulacaoData[]>([]);
   const [showModalApproved, setShowModalApproved] = useState(false);
@@ -40,7 +44,6 @@ const RegulacaoMedicaInterna: React.FC = () => {
   const [unidadeOrigem, setUnidadeOrigem] = useState('');
   const [unidadeDestino, setUnidadeDestino] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
-  const [showFilters, setShowFilters] = useState(false); // Controle da exibição dos filtros
 
   /*PAGINAÇÃO*/
   const [currentPage, setCurrentPage] = useState(1);  // Página atual
@@ -247,45 +250,16 @@ const RegulacaoMedicaInterna: React.FC = () => {
       <div className="Component">
         <div className='Component-Table'>
 
-          <div className="Header-ListaRegulaçoes">
-            <label className="Title-Tabela">
-              Regulações Internas Pendentes <LuFilter className='Icon' onClick={() => setShowFilters(!showFilters)} title='Filtros' />
-            </label>
-          </div>
-
-          {showFilters && (
-            <div className="Filtro-Container">
-              <input
-                type="text"
-                placeholder="Buscar por Nome, Prontuário ou Regulação"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="Search-Input"
-              />
-              <Filtro
-                filtros={[
-                  {
-                    label: 'Unidade Origem',
-                    value: unidadeOrigem,
-                    options: [...new Set(regulacoes.map((r) => r.un_origem).filter(Boolean))],
-                    onChange: setUnidadeOrigem,
-                  },
-                  {
-                    label: 'Unidade Destino',
-                    value: unidadeDestino,
-                    options: [...new Set(regulacoes.map((r) => r.un_destino).filter(Boolean))],
-                    onChange: setUnidadeDestino,
-                  },
-                ]}
-                onClear={() => {
-                  setUnidadeOrigem('');
-                  setUnidadeDestino('');
-                  setSearchTerm('');
-                }}
-              />
-
-            </div>
-          )}
+        <HeaderFiltroInterno
+            title={title}
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            unidadeDestino={unidadeDestino}
+            setUnidadeDestino={setUnidadeDestino}
+            unidadeOrigem={unidadeOrigem}
+            setUnidadeOrigem={setUnidadeOrigem}
+            regulacoes={regulacoes}
+          />
 
           <div>
             <TabelaRegulacoes

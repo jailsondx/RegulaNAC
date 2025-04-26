@@ -144,6 +144,7 @@ const Sidebar: React.FC = () => {
         <li><Link to="/RegulacaoExObstetrica"><TiUpload className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulação Obstétrica</label></Link></li>
         <li><Link to="/RegulacaoExAVC"><TiUpload className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulação AVC</label></Link></li>
         <li><Link to="/RegulacaoExNeurocirurgia"><TiUpload className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulação Neurocirurgia</label></Link></li>
+        <li><Link to="/ListaRegulacoesExternas"><TiUpload className='Icon-Menu-Item' /><label className='textMenu-Item'>Lista de Regulações</label></Link></li>
       </>
     );
   };

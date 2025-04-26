@@ -3,21 +3,24 @@ import axios from 'axios';
 import { AxiosError } from 'axios';
 
 /*IMPORT COMPONENTS*/
-import DadosPaciente from '../../Dados Paciente/DadosPaciente';
+import DadosPaciente from '../../../Dados Paciente/DadosPaciente_Externo';
 
 /*IMPORT INTERFACES*/
-import { UserData } from '../../../interfaces/UserData';
-import { DadosPacienteData } from '../../../interfaces/DadosPaciente';
-import { RegulacaoMedicoData } from '../../../interfaces/Regulacao';
+import { UserData } from '../../../../interfaces/UserData';
+import { DadosPacienteExternoData } from '../../../../interfaces/DadosPaciente';
+import { RegulacaoMedicoData } from '../../../../interfaces/Regulacao';
 
 /*IMPORT FUNCTIONS*/
-import { getUserData } from '../../../functions/storageUtils';
+import { getUserData } from '../../../../functions/storageUtils';
+
+/*IMPORT CSS*/
+import '../../../Modal/Modal-Inputs.css';
 
 /*IMPORT VARIAVEIS DE AMBIENTE*/
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
 
 interface Props {
-  dadosPaciente: DadosPacienteData;
+  dadosPaciente: DadosPacienteExternoData;
   onClose: () => void; // Função de fechado Modal + Snackbar status
   showSnackbar: (message: string, severity: 'success' | 'error' | 'info' | 'warning') => void; // valores para controle do snackbar
 }
@@ -33,7 +36,7 @@ const initialFormData: RegulacaoMedicoData = {
   justificativa_tempo30: '',
 };
 
-const NovaRegulacaoMedicoNegada: React.FC<Props> = ({ dadosPaciente, onClose, showSnackbar }) => {
+const NovaRegulacaoMedicoNegada_Externa: React.FC<Props> = ({ dadosPaciente, onClose, showSnackbar }) => {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [formData, setFormData] = useState<RegulacaoMedicoData>(initialFormData);
 
@@ -145,4 +148,4 @@ const NovaRegulacaoMedicoNegada: React.FC<Props> = ({ dadosPaciente, onClose, sh
   );
 };
 
-export default NovaRegulacaoMedicoNegada;
+export default NovaRegulacaoMedicoNegada_Externa;

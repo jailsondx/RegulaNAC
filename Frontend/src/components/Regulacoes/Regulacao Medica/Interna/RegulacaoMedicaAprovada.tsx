@@ -3,18 +3,15 @@ import axios from 'axios';
 import { AxiosError } from 'axios';
 
 /*IMPORT COMPONENTS*/
-import DadosPaciente from '../../Dados Paciente/DadosPaciente';
+import DadosPaciente from '../../../Dados Paciente/DadosPaciente';
 
 /*IMPORT INTERFACES*/
-import { UserData } from '../../../interfaces/UserData';
-import { DadosPacienteData } from '../../../interfaces/DadosPaciente';
-import { RegulacaoMedicoData } from '../../../interfaces/Regulacao';
+import { UserData } from '../../../../interfaces/UserData';
+import { DadosPacienteData } from '../../../../interfaces/DadosPaciente';
+import { RegulacaoMedicoData } from '../../../../interfaces/Regulacao';
 
 /*IMPORT FUNCTIONS*/
-import { getUserData } from '../../../functions/storageUtils';
-
-/*IMPORT CSS*/
-import '../../Modal/Modal-Inputs.css';
+import { getUserData } from '../../../../functions/storageUtils';
 
 /*IMPORT VARIAVEIS DE AMBIENTE*/
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
@@ -166,6 +163,7 @@ const NovaRegulacaoMedicoAprovada: React.FC<Props> = ({ dadosPaciente, tempoEspe
               />
             </div>
           </div>
+          
           <div className="modal-input-line">
             <label>Justificativa de Tempo +30min:</label>
             <textarea

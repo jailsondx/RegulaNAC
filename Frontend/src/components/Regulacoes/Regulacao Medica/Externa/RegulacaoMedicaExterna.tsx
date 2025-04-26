@@ -2,45 +2,47 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { AxiosError } from 'axios';
 import { Snackbar, Alert } from "@mui/material";
-import { LuFilter } from "react-icons/lu";
 
 /*IMPORT INTERFACES*/
-import { RegulacaoExternaData } from '../../../interfaces/RegulacaoExtena.ts';
-import { DadosPacienteData } from "../../../interfaces/DadosPaciente.ts";
+import { RegulacaoExternaData } from '../../../../interfaces/RegulacaoExtena.ts';
+import { DadosPacienteExternoData } from "../../../../interfaces/DadosPaciente.ts";
 
 /*IMPORT COMPONENTS*/
-import NovaRegulacaoMedicoAprovada from "./RegulacaoMedicaAprovada.tsx";
-import NovaRegulacaoMedicoNegada from "./RegulacaoMedicaNegada.tsx";
-import Filtro from '../../Filtro/Filtro.tsx';
-import TabelaRegulacoesExternas from '../Tabela de Regulacoes/Externas/TabelaRegulacoesExternas.tsx';
-import Modal from "../../Modal/Modal.tsx";
+import HeaderFiltroExterno from "../../../Header/Header_Lista_Externa.tsx";
+import NovaRegulacaoMedicoAprovada_Externa from "./RegulacaoMedicaAprovada_Externa.tsx";
+import NovaRegulacaoMedicoNegada_Externa from "./RegulacaoMedicaNegada_Externa.tsx";
+import TabelaRegulacoesExternas from '../../Tabela de Regulacoes/Externas/TabelaRegulacoesExternas.tsx';
+import Modal from "../../../Modal/Modal.tsx";
 
 /*IMPORT FUNCTIONS*/
-import { getDay, getMonth, getYear } from '../../../functions/DateTimes.ts';
+import { getDay, getMonth, getYear } from '../../../../functions/DateTimes.ts';
 
 /*IMPORT UTILS*/
 
 /*IMPORT CSS*/
-import "./RegulacaoMedica.css";
+import "../RegulacaoMedica.css";
 
 /*IMPORT VARIAVEIS DE AMBIENTE*/
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
 
-const RegulacaoMedicaExterna: React.FC = () => {
+interface Props {
+  title: string;
+}
+
+const RegulacaoMedicaExterna: React.FC<Props> = ({ title }) => {
   const [serverTime, setServerTime] = useState("");
   const [regulacoes, setRegulacoes] = useState<RegulacaoExternaData[]>([]);
   const [showModalApproved, setShowModalApproved] = useState(false);
   const [showModalDeny, setShowModalDeny] = useState(false);
   const [currentRegulacao, setCurrentRegulacao] = useState<RegulacaoExternaData | null>(null);
-  const [dadosPaciente, setDadosPaciente] = useState<DadosPacienteData | null>(null);
+  const [dadosPaciente, setDadosPaciente] = useState<DadosPacienteExternoData | null>(null);
   const [elapsedTime] = useState<string>(''); // Armazena o tempo decorrido
 
   /*FILTROS*/
   const [filteredRegulacoes, setFilteredRegulacoes] = useState<RegulacaoExternaData[]>([]);
   const [unidadeOrigem, setUnidadeOrigem] = useState('');
-  const [vinculo, setUnidadeDestino] = useState('');
+  const [vinculo, setVinculo] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
-  const [showFilters, setShowFilters] = useState(false); // Controle da exibição dos filtros
 
   /*PAGINAÇÃO*/
   const [currentPage, setCurrentPage] = useState(1);  // Página atual
@@ -62,7 +64,7 @@ const RegulacaoMedicaExterna: React.FC = () => {
   // Defina fetchRegulacoes fora do useEffect
   const fetchRegulacoes = async () => {
     try {
-      const response = await axios.get(`${NODE_URL}/api/internal/get/ListaRegulacoesPendentes`);
+      const response = await axios.get(`${NODE_URL}/api/internal/get/Externa/ListaRegulacoesPendentes`);
 
       if (response.data && Array.isArray(response.data.data)) {
         setRegulacoes(response.data.data);
@@ -165,7 +167,7 @@ const RegulacaoMedicaExterna: React.FC = () => {
     setCurrentRegulacao(regulacao);
 
     // Supondo que você já tenha todos os dados necessários na `regulacao` ou possa fazer algum processamento:
-    const dados: DadosPacienteData = {
+    const dados: DadosPacienteExternoData = {
       nome_paciente: regulacao.nome_paciente,
       num_prontuario: regulacao.num_prontuario,
       num_regulacao: regulacao.num_regulacao,
@@ -175,7 +177,7 @@ const RegulacaoMedicaExterna: React.FC = () => {
       nome_regulador_medico: regulacao.nome_regulador_medico, // Certifique-se de que este campo possui um valor válido
     };
 
-    setDadosPaciente(dados); // Ensure the type matches DadosPacienteData
+    setDadosPaciente(dados); // Ensure the type matches DadosPacienteExternoData
     setShowModalApproved(true);
   };
 
@@ -183,7 +185,7 @@ const RegulacaoMedicaExterna: React.FC = () => {
     setCurrentRegulacao(regulacao);
 
     // Supondo que você já tenha todos os dados necessários na `regulacao` ou possa fazer algum processamento:
-    const dados: DadosPacienteData = {
+    const dados: DadosPacienteExternoData = {
       nome_paciente: regulacao.nome_paciente,
       num_prontuario: regulacao.num_prontuario,
       num_regulacao: regulacao.num_regulacao,
@@ -244,48 +246,18 @@ const RegulacaoMedicaExterna: React.FC = () => {
 
   return (
     <>
-      <div className="Component">
+      <div className='Component'>
         <div className='Component-Table'>
-
-          <div className="Header-ListaRegulaçoes">
-            <label className="Title-Tabela">
-              Regulações Externas Pendentes <LuFilter className='Icon' onClick={() => setShowFilters(!showFilters)} title='Filtros' />
-            </label>
-          </div>
-
-          {showFilters && (
-            <div className="Filtro-Container">
-              <input
-                type="text"
-                placeholder="Buscar por Nome, Prontuário ou Regulação"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="Search-Input"
-              />
-              <Filtro
-                filtros={[
-                  {
-                    label: 'Unidade Origem',
-                    value: unidadeOrigem,
-                    options: [...new Set(regulacoes.map((r) => r.un_origem).filter(Boolean))],
-                    onChange: setUnidadeOrigem,
-                  },
-                  {
-                    label: 'Vinculo',
-                    value: vinculo,
-                    options: [...new Set(regulacoes.map((r) => r.vinculo).filter(Boolean))],
-                    onChange: setUnidadeDestino,
-                  },
-                ]}
-                onClear={() => {
-                  setUnidadeOrigem('');
-                  setUnidadeDestino('');
-                  setSearchTerm('');
-                }}
-              />
-
-            </div>
-          )}
+          <HeaderFiltroExterno
+            title={title}
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            vinculo={vinculo}
+            setVinculo={setVinculo}
+            unidadeOrigem={unidadeOrigem}
+            setUnidadeOrigem={setUnidadeOrigem}
+            regulacoes={regulacoes}
+          />
 
           <div>
             <TabelaRegulacoesExternas
@@ -307,7 +279,7 @@ const RegulacaoMedicaExterna: React.FC = () => {
               onClose={handleCloseModal}
               title="Regulação Médica: Aprovação"
             >
-              <NovaRegulacaoMedicoAprovada
+              <NovaRegulacaoMedicoAprovada_Externa
                 dadosPaciente={dadosPaciente}
                 tempoEspera={elapsedTime} // Passa o tempo para o modal
                 onClose={handleCloseModal} // Fecha o modal
@@ -322,7 +294,7 @@ const RegulacaoMedicaExterna: React.FC = () => {
               onClose={handleCloseModal}
               title="Regulação Médica: Negação"
             >
-              <NovaRegulacaoMedicoNegada
+              <NovaRegulacaoMedicoNegada_Externa
                 dadosPaciente={currentRegulacao}
                 onClose={handleCloseModal} // Fecha o modal
                 showSnackbar={showSnackbar} // Passa o controle do Snackbar

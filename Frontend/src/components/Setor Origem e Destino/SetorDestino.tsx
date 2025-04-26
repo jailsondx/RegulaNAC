@@ -38,7 +38,7 @@ const SetorDestino: React.FC<Props> = ({ dadosPaciente, onClose, showSnackbar })
     const [userData, setUserData] = useState<UserData | null>(null);
     const [formData, setFormData] = useState<DestinoData>({
         ...initialFormData, // Espalha os valores iniciais
-        un_destino: dadosPaciente.un_destino, // Sobrescreve apenas 'un_destino'
+        un_destino: dadosPaciente.un_destino, // Sobrescreve apenas 'un_destino' com valor padrão
     });
 
 

@@ -120,7 +120,7 @@ const Transporte01: React.FC<Props> = ({ dadosPaciente, onClose, showSnackbar, }
                         </div>
 
                         <div className='modal-input-line2'>
-                            <div className="Transporte-line">
+                            <div className='modal-input-line sub'>
                                 <label>Acionamento do Transporte:</label>
                                 <input
                                     type="datetime-local"
@@ -132,7 +132,7 @@ const Transporte01: React.FC<Props> = ({ dadosPaciente, onClose, showSnackbar, }
                                 />
                             </div>
 
-                            <div className="Transporte-line">
+                            <div className='modal-input-line sub'>
                                 <label>Criticidade:</label>
                                 <select
                                     name="criticidade"
@@ -151,7 +151,7 @@ const Transporte01: React.FC<Props> = ({ dadosPaciente, onClose, showSnackbar, }
 
                         </div>
 
-                        <div className="Transporte-line">
+                        <div className="modal-input-line">
                             <label>Hora da liberação do leito:</label>
                             <input
                                 type="datetime-local"

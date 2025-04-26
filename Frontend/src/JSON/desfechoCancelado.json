@@ -1,14 +1,8 @@
-[
-  { "value": "ALTA", "label": "ALTA" },
-  { "value": "ÓBITO", "label": "ÓBITO" },
-  { "value": "TRANSFERÊNCIA EXTERNA", "label": "TRANSFERÊNCIA EXTERNA" },
-  { "value": "PRIORIZADO OUTRO PACIENTE", "label": "PRIORIZADO OUTRO PACIENTE" },
-  { "value": "MUDANÇA DE PERFIL", "label": "MUDANÇA DE PERFIL" },
-  { "value": "MÉDICO CANCELOU", "label": "MÉDICO CANCELOU" },
-  { "value": "FORA DO PERFIL", "label": "FORA DO PERFIL" },
-  { "value": "INSTABILIDADE CLÍNICA", "label": "INSTABILIDADE CLÍNICA" },
-  { "value": "RECUSA DO PCT", "label": "RECUSA DO PCT" },
-  { "value": "EVASÃO", "label": "EVASÃO" },
-  { "value": "CANCELADO", "label": "CANCELADO" },
-  { "value": "PACIENTE NÃO COMPARECEU", "label": "PACIENTE NÃO COMPARECEU" }
+[ 
+  { "value": "RECUSA DO PACIENTE", "label": "RECUSA DO PACIENTE" },
+  { "value": "INSTABILIDADE CLINICA", "label": "INSTABILIDADE CLÍNICA" },
+  { "value": "PERMUTA DE PACIENTE", "label": "PERMUTA DE PACIENTE" },
+  { "value": "ERRO NA SOLICITACAO", "label": "ERRO NA SOLICITACAO" },
+  { "value": "NAO ATENDE CRITERIOS DA UNIDADE", "label": "NÃO ATENDE CRITÉRIOS DA UNIDADE" },
+  { "value": "DECISAO MEDICA", "label": "DECISÃO MÉDICA" }
 ]

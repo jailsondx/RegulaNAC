@@ -2,7 +2,7 @@
     min-height: 20dvh;
 }
 
-.modal-input input, .modal-input select, .modal-input textarea{
+.modal-input input, .modal-input select{
     width: 99%;
 }
 
@@ -13,10 +13,6 @@
 input[type='datetime-local']{
     width: 97%;
     max-width: 250px;
-}
-
-.input-dateTime{
-    
 }
 
 .modal-input-textarea{
@@ -31,16 +27,25 @@ input[type='datetime-local']{
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;
-    width: 100%;
+    width: 97%;
     margin-bottom: 20px;
+}
+
+.modal-input-line2 .sub{
+    margin-bottom: 0px;
 }
 
 .modal-input-line2{
     display: flex;
     flex-direction: row;
-    width: 100%;
-    justify-content: space-between;
+    width: 97%;
+    justify-content: center;
     gap: 5%;
+    margin-bottom: 20px;
+}
+
+.modal-input-line2 input, .modal-input-line2 select{
+    width: 100%;
 }
 
 .modal-input-line, .modal-input-line2 label{

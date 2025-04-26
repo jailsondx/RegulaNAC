@@ -1,43 +1,47 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { AxiosError } from 'axios';
-import { LuFilter } from "react-icons/lu";
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { Snackbar, Alert } from '@mui/material';
 
 /*IMPORT INTERFACES*/
-import { RegulacaoData } from '../../../interfaces/Regulacao';
+import { UserData } from '../../../../interfaces/UserData';
+import { RegulacaoExternaData } from '../../../../interfaces/RegulacaoExtena';
 
 /*IMPORT COMPONENTS*/
-import Filtro from '../../Filtro/Filtro';
-import TabelaRegulacoes from '../Tabela de Regulacoes/Internas/TabelaRegulacoesInternas';
+import HeaderFiltroExterno from '../../../Header/Header_Lista_Externa';
+import TabelaRegulacoesExternas from '../../Tabela de Regulacoes/Externas/TabelaRegulacoesExternas';
 
 /*IMPORT FUNCTIONS*/
+import { getUserData } from '../../../../functions/storageUtils';
 
 
 /*IMPORT CSS*/
-import './ListaRegulacoes.css';
+import '../ListaRegulacoes.css';
 
 /*IMPORT JSON*/
 
 /*IMPORT UTILS*/
-import { fetchPDF } from '../../../Utils/fetchPDF';
+import { fetchPDF } from '../../../../Utils/fetchPDF';
 
 /*IMPORT VARIAVEIS DE AMBIENTE*/
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
 
-const ListaRegulacoes: React.FC = () => {
+interface Props {
+    title: string;
+}
+
+const ListaRegulacoesExternas: React.FC<Props> = ({ title }) => {
+  const [userData, setUserData] = useState<UserData | null>(null);
   const [serverTime, setServerTime] = useState("");
-  const [regulacoes, setRegulacoes] = useState<RegulacaoData[]>([]); // Tipo do estado
+  const [regulacoes, setRegulacoes] = useState<RegulacaoExternaData[]>([]); // Tipo do estado
   const location = useLocation();
-  const navigate = useNavigate();
 
   /*FILTROS*/
   const [unidadeOrigem, setUnidadeOrigem] = useState('');
-  const [unidadeDestino, setUnidadeDestino] = useState('');
-  const [filteredRegulacoes, setFilteredRegulacoes] = useState<RegulacaoData[]>([]);
+  const [vinculo, setVinculo] = useState('');
+  const [filteredRegulacoes, setFilteredRegulacoes] = useState<RegulacaoExternaData[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [showFilters, setShowFilters] = useState(false); // Controle da exibição dos filtros
 
   /*PAGINAÇÃO*/
   const [currentPage, setCurrentPage] = useState(1);  // Página atual
@@ -48,19 +52,25 @@ const ListaRegulacoes: React.FC = () => {
   const totalPages = Math.ceil(filteredRegulacoes.length / itemsPerPage);
 
   /*ORDENAÇÃO*/
-  const [sortConfig, setSortConfig] = useState<{ key: keyof RegulacaoData; direction: "asc" | "desc" } | null>(null);
-  const [selectedColumn, setSelectedColumn] = useState<keyof RegulacaoData | null>(null);
+  const [sortConfig, setSortConfig] = useState<{ key: keyof RegulacaoExternaData; direction: "asc" | "desc" } | null>(null);
+  const [selectedColumn, setSelectedColumn] = useState<keyof RegulacaoExternaData | null>(null);
 
   /*SNACKBAR*/
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error' | 'info' | 'warning'>('success');
 
+  //Pega dados do SeassonStorage User
+  useEffect(() => {
+      const data = getUserData();
+      setUserData(data);
+  }, []);
+
   //CHAMADA DE API PARA GERAR A LISTA DE REGULAÇÕES
   useEffect(() => {
     const fetchRegulacoes = async () => {
       try {
-        const response = await axios.get(`${NODE_URL}/api/internal/get/ListaRegulacoesPendentes`);
+        const response = await axios.get(`${NODE_URL}/api/internal/get/Externa/ListaRegulacoesPendentes`);
 
         if (response.data && Array.isArray(response.data.data)) {
           setRegulacoes(response.data.data);
@@ -109,8 +119,8 @@ const ListaRegulacoes: React.FC = () => {
       filtered = filtered.filter((r) => r.un_origem === unidadeOrigem);
     }
 
-    if (unidadeDestino) {
-      filtered = filtered.filter((r) => r.un_destino === unidadeDestino);
+    if (vinculo) {
+      filtered = filtered.filter((r) => r.vinculo === vinculo);
     }
 
     if (searchTerm) {
@@ -123,7 +133,7 @@ const ListaRegulacoes: React.FC = () => {
     }
 
     setFilteredRegulacoes(filtered);
-  }, [unidadeOrigem, unidadeDestino, searchTerm, regulacoes]);
+  }, [unidadeOrigem, vinculo, searchTerm, regulacoes]);
 
   //FUNÇÃO PARA BUSCAR O PDF
   const handleFetchPDF = (datetime: string, filename: string) => {
@@ -136,7 +146,7 @@ const ListaRegulacoes: React.FC = () => {
   };
 
   //CONFIGURA A ORDENAÇÃO
-  const handleSort = (key: keyof RegulacaoData) => {
+  const handleSort = (key: keyof RegulacaoExternaData) => {
     let direction: "asc" | "desc" = "asc";
     if (sortConfig?.key === key && sortConfig.direction === "asc") {
       direction = "desc";
@@ -153,11 +163,6 @@ const ListaRegulacoes: React.FC = () => {
     setFilteredRegulacoes(sortedData);
     setSelectedColumn(key);
   };
-
-  //CHAMA A ROTA DE NOVA REGULAÇÃO
-  const NovaRegulacao = () => {
-    navigate('/NovaRegulacao');
-  }
 
   //EXIBE O SNACKBAR
   const showSnackbar = (
@@ -179,58 +184,30 @@ const ListaRegulacoes: React.FC = () => {
     <>
       <div className='Component'>
         <div className='Component-Table'>
-
-          <div className="Header-ListaRegulaçoes">
-            <label className="Title-Tabela">
-              Lista de Regulações <LuFilter className='Icon' onClick={() => setShowFilters(!showFilters)} title='Filtros' />
-            </label>
-            <button type="button" onClick={NovaRegulacao}>+ Nova Regulação</button>
-          </div>
-
-          {showFilters && (
-            <div className="Filtro-Container">
-              <input
-                type="text"
-                placeholder="Buscar por Nome, Prontuário ou Regulação"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="Search-Input"
-              />
-              <Filtro
-                filtros={[
-                  {
-                    label: 'Unidade Origem',
-                    value: unidadeOrigem,
-                    options: [...new Set(regulacoes.map((r) => r.un_origem).filter(Boolean))],
-                    onChange: setUnidadeOrigem,
-                  },
-                  {
-                    label: 'Unidade Destino',
-                    value: unidadeDestino,
-                    options: [...new Set(regulacoes.map((r) => r.un_destino).filter(Boolean))],
-                    onChange: setUnidadeDestino,
-                  },
-                ]}
-                onClear={() => {
-                  setUnidadeOrigem('');
-                  setUnidadeDestino('');
-                  setSearchTerm('');
-                }}
-              />
-
-            </div>
-          )}
+          <HeaderFiltroExterno
+              title={title}
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+              vinculo={vinculo}
+              setVinculo={setVinculo}
+              unidadeOrigem={unidadeOrigem}
+              setUnidadeOrigem={setUnidadeOrigem}
+              regulacoes={regulacoes}
+            />
 
           <div>
-            <TabelaRegulacoes
-              currentRegulacoes={currentRegulacoes}
-              selectedColumn={selectedColumn}
-              sortConfig={sortConfig}
-              handleSort={handleSort}
-              fetchPDF={handleFetchPDF}
-              serverTime={serverTime}
-              IconOpcoes='normais'
-            />
+            {userData && (
+              <TabelaRegulacoesExternas
+                currentRegulacoes={currentRegulacoes}
+                selectedColumn={selectedColumn}
+                sortConfig={sortConfig}
+                handleSort={handleSort}
+                fetchPDF={handleFetchPDF}
+                serverTime={serverTime}
+                IconOpcoes='normais'
+                UserData={userData}
+              />
+            )}
           </div>
 
         </div>
@@ -262,4 +239,4 @@ const ListaRegulacoes: React.FC = () => {
 };
 
 
-export default ListaRegulacoes;
+export default ListaRegulacoesExternas;

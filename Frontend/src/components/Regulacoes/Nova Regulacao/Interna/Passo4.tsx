@@ -35,6 +35,7 @@ export const Passo4: React.FC<Props> = ({
                     type="file"
                     accept="application/pdf"
                     onChange={handleFileChange}
+                    required
                 />
             </div>
         </div>
