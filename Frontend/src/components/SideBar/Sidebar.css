@@ -117,6 +117,34 @@
   transform: scale(1.1);
 }
 
+
+
+
+.sidebar ul li button {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: flex-start;
+  height: 30px;
+  width: 100%;
+  padding: 0;
+  color: white;
+  background: none;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.sidebar ul li button:hover {
+  background-color: #0c4d8d;
+  border-radius: 5px;
+  transform: scale(1.1);
+}
+
+
+
+
 .app-container {
   display: flex;
 }
@@ -126,6 +154,7 @@
   padding: 20px;
   width: auto;
 }
+
 
 /*USER SECTION*/
 .inf-user{
@@ -209,6 +238,7 @@
 }
 
 .textMenu-Item{
+  text-align: left;
   width: 83%;
   cursor: pointer;
 }

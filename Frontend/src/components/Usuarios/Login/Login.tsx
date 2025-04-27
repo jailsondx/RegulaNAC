@@ -49,7 +49,7 @@ const Login: React.FC = () => {
       });
 
       //const success = response.data.success;
-      const { id_user, login, nome, tipo } = response.data.data;
+      const { id_user, login, nome, tipo, permissao } = response.data.data;
 
       if (response.data.message === 'Redefina sua senha pessoal') {
         //navigate(`/updatepassword?login=${response.data.data}`);
@@ -60,6 +60,7 @@ const Login: React.FC = () => {
         sessionStorage.setItem('login', login);
         sessionStorage.setItem('nome', nome);
         sessionStorage.setItem('tipo', tipo);
+        sessionStorage.setItem('permissao', permissao);
 
         // Redirecionar para a rota /home
         navigate('/home');

@@ -3,5 +3,5 @@ export interface UserData {
     login: string;
     nome: string;
     tipo: string;
-    especialidade?: string;
+    permissao?: string;
   }

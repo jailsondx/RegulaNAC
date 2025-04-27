@@ -5,7 +5,7 @@ import Externa_UpdateMedico from "../../UpdateSQL/Externas/Externa_UpdateMedico.
 async function Externa_RegulacaoMedica_01(FormData) {
     const DBtable = "externa_regulacao_medico";
     const DBtableUsuarios = "usuarios";
-    const NovoStatusApproved = "ABERTO - APROVADO - AGUARDANDO ORIGEM";
+    const NovoStatusApproved = "ABERTO - APROVADO - AGUARDANDO DESFECHO";
     const NovoStatusHalfApproved = "ABERTO - APROVADO - AGUARDANDO SEGUNDA APROVACAO";
     const NovoStatusDeny = "NEGADO";
 
@@ -77,4 +77,4 @@ async function Externa_RegulacaoMedica_01(FormData) {
     }
 }
 
-export {Externa_RegulacaoMedica_01};
+export default Externa_RegulacaoMedica_01;

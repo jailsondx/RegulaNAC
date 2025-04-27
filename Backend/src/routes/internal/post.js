@@ -11,7 +11,7 @@ import CadastroUser from '../../functions/InsertSQL/CadastroUser.js';
 import Transporte from '../../functions/InsertSQL/Transporte.js';
 
 import { Externa_NovaRegulacao_Obstetrica } from '../../functions/InsertSQL/Externas/Externa_NovaRegulacao.js';
-import { Externa_RegulacaoMedica_01 } from '../../functions/InsertSQL/Externas/Externa_RegulacaoMedica.js';
+import Externa_RegulacaoMedica_01 from '../../functions/InsertSQL/Externas/Externa_RegulacaoMedica.js';
 
 const routerPost = express.Router();
 
