@@ -52,9 +52,10 @@ const Sidebar: React.FC = () => {
     if (tipo === 'MEDICO') {
       return (
         <>
-          <li><Link to="/RegulacaoMedicaInterna"><TiHeartHalfOutline className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulação Médica Interna</label></Link></li>
-          <li><Link to="/RegulacaoMedicaExterna"><TiHeartHalfOutline className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulação Médica Externa</label></Link></li>
-          <li><Link to="/RegulacoesAprovadas"><TiThumbsUp className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações Aprovadas</label></Link></li>
+          <li><Link to="/RegulacaoMedica"><TiHeartHalfOutline className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulação Médica Interna</label></Link></li>
+          <li><Link to="/RegulacaoMedicaExternas"><TiHeartHalfOutline className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulação Médica Externa</label></Link></li>
+          <li><Link to="/RegulacoesAprovadas"><TiThumbsUp className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações Aprovadas Internas</label></Link></li>
+          <li><Link to="/RegulacoesAprovadasExternas"><TiThumbsUp className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações Aprovadas Externas</label></Link></li>
           <hr />
           <li><Link to="/Login"><TiExportOutline className='Icon-Menu-Item' /><label className='textMenu-Item'>Sair</label></Link></li>
         </>
@@ -115,8 +116,8 @@ const Sidebar: React.FC = () => {
           <hr />
           <li><Link to="/ListaRegulacoes24"><TiClipboard className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações +24hrs</label></Link></li>
           <li><Link to="/Finalizadas"><TiClipboard className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulações Finalizadas</label></Link></li>
-          <li><Link to="/RegulacaoMedicaInterna"><TiHeartHalfOutline className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulação Médica Interna</label></Link></li>
-          <li><Link to="/RegulacaoMedicaExterna"><TiHeartHalfOutline className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulação Médica Externa</label></Link></li>
+          <li><Link to="/RegulacaoMedica"><TiHeartHalfOutline className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulação Médica Interna</label></Link></li>
+          <li><Link to="/RegulacaoMedicaExternas"><TiHeartHalfOutline className='Icon-Menu-Item' /><label className='textMenu-Item'>Regulação Médica Externa</label></Link></li>
           <hr />
           <li><Link to="/Login"><TiExportOutline className='Icon-Menu-Item' /><label className='textMenu-Item'>Sair</label></Link></li>
         </>

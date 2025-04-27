@@ -30,6 +30,7 @@ import Page_Obstetrica from '../Pages/Nova Regulação/Regulação Externa/Page_
 import Page_AVC from '../Pages/Nova Regulação/Regulação Externa/Page_AVC';
 import Page_ListaRegulacoesExternas from '../Pages/Listas/Externas/Page_ListaRegulacoesExternas';
 import Page_ListaRegulacoesMedicasExternas from '../Pages/Listas/Externas/Page_ListaRegulacoesMedicasExternas';
+import Page_ListaRegulacoesExternasAprovadas from '../Pages/Listas/Externas/Page_ListaRegulacoesExternasAprovadas';
 
 
 
@@ -74,7 +75,7 @@ const Rotas: React.FC = () => {
           <Route path="AtualizaRegulacao" element={<AtualizaRegulacao />} />
           <Route path="EditaRegulacao" element={<EditaRegulacao />} />
           <Route path="ListaRegulacoes" element={<Page_ListaRegulacoesInternas />} />
-          <Route path="RegulacaoMedicaInterna" element={<Page_ListaRegulacoesMedicasInternas />} />
+          <Route path="RegulacaoMedica" element={<Page_ListaRegulacoesMedicasInternas />} />
           <Route path="ListaRegulacoes24" element={<Page_ListaRegulacoesInternas24hrs />} />
           <Route path="RegulacoesAprovadas" element={<Page_ListaRegulacoesInternasAprovadas />} />
           <Route path="RegulacoesNegadas" element={<Page_ListaRegulacoesInternasNegadas />} />
@@ -83,7 +84,8 @@ const Rotas: React.FC = () => {
           <Route path="RegulacaoExObstetrica" element={<Page_Obstetrica />} />
           <Route path="RegulacaoExAVC" element={<Page_AVC />} />
           <Route path="ListaRegulacoesExternas" element={<Page_ListaRegulacoesExternas />} />
-          <Route path="RegulacaoMedicaExterna" element={<Page_ListaRegulacoesMedicasExternas />} />
+          <Route path="RegulacaoMedicaExternas" element={<Page_ListaRegulacoesMedicasExternas />} />
+          <Route path="RegulacoesAprovadasExternas" element={<Page_ListaRegulacoesExternasAprovadas />} />
 
           
 

@@ -70,7 +70,16 @@ routerGet.get('/ListaRegulacoesPendentes24', async (req, res) => {
 
 routerGet.get('/ListaRegulacoesAprovadas', async (req, res) => {
   try {
-    const result = await ListaRegulacoesAprovadas();
+    const result = await ListaRegulacoesAprovadas('Interna');
+    handleResponse(res, result);
+  } catch (error) {
+    handleError(res, error);
+  }
+});
+
+routerGet.get('/Externa/ListaRegulacoesAprovadas', async (req, res) => {
+  try {
+    const result = await ListaRegulacoesAprovadas('Externa');
     handleResponse(res, result);
   } catch (error) {
     handleError(res, error);
