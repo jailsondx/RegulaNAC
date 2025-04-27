@@ -32,6 +32,7 @@ const initialFormData: RegulacaoExternoMedicoData = {
   num_leito: '',
   extra: false,
   segundo_medico: false,
+  especialidade: '',
   justificativa_neg: '',
   nome_regulador_medico_01: '',
   data_hora_regulacao_medico_01: '',
@@ -76,9 +77,18 @@ const NovaRegulacaoMedicoAprovada_Externa: React.FC<Props> = ({ dadosPaciente, t
     return true;
   };
 
+  const defineEspecialidade = () => {
+    if(formData.segundo_medico){
+      formData.especialidade = 'NEONATOLOGIA'
+    }
+  }
+
   const handleSubmit = async (e: FormEvent): Promise<void> => {
     e.preventDefault();
     if (!validateForm()) return;
+
+    //função para definir a especialidade
+    defineEspecialidade();
 
     try {
       const dataToSubmit = {
@@ -167,7 +177,8 @@ const NovaRegulacaoMedicoAprovada_Externa: React.FC<Props> = ({ dadosPaciente, t
               />
             </div>
 
-            <div className="segundo_medico">
+            {dadosPaciente.un_origem === 'CRESUS' && (
+              <div className="segundo_medico">
               <span>Avaliação Neonatologista?</span>
               <input
                 type="checkbox"
@@ -178,6 +189,8 @@ const NovaRegulacaoMedicoAprovada_Externa: React.FC<Props> = ({ dadosPaciente, t
               />
               <label htmlFor="segundoMedicoCheckbox"></label>
             </div>
+            )}
+
           </div>
           
           <div className="modal-input-line">

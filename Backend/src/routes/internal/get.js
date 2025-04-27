@@ -90,7 +90,17 @@ routerGet.get('/VerificaID', async (req, res) => {
 routerGet.get('/VerificaProntuario', async (req, res) => {
   try {
     const { num_prontuario } = req.query;
-    const result = await VerificaProntuario(num_prontuario);
+    const result = await VerificaProntuario(num_prontuario, 'Interna');
+    handleResponse(res, result);
+  } catch (error) {
+    handleError(res, error);
+  }
+});
+
+routerGet.get('/Externa/VerificaProntuario', async (req, res) => {
+  try {
+    const { num_prontuario } = req.query;
+    const result = await VerificaProntuario(num_prontuario, 'Externa');
     handleResponse(res, result);
   } catch (error) {
     handleError(res, error);

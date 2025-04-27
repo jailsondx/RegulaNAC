@@ -33,6 +33,7 @@ export interface RegulacaoExternoMedicoData {
   num_leito?: string;
   extra?: boolean;
   segundo_medico?: boolean;
+  especialidade?: string;
   justificativa_neg?: string;
   nome_regulador_medico_01: string;
   nome_regulador_medico_02?: string;

@@ -7,8 +7,6 @@ async function ListaRegulacoesPendentes(Origem) {
     let query;
     let queryParams = [];
 
-    console.log('requisicao: ',Origem);
-
     switch (Origem) {
         case "Interna":
             DBtable = "regulacao";

@@ -122,6 +122,9 @@ const RegulacaoExObstetrica: React.FC = () => {
                 case !formData.num_regulacao:
                     invalidField = 'O número da regulação é obrigatório.';
                     break;
+                case !file:
+                    invalidField = 'PDF da regulação é obrigatório.';
+                    break;
                 default:
                     break;
             }
@@ -283,7 +286,7 @@ const RegulacaoExObstetrica: React.FC = () => {
         }
 
         try {
-            const response = await axios.get(`${NODE_URL}/api/internal/get/VerificaProntuario`, {
+            const response = await axios.get(`${NODE_URL}/api/internal/get/Externa/VerificaProntuario`, {
                 params: { num_prontuario: numProntuario },
             });
 
