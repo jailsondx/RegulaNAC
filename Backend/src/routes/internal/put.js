@@ -56,7 +56,6 @@ routerPut.put('/EditaRegulacao', async (req, res) => {
 routerPut.put('/Transporte', async (req, res) => {
   try {
     const formData = convertObjectToUpperCase(req.body); // Converte os dados para maiúsculas
-
     const result = await updateTransporte(formData);
     handleResponse(res, result);
   } catch (error) {

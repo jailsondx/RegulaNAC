@@ -122,6 +122,12 @@ const TabelaRegulacoesInternas: React.FC<TabelaRegulacoesProps> = ({
 
           <th title='Tempo de Espera calculado com base no tempo do acionamento médico'>Tempo de Espera</th>
 
+          {IconOpcoes === 'normais' && (
+            <>
+              <th>Editar</th>
+            </>
+          )}
+
           {IconOpcoes === 'desfecho' && (
             <>
               <th>Fase</th>

@@ -35,7 +35,8 @@ const initialFormData: TransporteDatesData = {
     data_hora_chegada_origem: '',
     data_hora_saida_origem: '',
     data_hora_chegada_destino: '',
-    justificativa_atraso_leito: ''
+    justificativa_atraso_leito: '',
+    observacao: [] as string[], // <- Aqui agora é um array de strings
 };
 
 const Transporte02: React.FC<Props> = ({ dadosPaciente, onClose, showSnackbar }) => {
@@ -107,6 +108,22 @@ const Transporte02: React.FC<Props> = ({ dadosPaciente, onClose, showSnackbar })
         }));
     };
 
+    const handleCheckboxChange = (e: ChangeEvent<HTMLInputElement>): void => {
+        const { value, checked } = e.target;
+
+        setFormData((prevState) => {
+            const newObservacao = checked
+                ? [...(prevState.observacao || []), value] // se marcou, adiciona
+                : (prevState.observacao || []).filter((item) => item !== value); // se desmarcou, tira
+
+            return {
+                ...prevState,
+                observacao: newObservacao,
+            };
+        });
+    };
+
+
     const validateForm = (): boolean => {
         if (!formData.data_hora_chegada_origem.trim() || !formData.data_hora_saida_origem.trim() || !formData.data_hora_chegada_destino.trim()) {
             showSnackbar('Todas as datas e horários são obrigatórios!', 'warning');
@@ -128,9 +145,10 @@ const Transporte02: React.FC<Props> = ({ dadosPaciente, onClose, showSnackbar })
         try {
             const dataToSubmit = {
                 ...formData,
-                justificativa_atraso_leito: diferencaHoras >= 2 ? justificativa_atraso_leito : null, // Inclui a observação apenas se necessário
+                justificativa_atraso_leito: justificativa_atraso_leito ?? null, // Inclui a observação apenas se necessário
                 id_user: userData?.id_user,
                 id_regulacao: dadosPaciente.id_regulacao,
+                observacao: Array.isArray(formData.observacao) ? formData.observacao.join(', ') : formData.observacao,
             };
 
             const response = await axios.put(`${NODE_URL}/api/internal/put/Transporte`, dataToSubmit);
@@ -247,6 +265,76 @@ const Transporte02: React.FC<Props> = ({ dadosPaciente, onClose, showSnackbar })
                                         placeholder="Descreva o motivo..."
                                         required
                                     />
+                                </div>
+                            )}
+
+                            {justificativa_atraso_leito === 'ATRASO NO PREPARO DO PACIENTE' && (
+                                <div className="modal-input-line">
+                                    <label>Selecione o motivo do atraso:</label>
+                                    <select
+                                        className="modal-input-select"
+                                        name="observacao"
+                                        value={formData.observacao}
+                                        onChange={handleChange}
+                                        required
+                                    >
+                                        <option value="">SELECIONE O MOTIVO</option>
+                                        <option value="AIH">AIH</option>
+                                        <option value="BANHO">BANHO</option>
+                                        <option value="CURATIVO">CURATIVO</option>
+                                        <option value="EVOLUÇÃO MÉDICA">EVOLUÇÃO MÉDICA</option>
+                                        <option value="MEDICAÇÃO">MEDICAÇÃO</option>
+                                        <option value="PROCEDIMENTOS">PROCEDIMENTOS</option>
+                                    </select>
+                                </div>
+                            )}
+
+                            {justificativa_atraso_leito === 'REALIZANDO PROCEDIMENTO' && (
+                                <div className="modal-input-line">
+                                    <label>Selecione o motivo do atraso:</label>
+                                    <div className="modal-input-checkbox-group">
+                                        <label>
+                                            <input
+                                                type="checkbox"
+                                                name="observacao"
+                                                value="EXAME"
+                                                checked={formData.observacao?.includes('EXAME')}
+                                                onChange={handleCheckboxChange}
+
+                                            />
+                                            EXAME
+                                        </label>
+                                        <label>
+                                            <input
+                                                type="checkbox"
+                                                name="observacao"
+                                                value="DIÁLISE"
+                                                checked={formData.observacao?.includes('DIÁLISE')}
+                                                onChange={handleCheckboxChange}
+                                            />
+                                            DIÁLISE
+                                        </label>
+                                        <label>
+                                            <input
+                                                type="checkbox"
+                                                name="observacao"
+                                                value="TRANSFUSÃO"
+                                                checked={formData.observacao?.includes('TRANSFUSÃO')}
+                                                onChange={handleCheckboxChange}
+                                            />
+                                            TRANSFUSÃO
+                                        </label>
+                                        <label>
+                                            <input
+                                                type="checkbox"
+                                                name="observacao"
+                                                value="PROCEDIMENTO CIRÚRGICO"
+                                                checked={formData.observacao?.includes('PROCEDIMENTO CIRÚRGICO')}
+                                                onChange={handleCheckboxChange}
+                                            />
+                                            PROCEDIMENTO CIRÚRGICO
+                                        </label>
+                                    </div>
                                 </div>
                             )}
 

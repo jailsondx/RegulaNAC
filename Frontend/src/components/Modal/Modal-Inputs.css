@@ -39,7 +39,7 @@ input[type='datetime-local']{
     display: flex;
     flex-direction: row;
     width: 97%;
-    justify-content: center;
+    justify-content: space-between;
     gap: 5%;
     margin-bottom: 20px;
 }
@@ -50,4 +50,13 @@ input[type='datetime-local']{
 
 .modal-input-line, .modal-input-line2 label{
     display: flex;
+}
+
+.modal-input-checkbox-group{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 100%;
+    min-height: 50px;
+    width: 100%;
 }
