@@ -7,15 +7,17 @@ import { Snackbar, Alert } from '@mui/material';
 /*IMPORT COMPONENTS*/
 import Modal from '../Modal/Modal';
 import Desfecho from '../Desfecho/Desfecho';
-import TabelaRegulacoes from '../Regulacoes/Tabela de Regulacoes/Internas/TabelaRegulacoesInternas.tsx';
+import TabelaRegulacoesInternas from '../Regulacoes/Tabela de Regulacoes/Internas/TabelaRegulacoesInternas.tsx';
 
 /*IMPORT INTERFACES*/
+import { UserData } from '../../interfaces/UserData.ts';
 import { RegulacaoAprovadaData } from '../../interfaces/Regulacao.ts';
 import { StatusRegulacaoData } from '../../interfaces/Status.ts';
 import { DadosPacienteData } from "../../interfaces/DadosPaciente.ts";
 import { RegulacaoData } from '../../interfaces/Regulacao';
 
 /*IMPORT FUNCTIONS*/
+import { getUserData } from '../../functions/storageUtils.ts';
 import { getDay, getMonth, getYear } from '../../functions/DateTimes';
 
 /*IMPORT CSS*/
@@ -42,6 +44,7 @@ const initialForm: SearchForm = {
 };
 
 const ListarDesfecho: React.FC = () => {
+  const [userData, setUserData] = useState<UserData | null>(null);
   const location = useLocation();
   const [dadosPaciente, setDadosPaciente] = useState<DadosPacienteData | null>(null);
   const [currentRegulacao, setCurrentRegulacao] = useState<RegulacaoAprovadaData | null>(null);
@@ -67,6 +70,19 @@ const ListarDesfecho: React.FC = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error' | 'info' | 'warning'>('success');
+
+  /*PAGINAÇÃO*/
+  const indexOfLastRegulacao = currentPage * itemsPerPage;
+  const indexOfFirstRegulacao = indexOfLastRegulacao - itemsPerPage;
+  const currentRegulacoes = filteredRegulacoes.slice(indexOfFirstRegulacao, indexOfLastRegulacao);
+  const totalPages = Math.ceil(filteredRegulacoes.length / itemsPerPage);
+
+  //Pega dados do SeassonStorage User
+  useEffect(() => {
+    const data = getUserData();
+    setUserData(data);
+  }, []);
+
 
   //Carrega a lista de STATUS REGULACAO
   useEffect(() => {
@@ -234,11 +250,7 @@ const ListarDesfecho: React.FC = () => {
     setSnackbarOpen(false);
   };
 
-  const indexOfLastRegulacao = currentPage * itemsPerPage;
-  const indexOfFirstRegulacao = indexOfLastRegulacao - itemsPerPage;
-  const currentRegulacoes = filteredRegulacoes.slice(indexOfFirstRegulacao, indexOfLastRegulacao);
 
-  const totalPages = Math.ceil(filteredRegulacoes.length / itemsPerPage);
 
   return (
     <>
@@ -248,6 +260,7 @@ const ListarDesfecho: React.FC = () => {
             <label className="Title-Tabela">Desfechos</label>
           </div>
 
+          {/* Pesquisa */}
           <div>
             {/* Formulário de Pesquisa */}
             <form onSubmit={handleSearch} className="form-search">
@@ -306,16 +319,19 @@ const ListarDesfecho: React.FC = () => {
 
           {/* Tabela de Regulações */}
           <div>
-            <TabelaRegulacoes
-              currentRegulacoes={currentRegulacoes}
-              selectedColumn={selectedColumn}
-              sortConfig={sortConfig}
-              handleSort={handleSort}
-              fetchPDF={fetchPDF}
-              serverTime={serverTime}
-              handleOpenModalDesfecho={handleOpenModalDesfecho}
-              IconOpcoes='desfecho'
-            />
+            {(userData &&
+              <TabelaRegulacoesInternas
+                currentRegulacoes={currentRegulacoes}
+                selectedColumn={selectedColumn}
+                sortConfig={sortConfig}
+                handleSort={handleSort}
+                fetchPDF={fetchPDF}
+                serverTime={serverTime}
+                handleOpenModalDesfecho={handleOpenModalDesfecho}
+                IconOpcoes='desfecho'
+                UserData={userData}
+              />
+            )}
           </div>
 
         </div>
@@ -331,7 +347,7 @@ const ListarDesfecho: React.FC = () => {
         <Modal show={ShowModalDesfecho} onClose={handleCloseModal} title='Desfecho'>
           <Desfecho
             dadosPaciente={currentRegulacao}
-            forcado= {true}
+            forcado={true}
             onClose={handleCloseModal} // Fecha o modal
             showSnackbar={showSnackbar} // Passa o controle do Snackbar
           />

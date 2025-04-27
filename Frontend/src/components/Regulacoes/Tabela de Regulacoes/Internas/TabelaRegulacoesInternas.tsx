@@ -131,6 +131,7 @@ const TabelaRegulacoesInternas: React.FC<TabelaRegulacoesProps> = ({
           {IconOpcoes === 'desfecho' && (
             <>
               <th>Fase</th>
+              <th>Desfecho</th>
             </>
           )}
           

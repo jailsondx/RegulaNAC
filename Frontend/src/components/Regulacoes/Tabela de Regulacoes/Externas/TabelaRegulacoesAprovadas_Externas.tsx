@@ -49,17 +49,17 @@ const TabelaRegulacoesAprovadas_Externas: React.FC<TabelaRegulacoesAprovadasProp
             </span>
           </th>
 
+          <th className={`col-Vinculo clicked${selectedColumn === "vinculo" ? " selected" : ""}`} onClick={() => handleSort("vinculo")}>
+            <span>
+              <label>Vinculo</label>
+              <label>{sortConfig?.key === "vinculo" ? (sortConfig.direction === "asc" ? <LuArrowUpNarrowWide  /> : <LuArrowDownWideNarrow />) : ""}</label>
+            </span>
+          </th>
+
           <th className={`col-UnOrigem clicked${selectedColumn === "un_origem" ? " selected" : ""}`} onClick={() => handleSort("un_origem")}>
             <span>
               <label>Un. Origem</label>
               <label>{sortConfig?.key === "un_origem" ? (sortConfig.direction === "asc" ? <LuArrowUpNarrowWide  /> : <LuArrowDownWideNarrow />) : ""}</label>
-            </span>
-          </th>
-
-          <th className={`col-Vinculo clicked${selectedColumn === "vinculo" ? " selected" : ""}`} onClick={() => handleSort("vinculo")}>
-            <span>
-              <label>Un. Destino</label>
-              <label>{sortConfig?.key === "vinculo" ? (sortConfig.direction === "asc" ? <LuArrowUpNarrowWide  /> : <LuArrowDownWideNarrow />) : ""}</label>
             </span>
           </th>
 
@@ -99,8 +99,8 @@ const TabelaRegulacoesAprovadas_Externas: React.FC<TabelaRegulacoesAprovadasProp
               </a>
             </td>
             <td className="col-NumRegulacao">{regulacao.num_regulacao}</td>
-            <td>{regulacao.un_origem}</td>
             <td>{regulacao.vinculo}</td>
+            <td>{regulacao.un_origem}</td>
             <td className="col-Prioridade">{regulacao.num_leito}</td>
             <td>{regulacao.nome_regulador_medico}</td>
             <td>{new Date(regulacao.data_hora_regulacao_medico_01).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</td>
