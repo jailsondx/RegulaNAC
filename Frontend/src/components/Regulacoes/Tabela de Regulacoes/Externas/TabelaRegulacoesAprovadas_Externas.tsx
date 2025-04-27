@@ -1,21 +1,17 @@
 import React from 'react';
 import { LuArrowDownWideNarrow, LuArrowUpNarrowWide  } from "react-icons/lu";
-import { FcHome, FcOrganization, FcOnlineSupport, FcOvertime, FcAbout } from "react-icons/fc";
-import { RegulacaoAprovadaData } from '../../../../interfaces/Regulacao';
+import { FcAbout } from "react-icons/fc";
+import { RegulacaoExternaAprovadaData } from '../../../../interfaces/RegulacaoExtena';
 import { UserData } from '../../../../interfaces/UserData';
 
 interface TabelaRegulacoesAprovadasProps {
   UserData: UserData | null;
-  currentRegulacoes: RegulacaoAprovadaData[];
-  selectedColumn: keyof RegulacaoAprovadaData | null;
-  sortConfig: { key: keyof RegulacaoAprovadaData; direction: "asc" | "desc" } | null;
-  handleSort: (key: keyof RegulacaoAprovadaData) => void;
+  currentRegulacoes: RegulacaoExternaAprovadaData[];
+  selectedColumn: keyof RegulacaoExternaAprovadaData | null;
+  sortConfig: { key: keyof RegulacaoExternaAprovadaData; direction: "asc" | "desc" } | null;
+  handleSort: (key: keyof RegulacaoExternaAprovadaData) => void;
   fetchPDF: (datetime: string, filename: string) => void;
-  handleOpenModalOrigem: (regulacao: RegulacaoAprovadaData) => void;
-  handleOpenModalDestino: (regulacao: RegulacaoAprovadaData) => void;
-  handleOpenModalTransporte01: (regulacao: RegulacaoAprovadaData) => void;
-  handleOpenModalTransporte02: (regulacao: RegulacaoAprovadaData) => void;
-  handleOpenModalDesfecho: (regulacao: RegulacaoAprovadaData) => void;
+  handleOpenModalDesfecho: (regulacao: RegulacaoExternaAprovadaData) => void;
 }
 
 const TabelaRegulacoesAprovadas_Externas: React.FC<TabelaRegulacoesAprovadasProps> = ({
@@ -25,10 +21,6 @@ const TabelaRegulacoesAprovadas_Externas: React.FC<TabelaRegulacoesAprovadasProp
   sortConfig,
   handleSort,
   fetchPDF,
-  handleOpenModalOrigem,
-  handleOpenModalDestino,
-  handleOpenModalTransporte01,
-  handleOpenModalTransporte02,
   handleOpenModalDesfecho
 }) => {
 
@@ -64,10 +56,10 @@ const TabelaRegulacoesAprovadas_Externas: React.FC<TabelaRegulacoesAprovadasProp
             </span>
           </th>
 
-          <th className={`col-UnDestino clicked${selectedColumn === "un_destino" ? " selected" : ""}`} onClick={() => handleSort("un_destino")}>
+          <th className={`col-Vinculo clicked${selectedColumn === "vinculo" ? " selected" : ""}`} onClick={() => handleSort("vinculo")}>
             <span>
               <label>Un. Destino</label>
-              <label>{sortConfig?.key === "un_destino" ? (sortConfig.direction === "asc" ? <LuArrowUpNarrowWide  /> : <LuArrowDownWideNarrow />) : ""}</label>
+              <label>{sortConfig?.key === "vinculo" ? (sortConfig.direction === "asc" ? <LuArrowUpNarrowWide  /> : <LuArrowDownWideNarrow />) : ""}</label>
             </span>
           </th>
 
@@ -85,10 +77,10 @@ const TabelaRegulacoesAprovadas_Externas: React.FC<TabelaRegulacoesAprovadasProp
             </span>
           </th>
 
-          <th className={`col-DataRegMedico clicked${selectedColumn === "data_hora_regulacao_medico" ? " selected" : ""}`} onClick={() => handleSort("data_hora_regulacao_medico")}>
+          <th className={`col-DataRegMedico clicked${selectedColumn === "data_hora_regulacao_medico_01" ? " selected" : ""}`} onClick={() => handleSort("data_hora_regulacao_medico_01")}>
             <span>
               <label>Autorização</label>
-              <label>{sortConfig?.key === "data_hora_regulacao_medico" ? (sortConfig.direction === "asc" ? <LuArrowUpNarrowWide  /> : <LuArrowDownWideNarrow />) : ""}</label>
+              <label>{sortConfig?.key === "data_hora_regulacao_medico_01" ? (sortConfig.direction === "asc" ? <LuArrowUpNarrowWide  /> : <LuArrowDownWideNarrow />) : ""}</label>
             </span>
           </th>
 
@@ -102,47 +94,19 @@ const TabelaRegulacoesAprovadas_Externas: React.FC<TabelaRegulacoesAprovadasProp
           <tr key={regulacao.id_regulacao}>
             <td>{regulacao.num_prontuario}</td>
             <td className="col-NomePaciente">
-              <a onClick={() => fetchPDF(regulacao.data_hora_solicitacao_02, regulacao.link)}>
+              <a onClick={() => fetchPDF(regulacao.data_hora_solicitacao_02 ?? '', regulacao.link ?? '')}>
                 {regulacao.nome_paciente}
               </a>
             </td>
             <td className="col-NumRegulacao">{regulacao.num_regulacao}</td>
             <td>{regulacao.un_origem}</td>
-            <td>{regulacao.un_destino}</td>
+            <td>{regulacao.vinculo}</td>
             <td className="col-Prioridade">{regulacao.num_leito}</td>
             <td>{regulacao.nome_regulador_medico}</td>
-            <td>{new Date(regulacao.data_hora_regulacao_medico).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</td>
+            <td>{new Date(regulacao.data_hora_regulacao_medico_01).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</td>
             {UserData?.tipo !== "MEDICO" && (
               <td>
                 <label className="td-Icons">
-                  {regulacao.status_regulacao === "ABERTO - APROVADO - AGUARDANDO ORIGEM" && (
-                    <FcHome
-                      className="Icon Icons-Regulacao"
-                      onClick={() => handleOpenModalOrigem(regulacao)}
-                      title='Acionamento do Setor de Origem'
-                    />
-                  )}
-                  {regulacao.status_regulacao === "ABERTO - APROVADO - AGUARDANDO DESTINO" && (
-                    <FcOrganization
-                      className="Icon Icons-Regulacao"
-                      onClick={() => handleOpenModalDestino(regulacao)}
-                      title='Acionamento do Setor de Destino'
-                    />
-                  )}
-                  {regulacao.status_regulacao === "ABERTO - APROVADO - AGUARDANDO ACIONAMENTO TRANSPORTE" && (
-                    <FcOnlineSupport
-                      className="Icon Icons-Regulacao"
-                      onClick={() => handleOpenModalTransporte01(regulacao)}
-                      title='Acionamento do Transporte'
-                    />
-                  )}
-                  {regulacao.status_regulacao === "ABERTO - APROVADO - AGUARDANDO FINALIZACAO TRANSPORTE" && (
-                    <FcOvertime
-                      className="Icon Icons-Regulacao"
-                      onClick={() => handleOpenModalTransporte02(regulacao)}
-                      title='Finalização do Transporte'
-                    />
-                  )}
                   {regulacao.status_regulacao === "ABERTO - APROVADO - AGUARDANDO DESFECHO" && (
                     <FcAbout
                       className="Icon Icons-Regulacao"

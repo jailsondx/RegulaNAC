@@ -4,24 +4,22 @@ import { Snackbar, Alert } from "@mui/material";
 
 /*IMPORT INTERFACES*/
 import { UserData } from '../../../../interfaces/UserData.ts';
-import { RegulacaoAprovadaData } from '../../../../interfaces/Regulacao.ts';
-import { DadosPacienteData } from "../../../../interfaces/DadosPaciente.ts";
+import { RegulacaoExternaAprovadaData } from '../../../../interfaces/RegulacaoExtena.ts';
+import { DadosPacienteExternoData } from '../../../../interfaces/DadosPaciente.ts';
 
 /*IMPORT COMPONENTS*/
 import Modal from '../../../Modal/Modal.tsx';
-import HeaderFiltroInterno from '../../../Header/Header_Lista_Interna.tsx';
-import SetorOrigem from '../../../Setor Origem e Destino/SetorOrigem.tsx';
-import SetorDestino from '../../../Setor Origem e Destino/SetorDestino.tsx';
-import Transporte01 from '../../../Transporte/Transporte01.tsx';
-import Transporte02 from '../../../Transporte/Transporte02.tsx';
-import Desfecho from '../../../Desfecho/Desfecho.tsx';
-import TabelaRegulacoesAprovadas from '../../Tabela de Regulacoes/Internas/TabelaRegulacoesAprovadas.tsx';
+import HeaderFiltroExterno from '../../../Header/Header_Lista_Externa.tsx';
+import DesfechoExterno from '../../../Desfecho/Desfecho_Externo.tsx';
 
 /*IMPORT FUNCTIONS*/
 import { getUserData } from '../../../../functions/storageUtils.ts';
 
 /*IMPORT UTILS*/
 import { fetchPDF } from '../../../../Utils/fetchPDF.ts';
+import TabelaRegulacoesAprovadas_Externas from '../../Tabela de Regulacoes/Externas/TabelaRegulacoesAprovadas_Externas.tsx';
+
+
 
 /*IMPORT VARIAVEIS DE AMBIENTE*/
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
@@ -32,26 +30,22 @@ interface Props {
 
 const RegulacoesAprovadas_Externas: React.FC<Props> = ({ title }) => {
   const [userData, setUserData] = useState<UserData | null>(null);
-  const [regulacoes, setRegulacoes] = useState<RegulacaoAprovadaData[]>([]); // Tipo do estado
-  const [dadosPaciente, setDadosPaciente] = useState<DadosPacienteData | null>(null);
-  const [currentRegulacao, setCurrentRegulacao] = useState<RegulacaoAprovadaData | null>(null);
+  const [regulacoes, setRegulacoes] = useState<RegulacaoExternaAprovadaData[]>([]); // Tipo do estado
+  const [dadosPaciente, setDadosPaciente] = useState<DadosPacienteExternoData | null>(null);
+  const [currentRegulacao, setCurrentRegulacao] = useState<RegulacaoExternaAprovadaData | null>(null);
 
   /*MODAL*/
-  const [showModalOrigem, setShowModalOrigem] = useState(false);
-  const [showModalDestino, setShowModalDestino] = useState(false);
-  const [ShowModalTransporte01, setShowModalTransporte01] = useState(false);
-  const [ShowModalTransporte02, setShowModalTransporte02] = useState(false);
   const [ShowModalDesfecho, setShowModalDesfecho] = useState(false);
 
   /*FILTROS*/
   const [unidadeOrigem, setUnidadeOrigem] = useState('');
-  const [unidadeDestino, setUnidadeDestino] = useState('');
-  const [filteredRegulacoes, setFilteredRegulacoes] = useState<RegulacaoAprovadaData[]>([]);
+  const [vinculo, setVinculo] = useState('');
+  const [filteredRegulacoes, setFilteredRegulacoes] = useState<RegulacaoExternaAprovadaData[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
 
   /*ORDENAÇÃO*/
-  const [sortConfig, setSortConfig] = useState<{ key: keyof RegulacaoAprovadaData; direction: "asc" | "desc" } | null>(null);
-  const [selectedColumn, setSelectedColumn] = useState<keyof RegulacaoAprovadaData | null>(null);
+  const [sortConfig, setSortConfig] = useState<{ key: keyof RegulacaoExternaAprovadaData; direction: "asc" | "desc" } | null>(null);
+  const [selectedColumn, setSelectedColumn] = useState<keyof RegulacaoExternaAprovadaData | null>(null);
 
   /*PAGINAÇÃO*/
   const [currentPage, setCurrentPage] = useState(1);  // Página atual
@@ -101,8 +95,8 @@ const RegulacoesAprovadas_Externas: React.FC<Props> = ({ title }) => {
       filtered = filtered.filter((r) => r.un_origem === unidadeOrigem);
     }
 
-    if (unidadeDestino) {
-      filtered = filtered.filter((r) => r.un_destino === unidadeDestino);
+    if (vinculo) {
+      filtered = filtered.filter((r) => r.vinculo === vinculo);
     }
 
     if (searchTerm) {
@@ -115,7 +109,7 @@ const RegulacoesAprovadas_Externas: React.FC<Props> = ({ title }) => {
     }
 
     setFilteredRegulacoes(filtered);
-  }, [unidadeOrigem, unidadeDestino, searchTerm, regulacoes]);
+  }, [unidadeOrigem, vinculo, searchTerm, regulacoes]);
 
   //FUNÇÃO PARA BUSCAR O PDF
   const handleFetchPDF = (datetime: string, filename: string) => {
@@ -123,7 +117,7 @@ const RegulacoesAprovadas_Externas: React.FC<Props> = ({ title }) => {
   };
 
   //CONFIGURA A ORDENAÇÃO
-  const handleSort = (key: keyof RegulacaoAprovadaData) => {
+  const handleSort = (key: keyof RegulacaoExternaAprovadaData) => {
     let direction: "asc" | "desc" = "asc";
     if (sortConfig?.key === key && sortConfig.direction === "asc") {
       direction = "desc";
@@ -148,86 +142,16 @@ const RegulacoesAprovadas_Externas: React.FC<Props> = ({ title }) => {
 
   /*MODAIS*/
 
-  const handleOpenModalOrigem = (regulacao: RegulacaoAprovadaData) => {
+  const handleOpenModalDesfecho = (regulacao: RegulacaoExternaAprovadaData) => {
     setCurrentRegulacao(regulacao);
+
     // Supondo que você já tenha todos os dados necessários na `regulacao` ou possa fazer algum processamento:
-    const dados: DadosPacienteData = {
+    const dados: DadosPacienteExternoData = {
       nome_paciente: regulacao.nome_paciente,
       num_prontuario: regulacao.num_prontuario,
       num_regulacao: regulacao.num_regulacao,
       un_origem: regulacao.un_origem,
-      un_destino: regulacao.un_destino,
-      id_regulacao: regulacao.id_regulacao,
-      nome_regulador_medico: regulacao.nome_regulador_medico, // Certifique-se de que este campo possui um valor válido
-    };
-    setDadosPaciente(dados);
-    setShowModalOrigem(true);
-  };
-
-  const handleOpenModalDestino = (regulacao: RegulacaoAprovadaData) => {
-    setCurrentRegulacao(regulacao);
-
-    // Supondo que você já tenha todos os dados necessários na `regulacao` ou possa fazer algum processamento:
-    const dados: DadosPacienteData = {
-      nome_paciente: regulacao.nome_paciente,
-      num_prontuario: regulacao.num_prontuario,
-      num_regulacao: regulacao.num_regulacao,
-      un_origem: regulacao.un_origem,
-      un_destino: regulacao.un_destino,
-      id_regulacao: regulacao.id_regulacao,
-      nome_regulador_medico: regulacao.nome_regulador_medico, // Certifique-se de que este campo possui um valor válido
-    };
-
-    setDadosPaciente(dados);
-    setShowModalDestino(true);
-  };
-
-  const handleOpenModalTransporte01 = (regulacao: RegulacaoAprovadaData) => {
-    setCurrentRegulacao(regulacao);
-
-    // Supondo que você já tenha todos os dados necessários na `regulacao` ou possa fazer algum processamento:
-    const dados: DadosPacienteData = {
-      nome_paciente: regulacao.nome_paciente,
-      num_prontuario: regulacao.num_prontuario,
-      num_regulacao: regulacao.num_regulacao,
-      un_origem: regulacao.un_origem,
-      un_destino: regulacao.un_destino,
-      id_regulacao: regulacao.id_regulacao,
-      nome_regulador_medico: regulacao.nome_regulador_medico, // Certifique-se de que este campo possui um valor válido
-    };
-
-    setDadosPaciente(dados);
-    setShowModalTransporte01(true);
-  };
-
-  const handleOpenModalTransporte02 = (regulacao: RegulacaoAprovadaData) => {
-    setCurrentRegulacao(regulacao);
-
-    // Supondo que você já tenha todos os dados necessários na `regulacao` ou possa fazer algum processamento:
-    const dados: DadosPacienteData = {
-      nome_paciente: regulacao.nome_paciente,
-      num_prontuario: regulacao.num_prontuario,
-      num_regulacao: regulacao.num_regulacao,
-      un_origem: regulacao.un_origem,
-      un_destino: regulacao.un_destino,
-      id_regulacao: regulacao.id_regulacao,
-      nome_regulador_medico: regulacao.nome_regulador_medico, // Certifique-se de que este campo possui um valor válido
-    };
-
-    setDadosPaciente(dados);
-    setShowModalTransporte02(true);
-  };
-
-  const handleOpenModalDesfecho = (regulacao: RegulacaoAprovadaData) => {
-    setCurrentRegulacao(regulacao);
-
-    // Supondo que você já tenha todos os dados necessários na `regulacao` ou possa fazer algum processamento:
-    const dados: DadosPacienteData = {
-      nome_paciente: regulacao.nome_paciente,
-      num_prontuario: regulacao.num_prontuario,
-      num_regulacao: regulacao.num_regulacao,
-      un_origem: regulacao.un_origem,
-      un_destino: regulacao.un_destino,
+      vinculo: regulacao.vinculo,
       id_regulacao: regulacao.id_regulacao,
       nome_regulador_medico: regulacao.nome_regulador_medico, // Certifique-se de que este campo possui um valor válido
     };
@@ -237,10 +161,6 @@ const RegulacoesAprovadas_Externas: React.FC<Props> = ({ title }) => {
   };
 
   const handleCloseModal = () => {
-    setShowModalOrigem(false);
-    setShowModalDestino(false);
-    setShowModalTransporte01(false);
-    setShowModalTransporte02(false);
     setShowModalDesfecho(false);
     fetchRegulacoes();
     //window.location.reload(); // Recarregar a página ao fechar o modal
@@ -252,7 +172,7 @@ const RegulacoesAprovadas_Externas: React.FC<Props> = ({ title }) => {
     setSnackbarOpen(false);
   };
 
-   const showSnackbar = (
+  const showSnackbar = (
     message: string,
     severity: 'success' | 'error' | 'info' | 'warning'
   ): void => {
@@ -266,87 +186,42 @@ const RegulacoesAprovadas_Externas: React.FC<Props> = ({ title }) => {
     <>
       <div className='Component'>
         <div className='Component-Table'>
-          
-        <HeaderFiltroInterno
+
+          <HeaderFiltroExterno
             title={title}
             searchTerm={searchTerm}
             setSearchTerm={setSearchTerm}
-            unidadeDestino={unidadeDestino}
-            setUnidadeDestino={setUnidadeDestino}
+            vinculo={vinculo}
+            setVinculo={setVinculo}
             unidadeOrigem={unidadeOrigem}
             setUnidadeOrigem={setUnidadeOrigem}
             regulacoes={regulacoes}
           />
 
           <div>
-          <TabelaRegulacoesAprovadas
-            UserData={userData}
-            currentRegulacoes={currentRegulacoes}
-            selectedColumn={selectedColumn}
-            sortConfig={sortConfig}
-            handleSort={handleSort}
-            fetchPDF={handleFetchPDF}
-            handleOpenModalOrigem={handleOpenModalOrigem}
-            handleOpenModalDestino={handleOpenModalDestino}
-            handleOpenModalTransporte01={handleOpenModalTransporte01}
-            handleOpenModalTransporte02={handleOpenModalTransporte02}
-            handleOpenModalDesfecho={handleOpenModalDesfecho}
-          />
+            <TabelaRegulacoesAprovadas_Externas
+              UserData={userData}
+              currentRegulacoes={currentRegulacoes}
+              selectedColumn={selectedColumn}
+              sortConfig={sortConfig}
+              handleSort={handleSort}
+              fetchPDF={handleFetchPDF}
+              handleOpenModalDesfecho={handleOpenModalDesfecho}
+            />
           </div>
         </div>
         <div className="Pagination">
-                <button className='button-pagination' onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>Anterior</button>
-                <span>{`Página ${currentPage} de ${totalPages}`}</span>
-                <button className='button-pagination' onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}>Próxima</button>
-            </div>
+          <button className='button-pagination' onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>Anterior</button>
+          <span>{`Página ${currentPage} de ${totalPages}`}</span>
+          <button className='button-pagination' onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}>Próxima</button>
+        </div>
 
       </div>
 
-      {showModalOrigem && currentRegulacao && dadosPaciente && (
-        <Modal show={showModalOrigem} onClose={handleCloseModal} title='Setor de Origem'>
-          <SetorOrigem
-            dadosPaciente={currentRegulacao}
-            onClose={handleCloseModal} // Fecha o modal
-            showSnackbar={showSnackbar} // Passa o controle do Snackbar
-          />
-        </Modal>
-      )}
-
-      {showModalDestino && currentRegulacao && dadosPaciente && (
-        <Modal show={showModalDestino} onClose={handleCloseModal} title='Setor de Destino'>
-          <SetorDestino
-            dadosPaciente={currentRegulacao}
-            onClose={handleCloseModal} // Fecha o modal
-            showSnackbar={showSnackbar} // Passa o controle do Snackbar
-          />
-        </Modal>
-      )}
-
-      {ShowModalTransporte01 && currentRegulacao && dadosPaciente && (
-        <Modal show={ShowModalTransporte01} onClose={handleCloseModal} title='Transporte'>
-          <Transporte01
-            dadosPaciente={currentRegulacao}
-            onClose={handleCloseModal} // Fecha o modal
-            showSnackbar={showSnackbar} // Passa o controle do Snackbar
-          />
-        </Modal>
-      )}
-
-      {ShowModalTransporte02 && currentRegulacao && dadosPaciente && (
-        <Modal show={ShowModalTransporte02} onClose={handleCloseModal} title='Transporte'>
-          <Transporte02
-            dadosPaciente={currentRegulacao}
-            onClose={handleCloseModal} // Fecha o modal
-            showSnackbar={showSnackbar} // Passa o controle do Snackbar
-          />
-        </Modal>
-      )}
-
       {ShowModalDesfecho && currentRegulacao && dadosPaciente && (
         <Modal show={ShowModalDesfecho} onClose={handleCloseModal} title='Desfecho'>
-          <Desfecho
+          <DesfechoExterno
             dadosPaciente={currentRegulacao}
-            forcado= {false}
             onClose={handleCloseModal} // Fecha o modal
             showSnackbar={showSnackbar} // Passa o controle do Snackbar
           />

@@ -23,6 +23,12 @@ export interface RegulacaoExternaData extends NovaRegulacaoExterna {
   regulador_final?: string;
 }
 
+export interface RegulacaoExternaAprovadaData extends RegulacaoExternaData{
+  num_leito: number;
+  data_hora_regulacao_medico_01: string;
+  data_hora_regulacao_medico_02?: string;
+}
+
 
 
 

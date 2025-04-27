@@ -6,6 +6,12 @@ export interface DesfechoData {
   fastmedic: boolean;
 }
 
+export interface DesfechoExternoData {
+  id_user: string;
+  id_regulacao: number | null;
+  desfecho: string;
+}
+
 export interface DesfechoOptions {
   value: string;
   label: string;
