@@ -10,7 +10,7 @@ import { RegulacaoData } from '../../../../interfaces/Regulacao.ts';
 
 /*IMPORT COMPONENTS*/
 import HeaderFiltroInterno from '../../../Header/Header_Lista_Interna';
-import TabelaRegulacoesNegadas from '../../Tabela de Regulacoes/TabelaRegulacoesNegadas.tsx';
+import TabelaRegulacoesNegadas from '../../Tabela de Regulacoes/Internas/TabelaRegulacoesNegadas.tsx';
 
 /*IMPORT FUNCTIONS*/
 import { getUserData } from '../../../../functions/storageUtils.ts';

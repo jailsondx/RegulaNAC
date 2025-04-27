@@ -4,6 +4,7 @@ import { AxiosError } from 'axios';
 import { Snackbar, Alert } from "@mui/material";
 
 /*IMPORT INTERFACES*/
+import { UserData } from '../../../../interfaces/UserData';
 import { RegulacaoExternaData } from '../../../../interfaces/RegulacaoExtena.ts';
 import { DadosPacienteExternoData } from "../../../../interfaces/DadosPaciente.ts";
 
@@ -15,6 +16,7 @@ import TabelaRegulacoesExternas from '../../Tabela de Regulacoes/Externas/Tabela
 import Modal from "../../../Modal/Modal.tsx";
 
 /*IMPORT FUNCTIONS*/
+import { getUserData } from '../../../../functions/storageUtils';
 import { getDay, getMonth, getYear } from '../../../../functions/DateTimes.ts';
 
 /*IMPORT UTILS*/
@@ -30,6 +32,7 @@ interface Props {
 }
 
 const RegulacaoMedicaExterna: React.FC<Props> = ({ title }) => {
+  const [userData, setUserData] = useState<UserData | null>(null);
   const [serverTime, setServerTime] = useState("");
   const [regulacoes, setRegulacoes] = useState<RegulacaoExternaData[]>([]);
   const [showModalApproved, setShowModalApproved] = useState(false);
@@ -60,6 +63,13 @@ const RegulacaoMedicaExterna: React.FC<Props> = ({ title }) => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error' | 'info' | 'warning'>('success');
+
+
+  //Pega dados do SeassonStorage User
+  useEffect(() => {
+    const data = getUserData();
+    setUserData(data);
+  }, []);
 
   // Defina fetchRegulacoes fora do useEffect
   const fetchRegulacoes = async () => {
@@ -260,17 +270,20 @@ const RegulacaoMedicaExterna: React.FC<Props> = ({ title }) => {
           />
 
           <div>
-            <TabelaRegulacoesExternas
-              currentRegulacoes={currentRegulacoes}
-              selectedColumn={selectedColumn}
-              sortConfig={sortConfig}
-              handleSort={handleSort}
-              fetchPDF={fetchPDF}
-              serverTime={serverTime}
-              handleOpenModalApproved={handleOpenModalApproved}
-              handleOpenModalDeny={handleOpenModalDeny}
-              IconOpcoes="medico"
-            />
+            {userData && (
+              <TabelaRegulacoesExternas
+                currentRegulacoes={currentRegulacoes}
+                selectedColumn={selectedColumn}
+                sortConfig={sortConfig}
+                handleSort={handleSort}
+                fetchPDF={fetchPDF}
+                serverTime={serverTime}
+                handleOpenModalApproved={handleOpenModalApproved}
+                handleOpenModalDeny={handleOpenModalDeny}
+                IconOpcoes="medico"
+                UserData={userData}
+              />
+            )}
           </div>
 
           {showModalApproved && currentRegulacao && dadosPaciente && (

@@ -1,8 +1,8 @@
 import React from 'react';
 import { LuArrowDownWideNarrow, LuArrowUpNarrowWide  } from "react-icons/lu";
 import { FcHome, FcOrganization, FcOnlineSupport, FcOvertime, FcAbout } from "react-icons/fc";
-import { RegulacaoAprovadaData } from '../../../interfaces/Regulacao';
-import { UserData } from '../../../interfaces/UserData';
+import { RegulacaoAprovadaData } from '../../../../interfaces/Regulacao';
+import { UserData } from '../../../../interfaces/UserData';
 
 interface TabelaRegulacoesAprovadasProps {
   UserData: UserData | null;
@@ -18,7 +18,7 @@ interface TabelaRegulacoesAprovadasProps {
   handleOpenModalDesfecho: (regulacao: RegulacaoAprovadaData) => void;
 }
 
-const TabelaRegulacoesAprovadas: React.FC<TabelaRegulacoesAprovadasProps> = ({
+const TabelaRegulacoesAprovadas_Externas: React.FC<TabelaRegulacoesAprovadasProps> = ({
   UserData,
   currentRegulacoes,
   selectedColumn,
@@ -160,4 +160,4 @@ const TabelaRegulacoesAprovadas: React.FC<TabelaRegulacoesAprovadasProps> = ({
   );
 };
 
-export default TabelaRegulacoesAprovadas;
+export default TabelaRegulacoesAprovadas_Externas;

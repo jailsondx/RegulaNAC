@@ -15,7 +15,7 @@ import SetorDestino from '../../../Setor Origem e Destino/SetorDestino.tsx';
 import Transporte01 from '../../../Transporte/Transporte01.tsx';
 import Transporte02 from '../../../Transporte/Transporte02.tsx';
 import Desfecho from '../../../Desfecho/Desfecho.tsx';
-import TabelaRegulacoesAprovadas from '../../Tabela de Regulacoes/TabelaRegulacoesAprovadas.tsx';
+import TabelaRegulacoesAprovadas from '../../Tabela de Regulacoes/Internas/TabelaRegulacoesAprovadas.tsx';
 
 /*IMPORT FUNCTIONS*/
 import { getUserData } from '../../../../functions/storageUtils.ts';

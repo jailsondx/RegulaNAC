@@ -22,3 +22,21 @@ export interface RegulacaoExternaData extends NovaRegulacaoExterna {
   desfecho: string;
   regulador_final?: string;
 }
+
+
+
+
+/*REGULAÇÃO MÉDICA*/
+export interface RegulacaoExternoMedicoData {
+  id_user: string;
+  vaga_autorizada?: boolean;
+  num_leito?: string;
+  extra?: boolean;
+  segundo_medico?: boolean;
+  justificativa_neg?: string;
+  nome_regulador_medico_01: string;
+  nome_regulador_medico_02?: string;
+  data_hora_regulacao_medico_01: string;
+  data_hora_regulacao_medico_02?: string;
+  justificativa_tempo30?: string;
+}

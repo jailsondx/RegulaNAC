@@ -74,6 +74,46 @@
 }
 
 
+
+
+
+
+.segundo_medico input[type="checkbox"] {
+    display: none; /* Esconde a checkbox padrão */
+}
+
+.segundo_medico label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+/* Caixa customizada */
+.segundo_medico label::before {
+    content: "";
+    width: 28px;
+    height: 28px;
+    display: inline-block;
+    border-radius: 4px;
+    background-color: white;
+    border: solid 2px #ccc;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+/* Quando marcada, muda a cor */
+.segundo_medico input[type="checkbox"]:checked + label::before {
+    background-color: #218838;
+    border-color: #218838;
+    content: "✔"; /* Adiciona um check */
+    color: white;
+    font-size: 14px;
+    text-align: center;
+    line-height: 28px;
+    font-weight: bold;
+}
+
+
 .nome_regulador_medico{
     width: 70%;
 }

@@ -9,7 +9,9 @@ import Desfecho from '../../functions/InsertSQL/Desfecho.js';
 import LoginUser from '../../functions/SelectSQL/LoginUser.js';
 import CadastroUser from '../../functions/InsertSQL/CadastroUser.js';
 import Transporte from '../../functions/InsertSQL/Transporte.js';
+
 import { Externa_NovaRegulacao_Obstetrica } from '../../functions/InsertSQL/Externas/Externa_NovaRegulacao.js';
+import { Externa_RegulacaoMedica_01 } from '../../functions/InsertSQL/Externas/Externa_RegulacaoMedica.js';
 
 const routerPost = express.Router();
 
@@ -79,6 +81,21 @@ routerPost.post('/RegulacaoMedico', async (req, res) => {
     const formData = convertObjectToUpperCase(req.body);
     formData.data_hora_regulacao_medico = getCurrentTimestamp();
     const result = await RegulacaoMedica(formData);
+    handleResponse(res, result);
+  } catch (error) {
+    console.error('Erro no processamento:', error);
+  res.status(500).json({
+    message: 'Erro interno do servidor',
+    error: 'Erro desconhecido',
+  });
+  }
+});
+
+routerPost.post('/Externa/RegulacaoMedico', async (req, res) => {
+  try {
+    const formData = convertObjectToUpperCase(req.body);
+    formData.data_hora_regulacao_medico_01 = getCurrentTimestamp();
+    const result = await Externa_RegulacaoMedica_01(formData);
     handleResponse(res, result);
   } catch (error) {
     console.error('Erro no processamento:', error);

@@ -8,7 +8,7 @@ import DadosPaciente_Externo from '../../../Dados Paciente/DadosPaciente_Externo
 /*IMPORT INTERFACES*/
 import { UserData } from '../../../../interfaces/UserData';
 import { DadosPacienteExternoData } from '../../../../interfaces/DadosPaciente';
-import { RegulacaoMedicoData } from '../../../../interfaces/Regulacao';
+import { RegulacaoExternoMedicoData } from '../../../../interfaces/RegulacaoExtena';
 
 /*IMPORT FUNCTIONS*/
 import { getUserData } from '../../../../functions/storageUtils';
@@ -26,20 +26,21 @@ interface Props {
   showSnackbar: (message: string, severity: 'success' | 'error' | 'info' | 'warning') => void; // valores para controle do snackbar
 }
 
-const initialFormData: RegulacaoMedicoData = {
+const initialFormData: RegulacaoExternoMedicoData = {
   id_user: '',
   vaga_autorizada: true,
   num_leito: '',
   extra: false,
+  segundo_medico: false,
   justificativa_neg: '',
-  nome_regulador_medico: '',
-  data_hora_regulacao_medico: '',
+  nome_regulador_medico_01: '',
+  data_hora_regulacao_medico_01: '',
   justificativa_tempo30: '',
 };
 
 const NovaRegulacaoMedicoAprovada_Externa: React.FC<Props> = ({ dadosPaciente, tempoEspera, onClose, showSnackbar }) => {
   const [userData, setUserData] = useState<UserData | null>(null);
-  const [formData, setFormData] = useState<RegulacaoMedicoData>(initialFormData);
+  const [formData, setFormData] = useState<RegulacaoExternoMedicoData>(initialFormData);
 
 
   //Pega dados do SeassonStorage User
@@ -84,10 +85,10 @@ const NovaRegulacaoMedicoAprovada_Externa: React.FC<Props> = ({ dadosPaciente, t
         ...formData,
         id_user: userData?.id_user,
         id_regulacao: dadosPaciente.id_regulacao,
-        nome_regulador_medico: userData?.nome,
+        nome_regulador_medico_01: userData?.nome,
       };
 
-      const response = await axios.post(`${NODE_URL}/api/internal/post/RegulacaoMedico`, dataToSubmit);
+      const response = await axios.post(`${NODE_URL}/api/internal/post/Externa/RegulacaoMedico`, dataToSubmit);
 
       if (response.status == 200) {
         // Mensagem com base na resposta da API
@@ -158,12 +159,24 @@ const NovaRegulacaoMedicoAprovada_Externa: React.FC<Props> = ({ dadosPaciente, t
               <label>Médico:</label>
               <input
                 type="text"
-                name="nome_regulador_medico"
+                name="nome_regulador_medico_01"
                 value={userData?.nome}
                 onChange={handleChange}
                 required
                 disabled
               />
+            </div>
+
+            <div className="segundo_medico">
+              <span>Avaliação Neonatologista?</span>
+              <input
+                type="checkbox"
+                id="segundoMedicoCheckbox"
+                name="segundo_medico"
+                checked={formData.segundo_medico}
+                onChange={handleChange}
+              />
+              <label htmlFor="segundoMedicoCheckbox"></label>
             </div>
           </div>
           

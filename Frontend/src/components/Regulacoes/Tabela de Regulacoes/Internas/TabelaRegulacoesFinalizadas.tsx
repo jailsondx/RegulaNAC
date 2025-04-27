@@ -1,6 +1,6 @@
 import React from 'react';
 import { LuArrowDownWideNarrow, LuArrowUpNarrowWide } from "react-icons/lu";
-import { RegulacaoData } from '../../../interfaces/Regulacao';
+import { RegulacaoData } from '../../../../interfaces/Regulacao';
 
 interface TabelaRegulacoesProps {
   currentRegulacoes: RegulacaoData[];

@@ -116,8 +116,8 @@ const TabelaRegulacoesExternas: React.FC<TabelaRegulacoesProps> = ({
             </>
           )}
 
-          {IconOpcoes === 'normais' && UserData.tipo === 'GERENCIA' && (
-            <th>Editar</th>
+          {IconOpcoes === 'medico' && (
+            <th>Aprovação</th>
           )}
 
         </tr>

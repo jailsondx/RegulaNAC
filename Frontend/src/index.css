@@ -93,7 +93,7 @@
 }
 
 /* Responsividade para telas de até 1159px (tablets grandes) */
-@media screen and (min-width: 551px) and (max-width: 900px) {
+@media screen and (min-width: 701px) and (max-width: 900px) {
   body{
     font-size: 10px;
   }
@@ -106,7 +106,7 @@
 }
 
 /* Responsividade para telas de até 550px (smartphones) */
-@media screen and (max-width: 550px) {
+@media screen and (max-width: 700px) {
   body{
     font-size: 6px;
   }
@@ -114,7 +114,7 @@
     display: none;
   }
   .Component {
-    margin-left: 320px;
+    margin-left: 200px;
   }
   .ComponentForm, .Title-Form{
     margin-left: 0px;
@@ -405,8 +405,12 @@ input:disabled {
 }
 
 .Title-Tabela {
-  width: 15dvw;
-  font-size: 18px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  height: 100%;
+  width: 20dvw;
+  font-size: 1.2em;
   font-weight: bold;
   text-transform: uppercase;
 }

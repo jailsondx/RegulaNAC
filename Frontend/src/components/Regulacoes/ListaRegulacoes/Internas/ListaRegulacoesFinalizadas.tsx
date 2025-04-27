@@ -9,7 +9,7 @@ import { RegulacaoData } from '../../../../interfaces/Regulacao';
 
 /*IMPORT COMPONENTS*/
 import HeaderFiltroInterno from '../../../Header/Header_Lista_Interna';
-import TabelaRegulacoesFinalizadas from '../../Tabela de Regulacoes/TabelaRegulacoesFinalizadas';
+import TabelaRegulacoesFinalizadas from '../../Tabela de Regulacoes/Internas/TabelaRegulacoesFinalizadas';
 
 /*IMPORT FUNCTIONS*/
 

@@ -1,11 +1,11 @@
 import React from 'react';
 import { LuArrowDownWideNarrow, LuArrowUpNarrowWide } from "react-icons/lu";
 import { FcExpired } from "react-icons/fc";
-import { RegulacaoData } from '../../../interfaces/Regulacao';
-import { formatDateTimeToPtBr } from '../../../functions/DateTimes';
+import { RegulacaoData } from '../../../../interfaces/Regulacao';
+import { formatDateTimeToPtBr } from '../../../../functions/DateTimes';
 
 /*INTERFACES*/
-import { UserData } from '../../../interfaces/UserData';
+import { UserData } from '../../../../interfaces/UserData';
 
 interface TabelaRegulacoesProps {
   UserData: UserData | null;

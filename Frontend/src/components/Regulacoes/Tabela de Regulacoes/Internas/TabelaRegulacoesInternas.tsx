@@ -128,7 +128,9 @@ const TabelaRegulacoesInternas: React.FC<TabelaRegulacoesProps> = ({
             </>
           )}
           
-          <th>Editar</th>
+          {IconOpcoes === 'medico' && (
+            <th>Aprovação</th>
+          )}
         </tr>
       </thead>
       <tbody>
