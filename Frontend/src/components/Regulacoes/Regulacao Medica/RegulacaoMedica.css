@@ -117,3 +117,9 @@
 .nome_regulador_medico{
     width: 70%;
 }
+
+
+.select-destino {
+    width: 100%;
+    min-width: 120px;
+}

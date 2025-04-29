@@ -9,12 +9,16 @@ import DadosPaciente from '../../../Dados Paciente/DadosPaciente';
 import { UserData } from '../../../../interfaces/UserData';
 import { DadosPacienteData } from '../../../../interfaces/DadosPaciente';
 import { RegulacaoMedicoData } from '../../../../interfaces/Regulacao';
+import { UnidadeData } from '../../../../interfaces/Unidade';
 
 /*IMPORT FUNCTIONS*/
 import { getUserData } from '../../../../functions/storageUtils';
 
 /*IMPORT UTILS*/
 import { useSocket } from '../../../../Utils/useSocket';
+
+/*IMPORT JSON*/
+import UTI_adulto from '../../../../JSON/UTI_adulto.json'
 
 /*IMPORT VARIAVEIS DE AMBIENTE*/
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
@@ -35,12 +39,14 @@ const initialFormData: RegulacaoMedicoData = {
   nome_regulador_medico: '',
   data_hora_regulacao_medico: '',
   justificativa_tempo30: '',
+  un_destino: ''
 };
 
 const NovaRegulacaoMedicoAprovada: React.FC<Props> = ({ dadosPaciente, tempoEspera, onClose, showSnackbar }) => {
   const [userData, setUserData] = useState<UserData | null>(null);
   const userUsername = userData?.login || ''; // Nome do usuário
   const userTipo = userData?.tipo || ''; // Tipo de usuário
+  const [unidadesUTI, setUnidadesUTI] = useState<UnidadeData[]>([]);
   const [formData, setFormData] = useState<RegulacaoMedicoData>(initialFormData);
 
 
@@ -50,10 +56,15 @@ const NovaRegulacaoMedicoAprovada: React.FC<Props> = ({ dadosPaciente, tempoEspe
     setUserData(data);
   }, []);
 
-    //Função para fazer o envio de mensagem para o socket
-    const { enviarMensagem } = useSocket(userUsername, userTipo, (mensagem) => {
-      showSnackbar(mensagem, 'warning');
-    });
+  // Carregar os dados do arquivo JSON
+  useEffect(() => {
+    setUnidadesUTI(UTI_adulto);
+  }, []);
+
+  //Função para fazer o envio de mensagem para o socket
+  const { enviarMensagem } = useSocket(userUsername, userTipo, (mensagem) => {
+    showSnackbar(mensagem, 'warning');
+  });
 
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>): void => {
@@ -139,6 +150,25 @@ const NovaRegulacaoMedicoAprovada: React.FC<Props> = ({ dadosPaciente, tempoEspe
       <form onSubmit={handleSubmit}>
         <div className='modal-input'>
           <div className='modal-input-line2'>
+            {dadosPaciente.un_destino === 'UTI ADULTO' && (
+              <div>
+                <label>UTI:</label>
+                <select
+                  className='select-destino'
+                  name="un_destino"
+                  value={formData.un_destino || ''}
+                  onChange={handleChange}
+                >
+                  <option value="">Selecione...</option>
+                  {unidadesUTI.map((item, index) => (
+                    <option key={index} value={item.value}>
+                      {item.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
             <div className='num_leito'>
               <label>Nº do Leito:</label>
               <input
@@ -174,9 +204,9 @@ const NovaRegulacaoMedicoAprovada: React.FC<Props> = ({ dadosPaciente, tempoEspe
               />
             </div>
           </div>
-          
+
           <div className="modal-input-line">
-            <label>Justificativa de Tempo +30min:</label>
+            <label>Justificativa de Tempo +30min: <i>{tempoEspera}</i></label>
             <textarea
               className="modal-input-textarea"
               name="justificativa_tempo30"

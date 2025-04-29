@@ -13,7 +13,7 @@ import HeaderFiltroInterno from "../../../Header/Header_Lista_Interna.tsx";
 import NovaRegulacaoMedicoAprovada from "./RegulacaoMedicaAprovada.tsx";
 import NovaRegulacaoMedicoNegada from "./RegulacaoMedicaNegada.tsx";
 
-import TabelaRegulacoes from '../../Tabela de Regulacoes/Internas/TabelaRegulacoesInternas.tsx';
+import TabelaRegulacoesInternas from '../../Tabela de Regulacoes/Internas/TabelaRegulacoesInternas.tsx';
 import Modal from "../../../Modal/Modal.tsx";
 
 /*IMPORT FUNCTIONS*/
@@ -40,7 +40,7 @@ const RegulacaoMedicaInterna: React.FC<Props> = ({ title }) => {
   const [showModalDeny, setShowModalDeny] = useState(false);
   const [currentRegulacao, setCurrentRegulacao] = useState<RegulacaoData | null>(null);
   const [dadosPaciente, setDadosPaciente] = useState<DadosPacienteData | null>(null);
-  const [elapsedTime] = useState<string>(''); // Armazena o tempo decorrido
+  const [elapsedTime, setElapsedTime] = useState<string>(''); // Armazena o tempo decorrido
 
   /*FILTROS*/
   const [filteredRegulacoes, setFilteredRegulacoes] = useState<RegulacaoData[]>([]);
@@ -180,6 +180,24 @@ const RegulacaoMedicaInterna: React.FC<Props> = ({ title }) => {
     }
   };
 
+  const calcularTempoEspera = (inicio: string, fim: string): string => {
+    const inicioDate = new Date(inicio);
+    const fimDate = new Date(fim);
+    const diffMs = fimDate.getTime() - inicioDate.getTime();
+  
+    if (isNaN(diffMs) || diffMs < 0) return "0min";
+  
+    const diffMinutes = Math.floor(diffMs / 60000);
+    const horas = Math.floor(diffMinutes / 60);
+    const minutos = diffMinutes % 60;
+  
+    if (horas > 0) {
+      return `${horas}h ${minutos}min`;
+    }
+    return `${minutos}min`;
+  };
+  
+
   //MODAL
   const handleOpenModalApproved = (regulacao: RegulacaoData) => {
     setCurrentRegulacao(regulacao);
@@ -194,6 +212,11 @@ const RegulacaoMedicaInterna: React.FC<Props> = ({ title }) => {
       id_regulacao: regulacao.id_regulacao,
       nome_regulador_medico: regulacao.nome_regulador_medico, // Certifique-se de que este campo possui um valor válido
     };
+
+    if (regulacao.data_hora_acionamento_medico && serverTime) {
+      const tempo = calcularTempoEspera(regulacao.data_hora_acionamento_medico, serverTime);
+      setElapsedTime(tempo);
+    }
 
     setDadosPaciente(dados);
     setShowModalApproved(true);
@@ -280,7 +303,7 @@ const RegulacaoMedicaInterna: React.FC<Props> = ({ title }) => {
 
           <div>
             {userData && (
-              <TabelaRegulacoes
+              <TabelaRegulacoesInternas
                 currentRegulacoes={currentRegulacoes}
                 selectedColumn={selectedColumn}
                 sortConfig={sortConfig}

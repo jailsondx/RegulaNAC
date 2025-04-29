@@ -10,7 +10,6 @@ import { UserData } from '../../../../interfaces/UserData.ts';
 
 /*IMPORT FUNCTION*/
 import { removerText } from "../../../../functions/RemoveText.ts";
-
 interface TabelaRegulacoesProps {
   currentRegulacoes: RegulacaoData[];
   selectedColumn: keyof RegulacaoData | null;
@@ -121,12 +120,9 @@ const TabelaRegulacoesInternas: React.FC<TabelaRegulacoesProps> = ({
             </span>
           </th>
 
-          <th className={`col-TempoEspera clicked${selectedColumn === "tempo_espera" ? " selected" : ""}`} onClick={() => handleSort("tempo_espera")}>
-          <span>
-            <label>Tempo de Espera</label>
-            <label>{sortConfig?.key === "tempo_espera" ? (sortConfig.direction === "asc" ? <LuArrowUpNarrowWide /> : <LuArrowDownWideNarrow />) : ""}</label>
-          </span>
-        </th>
+          <th>
+            Tempo de Espera
+          </th>
 
 
           {IconOpcoes === 'normais' && (
@@ -239,7 +235,11 @@ const TabelaRegulacoesInternas: React.FC<TabelaRegulacoesProps> = ({
               <>
                 <td>
                   <label className="td-Icons">
-                    <FcApproval className="Icon Icons-Regulacao" onClick={() => handleOpenModalApproved && handleOpenModalApproved(regulacao)} title="Aprovar" />
+                    <FcApproval 
+                      className="Icon Icons-Regulacao" 
+                      onClick={() => handleOpenModalApproved && handleOpenModalApproved(regulacao)} 
+                      title="Aprovar" 
+                    />
                     <FcBadDecision className="Icon Icons-Regulacao" onClick={() => handleOpenModalDeny && handleOpenModalDeny(regulacao)} title="Negar" />
                   </label></td>
               </>
@@ -253,3 +253,4 @@ const TabelaRegulacoesInternas: React.FC<TabelaRegulacoesProps> = ({
 };
 
 export default TabelaRegulacoesInternas;
+

@@ -7,8 +7,7 @@
   { "value": "CLINICA CIRUGICA I", "label": "CLINICA CIRUGICA I" },
   { "value": "CLINICA CIRUGICA II", "label": "CLINICA CIRUGICA II" },
   { "value": "CLINICA CIRUGICA III", "label": "CLINICA CIRUGICA III" },
-  { "value": "CLINICA MEDICA I", "label": "CLINICA MEDICA I" },
-  { "value": "CLINICA MEDICA II", "label": "CLINICA MEDICA II" },
+  { "value": "CLINICA MEDICA", "label": "CLINICA MEDICA" },
   { "value": "CLINICA OBSTETRICA I", "label": "CLINICA OBSTETRICA I" },
   { "value": "CLINICA OBSTETRICA II", "label": "CLINICA OBSTETRICA II" },
   { "value": "CLINICA OBSTETRICA III", "label": "CLINICA OBSTETRICA III" },
@@ -34,10 +33,7 @@
   { "value": "UCE ADULTO", "label": "UCE ADULTO" },
   { "value": "UCINCA", "label": "UCINCA" },
   { "value": "UCINCO", "label": "UCINCO" },
-  { "value": "UTI ADULTO I", "label": "UTI ADULTO I" },
-  { "value": "UTI ADULTO II", "label": "UTI ADULTO II" },
-  { "value": "UTI ADULTO III", "label": "UTI ADULTO III" },
-  { "value": "UTI ADULTO IV", "label": "UTI ADULTO IV" },
+  { "value": "UTI ADULTO", "label": "UTI ADULTO" },
   { "value": "UTI NEONATAL", "label": "UTI NEONATAL" },
   { "value": "UTI PEDIATRICA", "label": "UTI PEDIATRICA" }
 ]

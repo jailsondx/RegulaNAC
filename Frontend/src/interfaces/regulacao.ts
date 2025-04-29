@@ -82,5 +82,6 @@ export interface RegulacaoMedicoData {
   nome_regulador_medico: string;
   data_hora_regulacao_medico: string;
   justificativa_tempo30?: string;
+  un_destino?: string;
 }
 

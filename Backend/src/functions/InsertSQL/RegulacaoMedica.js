@@ -1,6 +1,8 @@
 import { DBconnection } from "../Controller/connection.js";
 import UpdateStatus from "../UpdateSQL/UpdateStatus.js";
 import UpdateMedico from "../UpdateSQL/UpdateMedico.js";
+import UpdateUnDestino from "../UpdateSQL/UpdateUnDestino.js";
+import { filterFields } from "../Manipulation/filterFields.js";
 
 async function RegulacaoMedica(FormData) {
     const DBtable = "regulacao_medico";
@@ -9,10 +11,8 @@ async function RegulacaoMedica(FormData) {
     const NovoStatusDeny = "NEGADO";
 
     try {
-        // Inicia a conexão com o banco de dados
         const connection = await DBconnection.getConnection();
 
-        // Verifica a permissão do usuário
         const [rows] = await connection.query(
             `SELECT tipo FROM ${DBtableUsuarios} WHERE id_user = ?`,
             [FormData.id_user]
@@ -26,35 +26,51 @@ async function RegulacaoMedica(FormData) {
         const userType = rows[0].tipo;
 
         if (userType !== "MEDICO") {
-            console.error(`Usuário ID: ${FormData.id_user} sem permissão para Regulação Médica`);
             return {
                 success: false,
                 message: "Usuário não tem permissão para realizar esta ação.",
             };
         }
 
-        //Verifica se é LEITO EXTRA
-        if (FormData.extra === true || FormData.extra === 1){
+        if (FormData.extra === true || FormData.extra === 1) {
             FormData.num_leito = 'EXTRA.' + FormData.num_leito;
         }
 
-        // Insere os dados no banco
-        const [result] = await connection.query(
+        const allowedFields = [
+            'id_user',
+            'vaga_autorizada',
+            'num_leito',
+            'extra',
+            'justificativa_neg',
+            'nome_regulador_medico',
+            'data_hora_regulacao_medico',
+            'justificativa_tempo30',
+            'id_regulacao'
+          ];
+          
+          const insertData = filterFields(FormData, allowedFields);
+          
+          const [result] = await connection.query(
             `INSERT INTO ${DBtable} SET ?`,
-            [FormData]
-        );
+            [insertData]
+          );
+          
 
         if (result.affectedRows === 0) {
             throw new Error("Erro ao inserir no banco de dados.");
         }
 
-        // Atualiza o status de regulação e médico responsável
         const novoStatus = FormData.vaga_autorizada
             ? NovoStatusApproved
             : NovoStatusDeny;
 
         await UpdateStatus(FormData.id_regulacao, novoStatus);
         await UpdateMedico(FormData.id_regulacao, FormData.nome_regulador_medico);
+
+        // ✅ NOVO: Verifica se un_destino existe e chama updateUnDestino
+        if (FormData.un_destino && FormData.un_destino.trim() !== '') {
+            await UpdateUnDestino(FormData.id_regulacao, FormData.un_destino);
+        }
 
         return {
             success: true,
