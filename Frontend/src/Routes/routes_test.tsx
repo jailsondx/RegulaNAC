@@ -36,18 +36,18 @@ import Page_ListaRegulacoesExternasAprovadas from '../Pages/Listas/Externas/Page
 
 
 // Layout para rotas protegidas com o Sidebar
-const ProtectedLayout: React.FC = () => {
+const ProtectedLayout: React.FC<{ notification: (message: string, severity: 'success' | 'error' | 'info' | 'warning') => void }> = ({ notification }) => {
   return (
     <>
       <Sidebar />
       <div className="content">
-        <Outlet /> {/* Renderiza as rotas internas aqui */}
+        <Outlet context={{ notification }} /> {/* Passa a função para as rotas filhas */}
       </div>
     </>
   );
 };
 
-const Rotas: React.FC = () => {
+const Rotas: React.FC<{ notification: (message: string, severity: 'success' | 'error' | 'info' | 'warning') => void }> = ({ notification }) => {
   return (
     <BrowserRouter>
       <Routes>
@@ -66,8 +66,8 @@ const Rotas: React.FC = () => {
         {/* 🔐 Rota protegida com Sidebar (layout completo) */}
         <Route
           path="/"
-          element={<PrivateRoute element={<ProtectedLayout />} />}
-        >
+          element={<PrivateRoute element={<ProtectedLayout notification={notification} />} />}
+        > 
           {/* Essas são todas as páginas protegidas */}
           <Route path="home" element={<Home title="Bem Vindo ao RegulaNAC" />} />
 

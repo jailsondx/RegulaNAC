@@ -103,6 +103,14 @@ const RegulacaoMedicaInterna: React.FC<Props> = ({ title }) => {
     fetchRegulacoes();
   }, []);
 
+  // useEffect sempre que a snackbar for aberta
+  useEffect(() => {
+    if (snackbarOpen) {
+      fetchRegulacoes();
+    }
+  }, [snackbarOpen]);
+  
+
   //INICIALIZAÇÃO DOS FILTROS
   useEffect(() => {
     let filtered = regulacoes;

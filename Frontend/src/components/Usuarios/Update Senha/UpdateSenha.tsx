@@ -4,12 +4,12 @@ import { Snackbar, Alert } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 /*IMPORT INTERFACE*/
-import { UpdateSenhaData } from '../../../interfaces/Cadastro';
+import { UpdateSenhaData } from '../../../interfaces/CadastroUser';
 
 /*IMPORT CSS*/
 import '../Usuarios.css';
 
-const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
+const NODE_URL = import.meta.env.VITE_NODE_SERVER_GUARD_URL;
 
 const UpdateSenha: React.FC = () => {
     const location = useLocation();

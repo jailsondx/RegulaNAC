@@ -4,6 +4,11 @@ import { DBconnection } from "../Controller/connection.js"; // Importa apenas o 
 async function UpdateSenha(FormData) {
     const DBtable = 'usuarios';
 
+    // Verificação de comprimento mínimo da senha
+    if (!FormData.senha || FormData.senha.length < 6) {
+        return { success: false, message: "A senha deve ter no mínimo 6 caracteres." };
+    }
+
     try {
         // Criptografa a senha antes de salvar no banco
         const saltRounds = 10; // Define o número de rounds para o hash

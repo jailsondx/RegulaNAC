@@ -117,21 +117,19 @@ const Sidebar: React.FC = () => {
           <MenuLink to="/RegulacoesAprovadas" Icon={TiThumbsUp} label="Regulações Aprovadas" />
           <MenuLink to="/RegulacoesNegadas" Icon={TiThumbsDown} label="Regulações Negadas" />
           <MenuLink to="/Desfechos" Icon={TiHomeOutline} label="Gerar Desfecho" />
+          <MenuLink to="/ListaRegulacoes24" Icon={TiClipboard} label="Regulações +24hrs" />
           {/* Botão para abrir o menu de relatórios (apenas para gerência) */}
           {tipo === 'GERENCIA' && (
             <MenuButton onClick={() => { setShowReportMenu(true); setShowExternalMenu(false); }} Icon={TiUpload} label="Relatórios" />
           )}
           <hr />
+          
           {/* Botão para abrir o menu de solicitações externas */}
           <MenuButton onClick={() => { setShowExternalMenu(true); setShowReportMenu(false); }} Icon={TiContacts} label="Solicitações de Origem Externa" />
-          <hr />
-          <MenuLink to="/ListaRegulacoes24" Icon={TiClipboard} label="Regulações +24hrs" />
-          <MenuLink to="/Finalizadas" Icon={TiClipboard} label="Regulações Finalizadas" />
+        
           {/* Acesso a regulações médicas internas só para gerência */}
           {tipo === 'GERENCIA' && (
             <>
-              <MenuLink to="/RegulacaoMedica" Icon={TiHeartHalfOutline} label="Regulação Médica Interna" />
-              <MenuLink to="/RegulacaoMedicaExternas" Icon={TiHeartHalfOutline} label="Regulação Médica Externa" />
             </>
           )}
           <hr />

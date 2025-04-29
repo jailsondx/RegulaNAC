@@ -7,7 +7,6 @@ import RegulacaoOrigem from '../../functions/InsertSQL/RegulacaoOrigem.js';
 import RegulacaoDestino from '../../functions/InsertSQL/RegulacaoDestino.js';
 import Desfecho from '../../functions/InsertSQL/Desfecho.js';
 import LoginUser from '../../functions/SelectSQL/LoginUser.js';
-import CadastroUser from '../../functions/InsertSQL/CadastroUser.js';
 import Transporte from '../../functions/InsertSQL/Transporte.js';
 
 import { Externa_NovaRegulacao_Obstetrica } from '../../functions/InsertSQL/Externas/Externa_NovaRegulacao.js';
@@ -23,20 +22,6 @@ routerPost.post('/Login', async (req, res) => {
     const { username, password } = convertObjectToUpperCase(req.body);
     const result = await LoginUser(username, password);
     //res.status(200).json({ message: result.message, statusCode: result.statusCode, data: result.data });
-    handleResponse(res, result);
-  } catch (error) {
-    console.error('Erro no processamento:', error);
-  res.status(500).json({
-    message: 'Erro interno do servidor',
-    error: 'Erro desconhecido',
-  });
-  }
-});
-
-routerPost.post('/Cadastro', async (req, res) => {
-  try {
-    const formData = convertObjectToUpperCase(req.body);
-    const result = await CadastroUser(formData);
     handleResponse(res, result);
   } catch (error) {
     console.error('Erro no processamento:', error);

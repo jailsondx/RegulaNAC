@@ -75,7 +75,7 @@ const NovaRegulacao: React.FC = () => {
   //VERIFICAÇÃO DE UN ORIGEM
   //const requiredUnidadesOBS = ['COI', 'COII', 'COII']; // ou só 'UTI', 'COI' se quiser verificar por "começa com"
   //const isValueOrigemOBS = requiredUnidadesOBS.includes(formData.un_origem);
-  const requiredUnidades = ['UTI I', 'UTI II', 'UTI III', 'UTI IV', 'UTI PED']; // ou só 'UTI', 'COI' se quiser verificar por "começa com"
+  const requiredUnidades = ['UTI ADULTO I', 'UTI ADULTO II', 'UTI ADULTO III', 'UTI ADULTO IV']; // ou só 'UTI', 'COI' se quiser verificar por "começa com"
   const isValueDestino = requiredUnidades.includes(formData.un_destino);
 
 
@@ -127,7 +127,6 @@ const NovaRegulacao: React.FC = () => {
   const { enviarMensagem } = useSocket(userUsername, userTipo, (mensagem) => {
     showSnackbar(mensagem, 'warning');
   });
-
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>): void => {
     const { name, value, type } = e.target;
@@ -261,7 +260,7 @@ const NovaRegulacao: React.FC = () => {
       );
 
       showSnackbar(response.data.message || 'Regulação inserida com sucesso.', 'success');
-      enviarMensagem('Nova Regulação Solicitada: ' + formData.num_regulacao);
+      enviarMensagem('Nova Regulação Solicitada: Nº' + formData.num_regulacao);
 
       // Limpar dados após sucesso
       setFormData(initialFormData);
