@@ -39,15 +39,15 @@ export interface RegulacaoAprovadaData extends RegulacaoData{
 
 /*UPDATE REGULAÇÃO*/
 export interface PartialUpdateRegulacaoData {
-  un_origem: string;
-  un_destino: string;
+  un_origem?: string;
+  un_destino?: string;
   data_hora_solicitacao_02: string;
 }
 
 export interface UpdateRegulacaoData extends PartialUpdateRegulacaoData {
   id_user: string;
   num_prontuario: number | null;
-  num_leito: number | null;
+  num_leito?: number | null;
   link: string;
 }
 

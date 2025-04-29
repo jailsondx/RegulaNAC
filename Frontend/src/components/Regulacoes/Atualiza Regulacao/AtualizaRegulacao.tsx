@@ -7,7 +7,7 @@ import { Snackbar, Alert } from '@mui/material';
 /*IMPORT INTERFACES*/
 import { DadosPacienteData } from "../../../interfaces/DadosPaciente.ts";
 import { UpdateRegulacaoData, PartialUpdateRegulacaoData } from '../../../interfaces/Regulacao.ts';
-import { UnidadeData } from '../../../interfaces/Unidade.ts';
+//import { UnidadeData } from '../../../interfaces/Unidade.ts';
 import { UserData } from '../../../interfaces/UserData.ts';
 
 /*IMPORT COMPONENTS*/
@@ -21,8 +21,8 @@ import { getDay, getMonth, getYear } from '../../../functions/DateTimes.ts';
 import './AtualizarRegulacao.css';
 
 /*IMPORT JSON*/
-import un_origem from '../../../JSON/un_origem.json';
-import un_destino from '../../../JSON/un_destino.json';
+//import un_origem from '../../../JSON/un_origem.json';
+//import un_destino from '../../../JSON/un_destino.json';
 
 /*IMPORT VARIAVEIS DE AMBIENTE*/
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
@@ -30,9 +30,6 @@ const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
 const initialFormData: UpdateRegulacaoData = {
   id_user: '',
   num_prontuario: null,
-  un_origem: '',
-  un_destino: '',
-  num_leito: null,
   data_hora_solicitacao_02: '',
   link: '',
 };
@@ -41,8 +38,10 @@ const initialFormData: UpdateRegulacaoData = {
 const AtualizaRegulacao: React.FC = () => {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [file, setFile] = useState<File>();
-  const [unidadesOrigem, setUnidadesOrigem] = useState<UnidadeData[]>([]);
-  const [unidadesDestino, setUnidadesDestino] = useState<UnidadeData[]>([]);
+  
+  //const [unidadesOrigem, setUnidadesOrigem] = useState<UnidadeData[]>([]);
+  //const [unidadesDestino, setUnidadesDestino] = useState<UnidadeData[]>([]);
+  
   const location = useLocation(); // Captura o estado enviado via navegação
   const [numProntuario, setNumProntuario] = useState<number | ''>(''); // Número do prontuário recebido
   const [dadosPaciente, setDadosPaciente] = useState<DadosPacienteData>();
@@ -64,10 +63,12 @@ const AtualizaRegulacao: React.FC = () => {
   }, [location]);
 
   // Carregar os dados do arquivo JSON
+  /*
   useEffect(() => {
     setUnidadesOrigem(un_origem);
     setUnidadesDestino(un_destino);
   }, []);
+  */
 
   // Busca os dados do prontuário pelo número fornecido
   useEffect(() => {
@@ -138,33 +139,32 @@ const AtualizaRegulacao: React.FC = () => {
     const month = getMonth(datetime);
     const day = getDay(datetime);
 
-    const formData = new FormData();
-    formData.append('year', year);
-    formData.append('month', month);
-    formData.append('day', day);
-    formData.append('file', file!);
-    formData.append('num_regulacao', numRegulacao.toString()); // Adicionando num_regulacao no corpo da requisição
+    const formDataUpload = new FormData();
+    formDataUpload.append('year', year);
+    formDataUpload.append('month', month);
+    formDataUpload.append('day', day);
+    formDataUpload.append('file', file!);
+    formDataUpload.append('num_regulacao', numRegulacao.toString());
 
     try {
-      const response = await axios.post(`${NODE_URL}/api/internal/upload/uploadPDF`, formData, {
-        params: { numRegulacao }, // Passando numRegulacao através de params
+      const response = await axios.post(`${NODE_URL}/api/internal/upload/uploadPDF`, formDataUpload, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
 
-      // Resposta de sucesso
-      showSnackbar(response.data.message || 'Arquivo enviado com sucesso!', 'success');
+      showSnackbar('Arquivo enviado com sucesso.', 'success');
+      return response.data.filename;
     } catch (error: unknown) {
-      // Verifica se o erro é uma instância de AxiosError
       if (error instanceof AxiosError) {
-        // Se o erro tiver uma resposta, exibe a mensagem de erro da API
-        showSnackbar(error.response?.data?.message || 'Erro ao enviar arquivo. Tente novamente.', 'error');
+        console.error('Erro ao enviar o arquivo:', error);
+        showSnackbar(error.response?.data?.message || 'Erro ao enviar o arquivo.', 'error');
+      } else if (error instanceof Error) {
+        console.error('Erro desconhecido:', error.message);
+        showSnackbar('Erro desconhecido ao enviar o arquivo.', 'error');
       } else {
-        // Se o erro não for do tipo AxiosError, exibe uma mensagem genérica
-        showSnackbar('Erro inesperado ao enviar o arquivo. Tente novamente.', 'error');
+        console.error('Erro inesperado:', error);
+        showSnackbar('Erro inesperado ao enviar o arquivo.', 'error');
       }
-
-      // Lança um novo erro para garantir que o fluxo de controle seja interrompido
-      throw new Error('Erro ao enviar o arquivo');
+      return null;
     }
   };
 
@@ -195,7 +195,19 @@ const AtualizaRegulacao: React.FC = () => {
   // Submete os dados atualizados para o backend
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+
+    //if (!validateForm()) return;
+
     try {
+      let uploadedFilename = '';
+
+      if (file) {
+        if (dadosPaciente && dadosPaciente.num_regulacao !== null) {
+          uploadedFilename = await uploadFile(formData.data_hora_solicitacao_02 || '', dadosPaciente.num_regulacao);
+        } else {
+          throw new Error('Dados do paciente ou número de regulação estão ausentes.');
+        }
+      }
 
       const dataToSubmit = {
         ...formData,
@@ -204,18 +216,8 @@ const AtualizaRegulacao: React.FC = () => {
         nome_responsavel_nac: userData?.nome, // Nome do regulador NAC
         num_prontuario: numProntuario, // Número do prontuário
         num_regulacao: dadosPaciente?.num_regulacao, // Número da regulação
+        link: uploadedFilename,
       };
-
-      // Verifica se num_regulacao é válido
-      if (dataToSubmit.num_regulacao != null) {
-        // Verifica se há arquivo e, caso haja, faz o upload
-        if (file) {
-          await uploadFile(dataToSubmit.data_hora_solicitacao_02, dataToSubmit.num_regulacao);
-        }
-      } else {
-        console.error('Número de regulação inválido.');
-        // Opcional: mostrar uma mensagem para o usuário
-      }
 
       const response = await axios.put(`${NODE_URL}/api/internal/put/AtualizaRegulacao`, dataToSubmit);
 
@@ -259,6 +261,8 @@ const AtualizaRegulacao: React.FC = () => {
           </div>
 
           <div className="StepContent">
+
+{/*
             <div className="line-StepContent">
               <label>Unidade Origem:</label>
               <select
@@ -291,7 +295,8 @@ const AtualizaRegulacao: React.FC = () => {
                   </option>
                 ))}
               </select>
-            </div>
+            </div>*/}
+          
 
             <div className="line-StepContent">
               <label>Data e Hora da Nova Solicitação:</label>

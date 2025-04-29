@@ -24,8 +24,10 @@ async function UpdateLinkDOC(num_regulacao, link) {
             console.error('\nLink PDF: NÃO Registrado \nVerifique os valores de link e num_regulacao.');
             return { success: false, message: "Nenhum registro foi atualizado. Verifique os critérios fornecidos." };
         }
+        
+        console.log(`Link atualizado com sucesso para num_regulacao: ${num_regulacao}, link: ${link}`);
 
-        return { success: true, message: "Link PDF: Registrado." };
+        return { success: true, message: "Link PDF: Atualizado." };
 
     } catch (error) {
         if (connection) connection.release();

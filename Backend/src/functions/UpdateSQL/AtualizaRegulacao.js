@@ -1,10 +1,11 @@
 import { DBconnection } from "../Controller/connection.js"; // Importa apenas o objeto DBconnection
 import VerificaStatus from "../Checked/VerificaStatus.js";
+import UpdateLinkDOC from "./UpdateLink.js";
 
 async function AtualizaRegulacao(FormData) {
     const DBtable = 'regulacao';
     const DBtableUsuarios = 'usuarios';
-    const StatusAtual = ['ABERTO - AGUARDANDO AVALIACAO','NEGADO'];
+    const StatusAtual = ['ABERTO - AGUARDANDO AVALIACAO', 'NEGADO'];
     const novoStatus = 'ABERTO - AGUARDANDO AVALIACAO'
     const msgError = 'Regulação não pode ser atualizada; Status atual é: ';
 
@@ -16,7 +17,7 @@ async function AtualizaRegulacao(FormData) {
 
         // Verifica a permissão do usuário
         const [rowsUserPrivilege] = await connection.query(
-            `SELECT tipo FROM ${DBtableUsuarios} WHERE id_user = ?`, 
+            `SELECT tipo FROM ${DBtableUsuarios} WHERE id_user = ?`,
             [FormData.id_user]
         );
 
@@ -41,10 +42,10 @@ async function AtualizaRegulacao(FormData) {
         }
 
         const [valueRequests] = await connection.query(
-            `SELECT qtd_solicitacoes FROM ${DBtable} WHERE id_regulacao = ?`, 
+            `SELECT qtd_solicitacoes FROM ${DBtable} WHERE id_regulacao = ?`,
             [FormData.id_regulacao]
         );
-        
+
         if (valueRequests.length === 0) {
             console.error(`Regulação com ID ${FormData.id_regulacao} não encontrada.`);
             connection.release();
@@ -56,23 +57,27 @@ async function AtualizaRegulacao(FormData) {
         await connection.query(`
             UPDATE ${DBtable} 
             SET 
-                id_user = ?, 
-                un_origem = ?, 
-                un_destino = ?, 
+                id_user = ?,
                 data_hora_solicitacao_02 = ?, 
                 nome_responsavel_nac = ?, 
                 qtd_solicitacoes = ?, 
                 status_regulacao = ?
             WHERE id_regulacao = ?`, [
-                FormData.id_user, 
-                FormData.un_origem, 
-                FormData.un_destino, 
-                FormData.data_hora_solicitacao_02,
-                FormData.nome_responsavel_nac,
-                qtdSolicitacoes + 1, // Incrementa a quantidade de solicitações
-                novoStatus,
-                FormData.id_regulacao,
-            ]);
+            FormData.id_user,
+            FormData.data_hora_solicitacao_02,
+            FormData.nome_responsavel_nac,
+            qtdSolicitacoes + 1, // Incrementa a quantidade de solicitações
+            novoStatus,
+            FormData.id_regulacao,
+
+        ]);
+
+        const updateLinkResult = await UpdateLinkDOC(FormData.num_regulacao, FormData.link);
+        if (!updateLinkResult.success) {
+            console.error('Erro ao atualizar o link do documento:', updateLinkResult.message);
+            connection.release();
+            return { success: false, message: "Erro ao atualizar o link do documento." };
+        }
 
         connection.release();
 
