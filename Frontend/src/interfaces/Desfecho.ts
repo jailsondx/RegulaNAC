@@ -3,7 +3,7 @@ export interface DesfechoData {
   id_regulacao: number | null;
   desfecho: string;
   forcado: boolean;
-  fastmedic: boolean;
+  fastmedic?: boolean;
 }
 
 export interface DesfechoExternoData {

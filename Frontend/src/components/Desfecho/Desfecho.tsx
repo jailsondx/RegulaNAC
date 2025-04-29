@@ -31,7 +31,6 @@ const initialFormData: DesfechoData = {
     id_regulacao: null,
     desfecho: '',
     forcado: false,
-    fastmedic: false,
 };
 
 const Desfecho: React.FC<Props> = ({ dadosPaciente, forcado, onClose, showSnackbar }) => {

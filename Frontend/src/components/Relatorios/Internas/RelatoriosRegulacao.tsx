@@ -5,7 +5,7 @@ import { Snackbar, Alert } from "@mui/material";
 
 
 /*IMPORT INTERFACES*/
-import { UserData } from '../../interfaces/UserData';
+import { UserData } from '../../../interfaces/UserData';
 interface ReportData {
     startDate?: string;
     endDate?: string;
@@ -20,9 +20,10 @@ interface ReportData {
 
 
 /*IMPORT FUNCTIONS*/
-import { getUserData } from '../../functions/storageUtils';
+import { getUserData } from '../../../functions/storageUtils';
 
-
+/*IMPORT CSS*/
+import '../Relatorios.css';
 
 /*IMPORT VARIAVEIS DE AMBIENTE*/
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;

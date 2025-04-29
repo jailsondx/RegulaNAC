@@ -134,7 +134,7 @@ const Sidebar: React.FC = () => {
   const renderReportMenuItems = () => (
     <>
       <MenuButton onClick={() => setShowReportMenu(false)} Icon={TiArrowBack} label="Voltar" />
-      <MenuLink to="/RelatoriosRegulacao" Icon={TiUpload} label="EM DESENVOLVIMENTO" />
+      <MenuLink to="/RelatorioGeral" Icon={TiUpload} label="Relatório Geral" />
       <MenuLink to="/RelatorioEfetivacao" Icon={TiUpload} label="Relatório de Efetivação" />
       <MenuLink to="/RelatorioTempoEfetivacao" Icon={TiUpload} label="Relatório de Tempo de Efetivação" />
     </>

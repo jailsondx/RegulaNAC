@@ -1,4 +1,8 @@
-import { exportarRelatorioCSVPaciente as handleCSVPaciente, exportarRelatorioCSVEfetivacao as handleCSVEfetivacao } from '../Controller/ExportToCSV.js';
+import {
+    exportarRelatorioCSVPaciente as handleCSVPaciente,
+    exportarRelatorioCSVEfetivacao as handleCSVEfetivacao,
+    exportarRelatorioCSVGeral as handleCSVGeral
+} from '../Controller/ExportToCSV.js';
 import { DBconnection } from "../Controller/connection.js"; // Importa apenas o objeto DBconnection
 
 async function relatorioRegulacao(FormData) {
@@ -73,6 +77,67 @@ async function relatorioRegulacao(FormData) {
     } catch (error) {
         console.error('Erro ao carregar regulações:', error);
         return { success: false, message: "Erro ao carregar regulações.", error };
+    }
+}
+
+export async function relatorioGeral(startDate, endDate) {
+    const DBtableRegulacao = 'regulacao';
+    const DBtableRegulacaoMedico = 'regulacao_medico';
+    const DBtableSetorOrigem = 'setor_origem';
+    const DBtableSetorDestino = 'setor_destino';
+    const DBtableTransporte = 'transporte';
+    const DBtableDesfecho = 'desfecho';
+
+    try {
+        const connection = await DBconnection.getConnection();
+
+        const query = `
+            SELECT 
+                r.*,
+                rm.data_hora_regulacao_medico AS regulacaoMedico_data_hora_regulacao_medico,
+                rm.num_leito AS regulacaoMedico_num_leito,
+                rm.justificativa_tempo30 AS regulacaoMedico_justificativa_tempo30,
+                rm.justificativa_neg AS regulacaoMedico_justificativa_neg,
+                so.nome_colaborador AS setorOrigem_nome_colaborador,
+                so.data_hora_comunicacao AS setorOrigem_data_hora_comunicacao,
+                so.preparo_leito AS setorOrigem_preparo_leito,
+                sd.nome_colaborador AS setorDestino_nome_colaborador,
+                t.nome_colaborador AS transporte_nome_colaborador,
+                t.data_hora_acionamento AS transporte_data_hora_acionamento,
+                t.data_hora_chegada_origem AS transporte_data_hora_chegada_origem,
+                t.data_hora_saida_origem AS transporte_data_hora_saida_origem,
+                t.data_hora_chegada_destino AS transporte_data_hora_chegada_destino,
+                t.data_hora_liberacao_leito AS transporte_data_hora_liberacao_leito,
+                t.criticidade AS transporte_criticidade,
+                t.justificativa_atraso_leito AS transporte_justificativa_atraso_leito,
+                t.observacao AS transporte_observacao,
+                d.desfecho, 
+                d.forcado
+            FROM ${DBtableRegulacao} r
+            LEFT JOIN ${DBtableRegulacaoMedico} rm ON r.id_regulacao = rm.id_regulacao
+            LEFT JOIN ${DBtableSetorOrigem} so ON r.id_regulacao = so.id_regulacao
+            LEFT JOIN ${DBtableSetorDestino} sd ON r.id_regulacao = sd.id_regulacao
+            LEFT JOIN ${DBtableTransporte} t ON r.id_regulacao = t.id_regulacao
+            LEFT JOIN ${DBtableDesfecho} d ON r.id_regulacao = d.id_regulacao
+            WHERE DATE(r.data_hora_solicitacao_02) BETWEEN ? AND ?
+        `;
+
+        const queryParams = [startDate, endDate];
+
+        const [rows] = await connection.query(query, queryParams);
+
+        connection.release();
+
+        if (!rows || (Array.isArray(rows) && rows.length === 0)) {
+            return { success: false, message: "Nenhum registro encontrado para o período informado." };
+        }
+
+        const filePath = await handleCSVGeral(rows);
+
+        return { success: true, data: rows, filePath };
+    } catch (error) {
+        console.error('Erro ao gerar relatório geral:', error);
+        return { success: false, message: "Erro ao gerar relatório geral.", error };
     }
 }
 

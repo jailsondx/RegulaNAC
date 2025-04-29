@@ -5,7 +5,7 @@ import { Snackbar, Alert } from "@mui/material";
 
 
 /*IMPORT INTERFACES*/
-import { UserData } from '../../interfaces/UserData';
+import { UserData } from '../../../interfaces/UserData';
 interface ReportData {
   startDate?: string;
   endDate?: string;
@@ -15,15 +15,15 @@ interface ReportData {
 
 
 /*IMPORT FUNCTIONS*/
-import { getUserData } from '../../functions/storageUtils';
+import { getUserData } from '../../../functions/storageUtils';
 
 /*IMPORT CSS*/
-import './Relatorios.css';
+import '../Relatorios.css';
 
 /*IMPORT VARIAVEIS DE AMBIENTE*/
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
 
-const RelatorioEfetivacao: React.FC = () => {
+const RelatorioTempoEfetivacao: React.FC = () => {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [formData, setFormData] = useState<ReportData>({});
   const [showError, setShowError] = useState(false);
@@ -67,14 +67,14 @@ const RelatorioEfetivacao: React.FC = () => {
       };
 
       // Configura o axios para receber a resposta como um blob (arquivo)
-      const response = await axios.post(`${NODE_URL}/api/internal/report/Efetivacao`, dataToSubmit)
+      const response = await axios.post(`${NODE_URL}/api/internal/report/TempoEfetivacao`, dataToSubmit)
 
       console.log(response);
 
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', `Relatorio de Efetivacao.csv`); // Nome do arquivo que será baixado
+      link.setAttribute('download', `Relatorio Tempo de Efetivacao.csv`); // Nome do arquivo que será baixado
       document.body.appendChild(link);
       link.click();
 
@@ -120,7 +120,7 @@ const RelatorioEfetivacao: React.FC = () => {
   return (
     <>
       <div>
-        <label className='Title-Form'>Gerar relatório de efetivação</label>
+        <label className='Title-Form'>Gerar Relatório de Tempo de Efetivação</label>
       </div>
 
       <div className="ComponentForm">
@@ -181,4 +181,4 @@ const RelatorioEfetivacao: React.FC = () => {
 };
 
 
-export default RelatorioEfetivacao;
+export default RelatorioTempoEfetivacao;

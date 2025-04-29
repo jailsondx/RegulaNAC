@@ -1,6 +1,6 @@
 import express from 'express';
 import { convertObjectToUpperCase } from '../../functions/Manipulation/ObjectUpperCase.js';
-import { relatorioRegulacao, relatorioEfetivacao, relatorioTempoEfetivacao } from '../../functions/SelectSQL/Relatorios.js';
+import { relatorioRegulacao, relatorioEfetivacao, relatorioTempoEfetivacao, relatorioGeral } from '../../functions/SelectSQL/Relatorios.js';
 
 const routerReport = express.Router();
 
@@ -21,6 +21,29 @@ routerReport.post('/', async (req, res) => {
     message: 'Erro interno do servidor',
     error: 'Erro desconhecido',
   });
+  }
+});
+routerReport.post('/Geral', async (req, res) => {
+  try {
+    const { startDate, endDate } = req.body;
+
+    if (!startDate || !endDate) {
+      return res.status(400).json({ message: 'Datas de início e fim são obrigatórias.' });
+    }
+
+    const result = await relatorioGeral(startDate, endDate);
+
+    if (result.success && result.filePath) {
+      handleDownload(res, result.filePath, 'RelatorioGeral.csv');
+    } else {
+      res.status(500).json({ message: 'Erro ao gerar o relatório.', error: result.error });
+    }
+  } catch (error) {
+    console.error('Erro no processamento:', error);
+    res.status(500).json({
+      message: 'Erro interno do servidor',
+      error: error instanceof Error ? error.message : 'Erro desconhecido',
+    });
   }
 });
 

@@ -5,3 +5,16 @@
     height: 35dvh;
     max-height: 270px;
 }
+
+.report-container{
+    height: 100%;
+}
+
+.report-form{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 20%;
+    height: 20%;
+    margin: 1% 0 3% 0; /*top, right, bottom, left*/
+}
