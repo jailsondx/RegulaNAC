@@ -52,6 +52,7 @@ const TabelaRegulacoesInternas: React.FC<TabelaRegulacoesProps> = ({
       state: { id_regulacao },
     });
   };
+  
 
   return (
     <table className='Table-Regulacoes'>
@@ -120,7 +121,13 @@ const TabelaRegulacoesInternas: React.FC<TabelaRegulacoesProps> = ({
             </span>
           </th>
 
-          <th title='Tempo de Espera calculado com base no tempo do acionamento médico'>Tempo de Espera</th>
+          <th className={`col-TempoEspera clicked${selectedColumn === "tempo_espera" ? " selected" : ""}`} onClick={() => handleSort("tempo_espera")}>
+          <span>
+            <label>Tempo de Espera</label>
+            <label>{sortConfig?.key === "tempo_espera" ? (sortConfig.direction === "asc" ? <LuArrowUpNarrowWide /> : <LuArrowDownWideNarrow />) : ""}</label>
+          </span>
+        </th>
+
 
           {IconOpcoes === 'normais' && (
             <>

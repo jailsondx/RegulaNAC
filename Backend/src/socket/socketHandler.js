@@ -28,22 +28,26 @@ export default (server) => {
 
         // Suponha que alguém envie uma mensagem
         socket.on('nova-mensagem', (data) => {
-            const { roomId, mensagem } = data;
-
-            console.log(`Mensagem recebida na sala ${roomId}: ${mensagem}`);
-
-            // Envia a mensagem para todos na sala (roomId)
-            io.to(roomId).emit('nova-mensagem', mensagem);
-        });
+            try {
+              const { roomId, mensagem } = data;
+              if (!roomId || !mensagem) return;
+              io.to(roomId).emit('nova-mensagem', mensagem);
+            } catch (err) {
+              console.error('Erro ao processar nova mensagem:', err);
+            }
+          });
+          
 
         // Quando o usuário desconecta
         socket.on('disconnect', () => {
             const user = usuarios[socket.id];
             if (user) {
-              console.log(`Usuário ${user.username} saiu da sala ${user.sala}`);
+              socket.leave(user.sala);  // Remove da sala
               delete usuarios[socket.id];
+              console.log(`Usuário ${user.username} desconectado da sala ${user.sala}`);
             }
           });
+          
           
     });
 

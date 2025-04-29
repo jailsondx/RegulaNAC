@@ -170,11 +170,14 @@ const Sidebar: React.FC = () => {
       <div className="sidebar-sup">
         <label className="sidebar-Title">RegulaNAC</label>
         <div className="inf-user">
-          <img className="IconUser" src={iconUser} alt="User Icon" />
-          <p>
+          <span className="icon-user">
+            <img className="IconUser" src={iconUser} alt="User Icon" />
+          </span>
+          <span className="label-user">
             <label className="sidebar-Username">{userData?.login}</label>
             <label className="sidebar-Username">{userData?.nome}</label>
-          </p>
+          </span>
+         
         </div>
 
         <ul>

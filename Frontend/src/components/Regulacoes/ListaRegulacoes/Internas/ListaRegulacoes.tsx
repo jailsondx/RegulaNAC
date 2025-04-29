@@ -145,16 +145,20 @@ const ListaRegulacoesInternas: React.FC<Props> = ({ title }) => {
     setCurrentPage(newPage);
   };
 
+
   //CONFIGURA A ORDENAÇÃO
   const handleSort = (key: keyof RegulacaoData) => {
     let direction: "asc" | "desc" = "asc";
     if (sortConfig?.key === key && sortConfig.direction === "asc") {
       direction = "desc";
     }
+
+    console.log("Sorting by:", key, "Direction:", direction);  // Verifique se está passando corretamente
+
     setSortConfig({ key, direction });
 
     const sortedData = [...filteredRegulacoes].sort((a, b) => {
-      if (a[key] === null || b[key] === null) return 0; // Evita erros com valores null
+      if (a[key] === null || b[key] === null) return 0;
       if (a[key]! < b[key]!) return direction === "asc" ? -1 : 1;
       if (a[key]! > b[key]!) return direction === "asc" ? 1 : -1;
       return 0;
@@ -163,6 +167,7 @@ const ListaRegulacoesInternas: React.FC<Props> = ({ title }) => {
     setFilteredRegulacoes(sortedData);
     setSelectedColumn(key);
   };
+
 
   //EXIBE O SNACKBAR
   const showSnackbar = (

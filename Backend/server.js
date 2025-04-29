@@ -11,6 +11,17 @@ import routerReport from './src/routes/internal/reports.js';
 
 import dotenv from 'dotenv';
 
+
+process.on('uncaughtException', (err) => {
+    console.error('Erro não tratado (uncaughtException):', err);
+    // Você pode optar por não encerrar o processo aqui, dependendo da gravidade
+  });
+  
+  process.on('unhandledRejection', (reason, promise) => {
+    console.error('Rejeição não tratada (unhandledRejection):', reason);
+  });
+  
+
 dotenv.config();
 
 const app = express();
@@ -28,7 +39,9 @@ const corsOptions = {
 */
 
 app.use(cors());
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: '20mb' }));  // Ajuste conforme necessário
+app.use(bodyParser.urlencoded({ extended: true, limit: '20mb' }));
+
 
 // Aumenta o limite de listeners de eventos
 import('events').then((events) => {

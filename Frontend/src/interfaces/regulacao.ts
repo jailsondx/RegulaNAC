@@ -25,6 +25,7 @@ export interface RegulacaoData extends NovaRegulacaoData {
   desfecho: string;
   regulador_final?: string;
   justificativa_neg?: string;
+  tempo_espera?: number | null;
 }
 
 export interface RegulacaoAprovadaData extends RegulacaoData{
