@@ -78,7 +78,6 @@ const Sidebar: React.FC = () => {
 
     // Se for médico
     if (tipo === 'MEDICO') {
-      if (!permissao) {
         // Médico comum
         return (
           <>
@@ -87,18 +86,13 @@ const Sidebar: React.FC = () => {
             <MenuLink to="/RegulacoesAprovadas" Icon={TiThumbsUp} label="Regulações Aprovadas Internas" />
             <MenuLink to="/RegulacoesAprovadasExternas" Icon={TiThumbsUp} label="Regulações Aprovadas Externas" />
             <hr />
+            {permissao === 'NEONATOLOGIA' && (
+              <MenuLink to="/RegulacaoMedicaExternasNeonatologia" Icon={TiHeartHalfOutline} label="Neonatologia" />
+            )}
+            <hr />
             <MenuLink to="/Login" Icon={TiExportOutline} label="Sair" />
           </>
         );
-      }
-      if (permissao === 'NEONATOLOGIA') {
-        // Médico com permissão especial
-        return (
-          <>
-            <MenuLink to="/RegulacaoMedica" Icon={TiHeartHalfOutline} label="TESTE" />
-          </>
-        );
-      }
     }
 
     // Se for administrativo ou gerência

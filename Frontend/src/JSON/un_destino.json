@@ -22,7 +22,6 @@
   { "value": "CP", "label": "CP" },
   { "value": "UCINCO", "label": "UCINCO" },
   { "value": "UCINCA", "label": "UCINCA" },
-  { "value": "MED", "label": "MED" },
   { "value": "OBA CIR", "label": "OBA CIR" },
   { "value": "OBA CP", "label": "OBA CP" },
   { "value": "OBA TD", "label": "OBA TD" },
@@ -45,11 +44,6 @@
   { "value": "AVC SUB", "label": "AVC SUB" },
   { "value": "EXTERNA ARTERIO", "label": "EXTERNA ARTERIO" },
   { "value": "AMBULATÓRIO", "label": "AMBULATÓRIO" },
-  { "value": "HEMODINÂMICA", "label": "HEMODINÂMICA" },
-  { "value": "EXTERNA EMBOL", "label": "EXTERNA EMBOL" },
-  { "value": "POLICLINICA", "label": "POLICLINICA" },
-  { "value": "CSM", "label": "CSM" },
-  { "value": "RESIDÊNCIA", "label": "RESIDÊNCIA" },
-  { "value": "HMEP", "label": "HMEP" }
+  { "value": "HEMODINÂMICA", "label": "HEMODINÂMICA" }
 ]
   

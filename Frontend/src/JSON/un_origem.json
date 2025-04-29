@@ -43,15 +43,7 @@
   { "value": "ESTAR MATERNO", "label": "ESTAR MATERNO" },
   { "value": "TRIAGEM", "label": "TRIAGEM" },
   { "value": "SCMS", "label": "SCMS" },
-  { "value": "EXTERNO REG", "label": "EXTERNO REG" },
   { "value": "AVC SUB", "label": "AVC SUB" },
-  { "value": "EXTERNA ARTERIO", "label": "EXTERNA ARTERIO" },
   { "value": "AMBULATÓRIO", "label": "AMBULATÓRIO" },
-  { "value": "HEMODINÂMICA", "label": "HEMODINÂMICA" },
-  { "value": "HC-EXTERNO", "label": "HC-EXTERNO" },
-  { "value": "EXTERNA EMBOL", "label": "EXTERNA EMBOL" },
-  { "value": "POLICLINICA", "label": "POLICLINICA" },
-  { "value": "CSM", "label": "CSM" },
-  { "value": "RESIDÊNCIA", "label": "RESIDÊNCIA" },
-  { "value": "HMEP", "label": "HMEP" }
+  { "value": "HEMODINÂMICA", "label": "HEMODINÂMICA" }
 ]

@@ -20,6 +20,11 @@ async function LoginUser(login, password) {
 
         const user = rows[0];
 
+        // Verifica se o usuário está ativo
+        if (user.ativo !== 1) { // Considerando que 1 é ativo, 0 é inativo
+            return { success: false, message: "Usuário inativo. Não é possível realizar o login." };
+        }
+
         // Verifica se é o primeiro acesso
         if (user.primeiroAcesso === true || user.primeiroAcesso === 1) {
             if (password === 'ISGH') {
@@ -33,7 +38,7 @@ async function LoginUser(login, password) {
         const isPasswordValid = await bcrypt.compare(password, user.senha); // Usando bcrypt para comparar as senhas
 
         if (isPasswordValid) {
-            console.log("✅ Usuario Logado:", login);
+            console.log("✅ Usuário logado:", login);
             return { success: true, message: "Login realizado com sucesso.", data: user };
         } else {
             return { success: false, message: "Credenciais inválidas." };
@@ -43,6 +48,5 @@ async function LoginUser(login, password) {
         return { success: false, message: "Erro ao verificar usuário.", error };
     }
 }
-
 
 export default LoginUser;

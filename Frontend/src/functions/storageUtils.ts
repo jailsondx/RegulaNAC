@@ -7,9 +7,10 @@ export function getUserData(): UserData | null {
     const login = sessionStorage.getItem('login');
     const nome = sessionStorage.getItem('nome');
     const tipo = sessionStorage.getItem('tipo');
+    const permissao = sessionStorage.getItem('permissao');
 
-    if (id_user && nome &&login && tipo) {
-      return { id_user, login, nome, tipo };
+    if (id_user && nome &&login && tipo && permissao) {
+      return { id_user, login, nome, tipo, permissao };
     }
 
     return null;
@@ -24,4 +25,5 @@ export function clearSessionStorage() {
   sessionStorage.removeItem("login");
   sessionStorage.removeItem("nome");
   sessionStorage.removeItem("tipo");
+  sessionStorage.removeItem("permissao");
 }
