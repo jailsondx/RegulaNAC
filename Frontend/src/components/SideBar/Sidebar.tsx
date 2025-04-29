@@ -77,7 +77,7 @@ const Sidebar: React.FC = () => {
     const { tipo, permissao } = userData;
 
     // Se for médico
-    if (tipo === 'MEDICO') {
+    if (tipo === 'MEDICO-TESTE') {
         // Médico comum
         return (
           <>
@@ -94,6 +94,19 @@ const Sidebar: React.FC = () => {
           </>
         );
     }
+
+        // Se for médico
+        if (tipo === 'MEDICO') {
+          // Médico comum
+          return (
+            <>
+              <MenuLink to="/RegulacaoMedica" Icon={TiHeartHalfOutline} label="Regulação Interna Pendente de Autorização" />
+              <MenuLink to="/RegulacoesAprovadas" Icon={TiThumbsUp} label="Regulações Internas Aprovadas" />
+              <hr />
+              <MenuLink to="/Login" Icon={TiExportOutline} label="Sair" />
+            </>
+          );
+      }
 
     // Se for administrativo ou gerência
     if (tipo === 'AUX. ADMINISTRATIVO' || tipo === 'GERENCIA') {

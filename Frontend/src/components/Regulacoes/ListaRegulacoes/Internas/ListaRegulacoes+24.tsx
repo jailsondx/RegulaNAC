@@ -5,13 +5,15 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Snackbar, Alert } from '@mui/material';
 
 /*IMPORT INTERFACES*/
+import { UserData } from '../../../../interfaces/UserData';
 import { RegulacaoData } from '../../../../interfaces/Regulacao';
 
 /*IMPORT COMPONENTS*/
 import HeaderFiltroInterno from '../../../Header/Header_Lista_Interna';
-import TabelaRegulacoes from '../../Tabela de Regulacoes/Internas/TabelaRegulacoesInternas';
+import TabelaRegulacoesInternas from '../../Tabela de Regulacoes/Internas/TabelaRegulacoesInternas';
 
 /*IMPORT FUNCTIONS*/
+import { getUserData } from '../../../../functions/storageUtils';
 
 /*IMPORT CSS*/
 import '../ListaRegulacoes.css';
@@ -22,6 +24,7 @@ import '../ListaRegulacoes.css';
 import { atualizarRegulacao } from '../../../../Utils/handleAtualizarRegulacao';
 import { fetchPDF } from '../../../../Utils/fetchPDF';
 
+
 /*IMPORT VARIAVEIS DE AMBIENTE*/
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
 
@@ -30,6 +33,7 @@ interface Props {
 }
 
 const ListaRegulacoes24hrs: React.FC<Props> = ({ title }) => {
+  const [userData, setUserData] = useState<UserData | null>(null);
   const [serverTime, setServerTime] = useState("");
   const [regulacoes, setRegulacoes] = useState<RegulacaoData[]>([]); // Tipo do estado
   const location = useLocation();
@@ -57,6 +61,12 @@ const ListaRegulacoes24hrs: React.FC<Props> = ({ title }) => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error' | 'info' | 'warning'>('success');
+
+  //Pega dados do SeassonStorage User
+  useEffect(() => {
+    const data = getUserData();
+    setUserData(data);
+  }, []);
 
   //CHAMADA DE API PARA GERAR A LISTA DE REGULAÇÕES
   useEffect(() => {
@@ -191,16 +201,19 @@ const ListaRegulacoes24hrs: React.FC<Props> = ({ title }) => {
           />
 
           <div>
-            <TabelaRegulacoes
-              currentRegulacoes={currentRegulacoes}
-              selectedColumn={selectedColumn}
-              sortConfig={sortConfig}
-              handleSort={handleSort}
-              fetchPDF={handleFetchPDF}
-              serverTime={serverTime}
-              handleAtualizarRegulacao={handleClick_atualizarRegulacao}
-              IconOpcoes='expiradas'
-            />
+            {userData && (
+              <TabelaRegulacoesInternas
+                currentRegulacoes={currentRegulacoes}
+                selectedColumn={selectedColumn}
+                sortConfig={sortConfig}
+                handleSort={handleSort}
+                fetchPDF={handleFetchPDF}
+                serverTime={serverTime}
+                handleAtualizarRegulacao={handleClick_atualizarRegulacao}
+                IconOpcoes='expiradas'
+                UserData={userData}
+              />
+            )}
           </div>
 
         </div>
