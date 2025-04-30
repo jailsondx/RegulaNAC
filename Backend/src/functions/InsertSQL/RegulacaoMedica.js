@@ -49,6 +49,19 @@ async function RegulacaoMedica(FormData) {
           ];
           
           const insertData = filterFields(FormData, allowedFields);
+
+            // Verifica se o id_regulacao já existe na tabela regulacao_medico
+            const [existing] = await connection.query(
+                `SELECT id_regulacao FROM ${DBtable} WHERE id_regulacao = ?`,
+                [FormData.id_regulacao]
+            );
+
+            if (existing.length > 0) {
+                return {
+                    success: false,
+                    message: `Já existe uma regulação médica com o ID ${FormData.id_regulacao}.`,
+                };
+            }
           
           const [result] = await connection.query(
             `INSERT INTO ${DBtable} SET ?`,

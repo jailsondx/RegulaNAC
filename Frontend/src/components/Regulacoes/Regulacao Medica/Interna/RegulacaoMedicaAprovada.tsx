@@ -86,18 +86,25 @@ const NovaRegulacaoMedicoAprovada: React.FC<Props> = ({ dadosPaciente, tempoEspe
       showSnackbar('O campo "Número do Leito" é obrigatório.', 'error');
       return false;
     }
-
-    // Verifica o tempo e se a justificativa é necessária
-    const [hours, minutes] = tempoEspera.split(/h|m/).map(Number);
+  
+    // Extrai horas e minutos corretamente do tempoEspera (ex: "11h 8min")
+    const regex = /(\d+)\s*h\s*(\d+)?\s*min?/i;
+    const match = tempoEspera.match(regex);
+    const hours = match ? parseInt(match[1]) : 0;
+    const minutes = match && match[2] ? parseInt(match[2]) : 0;
+  
     if ((hours > 0 || minutes >= 30) && !formData.justificativa_tempo30?.trim()) {
       showSnackbar('Para tempos de espera acima de 30 minutos, a Justificativa é obrigatória.', 'info');
       return false;
     }
+  
     return true;
   };
+  
 
   const handleSubmit = async (e: FormEvent): Promise<void> => {
     e.preventDefault();
+
     if (!validateForm()) return;
 
     try {
