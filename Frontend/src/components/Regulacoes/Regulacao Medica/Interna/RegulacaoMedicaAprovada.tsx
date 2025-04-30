@@ -19,6 +19,7 @@ import { useSocket } from '../../../../Utils/useSocket';
 
 /*IMPORT JSON*/
 import UTI_adulto from '../../../../JSON/UTI_adulto.json'
+import clinica_medica from '../../../../JSON/clinica_medica.json'
 
 /*IMPORT VARIAVEIS DE AMBIENTE*/
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
@@ -47,6 +48,7 @@ const NovaRegulacaoMedicoAprovada: React.FC<Props> = ({ dadosPaciente, tempoEspe
   const userUsername = userData?.login || ''; // Nome do usuário
   const userTipo = userData?.tipo || ''; // Tipo de usuário
   const [unidadesUTI, setUnidadesUTI] = useState<UnidadeData[]>([]);
+  const [unidadesClinicaMedica, setUnidadesClinicaMedica] = useState<UnidadeData[]>([]);
   const [formData, setFormData] = useState<RegulacaoMedicoData>(initialFormData);
 
 
@@ -59,6 +61,7 @@ const NovaRegulacaoMedicoAprovada: React.FC<Props> = ({ dadosPaciente, tempoEspe
   // Carregar os dados do arquivo JSON
   useEffect(() => {
     setUnidadesUTI(UTI_adulto);
+    setUnidadesClinicaMedica(clinica_medica);
   }, []);
 
   //Função para fazer o envio de mensagem para o socket
@@ -150,6 +153,7 @@ const NovaRegulacaoMedicoAprovada: React.FC<Props> = ({ dadosPaciente, tempoEspe
       <form onSubmit={handleSubmit}>
         <div className='modal-input'>
           <div className='modal-input-line2'>
+
             {dadosPaciente.un_destino === 'UTI ADULTO' && (
               <div>
                 <label>UTI:</label>
@@ -161,6 +165,25 @@ const NovaRegulacaoMedicoAprovada: React.FC<Props> = ({ dadosPaciente, tempoEspe
                 >
                   <option value="">Selecione...</option>
                   {unidadesUTI.map((item, index) => (
+                    <option key={index} value={item.value}>
+                      {item.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            {dadosPaciente.un_destino === 'CLINICA MEDICA' && (
+              <div>
+                <label>CM:</label>
+                <select
+                  className='select-destino'
+                  name="un_destino"
+                  value={formData.un_destino || ''}
+                  onChange={handleChange}
+                >
+                  <option value="">Selecione...</option>
+                  {unidadesClinicaMedica.map((item, index) => (
                     <option key={index} value={item.value}>
                       {item.label}
                     </option>
