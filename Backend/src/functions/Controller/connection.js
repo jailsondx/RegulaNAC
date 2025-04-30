@@ -10,7 +10,10 @@ const DBconnection = mysql.createPool({
     port: parseInt(process.env.DB_PORT || '3306', 10), // Converte para número
     user: process.env.DB_USER || 'root',
     password: process.env.DB_PASSWORD || '',
-    database: process.env.DB_NAME || 'regulanac_database'
+    database: process.env.DB_NAME || 'regulanac_database',
+    waitForConnections: true,
+    connectionLimit: 20, // ajustável
+    queueLimit: 0        // 0 = ilimitado (pode ser perigoso em alta carga)
 });
 
 // Função para testar a conexão

@@ -80,6 +80,8 @@ const NovaRegulacaoMedicoAprovada: React.FC<Props> = ({ dadosPaciente, tempoEspe
     }));
   };
 
+
+  
   const validateForm = (): boolean => {
     // Valida número do leito
     if (!formData.num_leito) {
@@ -87,10 +89,10 @@ const NovaRegulacaoMedicoAprovada: React.FC<Props> = ({ dadosPaciente, tempoEspe
       return false;
     }
   
-    // Extrai horas e minutos corretamente do tempoEspera (ex: "11h 8min")
-    const regex = /(\d+)\s*h\s*(\d+)?\s*min?/i;
+    // Regex para capturar horas e minutos em qualquer ordem ou presença
+    const regex = /(?:(\d+)\s*h)?\s*(?:(\d+)\s*min)?/i;
     const match = tempoEspera.match(regex);
-    const hours = match ? parseInt(match[1]) : 0;
+    const hours = match && match[1] ? parseInt(match[1]) : 0;
     const minutes = match && match[2] ? parseInt(match[2]) : 0;
   
     if ((hours > 0 || minutes >= 30) && !formData.justificativa_tempo30?.trim()) {
@@ -100,6 +102,7 @@ const NovaRegulacaoMedicoAprovada: React.FC<Props> = ({ dadosPaciente, tempoEspe
   
     return true;
   };
+  
   
 
   const handleSubmit = async (e: FormEvent): Promise<void> => {

@@ -124,9 +124,12 @@ const NovaRegulacao: React.FC = () => {
   }, []);
 
   //Função para fazer o envio de mensagem para o socket
-  const { enviarMensagem } = useSocket(userUsername, userTipo, (mensagem) => {
-    showSnackbar(mensagem, 'warning');
-  });
+  // Só chame o hook se os dados estiverem prontos
+  const { enviarMensagem } = useSocket(
+    userUsername,
+    userTipo,
+    (mensagem) => showSnackbar(mensagem, 'warning')
+  );
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>): void => {
     const { name, value, type } = e.target;
