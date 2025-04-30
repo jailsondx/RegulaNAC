@@ -78,35 +78,48 @@ const Sidebar: React.FC = () => {
 
     // Se for médico
     if (tipo === 'MEDICO-TESTE') {
-        // Médico comum
-        return (
-          <>
-            <MenuLink to="/RegulacaoMedica" Icon={TiHeartHalfOutline} label="Regulação Médica Interna" />
-            <MenuLink to="/RegulacaoMedicaExternas" Icon={TiHeartHalfOutline} label="Regulação Médica Externa" />
-            <MenuLink to="/RegulacoesAprovadas" Icon={TiThumbsUp} label="Regulações Aprovadas Internas" />
-            <MenuLink to="/RegulacoesAprovadasExternas" Icon={TiThumbsUp} label="Regulações Aprovadas Externas" />
-            <hr />
-            {permissao === 'NEONATOLOGIA' && (
-              <MenuLink to="/RegulacaoMedicaExternasNeonatologia" Icon={TiHeartHalfOutline} label="Neonatologia" />
-            )}
-            <hr />
-            <MenuLink to="/Login" Icon={TiExportOutline} label="Sair" />
-          </>
-        );
+      // Médico comum
+      return (
+        <>
+          <MenuLink to="/RegulacaoMedica" Icon={TiHeartHalfOutline} label="Regulação Médica Interna" />
+          <MenuLink to="/RegulacaoMedicaExternas" Icon={TiHeartHalfOutline} label="Regulação Médica Externa" />
+          <MenuLink to="/RegulacoesAprovadas" Icon={TiThumbsUp} label="Regulações Aprovadas Internas" />
+          <MenuLink to="/RegulacoesAprovadasExternas" Icon={TiThumbsUp} label="Regulações Aprovadas Externas" />
+          <hr />
+          {permissao === 'NEONATOLOGIA' && (
+            <MenuLink to="/RegulacaoMedicaExternasNeonatologia" Icon={TiHeartHalfOutline} label="Neonatologia" />
+          )}
+          <hr />
+          <MenuLink to="/Login" Icon={TiExportOutline} label="Sair" />
+        </>
+      );
     }
 
-        // Se for médico
-        if (tipo === 'MEDICO') {
-          // Médico comum
-          return (
-            <>
-              <MenuLink to="/RegulacaoMedica" Icon={TiHeartHalfOutline} label="Regulação Interna Pendente de Autorização" />
-              <MenuLink to="/RegulacoesAprovadas" Icon={TiThumbsUp} label="Regulações Internas Aprovadas" />
-              <hr />
-              <MenuLink to="/Login" Icon={TiExportOutline} label="Sair" />
-            </>
-          );
-      }
+    // Se for médico
+    if (tipo === 'MEDICO') {
+      // Médico comum
+      return (
+        <>
+          <MenuLink to="/RegulacaoMedica" Icon={TiHeartHalfOutline} label="Regulação Interna Pendente de Autorização" />
+          <MenuLink to="/RegulacoesAprovadas" Icon={TiThumbsUp} label="Regulações Internas Aprovadas" />
+          <hr />
+          <MenuLink to="/Login" Icon={TiExportOutline} label="Sair" />
+        </>
+      );
+    }
+
+
+    // Se for consulta
+    if (tipo === 'CONSULTA') {
+      // Médico comum
+      return (
+        <>
+          <MenuLink to="/RegulacaoMedica" Icon={TiHeartHalfOutline} label="Regulação Interna Pendente de Autorização" />
+          <hr />
+          <MenuLink to="/Login" Icon={TiExportOutline} label="Sair" />
+        </>
+      );
+    }
 
     // Se for administrativo ou gerência
     if (tipo === 'AUX. ADMINISTRATIVO' || tipo === 'GERENCIA') {
@@ -123,10 +136,10 @@ const Sidebar: React.FC = () => {
             <MenuButton onClick={() => { setShowReportMenu(true); setShowExternalMenu(false); }} Icon={TiUpload} label="Relatórios" />
           )}
           <hr />
-          
+
           {/* Botão para abrir o menu de solicitações externas */}
           <MenuButton onClick={() => { setShowExternalMenu(true); setShowReportMenu(false); }} Icon={TiContacts} label="Solicitações de Origem Externa" />
-        
+
           {/* Acesso a regulações médicas internas só para gerência */}
           {tipo === 'GERENCIA' && (
             <>
@@ -177,7 +190,7 @@ const Sidebar: React.FC = () => {
             <label className="sidebar-Username">{userData?.login}</label>
             <label className="sidebar-Username">{userData?.nome}</label>
           </span>
-         
+
         </div>
 
         <ul>

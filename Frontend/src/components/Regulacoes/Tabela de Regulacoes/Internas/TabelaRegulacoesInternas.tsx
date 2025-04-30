@@ -144,7 +144,7 @@ const TabelaRegulacoesInternas: React.FC<TabelaRegulacoesProps> = ({
             </>
           )}
           
-          {IconOpcoes === 'medico' && (
+          {IconOpcoes === 'medico' && UserData.tipo === 'MEDICO' && (
             <th>Aprovação</th>
           )}
         </tr>
@@ -231,7 +231,7 @@ const TabelaRegulacoesInternas: React.FC<TabelaRegulacoesProps> = ({
               </>
             )}
 
-            {IconOpcoes === 'medico' && (
+            {IconOpcoes === 'medico' && UserData.tipo === 'MEDICO' && (
               <>
                 <td>
                   <label className="td-Icons">
