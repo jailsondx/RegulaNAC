@@ -5,10 +5,8 @@ async function ListaRegulacoesNegadas() {
     const DBtableRegulacaoMedico = "regulacao_medico";
 
     try {
-        // Inicie a conexão com o banco de dados
         const connection = await DBconnection.getConnection();
 
-        // Execute a query para selecionar os registros da tabela regulacao
         const [rows] = await connection.query(`
             SELECT 
                 r.id_regulacao, 
@@ -27,14 +25,20 @@ async function ListaRegulacoesNegadas() {
             WHERE r.status_regulacao LIKE ?
         `, ["NEGADO"]);
 
-        connection.release(); // Libera a conexão
+        connection.release();
 
-        return { success: true, data: rows };
+        return {
+            success: true,
+            data: Array.isArray(rows) ? rows : []
+        };
 
     } catch (error) {
-        // Tratamento de erro
         console.error("Erro ao carregar regulações:", error);
-        return { success: false, message: "Erro ao carregar regulações.", error };
+        return {
+            success: false,
+            message: "Erro ao carregar regulações.",
+            error
+        };
     }
 }
 

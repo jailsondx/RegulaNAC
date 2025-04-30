@@ -1,11 +1,7 @@
 import { DBconnection } from "../Controller/connection.js";
 
 async function ListaRegulacoesAprovadas(Origem) {
-    let DBtable;
-    let DBtable2;
-    let rows = [];
-    let query;
-    let queryParams = [];
+    let DBtable, DBtable2, query, queryParams;
 
     switch (Origem) {
         case "Interna":
@@ -40,21 +36,21 @@ async function ListaRegulacoesAprovadas(Origem) {
 
     try {
         const connection = await DBconnection.getConnection();
+        const [rows] = await connection.query(query, queryParams);
+        connection.release();
 
-        [rows] = await connection.query(query, queryParams);
-
-        connection.release(); // Libera a conexão
-
-        // ✅ Proteção extra: garante que o retorno seja sempre um array
-        if (!rows || rows.length === 0) {
-            return { success: true, data: [] };
-        }
-
-        return { success: true, data: rows };
+        return {
+            success: true,
+            data: Array.isArray(rows) ? rows : []
+        };
 
     } catch (error) {
         console.error("Erro ao carregar regulações:", error);
-        return { success: false, message: "Erro ao carregar regulações.", error };
+        return {
+            success: false,
+            message: "Erro ao carregar regulações.",
+            error
+        };
     }
 }
 

@@ -2,10 +2,7 @@ import { DBconnection } from "../Controller/connection.js";
 import { getCurrentTimestamp } from "../Time/Timestamp.js";
 
 async function ListaRegulacoesPendentes(Origem) {
-    let DBtable;
-    let rows = [];
-    let query;
-    let queryParams = [];
+    let DBtable, query, queryParams;
 
     switch (Origem) {
         case "Interna":
@@ -30,22 +27,24 @@ async function ListaRegulacoesPendentes(Origem) {
         default:
             throw new Error("Origem inválida. Use 'Interna' ou 'Externa'.");
     }
-    
 
     try {
-        // Inicie a conexão com o banco de dados
         const connection = await DBconnection.getConnection();
+        const [rows] = await connection.query(query, queryParams);
+        connection.release();
 
-        // Execute a query utilizando a constante
-        [rows] = await connection.query(query, queryParams);
-
-        connection.release(); // Libera a conexão
-
-        return { success: true, data: rows };
+        return {
+            success: true,
+            data: Array.isArray(rows) ? rows : []
+        };
 
     } catch (error) {
         console.error("Erro ao carregar regulações:", error);
-        return { success: false, message: "Erro ao carregar regulações.", error };
+        return {
+            success: false,
+            message: "Erro ao carregar regulações.",
+            error
+        };
     }
 }
 
@@ -53,23 +52,29 @@ async function ListaRegulacoesPendentes24() {
     const DBtable = "regulacao";
 
     try {
-        // Inicie a conexão com o banco de dados
         const connection = await DBconnection.getConnection();
 
-        // Execute a query para selecionar os registros
         const [rows] = await connection.query(`
             SELECT * 
             FROM ${DBtable}
-            WHERE TIMESTAMPDIFF(HOUR, data_hora_solicitacao_02, ?) >= 24 AND (status_regulacao LIKE 'ABERTO%')
+            WHERE TIMESTAMPDIFF(HOUR, data_hora_solicitacao_02, ?) >= 24 
+            AND status_regulacao LIKE 'ABERTO%'
         `, [getCurrentTimestamp()]);
 
-        connection.release(); // Libera a conexão
+        connection.release();
 
-        return { success: true, data: rows };
+        return {
+            success: true,
+            data: Array.isArray(rows) ? rows : []
+        };
 
     } catch (error) {
         console.error("Erro ao carregar regulações:", error);
-        return { success: false, message: "Erro ao carregar regulações.", error };
+        return {
+            success: false,
+            message: "Erro ao carregar regulações.",
+            error
+        };
     }
 }
 
