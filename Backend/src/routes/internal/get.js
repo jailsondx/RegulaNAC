@@ -9,6 +9,7 @@ import ListaRegulacoesFinalizadas from '../../functions/SelectSQL/ListaRegulacoe
 import ListaRegulacoesNegadas from '../../functions/SelectSQL/ListaRegulacoesNegadas.js';
 import VerificaID from '../../functions/SelectSQL/VerificaID.js';
 import RecebeHoraLeito from '../../functions/SelectSQL/RecebeHoraLeito.js';
+import ListaRegulacoesPreAprovadas from '../../functions/SelectSQL/ListaRegulacoesPreAprovadas.js';
 
 
 
@@ -71,6 +72,15 @@ routerGet.get('/ListaRegulacoesPendentes24', async (req, res) => {
 routerGet.get('/ListaRegulacoesAprovadas', async (req, res) => {
   try {
     const result = await ListaRegulacoesAprovadas('Interna');
+    handleResponse(res, result);
+  } catch (error) {
+    handleError(res, error);
+  }
+});
+
+routerGet.get('/ListaRegulacoesPreAprovadas', async (req, res) => {
+  try {
+    const result = await ListaRegulacoesPreAprovadas('Interna');
     handleResponse(res, result);
   } catch (error) {
     handleError(res, error);

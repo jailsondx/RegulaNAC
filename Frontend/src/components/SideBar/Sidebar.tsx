@@ -128,6 +128,7 @@ const Sidebar: React.FC = () => {
           <MenuLink to="/NovaRegulacao" Icon={TiBusinessCard} label="Nova Regulação" />
           <MenuLink to="/ListaRegulacoes" Icon={TiClipboard} label="Lista de Regulações" />
           <MenuLink to="/RegulacoesAprovadas" Icon={TiThumbsUp} label="Regulações Aprovadas" />
+          <MenuLink to="/RegulacoesPreAprovadas" Icon={TiThumbsUp} label="Regulações Pré-Aprovadas" />
           <MenuLink to="/RegulacoesNegadas" Icon={TiThumbsDown} label="Regulações Negadas" />
           <MenuLink to="/Desfechos" Icon={TiHomeOutline} label="Gerar Desfecho" />
           <MenuLink to="/ListaRegulacoes24" Icon={TiClipboard} label="Regulações +24hrs" />

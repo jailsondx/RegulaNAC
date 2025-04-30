@@ -3,6 +3,15 @@ import axios from 'axios';
 import { AxiosError } from 'axios';
 import { useLocation } from 'react-router-dom';
 import { Snackbar, Alert } from '@mui/material';
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  Typography
+} from '@mui/material';
+
 
 /*IMPORT INTERFACES*/
 import { UserData } from '../../../../interfaces/UserData';
@@ -37,6 +46,11 @@ const ListaRegulacoesInternas: React.FC<Props> = ({ title }) => {
   const [regulacoes, setRegulacoes] = useState<RegulacaoData[]>([]); // Tipo do estado
   const location = useLocation();
 
+  /*DIALOG EXCLUIR REGULACAO*/
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [regulacaoParaExcluir, setRegulacaoParaExcluir] = useState<{ id_user: string, id_regulacao: number | null } | null>(null);
+
+
   /*FILTROS*/
   const [unidadeOrigem, setUnidadeOrigem] = useState('');
   const [unidadeDestino, setUnidadeDestino] = useState('');
@@ -60,6 +74,33 @@ const ListaRegulacoesInternas: React.FC<Props> = ({ title }) => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error' | 'info' | 'warning'>('success');
 
+  const fetchRegulacoes = async () => {
+    try {
+      const response = await axios.get(`${NODE_URL}/api/internal/get/ListaRegulacoesPendentes`);
+
+      if (response.data && Array.isArray(response.data.data)) {
+        setRegulacoes(response.data.data);
+        setServerTime(response.data.serverTime); // Hora atual do servidor em formato ISO
+        setFilteredRegulacoes(response.data.data);
+      } else {
+        console.error('Dados inesperados:', response.data);
+      }
+    } catch (error: unknown) {
+      // Verifica se o erro é uma instância de AxiosError
+      if (error instanceof AxiosError) {
+        // Se o erro tiver uma resposta, você pode tratar a mensagem de erro (caso haja)
+        console.error('Erro ao carregar regulações:', error.response?.data?.message || error.message);
+      } else {
+        // Caso o erro não seja um AxiosError, loga a mensagem do erro genérico
+        console.error('Erro desconhecido ao carregar regulações:', error);
+      }
+
+      // Garante que regulacoes seja sempre um array vazio em caso de erro
+      setRegulacoes([]);
+    }
+
+  };
+
   //Pega dados do SeassonStorage User
   useEffect(() => {
     const data = getUserData();
@@ -68,33 +109,6 @@ const ListaRegulacoesInternas: React.FC<Props> = ({ title }) => {
 
   //CHAMADA DE API PARA GERAR A LISTA DE REGULAÇÕES
   useEffect(() => {
-    const fetchRegulacoes = async () => {
-      try {
-        const response = await axios.get(`${NODE_URL}/api/internal/get/ListaRegulacoesPendentes`);
-
-        if (response.data && Array.isArray(response.data.data)) {
-          setRegulacoes(response.data.data);
-          setServerTime(response.data.serverTime); // Hora atual do servidor em formato ISO
-          setFilteredRegulacoes(response.data.data);
-        } else {
-          console.error('Dados inesperados:', response.data);
-        }
-      } catch (error: unknown) {
-        // Verifica se o erro é uma instância de AxiosError
-        if (error instanceof AxiosError) {
-          // Se o erro tiver uma resposta, você pode tratar a mensagem de erro (caso haja)
-          console.error('Erro ao carregar regulações:', error.response?.data?.message || error.message);
-        } else {
-          // Caso o erro não seja um AxiosError, loga a mensagem do erro genérico
-          console.error('Erro desconhecido ao carregar regulações:', error);
-        }
-
-        // Garante que regulacoes seja sempre um array vazio em caso de erro
-        setRegulacoes([]);
-      }
-
-    };
-
     fetchRegulacoes();
   }, []);
 
@@ -128,7 +142,7 @@ const ListaRegulacoesInternas: React.FC<Props> = ({ title }) => {
         (r) =>
           r.nome_paciente?.toLowerCase().includes(searchTerm.toLowerCase()) ||
           r.num_prontuario?.toString().includes(searchTerm) ||
-          r.num_regulacao?.toString().includes(searchTerm)
+          r.id_regulacao?.toString().includes(searchTerm)
       );
     }
 
@@ -166,6 +180,40 @@ const ListaRegulacoesInternas: React.FC<Props> = ({ title }) => {
 
     setFilteredRegulacoes(sortedData);
     setSelectedColumn(key);
+  };
+
+
+  //EXCLUSÃO DE REGULAÇÃO
+  const confirmarExclusao = (id_user: string, id_regulacao: number | null) => {
+    setRegulacaoParaExcluir({ id_user, id_regulacao });
+    setConfirmDialogOpen(true);
+  };
+
+  const handleApagar = async () => {
+    if (!regulacaoParaExcluir) return;
+
+    const { id_user, id_regulacao } = regulacaoParaExcluir;
+
+    try {
+      const response = await axios.delete(`${NODE_URL}/api/internal/delete/Regulacao`, {
+        data: { id_user, id_regulacao }
+      });
+
+      if (response.data.success) {
+        showSnackbar('Regulação apagada com sucesso!', 'success');
+        setRegulacoes(prev => prev.filter(reg => reg.id_regulacao !== id_regulacao));
+        setFilteredRegulacoes(prev => prev.filter(reg => reg.id_regulacao !== id_regulacao));
+      } else {
+        showSnackbar('Erro ao apagar a regulação.', 'error');
+      }
+    } catch (error) {
+      console.error('Erro ao apagar regulação:', error);
+      showSnackbar('Erro interno ao apagar regulação.', 'error');
+    }
+
+    setConfirmDialogOpen(false);
+    setRegulacaoParaExcluir(null);
+    fetchRegulacoes(); // Recarregar a lista de regulações
   };
 
 
@@ -210,6 +258,7 @@ const ListaRegulacoesInternas: React.FC<Props> = ({ title }) => {
                 sortConfig={sortConfig}
                 handleSort={handleSort}
                 fetchPDF={handleFetchPDF}
+                confirmarExclusao={confirmarExclusao}
                 serverTime={serverTime}
                 IconOpcoes='normais'
                 UserData={userData}
@@ -227,6 +276,29 @@ const ListaRegulacoesInternas: React.FC<Props> = ({ title }) => {
         </div>
       </div>
 
+
+      <Dialog
+        open={confirmDialogOpen}
+        onClose={() => setConfirmDialogOpen(false)}
+      >
+        <DialogTitle>Confirmar exclusão</DialogTitle>
+        <DialogContent>
+          <Typography>Tem certeza que deseja excluir esta regulação?</Typography>
+          {regulacaoParaExcluir?.id_regulacao && (
+            <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
+              {/*Número da Regulação: <strong>{regulacaoParaExcluir.id_regulacao}</strong>*/}
+            </Typography>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setConfirmDialogOpen(false)} color="primary">
+            Cancelar
+          </Button>
+          <Button onClick={handleApagar} color="error" variant="contained">
+            Apagar
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       <Snackbar
         open={snackbarOpen}

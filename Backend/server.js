@@ -6,10 +6,12 @@ import socketHandler from './src/socket/socketHandler.js';
 import routePost from './src/routes/internal/post.js';
 import routeGet from './src/routes/internal/get.js';
 import routePut from './src/routes/internal/put.js';
+import routerDelete from './src/routes/internal/delete.js';
 import routeUpload from './src/routes/internal/upload.js';
 import routerReport from './src/routes/internal/reports.js';
 
 import dotenv from 'dotenv';
+
 
 
 process.on('uncaughtException', (err) => {
@@ -27,7 +29,7 @@ dotenv.config();
 const app = express();
 const server = http.createServer(app);
 const IP = process.env.NODE_SERVER_IP || '0.0.0.0';
-const PORT = Number(process.env.NODE_SERVER_PORT) || 3001;
+const PORT = Number(process.env.NODE_SERVER_PORT) || 3003;
 
 
 // Configura o CORS para permitir conexões do front-end
@@ -58,12 +60,13 @@ socketHandler(server);
 app.use('/api/internal/post', routePost);
 app.use('/api/internal/get', routeGet);
 app.use('/api/internal/put', routePut);
+app.use('/api/internal/delete', routerDelete);
 app.use('/api/internal/upload', routeUpload);
 app.use('/api/internal/report', routerReport);
 
 
 app.get('/', (req, res) => {
-    res.send('Backend API funcionando!');
+    res.send(`Backend API funcionando! ${IP} na porta ${PORT}`);
 });
 
 

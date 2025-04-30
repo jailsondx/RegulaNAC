@@ -23,6 +23,7 @@ import Page_ListaRegulacoesInternas from '../Pages/Listas/Internas/Page_ListaReg
 import Page_ListaRegulacoesInternas24hrs from '../Pages/Listas/Internas/Page_ListaRegulacoesInternas24hrs';
 import Page_ListaRegulacoesMedicasInternas from '../Pages/Listas/Internas/Page_ListaRegulacoesMedicasInternas';
 import Page_ListaRegulacoesInternasAprovadas from '../Pages/Listas/Internas/Page_ListaRegulacoesAprovadas';
+import Page_ListaRegulacoesInternasPreAprovadas from '../Pages/Listas/Internas/Page_ListaRegulacoesPreAprovadas';
 import Page_ListaRegulacoesInternasNegadas from '../Pages/Listas/Internas/Page_ListaRegulacoesNegadas';
 //PAGES RELATORIOS
 import Page_RelatorioGeral from '../Pages/Relatorios/Page_RelatorioGeral';
@@ -33,6 +34,7 @@ import Page_AVC from '../Pages/Nova Regulação/Regulação Externa/Page_AVC';
 import Page_ListaRegulacoesExternas from '../Pages/Listas/Externas/Page_ListaRegulacoesExternas';
 import Page_ListaRegulacoesMedicasExternas from '../Pages/Listas/Externas/Page_ListaRegulacoesMedicasExternas';
 import Page_ListaRegulacoesExternasAprovadas from '../Pages/Listas/Externas/Page_ListaRegulacoesExternasAprovadas';
+
 
 
 // Layout para rotas protegidas com o Sidebar
@@ -79,6 +81,7 @@ const Rotas: React.FC = () => {
           <Route path="RegulacaoMedica" element={<Page_ListaRegulacoesMedicasInternas />} />
           <Route path="ListaRegulacoes24" element={<Page_ListaRegulacoesInternas24hrs />} />
           <Route path="RegulacoesAprovadas" element={<Page_ListaRegulacoesInternasAprovadas />} />
+          <Route path="RegulacoesPreAprovadas" element={<Page_ListaRegulacoesInternasPreAprovadas />} />
           <Route path="RegulacoesNegadas" element={<Page_ListaRegulacoesInternasNegadas />} />
 
           {/* Essas são todas as páginas de relatórios internos */}

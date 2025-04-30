@@ -75,7 +75,7 @@ const NovaRegulacao: React.FC = () => {
   //VERIFICAÇÃO DE UN ORIGEM
   //const requiredUnidadesOBS = ['COI', 'COII', 'COII']; // ou só 'UTI', 'COI' se quiser verificar por "começa com"
   //const isValueOrigemOBS = requiredUnidadesOBS.includes(formData.un_origem);
-  const requiredUnidades = ['UTI ADULTO I', 'UTI ADULTO II', 'UTI ADULTO III', 'UTI ADULTO IV']; // ou só 'UTI', 'COI' se quiser verificar por "começa com"
+  const requiredUnidades = ['UTI ADULTO', 'UTI ADULTO I', 'UTI ADULTO II', 'UTI ADULTO III', 'UTI ADULTO IV']; // ou só 'UTI', 'COI' se quiser verificar por "começa com"
   const isValueDestino = requiredUnidades.includes(formData.un_destino);
 
 
@@ -249,12 +249,20 @@ const NovaRegulacao: React.FC = () => {
         uploadedFilename = await uploadFile(formData.data_hora_solicitacao_01 || '', formData.num_regulacao);
       }
 
+      if (file) {
+        if (formData.num_regulacao !== null) {
+          uploadedFilename = await uploadFile(formData.data_hora_solicitacao_01 || '', formData.num_regulacao);
+        } else {
+          throw new Error('Dados do paciente ou número de regulação estão ausentes.');
+        }
+      }
+
       const dataToSubmit = {
         ...formData,
         id_user: userData?.id_user,
         nome_responsavel_nac: userData?.nome,
         data_hora_solicitacao_02: formData.data_hora_solicitacao_01,
-        link: uploadedFilename || null,
+        link: uploadedFilename,
       };
 
       const response = await axios.post(

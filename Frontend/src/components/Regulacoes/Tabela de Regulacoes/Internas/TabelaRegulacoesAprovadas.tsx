@@ -1,6 +1,6 @@
 import React from 'react';
-import { LuArrowDownWideNarrow, LuArrowUpNarrowWide  } from "react-icons/lu";
-import { FcHome, FcOrganization, FcOnlineSupport, FcOvertime, FcAbout } from "react-icons/fc";
+import { LuArrowDownWideNarrow, LuArrowUpNarrowWide } from "react-icons/lu";
+import { FcHome, FcOrganization, FcOnlineSupport, FcOvertime, FcAbout, FcFullTrash } from "react-icons/fc";
 import { RegulacaoAprovadaData } from '../../../../interfaces/Regulacao';
 import { UserData } from '../../../../interfaces/UserData';
 
@@ -11,6 +11,7 @@ interface TabelaRegulacoesAprovadasProps {
   sortConfig: { key: keyof RegulacaoAprovadaData; direction: "asc" | "desc" } | null;
   handleSort: (key: keyof RegulacaoAprovadaData) => void;
   fetchPDF: (datetime: string, filename: string) => void;
+  confirmarExclusao?: (id_user: string, id_regulacao: number | null) => void;
   handleOpenModalOrigem: (regulacao: RegulacaoAprovadaData) => void;
   handleOpenModalDestino: (regulacao: RegulacaoAprovadaData) => void;
   handleOpenModalTransporte01: (regulacao: RegulacaoAprovadaData) => void;
@@ -25,6 +26,7 @@ const TabelaRegulacoesAprovadas: React.FC<TabelaRegulacoesAprovadasProps> = ({
   sortConfig,
   handleSort,
   fetchPDF,
+  confirmarExclusao,
   handleOpenModalOrigem,
   handleOpenModalDestino,
   handleOpenModalTransporte01,
@@ -39,62 +41,67 @@ const TabelaRegulacoesAprovadas: React.FC<TabelaRegulacoesAprovadasProps> = ({
           <th className={`col-NumProntuario clicked${selectedColumn === "num_prontuario" ? " selected" : ""}`} onClick={() => handleSort("num_prontuario")}>
             <span>
               <label>Pront.</label>
-              <label>{sortConfig?.key === "num_prontuario" ? (sortConfig.direction === "asc" ? <LuArrowUpNarrowWide  /> : <LuArrowDownWideNarrow />) : ""}</label>
+              <label>{sortConfig?.key === "num_prontuario" ? (sortConfig.direction === "asc" ? <LuArrowUpNarrowWide /> : <LuArrowDownWideNarrow />) : ""}</label>
             </span>
           </th>
 
           <th className={`col-NomePaciente clicked${selectedColumn === "nome_paciente" ? " selected" : ""}`} onClick={() => handleSort("nome_paciente")}>
             <span>
               <label>Nome Paciente</label>
-              <label>{sortConfig?.key === "nome_paciente" ? (sortConfig.direction === "asc" ? <LuArrowUpNarrowWide  /> : <LuArrowDownWideNarrow />) : ""}</label>
+              <label>{sortConfig?.key === "nome_paciente" ? (sortConfig.direction === "asc" ? <LuArrowUpNarrowWide /> : <LuArrowDownWideNarrow />) : ""}</label>
             </span>
           </th>
 
           <th className={`col-NumRegulacao clicked${selectedColumn === "num_regulacao" ? " selected" : ""}`} onClick={() => handleSort("num_regulacao")}>
             <span>
               <label>Num. Regulação</label>
-              <label>{sortConfig?.key === "num_regulacao" ? (sortConfig.direction === "asc" ? <LuArrowUpNarrowWide  /> : <LuArrowDownWideNarrow />) : ""}</label>
+              <label>{sortConfig?.key === "num_regulacao" ? (sortConfig.direction === "asc" ? <LuArrowUpNarrowWide /> : <LuArrowDownWideNarrow />) : ""}</label>
             </span>
           </th>
 
           <th className={`col-UnOrigem clicked${selectedColumn === "un_origem" ? " selected" : ""}`} onClick={() => handleSort("un_origem")}>
             <span>
               <label>Un. Origem</label>
-              <label>{sortConfig?.key === "un_origem" ? (sortConfig.direction === "asc" ? <LuArrowUpNarrowWide  /> : <LuArrowDownWideNarrow />) : ""}</label>
+              <label>{sortConfig?.key === "un_origem" ? (sortConfig.direction === "asc" ? <LuArrowUpNarrowWide /> : <LuArrowDownWideNarrow />) : ""}</label>
             </span>
           </th>
 
           <th className={`col-UnDestino clicked${selectedColumn === "un_destino" ? " selected" : ""}`} onClick={() => handleSort("un_destino")}>
             <span>
               <label>Un. Destino</label>
-              <label>{sortConfig?.key === "un_destino" ? (sortConfig.direction === "asc" ? <LuArrowUpNarrowWide  /> : <LuArrowDownWideNarrow />) : ""}</label>
+              <label>{sortConfig?.key === "un_destino" ? (sortConfig.direction === "asc" ? <LuArrowUpNarrowWide /> : <LuArrowDownWideNarrow />) : ""}</label>
             </span>
           </th>
 
           <th className={`col-numLeito clicked${selectedColumn === "num_leito" ? " selected" : ""}`} onClick={() => handleSort("num_leito")}>
             <span>
               <label>Num. Leito</label>
-              <label>{sortConfig?.key === "num_leito" ? (sortConfig.direction === "asc" ? <LuArrowUpNarrowWide  /> : <LuArrowDownWideNarrow />) : ""}</label>
+              <label>{sortConfig?.key === "num_leito" ? (sortConfig.direction === "asc" ? <LuArrowUpNarrowWide /> : <LuArrowDownWideNarrow />) : ""}</label>
             </span>
           </th>
 
           <th className={`col-MedicoRegulador clicked${selectedColumn === "nome_regulador_medico" ? " selected" : ""}`} onClick={() => handleSort("nome_regulador_medico")}>
             <span>
               <label>Médico Regulador</label>
-              <label>{sortConfig?.key === "nome_regulador_medico" ? (sortConfig.direction === "asc" ? <LuArrowUpNarrowWide  /> : <LuArrowDownWideNarrow />) : ""}</label>
+              <label>{sortConfig?.key === "nome_regulador_medico" ? (sortConfig.direction === "asc" ? <LuArrowUpNarrowWide /> : <LuArrowDownWideNarrow />) : ""}</label>
             </span>
           </th>
 
           <th className={`col-DataRegMedico clicked${selectedColumn === "data_hora_regulacao_medico" ? " selected" : ""}`} onClick={() => handleSort("data_hora_regulacao_medico")}>
             <span>
               <label>Autorização</label>
-              <label>{sortConfig?.key === "data_hora_regulacao_medico" ? (sortConfig.direction === "asc" ? <LuArrowUpNarrowWide  /> : <LuArrowDownWideNarrow />) : ""}</label>
+              <label>{sortConfig?.key === "data_hora_regulacao_medico" ? (sortConfig.direction === "asc" ? <LuArrowUpNarrowWide /> : <LuArrowDownWideNarrow />) : ""}</label>
             </span>
           </th>
 
           {UserData?.tipo !== "MEDICO" && (
             <th>Fase</th>
           )}
+
+          {UserData?.tipo === "GERENCIA" && (
+            <th>Apagar</th>
+          )}
+
         </tr>
       </thead>
       <tbody>
@@ -152,6 +159,22 @@ const TabelaRegulacoesAprovadas: React.FC<TabelaRegulacoesAprovadasProps> = ({
                   )}
                 </label>
               </td>
+            )}
+
+            {UserData?.tipo === 'GERENCIA' && (
+              <>
+                <td>
+                  <label className="td-Icons">
+                    {regulacao.num_regulacao && (
+                      <FcFullTrash
+                        className='Icon Icons-Regulacao'
+                        onClick={() => confirmarExclusao && confirmarExclusao(UserData.id_user, regulacao.id_regulacao)}
+                        title='Apagar Regulação' />
+                    )}
+
+                  </label>
+                </td>
+              </>
             )}
           </tr>
         ))}

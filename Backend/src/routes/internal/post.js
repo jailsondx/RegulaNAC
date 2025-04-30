@@ -34,7 +34,8 @@ routerPost.post('/Login', async (req, res) => {
 
 routerPost.post('/NovaRegulacao', async (req, res) => {
   try {
-    const formData = convertObjectToUpperCase(req.body);
+    let formData = convertObjectToUpperCase(req.body);
+    formData.link = formData.link.toLowerCase();
     const result = await NovaRegulacao(formData);
     handleResponse(res, result);
   } catch (error) {

@@ -38,7 +38,7 @@ interface Props {
   title: string;
 }
 
-const RegulacoesAprovadas: React.FC<Props> = ({ title }) => {
+const RegulacoesPreAprovadas: React.FC<Props> = ({ title }) => {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [regulacoes, setRegulacoes] = useState<RegulacaoAprovadaData[]>([]); // Tipo do estado
   const [dadosPaciente, setDadosPaciente] = useState<DadosPacienteData | null>(null);
@@ -81,7 +81,7 @@ const RegulacoesAprovadas: React.FC<Props> = ({ title }) => {
   // Defina fetchRegulacoes fora do useEffect
   const fetchRegulacoes = async () => {
     try {
-      const response = await axios.get(`${NODE_URL}/api/internal/get/ListaRegulacoesAprovadas`);
+      const response = await axios.get(`${NODE_URL}/api/internal/get/ListaRegulacoesPreAprovadas`);
 
       if (response.data && Array.isArray(response.data.data)) {
         setRegulacoes(response.data.data);
@@ -444,4 +444,4 @@ const RegulacoesAprovadas: React.FC<Props> = ({ title }) => {
 };
 
 
-export default RegulacoesAprovadas;
+export default RegulacoesPreAprovadas;

@@ -1,4 +1,5 @@
 import { DBconnection } from "../Controller/connection.js";
+import UpdateLinkDOC from "../UpdateSQL/UpdateLink.js";
 
 async function NovaRegulacao(FormData) {
     const DBtable = "regulacao";
@@ -34,11 +35,19 @@ async function NovaRegulacao(FormData) {
             };
         }
 
+
         // Insere os dados no banco
         await connection.query(
             `INSERT INTO ${DBtable} SET ?`,
             [FormData]
         );
+
+        const updateLinkResult = await UpdateLinkDOC(FormData.num_regulacao, FormData.link);
+        if (!updateLinkResult.success) {
+            console.error('Erro ao gerar o link do documento:', updateLinkResult.message);
+            connection.release();
+            return { success: false, message: "Erro ao gerar o link do documento." };
+        }
 
         return { success: true, message: "Regulação cadastrada com sucesso." };
     } catch (error) {

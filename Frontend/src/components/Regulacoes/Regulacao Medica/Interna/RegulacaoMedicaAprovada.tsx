@@ -38,6 +38,7 @@ const initialFormData: RegulacaoMedicoData = {
   extra: false,
   justificativa_neg: '',
   nome_regulador_medico: '',
+  autorizacao: '',
   data_hora_regulacao_medico: '',
   justificativa_tempo30: '',
   un_destino: ''
@@ -81,29 +82,36 @@ const NovaRegulacaoMedicoAprovada: React.FC<Props> = ({ dadosPaciente, tempoEspe
   };
 
 
-  
+
   const validateForm = (): boolean => {
     // Valida número do leito
     if (!formData.num_leito) {
       showSnackbar('O campo "Número do Leito" é obrigatório.', 'error');
       return false;
     }
-  
+
+    if (dadosPaciente.un_destino === 'UTI ADULTO' || dadosPaciente.un_destino === 'CLINICA MEDICA') {
+      if (!formData.un_destino) {
+        showSnackbar('O campo de UNIDADE é obrigatório.', 'error');
+        return false;
+      }
+    }
+
     // Regex para capturar horas e minutos em qualquer ordem ou presença
     const regex = /(?:(\d+)\s*h)?\s*(?:(\d+)\s*min)?/i;
     const match = tempoEspera.match(regex);
     const hours = match && match[1] ? parseInt(match[1]) : 0;
     const minutes = match && match[2] ? parseInt(match[2]) : 0;
-  
+
     if ((hours > 0 || minutes >= 30) && !formData.justificativa_tempo30?.trim()) {
       showSnackbar('Para tempos de espera acima de 30 minutos, a Justificativa é obrigatória.', 'info');
       return false;
     }
-  
+
     return true;
   };
-  
-  
+
+
 
   const handleSubmit = async (e: FormEvent): Promise<void> => {
     e.preventDefault();
@@ -162,7 +170,36 @@ const NovaRegulacaoMedicoAprovada: React.FC<Props> = ({ dadosPaciente, tempoEspe
 
       <form onSubmit={handleSubmit}>
         <div className='modal-input'>
+          <div className='modal-input-line'>
+            <div className='nome_regulador_medico'>
+              <label>Médico:</label>
+              <input
+                type="text"
+                name="nome_regulador_medico"
+                value={userData?.nome}
+                onChange={handleChange}
+                required
+                disabled
+              />
+            </div>
+          </div>
+
           <div className='modal-input-line2'>
+            <div>
+              <label>Autorização:</label>
+              <select
+                className='select-destino'
+                name="autorizacao"
+                value={formData.autorizacao || ''}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Selecione...</option>
+                <option value="AUTORIZADO">Autorizado</option>
+                <option value="PRE-AUTORIZADO 1">Pré Autorizado 1</option>
+                <option value="PRE-AUTORIZADO 2">Pré Autorizado 2</option>
+              </select>
+            </div>
 
             {dadosPaciente.un_destino === 'UTI ADULTO' && (
               <div>
@@ -223,18 +260,6 @@ const NovaRegulacaoMedicoAprovada: React.FC<Props> = ({ dadosPaciente, tempoEspe
                 onChange={handleChange}
               />
               <label htmlFor="extraCheckbox"></label>
-            </div>
-
-            <div className='nome_regulador_medico'>
-              <label>Médico:</label>
-              <input
-                type="text"
-                name="nome_regulador_medico"
-                value={userData?.nome}
-                onChange={handleChange}
-                required
-                disabled
-              />
             </div>
           </div>
 

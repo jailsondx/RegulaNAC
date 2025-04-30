@@ -1,6 +1,6 @@
 import { DBconnection } from "../Controller/connection.js";
 
-async function ListaRegulacoesAprovadas(Origem) {
+async function ListaRegulacoesPreAprovadas(Origem) {
     let DBtable, DBtable2, query, queryParams;
 
     switch (Origem) {
@@ -13,9 +13,9 @@ async function ListaRegulacoesAprovadas(Origem) {
                     rm.nome_regulador_medico, data_hora_regulacao_medico, num_leito
                 FROM ${DBtable} r
                 LEFT JOIN ${DBtable2} rm ON r.id_regulacao = rm.id_regulacao
-                WHERE r.status_regulacao LIKE ? AND vaga_autorizada = ? AND autorizacao = ?
+                WHERE r.status_regulacao LIKE ? AND vaga_autorizada = ? AND autorizacao LIKE ?
             `;
-            queryParams = ["ABERTO - APROVADO%", 1, "AUTORIZADO"];
+            queryParams = ["ABERTO - APROVADO%", 1, "PRE-%"];
             break;
         case "Externa":
             DBtable = "externa_regulacao";
@@ -54,4 +54,4 @@ async function ListaRegulacoesAprovadas(Origem) {
     }
 }
 
-export default ListaRegulacoesAprovadas;
+export default ListaRegulacoesPreAprovadas;

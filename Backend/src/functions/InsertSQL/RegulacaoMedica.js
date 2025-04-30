@@ -45,6 +45,7 @@ async function RegulacaoMedica(FormData) {
             'nome_regulador_medico',
             'data_hora_regulacao_medico',
             'justificativa_tempo30',
+            'autorizacao',
             'id_regulacao'
           ];
           

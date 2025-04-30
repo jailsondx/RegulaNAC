@@ -16,6 +16,7 @@ interface TabelaRegulacoesProps {
   sortConfig: { key: keyof RegulacaoData; direction: "asc" | "desc" } | null;
   handleSort: (key: keyof RegulacaoData) => void;
   fetchPDF: (datetime: string, filename: string) => void;
+  confirmarExclusao?: (id_user: string, id_regulacao: number | null,num_regulacao: number | null) => void;
   serverTime: string;
   handleAtualizarRegulacao?: (regulacao: RegulacaoData) => void;
   handleOpenModalApproved?: (regulacao: RegulacaoData) => void;
@@ -31,6 +32,7 @@ const TabelaRegulacoesInternas: React.FC<TabelaRegulacoesProps> = ({
   sortConfig,
   handleSort,
   fetchPDF,
+  confirmarExclusao,
   serverTime,
   handleAtualizarRegulacao,
   handleOpenModalApproved,
@@ -51,7 +53,10 @@ const TabelaRegulacoesInternas: React.FC<TabelaRegulacoesProps> = ({
       state: { id_regulacao },
     });
   };
-  
+
+
+
+
 
   return (
     <table className='Table-Regulacoes'>
@@ -131,7 +136,7 @@ const TabelaRegulacoesInternas: React.FC<TabelaRegulacoesProps> = ({
             </>
           )}
 
-        {IconOpcoes === 'expiradas' && (
+          {IconOpcoes === 'expiradas' && (
             <>
               <th>Renovar</th>
             </>
@@ -143,7 +148,7 @@ const TabelaRegulacoesInternas: React.FC<TabelaRegulacoesProps> = ({
               <th>Desfecho</th>
             </>
           )}
-          
+
           {IconOpcoes === 'medico' && UserData.tipo === 'MEDICO' && (
             <th>Aprovação</th>
           )}
@@ -178,15 +183,18 @@ const TabelaRegulacoesInternas: React.FC<TabelaRegulacoesProps> = ({
               <>
                 <td>
                   <label className="td-Icons">
-                    <FcInspection 
-                    className='Icon Icons-Regulacao' 
-                    onClick={() => handleEditarRegulacao && handleEditarRegulacao(regulacao.id_regulacao)} 
-                    title='Editar Regulação' />
+                    <FcInspection
+                      className='Icon Icons-Regulacao'
+                      onClick={() => handleEditarRegulacao && handleEditarRegulacao(regulacao.id_regulacao)}
+                      title='Editar Regulação' />
 
-                    <FcFullTrash 
-                    className='Icon Icons-Regulacao' 
-                    onClick={() => handleOpenModalDeny && handleOpenModalDeny(regulacao)} 
-                    title='Apagar Regulação' />
+                    {regulacao.id_regulacao && (
+                      <FcFullTrash
+                        className='Icon Icons-Regulacao'
+                        onClick={() => confirmarExclusao && confirmarExclusao(UserData.id_user, regulacao.id_regulacao, regulacao.num_regulacao)}
+                        title='Apagar Regulação' />
+                    )}
+
                   </label>
                 </td>
               </>
@@ -196,10 +204,10 @@ const TabelaRegulacoesInternas: React.FC<TabelaRegulacoesProps> = ({
               <>
                 <td>
                   <label className="td-Icons">
-                    <FcInspection 
-                    className='Icon Icons-Regulacao' 
-                    onClick={() => handleEditarRegulacao && handleEditarRegulacao(regulacao.id_regulacao)} 
-                    title='Editar Regulação' />
+                    <FcInspection
+                      className='Icon Icons-Regulacao'
+                      onClick={() => handleEditarRegulacao && handleEditarRegulacao(regulacao.id_regulacao)}
+                      title='Editar Regulação' />
                   </label>
                 </td>
               </>
@@ -224,7 +232,7 @@ const TabelaRegulacoesInternas: React.FC<TabelaRegulacoesProps> = ({
                   <label className="td-Icons">
                     <FcNews
                       className="Icon Icons-Regulacao"
-                      onClick={() => handleOpenModalDesfecho && handleOpenModalDesfecho(regulacao as RegulacaoAprovadaData)} 
+                      onClick={() => handleOpenModalDesfecho && handleOpenModalDesfecho(regulacao as RegulacaoAprovadaData)}
                       title="Aprovar"
                     />
                   </label></td>
@@ -235,16 +243,16 @@ const TabelaRegulacoesInternas: React.FC<TabelaRegulacoesProps> = ({
               <>
                 <td>
                   <label className="td-Icons">
-                    <FcApproval 
-                      className="Icon Icons-Regulacao" 
-                      onClick={() => handleOpenModalApproved && handleOpenModalApproved(regulacao)} 
-                      title="Aprovar" 
+                    <FcApproval
+                      className="Icon Icons-Regulacao"
+                      onClick={() => handleOpenModalApproved && handleOpenModalApproved(regulacao)}
+                      title="Aprovar"
                     />
                     <FcBadDecision className="Icon Icons-Regulacao" onClick={() => handleOpenModalDeny && handleOpenModalDeny(regulacao)} title="Negar" />
                   </label></td>
               </>
             )}
-            
+
           </tr>
         ))}
       </tbody>
