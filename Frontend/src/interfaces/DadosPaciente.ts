@@ -6,6 +6,7 @@ export interface DadosPacienteData {
     num_leito?: number | null;
     un_origem: string;
     un_destino: string;
+    preparo_leito?: string;
     nome_regulador_medico: string;
 };
 

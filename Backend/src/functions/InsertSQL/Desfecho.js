@@ -3,17 +3,18 @@ import VerificaStatus from "../Checked/VerificaStatus.js";
 import UpdateStatus from "../UpdateSQL/UpdateStatus.js";
 
 async function Desfecho(FormData) {
-    const DBtable = 'desfecho';
-    const DBtableUsuarios = 'usuarios';
+    const DBtable = "desfecho";
+    const DBtableUsuarios = "usuarios";
     const DesfechoForcado = FormData.forcado;
-    const StatusAtual = 'ABERTO - APROVADO - AGUARDANDO DESFECHO';
-    const NovoStatus = 'FECHADO';
-    const msgError = 'Desfecho não pode ser atualizado; Status atual é: ';
+    const StatusAtual = "ABERTO - APROVADO - AGUARDANDO DESFECHO";
+    const NovoStatus = "FECHADO";
+    const msgError = "Desfecho não pode ser atualizado; Status atual é: ";
 
     let connection;
+
     try {
-        // Inicia a conexão com o banco de dados
         connection = await DBconnection.getConnection();
+        await connection.beginTransaction();
 
         // Verifica a permissão do usuário
         const [rowsUserPrivilege] = await connection.query(
@@ -22,45 +23,63 @@ async function Desfecho(FormData) {
         );
 
         if (rowsUserPrivilege.length === 0) {
-            console.error('Usuário não encontrado: ID:', FormData.id_user);
-            return { success: false, message: "Usuário não encontrado." };
+            throw new Error(`Usuário não encontrado: ID: ${FormData.id_user}`);
         }
 
         const userType = rowsUserPrivilege[0].tipo;
-
-        if (userType === 'MEDICO') {
-            console.error(`Usuário ID: ${FormData.id_user} não tem permissão.`);
-            return { success: false, message: "Usuário não tem permissão para realizar esta ação." };
+        if (userType === "MEDICO") {
+            throw new Error(`Usuário ID: ${FormData.id_user} não tem permissão para desfecho.`);
         }
 
-        // Verifica o status da regulação, caso não seja um desfecho forçado
+        // Se não for desfecho forçado, verifica o status
         if (!DesfechoForcado) {
             const statusCheck = await VerificaStatus(FormData.id_regulacao, StatusAtual, msgError);
             if (!statusCheck.success) {
-                return { success: false, message: statusCheck.message };
+                throw new Error(statusCheck.message);
             }
         }
 
-        // Insere os dados no banco
-        const [result] = await connection.query(
-            `INSERT INTO ${DBtable} SET ?`,
-            [FormData]
+        // Verifica se já existe um desfecho para a regulação
+        const [existing] = await connection.query(
+            `SELECT * FROM ${DBtable} WHERE id_regulacao = ?`,
+            [FormData.id_regulacao]
         );
 
-        if (result.affectedRows === 0) {
-            return { success: false, message: "Falha ao cadastrar desfecho." };
+        if (existing.length > 0) {
+            // Atualiza se já existir
+            const [updateResult] = await connection.query(
+                `UPDATE ${DBtable} SET ? WHERE id_regulacao = ?`,
+                [FormData, FormData.id_regulacao]
+            );
+            if (updateResult.affectedRows === 0) {
+                throw new Error("Erro ao atualizar o desfecho.");
+            }
+        } else {
+            // Insere se não existir
+            const [insertResult] = await connection.query(
+                `INSERT INTO ${DBtable} SET ?`,
+                [FormData]
+            );
+            if (insertResult.affectedRows === 0) {
+                throw new Error("Erro ao inserir o desfecho.");
+            }
         }
 
-        // Atualiza o status
-        await UpdateStatus(FormData.id_regulacao, novoStatus, connection);
+        // Atualiza o status da regulação
+        const statusUpdate = await UpdateStatus(FormData.id_regulacao, NovoStatus, connection);
+        if (!statusUpdate.success) {
+            throw new Error(statusUpdate.message || "Erro ao atualizar status.");
+        }
 
-        return { success: true, message: "Desfecho cadastrado com sucesso." };
+        await connection.commit();
+        return { success: true, message: "Desfecho cadastrado/atualizado com sucesso." };
 
     } catch (error) {
-        console.error('Erro no cadastro de desfecho:', error);
-        return { success: false, message: "Erro ao cadastrar desfecho.", error };
+        if (connection) await connection.rollback();
+        console.error("Erro no cadastro de desfecho:", error);
+        return { success: false, message: "Erro ao cadastrar/atualizar desfecho.", error };
     } finally {
-        if (connection) connection.release(); // Libera a conexão no final
+        if (connection) connection.release();
     }
 }
 

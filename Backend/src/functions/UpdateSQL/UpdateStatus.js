@@ -2,6 +2,11 @@
 async function UpdateStatus(id_regulacao, status, connection) {
     const DBtable = 'regulacao';
 
+    if (!connection) {
+        console.error("Conexão com o banco de dados não fornecida para UpdateStatus.");
+        return { success: false, message: "Erro interno: conexão não fornecida." };
+    }
+
     try {
         const [updateResult] = await connection.query(
             `UPDATE ${DBtable} 

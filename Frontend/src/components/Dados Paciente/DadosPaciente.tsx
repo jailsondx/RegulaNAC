@@ -12,6 +12,7 @@ const DadosPaciente: React.FC<{ dadosPaciente: DadosPacienteData }> = ({ dadosPa
     un_origem,
     un_destino,
     num_leito,
+    preparo_leito,
     nome_regulador_medico,
   } = dadosPaciente;
 
@@ -35,6 +36,7 @@ const DadosPaciente: React.FC<{ dadosPaciente: DadosPacienteData }> = ({ dadosPa
             <span>
               <label>Un. Destino: {un_destino}</label>
               <label>Leito: {num_leito}</label>
+              <label>Preparo Leito: {preparo_leito}</label>
             </span>
           </div>
           <div>

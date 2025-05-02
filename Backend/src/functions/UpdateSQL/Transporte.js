@@ -45,13 +45,17 @@ async function updateTransporte(FormData) {
         }
 
         // Atualiza os dados no banco
-        await connection.query(
-            `UPDATE ${DBtable} SET ? WHERE id_regulacao = ?`, 
+        const [updateResult] = await connection.query(
+            `UPDATE ${DBtable} SET ? WHERE id_regulacao = ?`,
             [FormData, FormData.id_regulacao]
         );
+        
+        if (updateResult.affectedRows === 0) {
+            throw new Error("Nenhuma linha foi atualizada no transporte.");
+        }        
 
         // Atualiza o status da regulação
-        await UpdateStatus(FormData.id_regulacao, novoStatus, connection);
+        await UpdateStatus(FormData.id_regulacao, NovoStatus, connection);
 
         // Confirma as alterações na transação
         await connection.commit();

@@ -9,52 +9,81 @@ async function saveTransporte(FormData) {
     const NovoStatus = "ABERTO - APROVADO - AGUARDANDO FINALIZACAO TRANSPORTE";
     const msgError = "Acionamento do Transporte não pode ser realizado; Status atual é: ";
 
+    let connection;
+
     try {
-        // Inicia a conexão com o banco de dados
-        const connection = await DBconnection.getConnection();
+        connection = await DBconnection.getConnection();
+        await connection.beginTransaction();
 
         // Verifica a permissão do usuário
         const [rowsUserPrivilege] = await connection.query(
-            `SELECT tipo FROM ${DBtableUsuarios} WHERE id_user = ?`, 
+            `SELECT tipo FROM ${DBtableUsuarios} WHERE id_user = ?`,
             [FormData.id_user]
         );
 
-        connection.release(); // Libera a conexão
-
         if (rowsUserPrivilege.length === 0) {
-            console.error("Usuário não encontrado: ID:", FormData.id_user);
-            return { success: false, message: "Usuário não encontrado." };
+            throw new Error(`Usuário não encontrado: ID: ${FormData.id_user}`);
         }
 
         const userType = rowsUserPrivilege[0].tipo;
 
         if (userType === "MEDICO") {
-            console.error(`Usuário ID: ${FormData.id_user} não tem permissão para Acionamento de Transporte.`);
-            return { success: false, message: "Usuário não tem permissão para realizar esta ação." };
+            throw new Error(`Usuário ID: ${FormData.id_user} não tem permissão para Acionamento de Transporte.`);
         }
 
         // Verifica o status da regulação
         const statusCheck = await VerificaStatus(FormData.id_regulacao, StatusAtual, msgError);
-
         if (!statusCheck.success) {
-            return { success: false, message: statusCheck.message };
+            throw new Error(statusCheck.message);
         }
 
-        // Insere os dados no banco
-        const [result] = await connection.query(
-            `INSERT INTO ${DBtable} SET ?`,
-            [FormData]
+        // Verifica se já existe um transporte com o mesmo ID de regulação
+        const [existingRecord] = await connection.query(
+            `SELECT * FROM ${DBtable} WHERE id_regulacao = ?`,
+            [FormData.id_regulacao]
         );
 
-        if (result.affectedRows > 0) {
-            await UpdateStatus(FormData.id_regulacao, novoStatus, connection);
-            return { success: true, message: "Transporte cadastrado com sucesso." };
+        if (existingRecord.length > 0) {
+            // Se o transporte já existir, realiza a atualização
+            const [updateResult] = await connection.query(
+                `UPDATE ${DBtable} SET ? WHERE id_regulacao = ?`,
+                [FormData, FormData.id_regulacao]
+            );
+
+            if (updateResult.affectedRows === 0) {
+                throw new Error("Erro ao atualizar transporte no banco de dados.");
+            }
+
+            console.log(`Transporte atualizado para a regulação ${FormData.id_regulacao}`);
         } else {
-            throw new Error("Erro ao inserir no banco de dados.");
+            // Caso não exista, insere um novo registro
+            const [insertResult] = await connection.query(
+                `INSERT INTO ${DBtable} SET ?`,
+                [FormData]
+            );
+
+            if (insertResult.affectedRows === 0) {
+                throw new Error("Erro ao inserir no banco de dados.");
+            }
+
+            console.log(`Novo transporte inserido para a regulação ${FormData.id_regulacao}`);
         }
+
+        // Atualiza o status
+        const updateResult = await UpdateStatus(FormData.id_regulacao, NovoStatus, connection);
+        if (!updateResult.success) {
+            throw new Error(updateResult.message);
+        }
+
+        await connection.commit();
+        return { success: true, message: "Transporte cadastrado/atualizado com sucesso." };
+
     } catch (error) {
+        if (connection) await connection.rollback();
         console.error("Erro no cadastro de transporte:", error);
-        return { success: false, message: "Erro ao cadastrar Transporte.", error };
+        return { success: false, message: "Erro ao cadastrar/atualizar Transporte.", error };
+    } finally {
+        if (connection) connection.release();
     }
 }
 
