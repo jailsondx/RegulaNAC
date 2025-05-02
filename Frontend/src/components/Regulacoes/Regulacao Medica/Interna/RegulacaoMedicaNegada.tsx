@@ -29,7 +29,7 @@ const initialFormData: RegulacaoMedicoData = {
   num_leito: '',
   justificativa_neg: '',
   nome_regulador_medico: '',
-  autorizacao: '',
+  autorizacao: 'NEGADO',
   data_hora_regulacao_medico: '',
   justificativa_tempo30: '',
 };

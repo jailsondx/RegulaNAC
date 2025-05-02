@@ -47,7 +47,7 @@ async function saveTransporte(FormData) {
         );
 
         if (result.affectedRows > 0) {
-            await UpdateStatus(FormData.id_regulacao, NovoStatus);
+            await UpdateStatus(FormData.id_regulacao, novoStatus, connection);
             return { success: true, message: "Transporte cadastrado com sucesso." };
         } else {
             throw new Error("Erro ao inserir no banco de dados.");

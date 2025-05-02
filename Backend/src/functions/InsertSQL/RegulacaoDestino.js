@@ -58,7 +58,7 @@ async function RegulacaoDestino(FormData) {
             };
         }
 
-        await UpdateStatus(FormData.id_regulacao, NovoStatus);
+        await UpdateStatus(FormData.id_regulacao, novoStatus, connection);
 
         return {
             success: true,

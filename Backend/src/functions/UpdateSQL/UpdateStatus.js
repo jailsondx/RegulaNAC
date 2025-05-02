@@ -1,14 +1,8 @@
-import { DBconnection } from "../Controller/connection.js";
-
-async function UpdateStatus(id_regulacao, status) {
+// UpdateStatus.js
+async function UpdateStatus(id_regulacao, status, connection) {
     const DBtable = 'regulacao';
 
-    let connection;
     try {
-        // Inicia a conexão com o banco de dados
-        connection = await DBconnection.getConnection();
-
-        // Atualiza os dados na tabela regulacao
         const [updateResult] = await connection.query(
             `UPDATE ${DBtable} 
              SET status_regulacao = ?
@@ -26,8 +20,6 @@ async function UpdateStatus(id_regulacao, status) {
     } catch (error) {
         console.error('Erro na atualização:', error);
         return { success: false, message: "Erro ao atualizar regulação.", error };
-    } finally {
-        if (connection) connection.release(); // Libera a conexão no final
     }
 }
 

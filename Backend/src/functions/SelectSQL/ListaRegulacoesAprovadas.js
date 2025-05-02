@@ -10,7 +10,7 @@ async function ListaRegulacoesAprovadas(Origem) {
             query = `
                 SELECT 
                     r.*,
-                    rm.nome_regulador_medico, data_hora_regulacao_medico, num_leito
+                    rm.nome_regulador_medico, data_hora_regulacao_medico, num_leito, autorizacao
                 FROM ${DBtable} r
                 LEFT JOIN ${DBtable2} rm ON r.id_regulacao = rm.id_regulacao
                 WHERE r.status_regulacao LIKE ? AND vaga_autorizada = ? AND autorizacao = ?

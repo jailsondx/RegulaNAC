@@ -55,7 +55,7 @@ async function RegulacaoOrigem(FormData) {
         }
 
         // Atualiza o status
-        await UpdateStatus(FormData.id_regulacao, NovoStatus);
+        await UpdateStatus(FormData.id_regulacao, novoStatus, connection);
 
         return {
             success: true,

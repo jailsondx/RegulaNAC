@@ -1,5 +1,6 @@
-import { DBconnection } from "../Controller/connection.js"; // Importa apenas o objeto DBconnection
+import { DBconnection } from "../Controller/connection.js";
 import VerificaStatus from "../Checked/VerificaStatus.js";
+import verificaRegulacao from "../Checked/VerificaRegulacao.js";
 
 async function EditaRegulacao(FormData) {
     const DBtable = 'regulacao';
@@ -7,41 +8,51 @@ async function EditaRegulacao(FormData) {
     const StatusAtual = 'ABERTO - AGUARDANDO AVALIACAO';
     const msgError = 'Regulação não pode ser atualizada; Status atual é: ';
 
-    let connection;
+    const connection = await DBconnection.getConnection();
 
     try {
-        // Inicie a conexão com o banco de dados
-        connection = await DBconnection.getConnection();
+        await connection.beginTransaction();
 
         // Verifica a permissão do usuário
         const [rowsUserPrivilege] = await connection.query(
-            `SELECT tipo FROM ${DBtableUsuarios} WHERE id_user = ?`, 
+            `SELECT tipo FROM ${DBtableUsuarios} WHERE id_user = ?`,
             [FormData.id_user]
         );
 
         if (rowsUserPrivilege.length === 0) {
-            console.error('Usuário não encontrado: ID:', FormData.id_user);
-            connection.release();
+            await connection.rollback();
             return { success: false, message: "Usuário não encontrado." };
         }
 
         const userType = rowsUserPrivilege[0].tipo;
 
         if (userType === 'MEDICO') {
-            console.error(`Usuário ID: ${FormData.id_user} - Sem permissão para atualizar regulação.`);
-            connection.release();
+            await connection.rollback();
             return { success: false, message: "Usuário não tem permissão para realizar esta ação." };
         }
 
-        // Verifica o status da regulação
+        // Verifica status atual da regulação
         const statusCheck = await VerificaStatus(FormData.id_regulacao, StatusAtual, msgError);
         if (!statusCheck.success) {
+            await connection.rollback();
             return { success: false, message: statusCheck.message };
         }
 
+        // Verifica se o num_regulacao já está em uso por outro registro
+        const regulacaoCheck = await verificaRegulacao(FormData.num_regulacao, FormData.id_regulacao);
+        if (!regulacaoCheck.success) {
+            await connection.rollback();
+            return { success: false, message: regulacaoCheck.message };
+        }
+        
+
+        // Atualiza os dados
         await connection.query(`
-            UPDATE ${DBtable} 
-            SET id_user = ?,
+            UPDATE ${DBtable}
+            SET 
+                id_user = ?, 
+                un_origem = ?,
+                un_destino = ?,
                 nome_paciente = ?, 
                 num_prontuario = ?, 
                 data_nascimento = ?, 
@@ -50,9 +61,11 @@ async function EditaRegulacao(FormData) {
                 prioridade = ?, 
                 nome_responsavel_nac = ?, 
                 nome_regulador_medico = ? 
-            WHERE id_regulacao = ?`, 
+            WHERE id_regulacao = ?`,
             [
                 FormData.id_user,
+                FormData.un_origem,
+                FormData.un_destino,
                 FormData.nome_paciente,
                 FormData.num_prontuario,
                 FormData.data_nascimento,
@@ -64,14 +77,16 @@ async function EditaRegulacao(FormData) {
                 FormData.id_regulacao
             ]);
 
-        connection.release();
+        await connection.commit();
 
         return { success: true, message: "Regulação editada com sucesso." };
 
     } catch (error) {
-        if (connection) connection.release();
+        if (connection) await connection.rollback();
         console.error('Erro na atualização:', error);
         return { success: false, message: "Erro ao atualizar regulação.", error };
+    } finally {
+        connection.release();
     }
 }
 

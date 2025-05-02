@@ -51,7 +51,7 @@ async function updateTransporte(FormData) {
         );
 
         // Atualiza o status da regulação
-        await UpdateStatus(FormData.id_regulacao, NovoStatus);
+        await UpdateStatus(FormData.id_regulacao, novoStatus, connection);
 
         // Confirma as alterações na transação
         await connection.commit();

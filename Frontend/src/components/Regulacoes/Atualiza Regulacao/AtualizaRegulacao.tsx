@@ -6,7 +6,7 @@ import { Snackbar, Alert } from '@mui/material';
 
 /*IMPORT INTERFACES*/
 import { DadosPacienteData } from "../../../interfaces/DadosPaciente.ts";
-import { UpdateRegulacaoData, PartialUpdateRegulacaoData } from '../../../interfaces/Regulacao.ts';
+import { UpdateRegulacaoData } from '../../../interfaces/Regulacao.ts';
 //import { UnidadeData } from '../../../interfaces/Unidade.ts';
 import { UserData } from '../../../interfaces/UserData.ts';
 
@@ -30,6 +30,7 @@ const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
 const initialFormData: UpdateRegulacaoData = {
   id_user: '',
   num_prontuario: null,
+  num_regulacao: null,
   data_hora_solicitacao_02: '',
   link: '',
 };
@@ -45,7 +46,7 @@ const AtualizaRegulacao: React.FC = () => {
   const location = useLocation(); // Captura o estado enviado via navegação
   const [numProntuario, setNumProntuario] = useState<number | ''>(''); // Número do prontuário recebido
   const [dadosPaciente, setDadosPaciente] = useState<DadosPacienteData>();
-  const [formData, setFormData] = useState<PartialUpdateRegulacaoData>(initialFormData);
+  const [formData, setFormData] = useState<UpdateRegulacaoData>(initialFormData);
 
   /*SNACKBAR*/
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -84,11 +85,10 @@ const AtualizaRegulacao: React.FC = () => {
 
         if (data) {
           // Preenche os campos do formulário com os dados recebidos
-          setFormData({
-            un_origem: data.un_origem,
-            un_destino: data.un_destino,
+          setFormData((prevFormData) => ({
+            ...prevFormData,
             data_hora_solicitacao_02: ''
-          });
+          }));
         }
       } catch (error: unknown) {
         if (error instanceof AxiosError && error.response) {

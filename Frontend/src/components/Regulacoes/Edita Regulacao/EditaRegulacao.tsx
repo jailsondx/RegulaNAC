@@ -6,15 +6,20 @@ import { Snackbar, Alert } from '@mui/material';
 
 /*IMPORT INTERFACES*/
 import { DadosPacienteData } from "../../../interfaces/DadosPaciente.ts";
-import { UpdateEditRegulacaoData, EditRegulacaoData } from '../../../interfaces/Regulacao.ts';
+import { EditaRegulacaoData } from '../../../interfaces/Regulacao.ts';
 import { UserData } from '../../../interfaces/UserData.ts';
+import { UnidadeData } from '../../../interfaces/Unidade.ts';
 
 /*IMPORT COMPONENTS*/
-import DadosPaciente from '../../Dados Paciente/DadosPaciente.tsx';
+//import DadosPaciente from '../../Dados Paciente/DadosPaciente.tsx';
 
 /*IMPORT FUNCTIONS*/
 import { getUserData } from '../../../functions/storageUtils.ts';
 import { calcularIdade } from '../../../functions/CalcularIdade.ts';
+
+/*IMPORT JSON*/
+import un_origem from '../../../JSON/un_origem.json';
+import un_destino from '../../../JSON/un_destino.json';
 
 /*IMPORT CSS*/
 import './EditaRegulacao.css';
@@ -22,7 +27,7 @@ import './EditaRegulacao.css';
 /*IMPORT VARIAVEIS DE AMBIENTE*/
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
 
-const initialFormData: UpdateEditRegulacaoData = {
+const initialFormData: EditaRegulacaoData = {
   id_user: '',
   num_prontuario: null,
   nome_paciente: '',
@@ -32,6 +37,8 @@ const initialFormData: UpdateEditRegulacaoData = {
   num_regulacao: null,
   nome_regulador_medico: '',
   data_hora_solicitacao_02: '',
+  un_origem: '',
+  un_destino: '',
   link: '',
 };
 
@@ -40,7 +47,10 @@ const EditaRegulacao: React.FC = () => {
   const location = useLocation(); // Captura o estado enviado via navegação
   const [idRegulacao, setidRegulacao] = useState<number | ''>(''); // Número do prontuário recebido
   const [dadosPaciente, setDadosPaciente] = useState<DadosPacienteData>();
-  const [formData, setFormData] = useState<EditRegulacaoData>(initialFormData);
+  const [formData, setFormData] = useState<EditaRegulacaoData>(initialFormData);
+
+  const [unidadesOrigem, setUnidadesOrigem] = useState<UnidadeData[]>([]);
+  const [unidadesDestino, setUnidadesDestino] = useState<UnidadeData[]>([]);
 
   const [medicos, setMedicos] = useState<string[]>([]); // Lista de médicos da API
 
@@ -50,6 +60,12 @@ const EditaRegulacao: React.FC = () => {
   const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error' | 'info' | 'warning'>('success');
 
   const navigate = useNavigate(); // Usado para redirecionar após a atualização
+
+  //Carrega o JSON
+  useEffect(() => {
+    setUnidadesOrigem(un_origem);
+    setUnidadesDestino(un_destino);
+  }, []);
 
   // Captura o número do id regulação ao montar o componente
   useEffect(() => {
@@ -82,6 +98,8 @@ const EditaRegulacao: React.FC = () => {
             prioridade: data.prioridade,
             num_regulacao: data.num_regulacao,
             nome_regulador_medico: data.nome_regulador_medico,
+            un_origem: data.un_origem,
+            un_destino: data.un_destino,
             link: data.link,
           });
         }
@@ -138,7 +156,7 @@ const EditaRegulacao: React.FC = () => {
           showSnackbar('Erro inesperado:', 'error');
         }
       }
-    };
+  };
 
   fetchMedicos();
   }, []);
@@ -232,11 +250,47 @@ const EditaRegulacao: React.FC = () => {
       </div>
       {dadosPaciente ? (
         <form onSubmit={handleSubmit} className="ComponentForm">
-          <div>
+          {/*          <div>
             <DadosPaciente dadosPaciente={dadosPaciente} />
-          </div>
+          </div>*/}
+
 
           <div className="StepContent">
+
+          <div className="line-StepContent">
+              <label>Unidade Origem:</label>
+              <select
+                name="un_origem"
+                value={formData.un_origem}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Selecione uma unidade</option>
+                {unidadesOrigem.map((unidadeOrigem) => (
+                  <option key={unidadeOrigem.value} value={unidadeOrigem.value}>
+                    {unidadeOrigem.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="line-StepContent">
+              <label>Unidade Destino:</label>
+              <select
+                name="un_destino"
+                value={formData.un_destino}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Selecione uma unidade</option>
+                {unidadesDestino.map((unidadeDestino) => (
+                  <option key={unidadeDestino.value} value={unidadeDestino.value}>
+                    {unidadeDestino.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
             <div className="line-StepContent">
               <label>Nome do Paciente:</label>
               <input

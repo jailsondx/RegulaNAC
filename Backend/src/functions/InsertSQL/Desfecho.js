@@ -52,7 +52,7 @@ async function Desfecho(FormData) {
         }
 
         // Atualiza o status
-        await UpdateStatus(FormData.id_regulacao, NovoStatus);
+        await UpdateStatus(FormData.id_regulacao, novoStatus, connection);
 
         return { success: true, message: "Desfecho cadastrado com sucesso." };
 

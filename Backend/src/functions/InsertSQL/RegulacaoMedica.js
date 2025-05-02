@@ -76,11 +76,12 @@ async function RegulacaoMedica(FormData) {
             ? NovoStatusApproved
             : NovoStatusDeny;
 
-        await UpdateStatus(FormData.id_regulacao, novoStatus);
-        await UpdateMedico(FormData.id_regulacao, FormData.nome_regulador_medico);
+        await UpdateStatus(FormData.id_regulacao, novoStatus, connection);
+        await UpdateMedico(FormData.id_regulacao, FormData.nome_regulador_medico, connection);
 
         if (FormData.un_destino && FormData.un_destino.trim() !== '') {
-            await UpdateUnDestino(FormData.id_regulacao, FormData.un_destino);
+            await UpdateUnDestino(FormData.id_regulacao, FormData.un_destino, connection);
+
         }
 
         await connection.commit();
