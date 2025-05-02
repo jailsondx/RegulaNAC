@@ -144,6 +144,7 @@ const Sidebar: React.FC = () => {
           {/* Acesso a regulações médicas internas só para gerência */}
           {tipo === 'GERENCIA' && (
             <>
+              <MenuLink to="/RegulacaoMedica" Icon={TiHeartHalfOutline} label="Regulação Interna Pendente de Autorização" />
             </>
           )}
           <hr />

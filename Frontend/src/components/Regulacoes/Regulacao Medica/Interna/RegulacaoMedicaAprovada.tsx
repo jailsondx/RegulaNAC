@@ -90,6 +90,11 @@ const NovaRegulacaoMedicoAprovada: React.FC<Props> = ({ dadosPaciente, tempoEspe
       return false;
     }
 
+    if (!formData.autorizacao) {
+      showSnackbar('O campo Autorização é obrigatório.', 'error');
+      return false;
+    }
+
     if (dadosPaciente.un_destino === 'UTI ADULTO' || dadosPaciente.un_destino === 'CLINICA MEDICA') {
       if (!formData.un_destino) {
         showSnackbar('O campo de UNIDADE é obrigatório.', 'error');
@@ -190,7 +195,7 @@ const NovaRegulacaoMedicoAprovada: React.FC<Props> = ({ dadosPaciente, tempoEspe
               <select
                 className='select-destino'
                 name="autorizacao"
-                value={formData.autorizacao || ''}
+                value={formData.autorizacao}
                 onChange={handleChange}
                 required
               >
@@ -198,6 +203,14 @@ const NovaRegulacaoMedicoAprovada: React.FC<Props> = ({ dadosPaciente, tempoEspe
                 <option value="AUTORIZADO">Autorizado</option>
                 <option value="PRE-AUTORIZADO 1">Pré Autorizado 1</option>
                 <option value="PRE-AUTORIZADO 2">Pré Autorizado 2</option>
+                <option value="PRE-AUTORIZADO 3">Pré Autorizado 3</option>
+                <option value="PRE-AUTORIZADO 4">Pré Autorizado 4</option>
+                <option value="PRE-AUTORIZADO 5">Pré Autorizado 5</option>
+                <option value="PRE-AUTORIZADO 6">Pré Autorizado 6</option>
+                <option value="PRE-AUTORIZADO 7">Pré Autorizado 7</option>
+                <option value="PRE-AUTORIZADO 8">Pré Autorizado 8</option>
+                <option value="PRE-AUTORIZADO 9">Pré Autorizado 9</option>
+                <option value="PRE-AUTORIZADO 10">Pré Autorizado 10</option>
               </select>
             </div>
 

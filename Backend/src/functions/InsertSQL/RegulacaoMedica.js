@@ -10,8 +10,10 @@ async function RegulacaoMedica(FormData) {
     const NovoStatusApproved = "ABERTO - APROVADO - AGUARDANDO ORIGEM";
     const NovoStatusDeny = "NEGADO";
 
+    const connection = await DBconnection.getConnection();
+
     try {
-        const connection = await DBconnection.getConnection();
+        await connection.beginTransaction();
 
         const [rows] = await connection.query(
             `SELECT tipo FROM ${DBtableUsuarios} WHERE id_user = ?`,
@@ -19,13 +21,13 @@ async function RegulacaoMedica(FormData) {
         );
 
         if (rows.length === 0) {
-            console.error("Usuário não encontrado: ID:", FormData.id_user);
+            await connection.rollback();
             return { success: false, message: "Usuário não encontrado." };
         }
 
         const userType = rows[0].tipo;
-
         if (userType !== "MEDICO") {
+            await connection.rollback();
             return {
                 success: false,
                 message: "Usuário não tem permissão para realizar esta ação.",
@@ -47,31 +49,27 @@ async function RegulacaoMedica(FormData) {
             'justificativa_tempo30',
             'autorizacao',
             'id_regulacao'
-          ];
-          
-          const insertData = filterFields(FormData, allowedFields);
+        ];
 
-            // Verifica se o id_regulacao já existe na tabela regulacao_medico
-            const [existing] = await connection.query(
-                `SELECT id_regulacao FROM ${DBtable} WHERE id_regulacao = ?`,
-                [FormData.id_regulacao]
+        const insertData = filterFields(FormData, allowedFields);
+
+        const [existing] = await connection.query(
+            `SELECT id_regulacao FROM ${DBtable} WHERE id_regulacao = ?`,
+            [FormData.id_regulacao]
+        );
+
+        if (existing.length > 0) {
+            // Já existe: atualizar
+            await connection.query(
+                `UPDATE ${DBtable} SET ? WHERE id_regulacao = ?`,
+                [insertData, FormData.id_regulacao]
             );
-
-            if (existing.length > 0) {
-                return {
-                    success: false,
-                    message: `Já existe uma regulação médica com o ID ${FormData.id_regulacao}.`,
-                };
-            }
-          
-          const [result] = await connection.query(
-            `INSERT INTO ${DBtable} SET ?`,
-            [insertData]
-          );
-          
-
-        if (result.affectedRows === 0) {
-            throw new Error("Erro ao inserir no banco de dados.");
+        } else {
+            // Não existe: inserir
+            await connection.query(
+                `INSERT INTO ${DBtable} SET ?`,
+                [insertData]
+            );
         }
 
         const novoStatus = FormData.vaga_autorizada
@@ -81,28 +79,26 @@ async function RegulacaoMedica(FormData) {
         await UpdateStatus(FormData.id_regulacao, novoStatus);
         await UpdateMedico(FormData.id_regulacao, FormData.nome_regulador_medico);
 
-        // ✅ NOVO: Verifica se un_destino existe e chama updateUnDestino
         if (FormData.un_destino && FormData.un_destino.trim() !== '') {
             await UpdateUnDestino(FormData.id_regulacao, FormData.un_destino);
         }
+
+        await connection.commit();
 
         return {
             success: true,
             message: `Regulação Médica: ${FormData.vaga_autorizada ? "Aprovada" : "Negada"}.`,
         };
     } catch (error) {
+        await connection.rollback();
         console.error("Erro no cadastro:", error);
-        if (error.code === "ER_DUP_ENTRY") {
-            return {
-                success: false,
-                message: "Entrada duplicada: já existe um registro com os mesmos dados.",
-            };
-        }
         return {
             success: false,
-            message: "Erro ao cadastrar regulação.",
+            message: "Erro ao cadastrar/atualizar regulação.",
             error,
         };
+    } finally {
+        connection.release();
     }
 }
 

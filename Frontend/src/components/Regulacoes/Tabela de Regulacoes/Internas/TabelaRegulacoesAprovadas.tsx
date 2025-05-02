@@ -94,6 +94,8 @@ const TabelaRegulacoesAprovadas: React.FC<TabelaRegulacoesAprovadasProps> = ({
             </span>
           </th>
 
+          <th>Tipo Autorização</th>
+
           {UserData?.tipo !== "MEDICO" && (
             <th>Fase</th>
           )}
@@ -119,6 +121,7 @@ const TabelaRegulacoesAprovadas: React.FC<TabelaRegulacoesAprovadasProps> = ({
             <td className="col-Prioridade">{regulacao.num_leito}</td>
             <td>{regulacao.nome_regulador_medico}</td>
             <td>{new Date(regulacao.data_hora_regulacao_medico).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</td>
+            <td>{regulacao.autorizacao}</td>
             {UserData?.tipo !== "MEDICO" && (
               <td>
                 <label className="td-Icons">
