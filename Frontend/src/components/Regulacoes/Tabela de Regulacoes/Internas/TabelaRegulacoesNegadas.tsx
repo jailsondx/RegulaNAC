@@ -7,8 +7,9 @@ import { formatDateTimeToPtBr } from '../../../../functions/DateTimes';
 /*INTERFACES*/
 import { UserData } from '../../../../interfaces/UserData';
 
+
 interface TabelaRegulacoesProps {
-  UserData: UserData | null;
+  UserData: UserData;
   currentRegulacoes: RegulacaoData[];
   selectedColumn: keyof RegulacaoData | null;
   sortConfig: { key: keyof RegulacaoData; direction: "asc" | "desc" } | null;
@@ -24,6 +25,7 @@ const TabelaRegulacoesNegadas: React.FC<TabelaRegulacoesProps> = ({
   handleSort,
   fetchPDF,
   handleAtualizarRegulacao,
+  UserData
 }) => {
   return (
     <table className='Table-Regulacoes'>
@@ -85,7 +87,10 @@ const TabelaRegulacoesNegadas: React.FC<TabelaRegulacoesProps> = ({
             </span>
           </th>
 
-          <th>Renovar</th>
+        {UserData.tipo != 'MEDICO' && (
+        <th>Renovar</th>
+        )}
+         
 
         </tr>
       </thead>
@@ -104,6 +109,8 @@ const TabelaRegulacoesNegadas: React.FC<TabelaRegulacoesProps> = ({
             <td>{regulacao.nome_regulador_medico}</td>
             <td>{formatDateTimeToPtBr(regulacao.data_hora_solicitacao_02)}</td>
             <td className='col-Text'>{regulacao.justificativa_neg}</td>
+
+            {UserData.tipo != 'MEDICO' && (
             <td>
               <label className="td-Icons">
                 <FcExpired 
@@ -112,8 +119,9 @@ const TabelaRegulacoesNegadas: React.FC<TabelaRegulacoesProps> = ({
                   title='Atualizar/Renovar Regulação' 
                 />
               </label>
-
             </td>
+            )}
+            
           </tr>
         ))}
       </tbody>

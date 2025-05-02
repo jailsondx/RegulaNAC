@@ -31,6 +31,7 @@ export interface RegulacaoData extends NovaRegulacaoData {
 export interface RegulacaoAprovadaData extends RegulacaoData{
   num_leito: number;
   data_hora_regulacao_medico: string;
+  preparo_leito: string;
   autorizacao?: string;
 }
 

@@ -1,18 +1,24 @@
 import { DBconnection } from "../Controller/connection.js";
 
 async function ListaRegulacoesPreAprovadas(Origem) {
-    let DBtable, DBtable2, query, queryParams;
+    let DBtable, DBtable2, DBtableOrigem, query, queryParams;
 
     switch (Origem) {
         case "Interna":
             DBtable = "regulacao";
             DBtable2 = "regulacao_medico";
+            DBtableOrigem = "setor_origem";
             query = `
                 SELECT 
                     r.*,
-                    rm.nome_regulador_medico, data_hora_regulacao_medico, num_leito, autorizacao
+                    rm.nome_regulador_medico, 
+                    data_hora_regulacao_medico, 
+                    num_leito, 
+                    autorizacao,
+                    so.preparo_leito
                 FROM ${DBtable} r
                 LEFT JOIN ${DBtable2} rm ON r.id_regulacao = rm.id_regulacao
+                LEFT JOIN ${DBtableOrigem} so ON r.id_regulacao = so.id_regulacao
                 WHERE r.status_regulacao LIKE ? AND vaga_autorizada = ? AND autorizacao LIKE ?
             `;
             queryParams = ["ABERTO - APROVADO%", 1, "PRE-%"];

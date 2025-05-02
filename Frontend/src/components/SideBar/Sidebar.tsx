@@ -102,6 +102,8 @@ const Sidebar: React.FC = () => {
         <>
           <MenuLink to="/RegulacaoMedica" Icon={TiHeartHalfOutline} label="Regulação Interna Pendente de Autorização" />
           <MenuLink to="/RegulacoesAprovadas" Icon={TiThumbsUp} label="Regulações Internas Aprovadas" />
+          <MenuLink to="/RegulacoesPreAprovadas" Icon={TiThumbsUp} label="Regulações Pré-Aprovadas" />
+          <MenuLink to="/RegulacoesNegadas" Icon={TiThumbsDown} label="Regulações Negadas" />
           <hr />
           <MenuLink to="/Login" Icon={TiExportOutline} label="Sair" />
         </>

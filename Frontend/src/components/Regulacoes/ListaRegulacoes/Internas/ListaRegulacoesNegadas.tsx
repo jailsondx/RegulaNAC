@@ -187,7 +187,7 @@ const ListaRegulacoesNegadas: React.FC<Props> = ({ title }) => {
       <div className='Component'>
         <div className='Component-Table'>
 
-        <HeaderFiltroInterno
+          <HeaderFiltroInterno
             title={title}
             searchTerm={searchTerm}
             setSearchTerm={setSearchTerm}
@@ -199,15 +199,17 @@ const ListaRegulacoesNegadas: React.FC<Props> = ({ title }) => {
           />
 
           <div>
-            <TabelaRegulacoesNegadas
-              UserData={userData}
-              currentRegulacoes={currentRegulacoes}
-              selectedColumn={selectedColumn}
-              sortConfig={sortConfig}
-              handleSort={handleSort}
-              fetchPDF={handleFetchPDF}
-              handleAtualizarRegulacao={handleClick_atualizarRegulacao}
-            />
+            {userData && (
+              <TabelaRegulacoesNegadas
+                UserData={userData}
+                currentRegulacoes={currentRegulacoes}
+                selectedColumn={selectedColumn}
+                sortConfig={sortConfig}
+                handleSort={handleSort}
+                fetchPDF={handleFetchPDF}
+                handleAtualizarRegulacao={handleClick_atualizarRegulacao}
+              />
+            )}
           </div>
 
         </div>

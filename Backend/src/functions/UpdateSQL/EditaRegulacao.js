@@ -1,6 +1,6 @@
 import { DBconnection } from "../Controller/connection.js";
-import VerificaStatus from "../Checked/VerificaStatus.js";
-import verificaRegulacao from "../Checked/VerificaRegulacao.js";
+//import VerificaStatus from "../Checked/VerificaStatus.js";
+//import verificaRegulacao from "../Checked/VerificaRegulacao.js";
 
 async function EditaRegulacao(FormData) {
     const DBtable = 'regulacao';
@@ -31,6 +31,9 @@ async function EditaRegulacao(FormData) {
             return { success: false, message: "Usuário não tem permissão para realizar esta ação." };
         }
 
+
+        
+        /*
         // Verifica status atual da regulação
         const statusCheck = await VerificaStatus(FormData.id_regulacao, StatusAtual, msgError);
         if (!statusCheck.success) {
@@ -44,6 +47,8 @@ async function EditaRegulacao(FormData) {
             await connection.rollback();
             return { success: false, message: regulacaoCheck.message };
         }
+        */
+        
         
 
         // Atualiza os dados

@@ -85,6 +85,7 @@ const RegulacoesAprovadas: React.FC<Props> = ({ title }) => {
 
       if (response.data && Array.isArray(response.data.data)) {
         setRegulacoes(response.data.data);
+        console.log(regulacoes);
       } else {
         console.error('Dados inesperados:', response.data);
       }
@@ -222,6 +223,7 @@ const RegulacoesAprovadas: React.FC<Props> = ({ title }) => {
       un_origem: regulacao.un_origem,
       un_destino: regulacao.un_destino,
       id_regulacao: regulacao.id_regulacao,
+      preparo_leito: regulacao.preparo_leito,
       nome_regulador_medico: regulacao.nome_regulador_medico, // Certifique-se de que este campo possui um valor válido
     };
 
@@ -239,6 +241,7 @@ const RegulacoesAprovadas: React.FC<Props> = ({ title }) => {
       num_regulacao: regulacao.num_regulacao,
       un_origem: regulacao.un_origem,
       un_destino: regulacao.un_destino,
+      preparo_leito: regulacao.preparo_leito,
       id_regulacao: regulacao.id_regulacao,
       nome_regulador_medico: regulacao.nome_regulador_medico, // Certifique-se de que este campo possui um valor válido
     };
@@ -256,6 +259,7 @@ const RegulacoesAprovadas: React.FC<Props> = ({ title }) => {
       num_prontuario: regulacao.num_prontuario,
       num_regulacao: regulacao.num_regulacao,
       un_origem: regulacao.un_origem,
+      preparo_leito: regulacao.preparo_leito,
       un_destino: regulacao.un_destino,
       id_regulacao: regulacao.id_regulacao,
       nome_regulador_medico: regulacao.nome_regulador_medico, // Certifique-se de que este campo possui um valor válido
@@ -275,6 +279,7 @@ const RegulacoesAprovadas: React.FC<Props> = ({ title }) => {
       num_regulacao: regulacao.num_regulacao,
       un_origem: regulacao.un_origem,
       un_destino: regulacao.un_destino,
+      preparo_leito: regulacao.preparo_leito,
       id_regulacao: regulacao.id_regulacao,
       nome_regulador_medico: regulacao.nome_regulador_medico, // Certifique-se de que este campo possui um valor válido
     };
