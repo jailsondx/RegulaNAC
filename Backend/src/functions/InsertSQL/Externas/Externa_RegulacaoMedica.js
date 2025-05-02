@@ -50,11 +50,11 @@ async function Externa_RegulacaoMedica_01(FormData) {
         }
 
         // Atualiza o status de regulação e médico responsável
-        const novoStatus = FormData.vaga_autorizada
+        const NovoStatus = FormData.vaga_autorizada
             ? (FormData.segundo_medico ? NovoStatusHalfApproved : NovoStatusApproved)
             : NovoStatusDeny;
 
-        await Externa_UpdateStatus(FormData.id_regulacao, novoStatus);
+        await Externa_UpdateStatus(FormData.id_regulacao, NovoStatus);
         await Externa_UpdateMedico(FormData.id_regulacao, FormData.nome_regulador_medico_01);
 
         return {

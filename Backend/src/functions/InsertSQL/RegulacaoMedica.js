@@ -72,7 +72,7 @@ async function RegulacaoMedica(FormData) {
             );
         }
 
-        const novoStatus = FormData.vaga_autorizada
+        const NovoStatus = FormData.vaga_autorizada
             ? NovoStatusApproved
             : NovoStatusDeny;
 

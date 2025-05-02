@@ -7,7 +7,7 @@ async function AtualizaRegulacao(FormData) {
     const DBtable = 'regulacao';
     const DBtableUsuarios = 'usuarios';
     const StatusAtual = ['ABERTO - AGUARDANDO AVALIACAO', 'NEGADO'];
-    const novoStatus = 'ABERTO - AGUARDANDO AVALIACAO';
+    const NovoStatus = 'ABERTO - AGUARDANDO AVALIACAO';
     const msgError = 'Regulação não pode ser atualizada; Status atual é: ';
 
     let connection;
@@ -68,7 +68,7 @@ async function AtualizaRegulacao(FormData) {
             FormData.data_hora_solicitacao_02,
             FormData.nome_responsavel_nac,
             qtdSolicitacoes + 1, // Incrementa a quantidade de solicitações
-            novoStatus,
+            NovoStatus,
             FormData.id_regulacao,
 
         ]);
@@ -95,7 +95,7 @@ async function AtualizaRegulacao(FormData) {
 async function AtualizaRegulacao(FormData) {
     const DBtable = 'regulacao';
     const DBtableUsuarios = 'usuarios';
-    const novoStatus = 'ABERTO - AGUARDANDO AVALIACAO';
+    const NovoStatus = 'ABERTO - AGUARDANDO AVALIACAO';
 
     const connection = await DBconnection.getConnection();
 
@@ -156,7 +156,7 @@ async function AtualizaRegulacao(FormData) {
             FormData.data_hora_solicitacao_02,
             FormData.nome_responsavel_nac,
             qtdSolicitacoes + 1,
-            novoStatus,
+            NovoStatus,
             FormData.id_regulacao
         ]);
 

@@ -6,9 +6,9 @@ async function ListaMedicos() {
     try {
         const connection = await DBconnection.getConnection();
 
-        // Realiza a consulta para buscar os médicos
+        // Realiza a consulta para buscar os médicos em ordem alfabética
         const [rows] = await connection.query(
-            `SELECT nome FROM ${DBtable} WHERE tipo = ? AND ativo = ?`, 
+            `SELECT nome FROM ${DBtable} WHERE tipo = ? AND ativo = ? ORDER BY nome ASC`, 
             ["MEDICO", true]
         );
 
