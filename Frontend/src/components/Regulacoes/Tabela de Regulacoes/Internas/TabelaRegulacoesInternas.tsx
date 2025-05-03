@@ -1,6 +1,6 @@
 import React from 'react';
 import { LuArrowDownWideNarrow, LuArrowUpNarrowWide } from "react-icons/lu";
-import { FcFullTrash, FcInspection, FcExpired, FcApproval, FcBadDecision, FcNews } from "react-icons/fc";
+import { FcFullTrash, FcInspection, FcExpired, FcApproval, FcBadDecision, FcNews, FcInfo } from "react-icons/fc";
 import TimeTracker from "../../../TimeTracker/TimeTracker.tsx";
 import { RegulacaoData, RegulacaoAprovadaData } from '../../../../interfaces/Regulacao.ts';
 import { useNavigate } from 'react-router-dom';
@@ -16,7 +16,7 @@ interface TabelaRegulacoesProps {
   sortConfig: { key: keyof RegulacaoData; direction: "asc" | "desc" } | null;
   handleSort: (key: keyof RegulacaoData) => void;
   fetchPDF: (datetime: string, filename: string) => void;
-  confirmarExclusao?: (id_user: string, id_regulacao: number | null,num_regulacao: number | null) => void;
+  confirmarExclusao?: (id_user: string, id_regulacao: number | null, num_regulacao: number | null) => void;
   serverTime: string;
   handleAtualizarRegulacao?: (regulacao: RegulacaoData) => void;
   handleOpenModalApproved?: (regulacao: RegulacaoData) => void;
@@ -24,6 +24,7 @@ interface TabelaRegulacoesProps {
   handleOpenModalDesfecho?: (regulacao: RegulacaoAprovadaData) => void;
   IconOpcoes: 'normais' | 'expiradas' | 'medico' | 'desfecho';
   UserData: UserData;
+  handleOpenModalObservacao: (regulacao: RegulacaoData) => void;
 }
 
 const TabelaRegulacoesInternas: React.FC<TabelaRegulacoesProps> = ({
@@ -39,7 +40,8 @@ const TabelaRegulacoesInternas: React.FC<TabelaRegulacoesProps> = ({
   handleOpenModalDeny,
   handleOpenModalDesfecho,
   IconOpcoes,
-  UserData
+  UserData,
+  handleOpenModalObservacao
 }) => {
   const navigate = useNavigate();
 
@@ -152,6 +154,11 @@ const TabelaRegulacoesInternas: React.FC<TabelaRegulacoesProps> = ({
           {IconOpcoes === 'medico' && UserData.tipo === 'MEDICO' && (
             <th>Aprovação</th>
           )}
+
+          {(UserData?.tipo === 'GERENCIA' || UserData?.tipo === 'AUX. ADMINISTRATIVO') && (
+            <th>Obs.</th>
+          )}
+
         </tr>
       </thead>
       <tbody>
@@ -250,6 +257,31 @@ const TabelaRegulacoesInternas: React.FC<TabelaRegulacoesProps> = ({
                     />
                     <FcBadDecision className="Icon Icons-Regulacao" onClick={() => handleOpenModalDeny && handleOpenModalDeny(regulacao)} title="Negar" />
                   </label></td>
+              </>
+            )}
+
+
+            {(UserData?.tipo === 'GERENCIA' || UserData?.tipo === 'AUX. ADMINISTRATIVO') && (
+              <>
+                <td>
+                  {regulacao.num_regulacao && (
+                    <label
+                      className='td-Icons'
+                      onClick={() => handleOpenModalObservacao(regulacao)}
+                      title={regulacao.observacaoTexto ? regulacao.observacaoTexto : 'Inserir Observação'}
+                    >
+                      {regulacao.observacaoTexto
+                        ? (
+                          <span className="texto-resumo">
+                            {regulacao.observacaoTexto.slice(0, 20)}...
+                          </span>
+                        )
+                        : <FcInfo
+                          className='Icon Icons-Regulacao'
+                        />}
+                    </label>
+                  )}
+                </td>
               </>
             )}
 

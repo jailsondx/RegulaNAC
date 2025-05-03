@@ -7,10 +7,14 @@ import { Snackbar, Alert } from '@mui/material';
 /*IMPORT INTERFACES*/
 import { UserData } from '../../../../interfaces/UserData';
 import { RegulacaoData } from '../../../../interfaces/Regulacao';
+import { DadosPacienteData } from "../../../../interfaces/DadosPaciente.ts";
 
 /*IMPORT COMPONENTS*/
+import Modal from '../../../Modal/Modal.tsx';
 import HeaderFiltroInterno from '../../../Header/Header_Lista_Interna';
 import TabelaRegulacoesInternas from '../../Tabela de Regulacoes/Internas/TabelaRegulacoesInternas';
+import ObservacoesNAC from '../../../Obsevacoes/ObervacoesNAC.tsx';
+
 
 /*IMPORT FUNCTIONS*/
 import { getUserData } from '../../../../functions/storageUtils';
@@ -25,6 +29,7 @@ import { atualizarRegulacao } from '../../../../Utils/handleAtualizarRegulacao';
 import { fetchPDF } from '../../../../Utils/fetchPDF';
 
 
+
 /*IMPORT VARIAVEIS DE AMBIENTE*/
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
 
@@ -34,10 +39,13 @@ interface Props {
 
 const ListaRegulacoes24hrs: React.FC<Props> = ({ title }) => {
   const [userData, setUserData] = useState<UserData | null>(null);
+  const [dadosPaciente, setDadosPaciente] = useState<DadosPacienteData | null>(null);
   const [serverTime, setServerTime] = useState("");
   const [regulacoes, setRegulacoes] = useState<RegulacaoData[]>([]); // Tipo do estado
+  const [currentRegulacao, setCurrentRegulacao] = useState<RegulacaoData | null>(null);
   const location = useLocation();
   const navigate = useNavigate();
+  const [ShowModalObservacao, setShowModalObservacao] = useState(false);
 
   /*FILTROS*/
   const [unidadeOrigem, setUnidadeOrigem] = useState('');
@@ -62,39 +70,42 @@ const ListaRegulacoes24hrs: React.FC<Props> = ({ title }) => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error' | 'info' | 'warning'>('success');
 
+
+  const fetchRegulacoes = async () => {
+    try {
+      const response = await axios.get(`${NODE_URL}/api/internal/get/ListaRegulacoesPendentes24`);
+
+      if (response.data && Array.isArray(response.data.data)) {
+        setRegulacoes(response.data.data);
+        setServerTime(response.data.serverTime); // Hora atual do servidor em formato ISO
+        setFilteredRegulacoes(response.data.data);
+      } else {
+        console.error('Dados inesperados:', response.data);
+      }
+    } catch (error: unknown) {
+      // Verifica se o erro é uma instância de AxiosError (caso você esteja lidando com erros de rede)
+      if (error instanceof AxiosError) {
+        console.error('Erro ao carregar regulações:', error.response?.data);
+        setRegulacoes([]); // Garante que regulacoes seja sempre um array
+      } else {
+        // Caso o erro não seja um AxiosError ou seja de outro tipo
+        console.error('Erro desconhecido ao carregar regulações:', error);
+        setRegulacoes([]); // Garante que regulacoes seja sempre um array
+      }
+    }
+
+  };
+
+
   //Pega dados do SeassonStorage User
   useEffect(() => {
     const data = getUserData();
     setUserData(data);
   }, []);
 
-  //CHAMADA DE API PARA GERAR A LISTA DE REGULAÇÕES
+
+  // useEffect apenas para a chamada inicial
   useEffect(() => {
-    const fetchRegulacoes = async () => {
-      try {
-        const response = await axios.get(`${NODE_URL}/api/internal/get/ListaRegulacoesPendentes24`);
-
-        if (response.data && Array.isArray(response.data.data)) {
-          setRegulacoes(response.data.data);
-          setServerTime(response.data.serverTime); // Hora atual do servidor em formato ISO
-          setFilteredRegulacoes(response.data.data);
-        } else {
-          console.error('Dados inesperados:', response.data);
-        }
-      } catch (error: unknown) {
-        // Verifica se o erro é uma instância de AxiosError (caso você esteja lidando com erros de rede)
-        if (error instanceof AxiosError) {
-          console.error('Erro ao carregar regulações:', error.response?.data);
-          setRegulacoes([]); // Garante que regulacoes seja sempre um array
-        } else {
-          // Caso o erro não seja um AxiosError ou seja de outro tipo
-          console.error('Erro desconhecido ao carregar regulações:', error);
-          setRegulacoes([]); // Garante que regulacoes seja sempre um array
-        }
-      }
-
-    };
-
     fetchRegulacoes();
   }, []);
 
@@ -169,6 +180,32 @@ const ListaRegulacoes24hrs: React.FC<Props> = ({ title }) => {
     setSelectedColumn(key);
   };
 
+
+  const handleOpenModalObservacao = (regulacao: RegulacaoData) => {
+    setCurrentRegulacao(regulacao);
+
+    // Supondo que você já tenha todos os dados necessários na `regulacao` ou possa fazer algum processamento:
+    const dados: DadosPacienteData = {
+      nome_paciente: regulacao.nome_paciente,
+      num_prontuario: regulacao.num_prontuario,
+      num_regulacao: regulacao.num_regulacao,
+      un_origem: regulacao.un_origem,
+      un_destino: regulacao.un_destino,
+      preparo_leito: regulacao.preparo_leito,
+      id_regulacao: regulacao.id_regulacao,
+      nome_regulador_medico: regulacao.nome_regulador_medico, // Certifique-se de que este campo possui um valor válido
+    };
+
+    setDadosPaciente(dados);
+    setShowModalObservacao(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModalObservacao(false);
+    fetchRegulacoes();
+    //window.location.reload(); // Recarregar a página ao fechar o modal
+  };
+
   //EXIBE O SNACKBAR
   const showSnackbar = (
     message: string,
@@ -212,6 +249,7 @@ const ListaRegulacoes24hrs: React.FC<Props> = ({ title }) => {
                 handleAtualizarRegulacao={handleClick_atualizarRegulacao}
                 IconOpcoes='expiradas'
                 UserData={userData}
+                handleOpenModalObservacao={handleOpenModalObservacao}
               />
             )}
           </div>
@@ -225,6 +263,18 @@ const ListaRegulacoes24hrs: React.FC<Props> = ({ title }) => {
           <button className='button-pagination' onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}>Próxima</button>
         </div>
       </div>
+
+
+      {ShowModalObservacao && currentRegulacao && dadosPaciente && (
+        <Modal show={ShowModalObservacao} onClose={handleCloseModal} title='Observação'>
+          <ObservacoesNAC
+            dadosPaciente={currentRegulacao}
+            observacaoTexto={currentRegulacao.observacaoTexto ?? ''}
+            onClose={handleCloseModal} // Fecha o modal
+            showSnackbar={showSnackbar} // Passa o controle do Snackbar
+          />
+        </Modal>
+      )}
 
 
       <Snackbar

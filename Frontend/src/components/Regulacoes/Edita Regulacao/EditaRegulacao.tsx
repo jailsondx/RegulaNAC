@@ -19,10 +19,11 @@ import { calcularIdade } from '../../../functions/CalcularIdade.ts';
 
 /*IMPORT JSON*/
 import un_origem from '../../../JSON/un_origem.json';
-import un_destino from '../../../JSON/un_destino.json';
+import un_destino_completo from '../../../JSON/un_destino_completo.json';
 
 /*IMPORT CSS*/
 import './EditaRegulacao.css';
+
 
 /*IMPORT VARIAVEIS DE AMBIENTE*/
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
@@ -37,6 +38,7 @@ const initialFormData: EditaRegulacaoData = {
   num_regulacao: null,
   nome_regulador_medico: '',
   data_hora_solicitacao_02: '',
+  data_hora_acionamento_medico: '',
   un_origem: '',
   un_destino: '',
   link: '',
@@ -64,7 +66,7 @@ const EditaRegulacao: React.FC = () => {
   //Carrega o JSON
   useEffect(() => {
     setUnidadesOrigem(un_origem);
-    setUnidadesDestino(un_destino);
+    setUnidadesDestino(un_destino_completo);
   }, []);
 
   // Captura o número do id regulação ao montar o componente
@@ -87,6 +89,8 @@ const EditaRegulacao: React.FC = () => {
         const data = response.data.data || null;
         setDadosPaciente(data);
 
+        //alert(data.data_hora_acionamento_medico);
+
         if (data) {
           // Preenche os campos do formulário com os dados recebidos
           setFormData({
@@ -98,6 +102,7 @@ const EditaRegulacao: React.FC = () => {
             prioridade: data.prioridade,
             num_regulacao: data.num_regulacao,
             nome_regulador_medico: data.nome_regulador_medico,
+            data_hora_acionamento_medico: data.data_hora_acionamento_medico,
             un_origem: data.un_origem,
             un_destino: data.un_destino,
             link: data.link,
@@ -137,7 +142,7 @@ const EditaRegulacao: React.FC = () => {
   // Carrega a lista de médicos ao montar o componente
   useEffect(() => {
 
-  const fetchMedicos = async () => {
+    const fetchMedicos = async () => {
       try {
         const response = await axios.get(`${NODE_URL}/api/internal/get/ListaMedicos`);
         const nomes_medicos_list = response.data.data;
@@ -156,9 +161,9 @@ const EditaRegulacao: React.FC = () => {
           showSnackbar('Erro inesperado:', 'error');
         }
       }
-  };
+    };
 
-  fetchMedicos();
+    fetchMedicos();
   }, []);
 
   // Busca os dados do usuário do sessionStorage ao carregar o componente
@@ -200,6 +205,43 @@ const EditaRegulacao: React.FC = () => {
     }));
   };
 
+  //formata a data e hora para se ancaixar no input
+  function formatDateForInput(dateString: string): string {
+    const date = new Date(dateString);
+    const offset = date.getTimezoneOffset();
+    const localDate = new Date(date.getTime() - offset * 60 * 1000);
+    return localDate.toISOString().slice(0, 16);
+  }
+
+  function formatDateForMySQL(datetimeLocal: string): string {
+    if (!datetimeLocal) return '';
+  
+    // Remove o sufixo ":00" se estiver depois do "Z"
+    const cleanDate = datetimeLocal.replace(/Z:00$/, 'Z');
+  
+    // Se for um datetime-local do input (sem "Z"), apenas adapta
+    if (!cleanDate.includes('T')) return datetimeLocal;
+  
+    // Converte para formato MySQL
+    const date = new Date(cleanDate);
+    if (isNaN(date.getTime())) {
+      console.error('Data inválida:', datetimeLocal);
+      return '';
+    }
+  
+    const yyyy = date.getFullYear();
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const dd = String(date.getDate()).padStart(2, '0');
+    const hh = String(date.getHours()).padStart(2, '0');
+    const min = String(date.getMinutes()).padStart(2, '0');
+    const ss = String(date.getSeconds()).padStart(2, '0');
+  
+    return `${yyyy}-${mm}-${dd} ${hh}:${min}:${ss}`;
+  }
+  
+  
+
+
   // Submete os dados atualizados para o backend
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -208,6 +250,7 @@ const EditaRegulacao: React.FC = () => {
       const dataToSubmit = {
         ...formData,
         data_nascimento: formData.data_nascimento.split("T")[0], //Converte a data para o formato yyyy-mm-dd
+        data_hora_acionamento_medico: formatDateForMySQL(formData.data_hora_acionamento_medico || ''),
         id_user: userData?.id_user, // ID do usuário logado
         id_regulacao: idRegulacao, // ID da regulação a ser atualizada
         nome_responsavel_nac: userData?.nome, // Nome do regulador NAC
@@ -257,7 +300,7 @@ const EditaRegulacao: React.FC = () => {
 
           <div className="StepContent">
 
-          <div className="line-StepContent">
+            <div className="line-StepContent">
               <label>Unidade Origem:</label>
               <select
                 name="un_origem"
@@ -352,7 +395,6 @@ const EditaRegulacao: React.FC = () => {
                     value={formData.num_regulacao ?? ''}
                     onChange={handleChange}
                     required
-
                   />
                 </span>
               </div>
@@ -368,21 +410,39 @@ const EditaRegulacao: React.FC = () => {
               </div>
             </div>
 
-            <div className="line-StepContent">
-              <label>Nome do Médico Regulador:</label>
-              <select
-                name="nome_regulador_medico"
-                value={formData.nome_regulador_medico}
-                onChange={handleSelectChange_medico}
-                required
-              >
-                <option value="" disabled> Selecione um médico </option>
-                {medicos.map((medico, index) => (
-                  <option key={index} value={medico}>
-                    {medico}
-                  </option>
-                ))}
-              </select>
+            <div className="line-StepContent-2">
+              <div className='line-StepContent-sub'>
+                <label>Nome do Médico Regulador:</label>
+                <select
+                  name="nome_regulador_medico"
+                  value={formData.nome_regulador_medico}
+                  onChange={handleSelectChange_medico}
+                  required
+                >
+                  <option value="" disabled> Selecione um médico </option>
+                  {medicos.map((medico, index) => (
+                    <option key={index} value={medico}>
+                      {medico}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="line-StepContent-sub">
+                <label>Acionamento Médico:</label>
+                <input
+                  type="datetime-local"
+                  name="data_hora_acionamento_medico"
+                  value={
+                    formData.data_hora_acionamento_medico
+                      ? formatDateForInput(formData.data_hora_acionamento_medico)
+                      : ''
+                  }
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
             </div>
 
           </div>

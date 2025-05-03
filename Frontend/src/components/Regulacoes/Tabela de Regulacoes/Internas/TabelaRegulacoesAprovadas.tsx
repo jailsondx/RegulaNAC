@@ -1,8 +1,12 @@
 import React from 'react';
 import { LuArrowDownWideNarrow, LuArrowUpNarrowWide } from "react-icons/lu";
-import { FcHome, FcOrganization, FcOnlineSupport, FcOvertime, FcAbout, FcFullTrash } from "react-icons/fc";
+import { FcHome, FcOrganization, FcOnlineSupport, FcOvertime, FcAbout, FcFullTrash, FcInspection, FcInfo } from "react-icons/fc";
+import { useNavigate } from 'react-router-dom';
+
+
+/*IMPORT INTERFACE*/
+import { UserData } from '../../../../interfaces/UserData.ts';
 import { RegulacaoAprovadaData } from '../../../../interfaces/Regulacao';
-import { UserData } from '../../../../interfaces/UserData';
 
 interface TabelaRegulacoesAprovadasProps {
   UserData: UserData | null;
@@ -17,6 +21,7 @@ interface TabelaRegulacoesAprovadasProps {
   handleOpenModalTransporte01: (regulacao: RegulacaoAprovadaData) => void;
   handleOpenModalTransporte02: (regulacao: RegulacaoAprovadaData) => void;
   handleOpenModalDesfecho: (regulacao: RegulacaoAprovadaData) => void;
+  handleOpenModalObservacao: (regulacao: RegulacaoAprovadaData) => void;
 }
 
 const TabelaRegulacoesAprovadas: React.FC<TabelaRegulacoesAprovadasProps> = ({
@@ -31,8 +36,24 @@ const TabelaRegulacoesAprovadas: React.FC<TabelaRegulacoesAprovadasProps> = ({
   handleOpenModalDestino,
   handleOpenModalTransporte01,
   handleOpenModalTransporte02,
-  handleOpenModalDesfecho
+  handleOpenModalDesfecho,
+  handleOpenModalObservacao
 }) => {
+
+  const navigate = useNavigate();
+
+  const handleEditarRegulacao = (id_regulacao: number): void => {
+    if (!id_regulacao) {
+      alert('Prontuário é obrigatório para atualizar a regulação');
+      return;
+    }
+    // Enviando dados de forma oculta
+    navigate('/EditaRegulacao', {
+      state: { id_regulacao },
+    });
+  };
+
+
 
   return (
     <table className='Table-Regulacoes'>
@@ -104,6 +125,10 @@ const TabelaRegulacoesAprovadas: React.FC<TabelaRegulacoesAprovadasProps> = ({
             <th>Apagar</th>
           )}
 
+          {(UserData?.tipo === 'GERENCIA' || UserData?.tipo === 'AUX. ADMINISTRATIVO') && (
+            <th>Obs.</th>
+          )}
+
         </tr>
       </thead>
       <tbody>
@@ -122,6 +147,7 @@ const TabelaRegulacoesAprovadas: React.FC<TabelaRegulacoesAprovadasProps> = ({
             <td>{regulacao.nome_regulador_medico}</td>
             <td>{new Date(regulacao.data_hora_regulacao_medico).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</td>
             <td>{regulacao.autorizacao}</td>
+
             {UserData?.tipo !== "MEDICO" && (
               <td>
                 <label className="td-Icons">
@@ -167,15 +193,43 @@ const TabelaRegulacoesAprovadas: React.FC<TabelaRegulacoesAprovadasProps> = ({
             {UserData?.tipo === 'GERENCIA' && (
               <>
                 <td>
-                  <label className="td-Icons">
-                    {regulacao.num_regulacao && (
+                  {regulacao.num_regulacao && (
+                    <label className="td-Icons">
+                      <FcInspection
+                        className='Icon Icons-Regulacao'
+                        onClick={() => handleEditarRegulacao && handleEditarRegulacao(regulacao.id_regulacao)}
+                        title='Editar Regulação' />
+
                       <FcFullTrash
                         className='Icon Icons-Regulacao'
                         onClick={() => confirmarExclusao && confirmarExclusao(UserData.id_user, regulacao.id_regulacao)}
                         title='Apagar Regulação' />
-                    )}
+                    </label>
+                  )}
+                </td>
+              </>
+            )}
 
-                  </label>
+            {(UserData?.tipo === 'GERENCIA' || UserData?.tipo === 'AUX. ADMINISTRATIVO') && (
+              <>
+                <td>
+                  {regulacao.num_regulacao && (
+                    <label
+                    className='td-Icons'
+                    onClick={() => handleOpenModalObservacao(regulacao)}
+                    title={regulacao.observacaoTexto ? regulacao.observacaoTexto : 'Inserir Observação'}
+                  >
+                    {regulacao.observacaoTexto
+                      ? (
+                          <span className="texto-resumo">
+                            {regulacao.observacaoTexto.slice(0, 20)}...
+                          </span>
+                        )
+                      : <FcInfo 
+                        className='Icon Icons-Regulacao'
+                        />}
+                  </label>                  
+                  )}
                 </td>
               </>
             )}

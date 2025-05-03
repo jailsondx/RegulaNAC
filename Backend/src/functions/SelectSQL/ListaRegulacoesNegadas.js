@@ -3,6 +3,7 @@ import { DBconnection } from "../Controller/connection.js";
 async function ListaRegulacoesNegadas() {
     const DBtable = "regulacao";
     const DBtableRegulacaoMedico = "regulacao_medico";
+    const DBtableObservacao = "observacao";
 
     try {
         const connection = await DBconnection.getConnection();
@@ -19,9 +20,11 @@ async function ListaRegulacoesNegadas() {
                 r.data_hora_solicitacao_02,
                 r.link,
                 rm.nome_regulador_medico,
-                rm.justificativa_neg
+                rm.justificativa_neg,
+                obs.observacaoTexto
             FROM ${DBtable} r
             JOIN ${DBtableRegulacaoMedico} rm ON r.id_regulacao = rm.id_regulacao
+            LEFT JOIN ${DBtableObservacao} obs ON r.id_regulacao = obs.id_regulacao
             WHERE r.status_regulacao LIKE ?
         `, ["NEGADO"]);
 

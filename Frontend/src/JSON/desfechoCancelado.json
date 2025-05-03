@@ -4,5 +4,6 @@
   { "value": "PERMUTA DE PACIENTE", "label": "PERMUTA DE PACIENTE" },
   { "value": "ERRO NA SOLICITACAO", "label": "ERRO NA SOLICITACAO" },
   { "value": "NAO ATENDE CRITERIOS DA UNIDADE", "label": "NÃO ATENDE CRITÉRIOS DA UNIDADE" },
-  { "value": "DECISAO MEDICA", "label": "DECISÃO MÉDICA" }
+  { "value": "DECISAO MEDICA", "label": "DECISÃO MÉDICA" },
+  { "value": "MUDANCA NO SETOR DE ORIGEM/DESTINO", "label": "MUDANÇA NO SETOR DE ORIGEM/DESTINO" }
 ]

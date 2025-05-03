@@ -5,8 +5,8 @@ import { DBconnection } from "../Controller/connection.js";
 async function EditaRegulacao(FormData) {
     const DBtable = 'regulacao';
     const DBtableUsuarios = 'usuarios';
-    const StatusAtual = 'ABERTO - AGUARDANDO AVALIACAO';
-    const msgError = 'Regulação não pode ser atualizada; Status atual é: ';
+    //const StatusAtual = 'ABERTO - AGUARDANDO AVALIACAO';
+    //const msgError = 'Regulação não pode ser atualizada; Status atual é: ';
 
     const connection = await DBconnection.getConnection();
 
@@ -65,7 +65,8 @@ async function EditaRegulacao(FormData) {
                 num_regulacao = ?, 
                 prioridade = ?, 
                 nome_responsavel_nac = ?, 
-                nome_regulador_medico = ? 
+                nome_regulador_medico = ?, 
+                data_hora_acionamento_medico = ? 
             WHERE id_regulacao = ?`,
             [
                 FormData.id_user,
@@ -79,6 +80,7 @@ async function EditaRegulacao(FormData) {
                 FormData.prioridade,
                 FormData.nome_responsavel_nac,
                 FormData.nome_regulador_medico,
+                FormData.data_hora_acionamento_medico,
                 FormData.id_regulacao
             ]);
 

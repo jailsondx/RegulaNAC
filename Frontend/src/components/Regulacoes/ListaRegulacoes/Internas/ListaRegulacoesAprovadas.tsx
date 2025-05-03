@@ -23,6 +23,7 @@ import SetorDestino from '../../../Setor Origem e Destino/SetorDestino.tsx';
 import Transporte01 from '../../../Transporte/Transporte01.tsx';
 import Transporte02 from '../../../Transporte/Transporte02.tsx';
 import Desfecho from '../../../Desfecho/Desfecho.tsx';
+import ObservacoesNAC from '../../../Obsevacoes/ObervacoesNAC.tsx';
 import TabelaRegulacoesAprovadas from '../../Tabela de Regulacoes/Internas/TabelaRegulacoesAprovadas.tsx';
 
 /*IMPORT FUNCTIONS*/
@@ -30,6 +31,7 @@ import { getUserData } from '../../../../functions/storageUtils.ts';
 
 /*IMPORT UTILS*/
 import { fetchPDF } from '../../../../Utils/fetchPDF.ts';
+
 
 /*IMPORT VARIAVEIS DE AMBIENTE*/
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
@@ -54,6 +56,7 @@ const RegulacoesAprovadas: React.FC<Props> = ({ title }) => {
   const [ShowModalTransporte01, setShowModalTransporte01] = useState(false);
   const [ShowModalTransporte02, setShowModalTransporte02] = useState(false);
   const [ShowModalDesfecho, setShowModalDesfecho] = useState(false);
+  const [ShowModalObservacao, setShowModalObservacao] = useState(false);
 
   /*FILTROS*/
   const [unidadeOrigem, setUnidadeOrigem] = useState('');
@@ -85,7 +88,6 @@ const RegulacoesAprovadas: React.FC<Props> = ({ title }) => {
 
       if (response.data && Array.isArray(response.data.data)) {
         setRegulacoes(response.data.data);
-        console.log(regulacoes);
       } else {
         console.error('Dados inesperados:', response.data);
       }
@@ -288,12 +290,32 @@ const RegulacoesAprovadas: React.FC<Props> = ({ title }) => {
     setShowModalDesfecho(true);
   };
 
+  const handleOpenModalObservacao = (regulacao: RegulacaoAprovadaData) => {
+    setCurrentRegulacao(regulacao);
+
+    // Supondo que você já tenha todos os dados necessários na `regulacao` ou possa fazer algum processamento:
+    const dados: DadosPacienteData = {
+      nome_paciente: regulacao.nome_paciente,
+      num_prontuario: regulacao.num_prontuario,
+      num_regulacao: regulacao.num_regulacao,
+      un_origem: regulacao.un_origem,
+      un_destino: regulacao.un_destino,
+      preparo_leito: regulacao.preparo_leito,
+      id_regulacao: regulacao.id_regulacao,
+      nome_regulador_medico: regulacao.nome_regulador_medico, // Certifique-se de que este campo possui um valor válido
+    };
+
+    setDadosPaciente(dados);
+    setShowModalObservacao(true);
+  };
+
   const handleCloseModal = () => {
     setShowModalOrigem(false);
     setShowModalDestino(false);
     setShowModalTransporte01(false);
     setShowModalTransporte02(false);
     setShowModalDesfecho(false);
+    setShowModalObservacao(false);
     fetchRegulacoes();
     //window.location.reload(); // Recarregar a página ao fechar o modal
   };
@@ -344,6 +366,7 @@ const RegulacoesAprovadas: React.FC<Props> = ({ title }) => {
               handleOpenModalTransporte01={handleOpenModalTransporte01}
               handleOpenModalTransporte02={handleOpenModalTransporte02}
               handleOpenModalDesfecho={handleOpenModalDesfecho}
+              handleOpenModalObservacao={handleOpenModalObservacao}
             />
           </div>
         </div>
@@ -400,6 +423,17 @@ const RegulacoesAprovadas: React.FC<Props> = ({ title }) => {
           <Desfecho
             dadosPaciente={currentRegulacao}
             forcado={false}
+            onClose={handleCloseModal} // Fecha o modal
+            showSnackbar={showSnackbar} // Passa o controle do Snackbar
+          />
+        </Modal>
+      )}
+
+      {ShowModalObservacao && currentRegulacao && dadosPaciente && (
+        <Modal show={ShowModalObservacao} onClose={handleCloseModal} title='Observação'>
+          <ObservacoesNAC
+            dadosPaciente={currentRegulacao}
+            observacaoTexto={currentRegulacao.observacaoTexto ?? ''}
             onClose={handleCloseModal} // Fecha o modal
             showSnackbar={showSnackbar} // Passa o controle do Snackbar
           />

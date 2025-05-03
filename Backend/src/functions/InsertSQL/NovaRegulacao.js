@@ -1,18 +1,30 @@
 import { DBconnection } from "../Controller/connection.js";
-import UpdateLinkDOC from "../UpdateSQL/UpdateLink.js";
+import UpdateLinkDOC from "../UpdateSQL/UpdateLinkTransactSQL.js";
+import InsertRegulacaoMedico from "../InsertSQL/InsertRegulacaoMedico.js";
 
 async function NovaRegulacao(FormData) {
     const DBtable = "regulacao";
     const DBtableUsuarios = "usuarios";
+    const NovoStatus_Padrao = "ABERTO - AGUARDANDO AVALIACAO";
+    const NovoStatus_Especial = "ABERTO - APROVADO - AGUARDANDO ORIGEM";
+
+    let connection;
 
     try {
         // Define valores padrões
         FormData.qtd_solicitacoes = 1;
         FormData.data_hora_solicitacao_02 = FormData.data_hora_solicitacao_01;
-        FormData.status_regulacao = "ABERTO - AGUARDANDO AVALIACAO";
 
-        // Inicia a conexão
-        const connection = await DBconnection.getConnection();
+        // Lógica para status especial
+        const origemEspecial = FormData.un_origem === 'CENTRO CIRURGICO';
+        const destinoEspecial = ['CLINICA CIRURGICA I', 'CLINICA CIRURGICA II'].includes(FormData.un_destino);
+
+        FormData.status_regulacao = (origemEspecial || destinoEspecial)
+            ? NovoStatus_Especial
+            : NovoStatus_Padrao;
+
+        connection = await DBconnection.getConnection();
+        await connection.beginTransaction();
 
         // Verifica a permissão do usuário
         const [rowsUserPrivilege] = await connection.query(
@@ -21,38 +33,50 @@ async function NovaRegulacao(FormData) {
         );
 
         if (rowsUserPrivilege.length === 0) {
-            console.error("Usuário não encontrado: ID:", FormData.id_user);
-            return { success: false, message: "Usuário não encontrado." };
+            throw new Error(`Usuário não encontrado: ID ${FormData.id_user}`);
         }
 
         const userType = rowsUserPrivilege[0].tipo;
-
         if (userType === "MEDICO") {
-            console.error(`Usuário ID: ${FormData.id_user} sem permissão para nova regulação`);
-            return {
-                success: false,
-                message: "Usuário não tem permissão para realizar esta ação.",
-            };
+            throw new Error(`Usuário ID ${FormData.id_user} não tem permissão para nova regulação.`);
         }
 
-
-        // Insere os dados no banco
-        await connection.query(
+        // Insere os dados
+        const [insertResult] = await connection.query(
             `INSERT INTO ${DBtable} SET ?`,
             [FormData]
         );
 
-        const updateLinkResult = await UpdateLinkDOC(FormData.num_regulacao, FormData.link);
-        if (!updateLinkResult.success) {
-            console.error('Erro ao gerar o link do documento:', updateLinkResult.message);
-            connection.release();
-            return { success: false, message: "Erro ao gerar o link do documento." };
+        if (insertResult.affectedRows === 0) {
+            throw new Error("Erro ao inserir regulação.");
         }
 
+        const id_regulacao = insertResult.insertId;
+
+        // Se for um status especial, insere também em regulacao_medico
+        if (FormData.status_regulacao === NovoStatus_Especial) {
+            //const InsertRegulacaoMedico = (await import("../InsertSQL/InsertRegulacaoMedico.js")).default;
+            const medicoResult = await InsertRegulacaoMedico(id_regulacao, FormData.id_user, connection);
+            if (!medicoResult.success) {
+                throw new Error(medicoResult.message);
+            }
+        }
+
+        // Atualiza o link do documento
+        const updateLinkResult = await UpdateLinkDOC(FormData.num_regulacao, FormData.link, connection);
+        if (!updateLinkResult.success) {
+            throw new Error(updateLinkResult.message || "Erro ao atualizar link.");
+        }
+
+        await connection.commit();
         return { success: true, message: "Regulação cadastrada com sucesso." };
+
     } catch (error) {
+        if (connection) await connection.rollback();
         console.error("Erro no cadastro:", error);
         return { success: false, message: "Erro ao cadastrar regulação.", error };
+    } finally {
+        if (connection) connection.release();
     }
 }
 

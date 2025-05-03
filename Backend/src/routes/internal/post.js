@@ -8,9 +8,11 @@ import RegulacaoDestino from '../../functions/InsertSQL/RegulacaoDestino.js';
 import Desfecho from '../../functions/InsertSQL/Desfecho.js';
 import LoginUser from '../../functions/SelectSQL/LoginUser.js';
 import Transporte from '../../functions/InsertSQL/Transporte.js';
+import Observacao from '../../functions/InsertSQL/Observacao.js';
 
 import { Externa_NovaRegulacao_Obstetrica } from '../../functions/InsertSQL/Externas/Externa_NovaRegulacao.js';
 import Externa_RegulacaoMedica_01 from '../../functions/InsertSQL/Externas/Externa_RegulacaoMedica.js';
+
 
 const routerPost = express.Router();
 
@@ -138,6 +140,20 @@ routerPost.post('/Desfecho', async (req, res) => {
   try {
     const formData = convertObjectToUpperCase(req.body);
     const result = await Desfecho(formData);
+    handleResponse(res, result);
+  } catch (error) {
+    console.error('Erro no processamento:', error);
+  res.status(500).json({
+    message: 'Erro interno do servidor',
+    error: 'Erro desconhecido',
+  });
+  }
+});
+
+routerPost.post('/Observacao', async (req, res) => {
+  try {
+    const formData = convertObjectToUpperCase(req.body);
+    const result = await Observacao(formData);
     handleResponse(res, result);
   } catch (error) {
     console.error('Erro no processamento:', error);

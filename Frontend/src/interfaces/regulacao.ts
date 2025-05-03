@@ -26,6 +26,8 @@ export interface RegulacaoData extends NovaRegulacaoData {
   regulador_final?: string;
   justificativa_neg?: string;
   tempo_espera?: number | null;
+  preparo_leito?: string;
+  observacaoTexto?: string;
 }
 
 export interface RegulacaoAprovadaData extends RegulacaoData{

@@ -1,6 +1,6 @@
 import React from 'react';
 import { LuArrowDownWideNarrow, LuArrowUpNarrowWide } from "react-icons/lu";
-import { FcExpired } from "react-icons/fc";
+import { FcExpired, FcInfo } from "react-icons/fc";
 import { RegulacaoData } from '../../../../interfaces/Regulacao';
 import { formatDateTimeToPtBr } from '../../../../functions/DateTimes';
 
@@ -16,6 +16,7 @@ interface TabelaRegulacoesProps {
   handleSort: (key: keyof RegulacaoData) => void;
   fetchPDF: (datetime: string, filename: string) => void;
   handleAtualizarRegulacao?: (regulacao: RegulacaoData) => void;
+  handleOpenModalObservacao: (regulacao: RegulacaoData) => void;
 }
 
 const TabelaRegulacoesNegadas: React.FC<TabelaRegulacoesProps> = ({
@@ -25,7 +26,8 @@ const TabelaRegulacoesNegadas: React.FC<TabelaRegulacoesProps> = ({
   handleSort,
   fetchPDF,
   handleAtualizarRegulacao,
-  UserData
+  UserData,
+  handleOpenModalObservacao
 }) => {
   return (
     <table className='Table-Regulacoes'>
@@ -87,10 +89,13 @@ const TabelaRegulacoesNegadas: React.FC<TabelaRegulacoesProps> = ({
             </span>
           </th>
 
-        {UserData.tipo != 'MEDICO' && (
-        <th>Renovar</th>
-        )}
-         
+          {UserData.tipo != 'MEDICO' && (
+            <th>Renovar</th>
+          )}
+
+          {(UserData?.tipo === 'GERENCIA' || UserData?.tipo === 'AUX. ADMINISTRATIVO') && (
+            <th>Obs.</th>
+          )}
 
         </tr>
       </thead>
@@ -111,17 +116,41 @@ const TabelaRegulacoesNegadas: React.FC<TabelaRegulacoesProps> = ({
             <td className='col-Text'>{regulacao.justificativa_neg}</td>
 
             {UserData.tipo != 'MEDICO' && (
-            <td>
-              <label className="td-Icons">
-                <FcExpired 
-                  className='Icon Icons-Regulacao' 
-                  onClick={() => handleAtualizarRegulacao && handleAtualizarRegulacao(regulacao)} 
-                  title='Atualizar/Renovar Regulação' 
-                />
-              </label>
-            </td>
+              <td>
+                <label className="td-Icons">
+                  <FcExpired
+                    className='Icon Icons-Regulacao'
+                    onClick={() => handleAtualizarRegulacao && handleAtualizarRegulacao(regulacao)}
+                    title='Atualizar/Renovar Regulação'
+                  />
+                </label>
+              </td>
             )}
-            
+
+            {(UserData?.tipo === 'GERENCIA' || UserData?.tipo === 'AUX. ADMINISTRATIVO') && (
+              <>
+                <td>
+                  {regulacao.num_regulacao && (
+                    <label
+                      className='td-Icons'
+                      onClick={() => handleOpenModalObservacao(regulacao)}
+                      title={regulacao.observacaoTexto ? regulacao.observacaoTexto : 'Inserir Observação'}
+                    >
+                      {regulacao.observacaoTexto
+                        ? (
+                          <span className="texto-resumo">
+                            {regulacao.observacaoTexto.slice(0, 20)}...
+                          </span>
+                        )
+                        : <FcInfo
+                          className='Icon Icons-Regulacao'
+                        />}
+                    </label>
+                  )}
+                </td>
+              </>
+            )}
+
           </tr>
         ))}
       </tbody>

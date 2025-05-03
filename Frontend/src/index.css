@@ -544,3 +544,11 @@ input:disabled {
 .Central{
   justify-content: center;
 }
+
+
+
+
+/*TEXTOS*/
+.texto-resumo:hover{
+  cursor: pointer;
+}

@@ -16,10 +16,13 @@ import {
 /*IMPORT INTERFACES*/
 import { UserData } from '../../../../interfaces/UserData';
 import { RegulacaoData } from '../../../../interfaces/Regulacao';
+import { DadosPacienteData } from "../../../../interfaces/DadosPaciente.ts";
 
 /*IMPORT COMPONENTS*/
+import Modal from '../../../Modal/Modal.tsx';
 import HeaderFiltroInterno from '../../../Header/Header_Lista_Interna';
 import TabelaRegulacoesInternas from '../../Tabela de Regulacoes/Internas/TabelaRegulacoesInternas';
+import ObservacoesNAC from '../../../Obsevacoes/ObervacoesNAC.tsx';
 
 /*IMPORT FUNCTIONS*/
 import { getUserData } from '../../../../functions/storageUtils';
@@ -42,9 +45,12 @@ interface Props {
 
 const ListaRegulacoesInternas: React.FC<Props> = ({ title }) => {
   const [userData, setUserData] = useState<UserData | null>(null);
+  const [dadosPaciente, setDadosPaciente] = useState<DadosPacienteData | null>(null);
   const [serverTime, setServerTime] = useState("");
   const [regulacoes, setRegulacoes] = useState<RegulacaoData[]>([]); // Tipo do estado
+  const [currentRegulacao, setCurrentRegulacao] = useState<RegulacaoData | null>(null);
   const location = useLocation();
+  const [ShowModalObservacao, setShowModalObservacao] = useState(false);
 
   /*DIALOG EXCLUIR REGULACAO*/
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
@@ -217,6 +223,34 @@ const ListaRegulacoesInternas: React.FC<Props> = ({ title }) => {
   };
 
 
+
+  const handleOpenModalObservacao = (regulacao: RegulacaoData) => {
+    setCurrentRegulacao(regulacao);
+
+    // Supondo que você já tenha todos os dados necessários na `regulacao` ou possa fazer algum processamento:
+    const dados: DadosPacienteData = {
+      nome_paciente: regulacao.nome_paciente,
+      num_prontuario: regulacao.num_prontuario,
+      num_regulacao: regulacao.num_regulacao,
+      un_origem: regulacao.un_origem,
+      un_destino: regulacao.un_destino,
+      preparo_leito: regulacao.preparo_leito,
+      id_regulacao: regulacao.id_regulacao,
+      nome_regulador_medico: regulacao.nome_regulador_medico, // Certifique-se de que este campo possui um valor válido
+    };
+
+    setDadosPaciente(dados);
+    setShowModalObservacao(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModalObservacao(false);
+    fetchRegulacoes();
+    //window.location.reload(); // Recarregar a página ao fechar o modal
+  };
+
+
+
   //EXIBE O SNACKBAR
   const showSnackbar = (
     message: string,
@@ -262,6 +296,7 @@ const ListaRegulacoesInternas: React.FC<Props> = ({ title }) => {
                 serverTime={serverTime}
                 IconOpcoes='normais'
                 UserData={userData}
+                handleOpenModalObservacao={handleOpenModalObservacao}
               />
             )}
           </div>
@@ -275,6 +310,19 @@ const ListaRegulacoesInternas: React.FC<Props> = ({ title }) => {
           <button className='button-pagination' onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}>Próxima</button>
         </div>
       </div>
+
+
+
+      {ShowModalObservacao && currentRegulacao && dadosPaciente && (
+        <Modal show={ShowModalObservacao} onClose={handleCloseModal} title='Observação'>
+          <ObservacoesNAC
+            dadosPaciente={currentRegulacao}
+            observacaoTexto={currentRegulacao.observacaoTexto ?? ''}
+            onClose={handleCloseModal} // Fecha o modal
+            showSnackbar={showSnackbar} // Passa o controle do Snackbar
+          />
+        </Modal>
+      )}
 
 
       <Dialog
