@@ -24,7 +24,7 @@ interface TabelaRegulacoesProps {
   handleOpenModalDesfecho?: (regulacao: RegulacaoAprovadaData) => void;
   IconOpcoes: 'normais' | 'expiradas' | 'medico' | 'desfecho';
   UserData: UserData;
-  handleOpenModalObservacao: (regulacao: RegulacaoData) => void;
+  handleOpenModalObservacao?: (regulacao: RegulacaoData) => void;
 }
 
 const TabelaRegulacoesInternas: React.FC<TabelaRegulacoesProps> = ({
@@ -267,7 +267,7 @@ const TabelaRegulacoesInternas: React.FC<TabelaRegulacoesProps> = ({
                   {regulacao.num_regulacao && (
                     <label
                       className='td-Icons'
-                      onClick={() => handleOpenModalObservacao(regulacao)}
+                      onClick={() => handleOpenModalObservacao && handleOpenModalObservacao(regulacao)}
                       title={regulacao.observacaoTexto ? regulacao.observacaoTexto : 'Inserir Observação'}
                     >
                       {regulacao.observacaoTexto

@@ -8,13 +8,13 @@ import { Snackbar, Alert } from '@mui/material';
 import Modal from '../Modal/Modal';
 import Desfecho from '../Desfecho/Desfecho';
 import TabelaRegulacoesInternas from '../Regulacoes/Tabela de Regulacoes/Internas/TabelaRegulacoesInternas.tsx';
+import ObservacoesNAC from '../Obsevacoes/ObervacoesNAC.tsx';
 
 /*IMPORT INTERFACES*/
 import { UserData } from '../../interfaces/UserData.ts';
-import { RegulacaoAprovadaData } from '../../interfaces/Regulacao.ts';
+import { RegulacaoData, RegulacaoAprovadaData } from '../../interfaces/Regulacao.ts';
 import { StatusRegulacaoData } from '../../interfaces/Status.ts';
 import { DadosPacienteData } from "../../interfaces/DadosPaciente.ts";
-import { RegulacaoData } from '../../interfaces/Regulacao';
 
 /*IMPORT FUNCTIONS*/
 import { getUserData } from '../../functions/storageUtils.ts';
@@ -47,12 +47,13 @@ const ListarDesfecho: React.FC = () => {
   const [userData, setUserData] = useState<UserData | null>(null);
   const location = useLocation();
   const [dadosPaciente, setDadosPaciente] = useState<DadosPacienteData | null>(null);
-  const [currentRegulacao, setCurrentRegulacao] = useState<RegulacaoAprovadaData | null>(null);
+  const [currentRegulacao, setCurrentRegulacao] = useState<RegulacaoData | null>(null);
   const [serverTime, setServerTime] = useState("");
   const [formData, setFormData] = useState<SearchForm>(initialForm);
 
   /*MODAIS*/
   const [ShowModalDesfecho, setShowModalDesfecho] = useState(false);
+  const [ShowModalObservacao, setShowModalObservacao] = useState(false);
 
   /*FILTROS*/
   const [statusRegulacao, setStatusRegulacao] = useState<StatusRegulacaoData[]>([]);
@@ -219,9 +220,29 @@ const ListarDesfecho: React.FC = () => {
     setShowModalDesfecho(true);
   };
 
+  const handleOpenModalObservacao = (regulacao: RegulacaoData) => {
+    setCurrentRegulacao(regulacao);
+
+    // Supondo que você já tenha todos os dados necessários na `regulacao` ou possa fazer algum processamento:
+    const dados: DadosPacienteData = {
+      nome_paciente: regulacao.nome_paciente,
+      num_prontuario: regulacao.num_prontuario,
+      num_regulacao: regulacao.num_regulacao,
+      un_origem: regulacao.un_origem,
+      un_destino: regulacao.un_destino,
+      preparo_leito: regulacao.preparo_leito,
+      id_regulacao: regulacao.id_regulacao,
+      nome_regulador_medico: regulacao.nome_regulador_medico, // Certifique-se de que este campo possui um valor válido
+    };
+
+    setDadosPaciente(dados);
+    setShowModalObservacao(true);
+  };
+
   const handleCloseModal = () => {
     handleSearch();
     setShowModalDesfecho(false);
+    setShowModalObservacao(false);
 
     //window.location.reload(); // Recarregar a página ao fechar o modal
   };
@@ -330,6 +351,7 @@ const ListarDesfecho: React.FC = () => {
                 handleOpenModalDesfecho={handleOpenModalDesfecho}
                 IconOpcoes='desfecho'
                 UserData={userData}
+                handleOpenModalObservacao={handleOpenModalObservacao}
               />
             )}
           </div>
@@ -353,6 +375,19 @@ const ListarDesfecho: React.FC = () => {
           />
         </Modal>
       )}
+
+
+      {ShowModalObservacao && currentRegulacao && dadosPaciente && (
+        <Modal show={ShowModalObservacao} onClose={handleCloseModal} title='Observação'>
+          <ObservacoesNAC
+            dadosPaciente={currentRegulacao}
+            observacaoTexto={currentRegulacao.observacaoTexto ?? ''}
+            onClose={handleCloseModal} // Fecha o modal
+            showSnackbar={showSnackbar} // Passa o controle do Snackbar
+          />
+        </Modal>
+      )}
+
 
       <Snackbar
         open={snackbarOpen}

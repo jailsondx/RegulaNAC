@@ -72,7 +72,7 @@
 /* Responsividade para telas acima de 1160px (desktop) */
 @media screen and (min-width: 1160px) {
   body{
-    font-size: 12px;
+    font-size: 11px;
   }
   .Mobile{
     display: none;
@@ -82,7 +82,7 @@
 /* Responsividade para telas de até 1159px (tablets) */
 @media screen and (min-width: 901px) and (max-width: 1159px) {
   body{
-    font-size: 12px;
+    font-size: 10px;
   }
   .Component {
     margin-left: 50px;
@@ -95,7 +95,7 @@
 /* Responsividade para telas de até 1159px (tablets grandes) */
 @media screen and (min-width: 701px) and (max-width: 900px) {
   body{
-    font-size: 10px;
+    font-size: 8px;
   }
   .Component {
     margin-left: 200px;
