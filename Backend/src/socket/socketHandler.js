@@ -18,7 +18,7 @@ export default (server) => {
     const ultimaMensagemPorSocket = {};
 
     io.on('connection', (socket) => {
-        console.log(`🟢 Socket conectado: ${socket.id}`);
+        //console.log(`🟢 Socket conectado: ${socket.id}`);
 
         // Envia confirmação de conexão
         socket.emit('conexao-estabelecida', 'Conexão WebSocket bem-sucedida!');
@@ -30,7 +30,7 @@ export default (server) => {
             socket.join(sala);
             usuarios[socket.id] = { username, sala };
 
-            console.log(`👤 Usuário "${username}" entrou na sala "${sala}"`);
+            //console.log(`👤 Usuário "${username}" entrou na sala "${sala}"`);
         });
 
         // Recebimento de mensagem
@@ -59,11 +59,11 @@ export default (server) => {
 
             if (user) {
                 socket.leave(user.sala);
-                console.log(`🔴 Usuário "${user.username}" saiu da sala "${user.sala}"`);
+                //console.log(`🔴 Usuário "${user.username}" saiu da sala "${user.sala}"`);
                 delete usuarios[socket.id];
                 delete ultimaMensagemPorSocket[socket.id];
             } else {
-                console.log(`🔴 Socket desconectado: ${socket.id}`);
+                //console.log(`🔴 Socket desconectado: ${socket.id}`);
             }
         });
 

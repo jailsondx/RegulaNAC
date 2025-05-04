@@ -1,5 +1,6 @@
 import React, { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 import axios from 'axios';
+import { v4 as uuidv4 } from 'uuid';
 import { AxiosError } from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Snackbar, Alert } from '@mui/material';
@@ -263,6 +264,7 @@ const NovaRegulacao: React.FC = () => {
         nome_responsavel_nac: userData?.nome,
         data_hora_solicitacao_02: formData.data_hora_solicitacao_01,
         link: uploadedFilename,
+        idempotency_key: uuidv4(), // 🔑 Aqui está a mágica
       };
 
       const response = await axios.post(

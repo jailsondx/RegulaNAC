@@ -10,6 +10,8 @@ async function NovaRegulacao(FormData) {
 
     let connection;
 
+    console.log("Idempotency key recebida:", FormData.idempotency_key, "Para Nova Regulação:", FormData.num_regulacao);
+
     try {
         // Define valores padrões
         FormData.qtd_solicitacoes = 1;
@@ -19,12 +21,28 @@ async function NovaRegulacao(FormData) {
         const origemEspecial = FormData.un_origem === 'CENTRO CIRURGICO';
         const destinoEspecial = ['CLINICA CIRURGICA I', 'CLINICA CIRURGICA II'].includes(FormData.un_destino);
 
-        FormData.status_regulacao = (origemEspecial || destinoEspecial)
+        FormData.status_regulacao = (origemEspecial && destinoEspecial)
             ? NovoStatus_Especial
             : NovoStatus_Padrao;
 
         connection = await DBconnection.getConnection();
         await connection.beginTransaction();
+
+        // Checa se já existe essa operação (idempotente)
+        const [checkIdempotency] = await connection.query(
+            `SELECT id_regulacao FROM ${DBtable} WHERE idempotency_key = ?`,
+            [FormData.idempotency_key]
+        );
+        
+        if (checkIdempotency.length > 0) {
+            await connection.rollback();
+            return {
+            success: false,
+            message: "Regulação registrada, verifique as listas.",
+            id_regulacao: checkIdempotency[0].id_regulacao,
+            };
+        }
+  
 
         // Verifica a permissão do usuário
         const [rowsUserPrivilege] = await connection.query(
@@ -44,8 +62,12 @@ async function NovaRegulacao(FormData) {
         // Insere os dados
         const [insertResult] = await connection.query(
             `INSERT INTO ${DBtable} SET ?`,
-            [FormData]
-        );
+            [{
+              ...FormData,
+              idempotency_key: FormData.idempotency_key,
+            }]
+          );
+          
 
         if (insertResult.affectedRows === 0) {
             throw new Error("Erro ao inserir regulação.");
