@@ -205,7 +205,7 @@ const ListaRegulacoesInternas: React.FC<Props> = ({ title }) => {
         data: { id_user, id_regulacao }
       });
 
-      if (response.data.success) {
+      if (response.status === 200) {
         showSnackbar('Regulação apagada com sucesso!', 'success');
         setRegulacoes(prev => prev.filter(reg => reg.id_regulacao !== id_regulacao));
         setFilteredRegulacoes(prev => prev.filter(reg => reg.id_regulacao !== id_regulacao));

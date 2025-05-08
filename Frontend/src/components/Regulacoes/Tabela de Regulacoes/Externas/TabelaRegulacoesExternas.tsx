@@ -2,7 +2,7 @@ import React from 'react';
 import { LuArrowDownWideNarrow, LuArrowUpNarrowWide } from "react-icons/lu";
 import { FcFullTrash, FcInspection, FcExpired, FcApproval, FcBadDecision, FcNews } from "react-icons/fc";
 //import TimeTracker from "../../TimeTracker/TimeTracker.tsx";
-import { RegulacaoAprovadaData } from '../../../../interfaces/Regulacao.ts';
+import { RegulacaoData } from '../../../../interfaces/Regulacao.ts';
 import { RegulacaoExternaData } from '../../../../interfaces/RegulacaoExtena.ts';
 import { useNavigate } from 'react-router-dom';
 
@@ -23,7 +23,7 @@ interface TabelaRegulacoesProps {
   handleAtualizarRegulacao?: (regulacao: RegulacaoExternaData) => void;
   handleOpenModalApproved?: (regulacao: RegulacaoExternaData) => void;
   handleOpenModalDeny?: (regulacao: RegulacaoExternaData) => void;
-  handleOpenModalDesfecho?: (regulacao: RegulacaoAprovadaData) => void;
+  handleOpenModalDesfecho?: (regulacao: RegulacaoData) => void;
   IconOpcoes: 'normais' | 'expiradas' | 'medico' | 'desfecho';
   UserData: UserData;
 }
@@ -173,7 +173,7 @@ const TabelaRegulacoesExternas: React.FC<TabelaRegulacoesProps> = ({
                   <label className="td-Icons">
                     <FcNews
                       className="Icon Icons-Regulacao"
-                      //onClick={() => handleOpenModalDesfecho && handleOpenModalDesfecho(regulacao as RegulacaoAprovadaData)} 
+                      //onClick={() => handleOpenModalDesfecho && handleOpenModalDesfecho(regulacao as RegulacaoData)} 
                       title="Aprovar"
                     />
                   </label></td>

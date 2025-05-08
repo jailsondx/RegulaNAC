@@ -5,20 +5,20 @@ import { useLocation } from 'react-router-dom';
 import { Snackbar, Alert } from '@mui/material';
 
 /*IMPORT COMPONENTS*/
-import Modal from '../Modal/Modal';
-import Desfecho from '../Desfecho/Desfecho';
+import Modal from '../Modal/Modal.tsx';
+import Desfecho from './Desfecho.tsx';
 import TabelaRegulacoesInternas from '../Regulacoes/Tabela de Regulacoes/Internas/TabelaRegulacoesInternas.tsx';
 import ObservacoesNAC from '../Obsevacoes/ObervacoesNAC.tsx';
 
 /*IMPORT INTERFACES*/
 import { UserData } from '../../interfaces/UserData.ts';
-import { RegulacaoData, RegulacaoAprovadaData } from '../../interfaces/Regulacao.ts';
+import { RegulacaoData } from '../../interfaces/Regulacao.ts';
 import { StatusRegulacaoData } from '../../interfaces/Status.ts';
 import { DadosPacienteData } from "../../interfaces/DadosPaciente.ts";
 
 /*IMPORT FUNCTIONS*/
 import { getUserData } from '../../functions/storageUtils.ts';
-import { getDay, getMonth, getYear } from '../../functions/DateTimes';
+import { getDay, getMonth, getYear } from '../../functions/DateTimes.ts';
 
 /*IMPORT CSS*/
 import './Desfecho.css';
@@ -43,7 +43,7 @@ const initialForm: SearchForm = {
   statusRegulacao: "",
 };
 
-const ListarDesfecho: React.FC = () => {
+const ListaDesfechos: React.FC = () => {
   const [userData, setUserData] = useState<UserData | null>(null);
   const location = useLocation();
   const [dadosPaciente, setDadosPaciente] = useState<DadosPacienteData | null>(null);
@@ -57,7 +57,7 @@ const ListarDesfecho: React.FC = () => {
 
   /*FILTROS*/
   const [statusRegulacao, setStatusRegulacao] = useState<StatusRegulacaoData[]>([]);
-  const [filteredRegulacoes, setFilteredRegulacoes] = useState<RegulacaoAprovadaData[]>([]);
+  const [filteredRegulacoes, setFilteredRegulacoes] = useState<RegulacaoData[]>([]);
 
   /*PAGINAÇÃO*/
   const [currentPage, setCurrentPage] = useState(1);
@@ -201,7 +201,7 @@ const ListarDesfecho: React.FC = () => {
     }
   };
 
-  const handleOpenModalDesfecho = (regulacao: RegulacaoAprovadaData) => {
+  const handleOpenModalDesfecho = (regulacao: RegulacaoData) => {
     setCurrentRegulacao(regulacao);
 
     // Supondo que você já tenha todos os dados necessários na `regulacao` ou possa fazer algum processamento:
@@ -317,7 +317,7 @@ const ListarDesfecho: React.FC = () => {
                   value={formData.statusRegulacao}
                   onChange={handleInputChange}
                 >
-                  <option value="">Selecione uma status</option>
+                  <option value="">Selecione um status</option>
                   {statusRegulacao.map((statusRegulacao) => (
                     <option key={statusRegulacao.value} value={statusRegulacao.value}>
                       {statusRegulacao.label}
@@ -406,4 +406,4 @@ const ListarDesfecho: React.FC = () => {
   );
 };
 
-export default ListarDesfecho;
+export default ListaDesfechos;

@@ -11,7 +11,7 @@ import UpdateSenha from '../components/Usuarios/Update Senha/UpdateSenha';
 import AtualizaRegulacao from '../components/Regulacoes/Atualiza Regulacao/AtualizaRegulacao';
 import Login from '../components/Usuarios/Login/Login';
 
-import ListarDesfecho from '../components/Desfecho/ListarDesfechos';
+import ListarDesfecho from '../components/Desfecho/ListaDesfechos';
 import RelatoriosRegulacao from '../components/Relatorios/Internas/RelatoriosRegulacao';
 import RelatorioEfetivacao from '../components/Relatorios/Internas/RelatorioEfetivacao';
 import RelatorioTempoEfetivacao from '../components/Relatorios/Internas/RelatorioTempoEfetivacao';

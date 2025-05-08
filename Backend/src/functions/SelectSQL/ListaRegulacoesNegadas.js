@@ -23,7 +23,7 @@ async function ListaRegulacoesNegadas() {
                 rm.justificativa_neg,
                 obs.observacaoTexto
             FROM ${DBtable} r
-            JOIN ${DBtableRegulacaoMedico} rm ON r.id_regulacao = rm.id_regulacao
+            LEFT JOIN ${DBtableRegulacaoMedico} rm ON r.id_regulacao = rm.id_regulacao
             LEFT JOIN ${DBtableObservacao} obs ON r.id_regulacao = obs.id_regulacao
             WHERE r.status_regulacao LIKE ?
         `, ["NEGADO"]);

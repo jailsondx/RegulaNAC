@@ -1,14 +1,10 @@
 import { DBconnection } from "../Controller/connection.js";
-import VerificaStatus from "../Checked/VerificaStatus.js";
 import UpdateStatus from "../UpdateSQL/UpdateStatus.js";
 
 async function Desfecho(FormData) {
     const DBtable = "desfecho";
     const DBtableUsuarios = "usuarios";
-    //const DesfechoForcado = FormData.forcado;
-    //const StatusAtual = "ABERTO - APROVADO - AGUARDANDO DESFECHO";
     const NovoStatus = "FECHADO";
-    //const msgError = "Desfecho não pode ser atualizado; Status atual é: ";
 
     let connection;
 
@@ -30,16 +26,6 @@ async function Desfecho(FormData) {
         if (userType === "MEDICO") {
             throw new Error(`Usuário ID: ${FormData.id_user} não tem permissão para desfecho.`);
         }
-
-        // Se não for desfecho forçado, verifica o status
-        /*
-        if (!DesfechoForcado) {
-            const statusCheck = await VerificaStatus(FormData.id_regulacao, StatusAtual, msgError);
-            if (!statusCheck.success) {
-                throw new Error(statusCheck.message);
-            }
-        }
-        */
 
         // Verifica se já existe um desfecho para a regulação
         const [existing] = await connection.query(

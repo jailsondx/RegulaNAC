@@ -1,6 +1,6 @@
 import React from 'react';
 import { LuArrowDownWideNarrow, LuArrowUpNarrowWide } from "react-icons/lu";
-import { FcExpired, FcInfo } from "react-icons/fc";
+import { FcExpired, FcInfo, FcFullTrash } from "react-icons/fc";
 import { RegulacaoData } from '../../../../interfaces/Regulacao';
 import { formatDateTimeToPtBr } from '../../../../functions/DateTimes';
 
@@ -15,6 +15,7 @@ interface TabelaRegulacoesProps {
   sortConfig: { key: keyof RegulacaoData; direction: "asc" | "desc" } | null;
   handleSort: (key: keyof RegulacaoData) => void;
   fetchPDF: (datetime: string, filename: string) => void;
+  confirmarExclusao?: (id_user: string, id_regulacao: number | null) => void;
   handleAtualizarRegulacao?: (regulacao: RegulacaoData) => void;
   handleOpenModalObservacao: (regulacao: RegulacaoData) => void;
 }
@@ -25,6 +26,7 @@ const TabelaRegulacoesNegadas: React.FC<TabelaRegulacoesProps> = ({
   sortConfig,
   handleSort,
   fetchPDF,
+  confirmarExclusao,
   handleAtualizarRegulacao,
   UserData,
   handleOpenModalObservacao
@@ -123,6 +125,14 @@ const TabelaRegulacoesNegadas: React.FC<TabelaRegulacoesProps> = ({
                     onClick={() => handleAtualizarRegulacao && handleAtualizarRegulacao(regulacao)}
                     title='Atualizar/Renovar Regulação'
                   />
+
+                  {UserData.tipo === 'GERENCIA' && (
+                    <FcFullTrash
+                      className='Icon Icons-Regulacao'
+                      onClick={() => confirmarExclusao && confirmarExclusao(UserData.id_user, regulacao.id_regulacao)}
+                      title='Apagar Regulação' />
+                  )}
+
                 </label>
               </td>
             )}

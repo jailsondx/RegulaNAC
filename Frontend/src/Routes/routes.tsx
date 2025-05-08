@@ -11,7 +11,7 @@ import UpdateSenha from '../components/Usuarios/Update Senha/UpdateSenha';
 import AtualizaRegulacao from '../components/Regulacoes/Atualiza Regulacao/AtualizaRegulacao';
 import Login from '../components/Usuarios/Login/Login';
 
-import ListarDesfecho from '../components/Desfecho/ListarDesfechos';
+import ListarDesfecho from '../components/Desfecho/ListaDesfechos';
 import RelatoriosRegulacao from '../components/Relatorios/Internas/RelatoriosRegulacao';
 import RelatorioEfetivacao from '../components/Relatorios/Internas/RelatorioEfetivacao';
 import RelatorioTempoEfetivacao from '../components/Relatorios/Internas/RelatorioTempoEfetivacao';
@@ -25,8 +25,10 @@ import Page_ListaRegulacoesMedicasInternas from '../Pages/Listas/Internas/Page_L
 import Page_ListaRegulacoesInternasAprovadas from '../Pages/Listas/Internas/Page_ListaRegulacoesAprovadas';
 import Page_ListaRegulacoesInternasPreAprovadas from '../Pages/Listas/Internas/Page_ListaRegulacoesPreAprovadas';
 import Page_ListaRegulacoesInternasNegadas from '../Pages/Listas/Internas/Page_ListaRegulacoesNegadas';
+import Page_ListaRegulacoesInternasFinalizadas from '../Pages/Listas/Internas/Page_ListaRegulacoesFinalizadas';
 //PAGES RELATORIOS
 import Page_RelatorioGeral from '../Pages/Relatorios/Page_RelatorioGeral';
+import Page_Auditoria from '../Pages/Auditoria/Page_Auditoria';
 
 //PAGES EXTERNAS
 import Page_Obstetrica from '../Pages/Nova Regulação/Regulação Externa/Page_Obstetrica';
@@ -34,6 +36,7 @@ import Page_AVC from '../Pages/Nova Regulação/Regulação Externa/Page_AVC';
 import Page_ListaRegulacoesExternas from '../Pages/Listas/Externas/Page_ListaRegulacoesExternas';
 import Page_ListaRegulacoesMedicasExternas from '../Pages/Listas/Externas/Page_ListaRegulacoesMedicasExternas';
 import Page_ListaRegulacoesExternasAprovadas from '../Pages/Listas/Externas/Page_ListaRegulacoesExternasAprovadas';
+
 
 
 
@@ -83,9 +86,11 @@ const Rotas: React.FC = () => {
           <Route path="RegulacoesAprovadas" element={<Page_ListaRegulacoesInternasAprovadas />} />
           <Route path="RegulacoesPreAprovadas" element={<Page_ListaRegulacoesInternasPreAprovadas />} />
           <Route path="RegulacoesNegadas" element={<Page_ListaRegulacoesInternasNegadas />} />
+          <Route path="RegulacoesFinalizadas" element={<Page_ListaRegulacoesInternasFinalizadas />} />
 
           {/* Essas são todas as páginas de relatórios internos */}
           <Route path="RelatorioGeral" element={<Page_RelatorioGeral />} />
+          <Route path="Auditoria" element={<Page_Auditoria />} />
 
           {/* Essas são todas as páginas de regulaçao externa */}
           <Route path="RegulacaoExObstetrica" element={<Page_Obstetrica />} />

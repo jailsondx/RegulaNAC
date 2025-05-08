@@ -1,6 +1,5 @@
 import React from "react";
 import { DadosPacienteData } from "../../interfaces/DadosPaciente";
-import { LuSquareUserRound } from "react-icons/lu";
 
 import './DadosPaciente.css';
 
@@ -10,7 +9,9 @@ const DadosPaciente: React.FC<{ dadosPaciente: DadosPacienteData }> = ({ dadosPa
     num_prontuario,
     num_regulacao,
     un_origem,
+    nome_colaborador_origem,
     un_destino,
+    nome_colaborador_destino,
     num_leito,
     preparo_leito,
     nome_regulador_medico,
@@ -21,29 +22,47 @@ const DadosPaciente: React.FC<{ dadosPaciente: DadosPacienteData }> = ({ dadosPa
       <div className="DadosPaciente-Border">
 
         <div className="Div-IconePaciente">
-          <LuSquareUserRound className="IconePaciente"/>
+          <img src="/DadosPaciente/paciente.png" className="IconePaciente" />
+          <div>
+            <label><p>{nome_paciente}</p></label>
+            <label><b>Prontuário:</b> {num_prontuario}</label>
+            <label><b>Regulação:</b> {num_regulacao}</label>
+          </div>
         </div>
 
         <div className="Div-DadosPaciente">
-          <label className="NomePaciente">{nome_paciente}</label>
           <div className="InformacoesPaciente">
             <span>
-              <label>Prontuário: {num_prontuario}</label>
-              <label>Regulação: {num_regulacao}</label>
+              <label><b>Un. Origem:</b> {un_origem}</label>
+              {nome_colaborador_origem && (
+                <label><b>Colaborador:</b> {nome_colaborador_origem}</label>
+              )}
             </span>
 
-            <label>Un. Origem: {un_origem}</label>
+
             <span>
-              <label>Un. Destino: {un_destino}</label>
-              <label>Leito: {num_leito}</label>
-              <label>Preparo Leito: {preparo_leito}</label>
+              <label><b>Un. Destino:</b> {un_destino}</label>
+              {nome_colaborador_destino && (
+                <label><b>Colaborador:</b> {nome_colaborador_destino}</label>
+              )}
             </span>
-          </div>
-          <div>
-            <label>Médico Regulador: {nome_regulador_medico}</label>
-          </div>
-        </div>
 
+
+            <div>
+              {num_leito && (
+                <label><b>Leito:</b> {num_leito}</label>
+              )}
+              {preparo_leito && (
+                <label><b>Preparo Leito:</b> {preparo_leito}</label>
+              )}
+
+            </div>
+
+            <label><b>Médico Regulador:</b> {nome_regulador_medico}</label>
+
+          </div>
+
+        </div>
       </div>
     </>
 

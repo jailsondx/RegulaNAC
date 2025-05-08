@@ -11,10 +11,11 @@ import { getUserData } from '../../functions/storageUtils';
 import { UserData } from '../../interfaces/UserData';
 import { DadosPacienteData } from '../../interfaces/DadosPaciente';
 import { DesfechoData, DesfechoOptions } from '../../interfaces/Desfecho';
+import { RegulacaoData } from '../../interfaces/Regulacao';
 
 /*IMPORT JSON*/
-import desfecho from '../../JSON/desfecho.json';
 import desfechoCancelado from '../../JSON/desfechoCancelado.json'; // JSON com as opções do segundo select
+
 
 /*IMPORT VARIAVEIS DE AMBIENTE*/
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
@@ -23,6 +24,7 @@ interface Props {
     dadosPaciente: DadosPacienteData;
     forcado: boolean;
     onClose: () => void;
+    desfechoExistente?: RegulacaoData | null; // <- NOVA PROP
     showSnackbar: (message: string, severity: 'success' | 'error' | 'info' | 'warning') => void;
 }
 
@@ -34,45 +36,37 @@ const initialFormData: DesfechoData = {
     fastmedic: null
 };
 
-const Desfecho: React.FC<Props> = ({ dadosPaciente, forcado, onClose, showSnackbar }) => {
+const Fastmedic: React.FC<Props> = ({ dadosPaciente, forcado, onClose, showSnackbar, desfechoExistente }) => {
     const [userData, setUserData] = useState<UserData | null>(null);
     const [formData, setFormData] = useState<DesfechoData>({ ...initialFormData, forcado });
-    const [desfechoCanceladoSelecionado, setDesfechoCanceladoSelecionado] = useState<string>(''); // Estado do segundo select
-    const [optionsDesfecho, setOptionsDesfecho] = useState<DesfechoOptions[]>([]);
+    const [desfechoCanceladoSelecionado, setDesfechoCanceladoSelecionado] = useState<string>('');
     const [optionsDesfechoCancelado, setOptionsDesfechoCancelado] = useState<DesfechoOptions[]>([]);
 
     useEffect(() => {
         setUserData(getUserData());
-        setOptionsDesfecho(desfecho);
         setOptionsDesfechoCancelado(desfechoCancelado);
-    }, [dadosPaciente]);
+
+        if (desfechoExistente) {
+            setFormData(prev => ({
+                ...prev,
+                desfecho: desfechoExistente.desfecho || '',
+                fastmedic: desfechoExistente.fastmedic ?? '',
+            }));
+        }
+    }, [desfechoExistente, dadosPaciente]);
 
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>): void => {
         const { name, value } = e.target;
-        const fieldValue: string | boolean = value;
+        setFormData(prev => ({ ...prev, [name]: value }));
 
-        setFormData((prevState) => ({
-            ...prevState,
-            [name]: fieldValue,
-        }));
-
-        // Resetar o segundo select caso o desfecho mude
         if (name === 'desfecho' && value !== 'CANCELADO') {
             setDesfechoCanceladoSelecionado('');
         }
     };
 
     const validateForm = (): boolean => {
-        if (!formData.desfecho.trim()) {
-            showSnackbar('Desfecho é obrigatório!', 'warning');
-            return false;
-        }
-        if (formData.desfecho === 'CANCELADO' && !desfechoCanceladoSelecionado) {
-            showSnackbar('O motivo do cancelamento é obrigatório!', 'warning');
-            return false;
-        }
         if (!formData.fastmedic || !formData.fastmedic.trim()) {
-            showSnackbar('Alocação de Leito é obrigatório!', 'warning');
+            showSnackbar('Alocação de Leito é obrigatória!', 'warning');
             return false;
         }
         return true;
@@ -83,22 +77,18 @@ const Desfecho: React.FC<Props> = ({ dadosPaciente, forcado, onClose, showSnackb
         if (!validateForm()) return;
 
         try {
-            const desfechoFinal =
-                formData.desfecho === 'CANCELADO' ? `CANCELADO - ${desfechoCanceladoSelecionado}` : formData.desfecho;
-
             const dataToSubmit = {
-                ...formData,
                 id_user: userData?.id_user,
                 id_regulacao: dadosPaciente.id_regulacao,
-                desfecho: desfechoFinal,
+                fastmedic: formData.fastmedic
             };
 
-            const response = await axios.post(`${NODE_URL}/api/internal/post/Desfecho`, dataToSubmit);
+            const response = await axios.put(`${NODE_URL}/api/internal/put/Fastmedic`, dataToSubmit);
             if (response.status === 200) {
-                showSnackbar(response.data?.message || 'Desfecho registrado com sucesso!', 'success');
+                showSnackbar(response.data?.message || 'Fastmedic registrado com sucesso!', 'success');
                 onClose();
             } else {
-                showSnackbar(response.data?.message || 'Erro ao registrar desfecho', 'error');
+                showSnackbar(response.data?.message || 'Erro ao registrar Fastmedic', 'error');
             }
         } catch (error) {
             if (error instanceof AxiosError && error.response) {
@@ -111,23 +101,20 @@ const Desfecho: React.FC<Props> = ({ dadosPaciente, forcado, onClose, showSnackb
 
     return (
         <>
-            <div>
-                <DadosPaciente dadosPaciente={dadosPaciente} />
-            </div>
+            <DadosPaciente dadosPaciente={dadosPaciente} />
 
             <form onSubmit={handleSubmit}>
                 <div className="div-Desfecho">
                     <div className='Desfecho-line-2'>
                         <div className="Desfecho-line">
                             <label>Desfecho:</label>
-                            <select name="desfecho" value={formData.desfecho} onChange={handleChange} required>
-                                <option value="">Selecione o Desfecho</option>
-                                {optionsDesfecho.map((option) => (
-                                    <option key={option.value} value={option.value}>
-                                        {option.label}
-                                    </option>
-                                ))}
-                            </select>
+                            <input
+                                type='text'
+                                name="desfecho"
+                                value={formData.desfecho}
+                                disabled
+                            >
+                            </input>
                         </div>
 
                         {formData.desfecho === 'CANCELADO' && (
@@ -137,7 +124,7 @@ const Desfecho: React.FC<Props> = ({ dadosPaciente, forcado, onClose, showSnackb
                                     name="desfechoCancelado"
                                     value={desfechoCanceladoSelecionado}
                                     onChange={(e) => setDesfechoCanceladoSelecionado(e.target.value)}
-                                    required
+                                    disabled
                                 >
                                     <option value="">Selecione o motivo</option>
                                     {optionsDesfechoCancelado.map((option) => (
@@ -152,7 +139,8 @@ const Desfecho: React.FC<Props> = ({ dadosPaciente, forcado, onClose, showSnackb
 
                     <div className="Desfecho-line w50">
                         <label>Leito Alocado:</label>
-                        <select name="fastmedic"
+                        <select
+                            name="fastmedic"
                             value={formData.fastmedic ?? ''}
                             onChange={handleChange}
                             required
@@ -165,10 +153,10 @@ const Desfecho: React.FC<Props> = ({ dadosPaciente, forcado, onClose, showSnackb
                 </div>
 
                 <p>*O desfecho irá encerrar essa regulação, essa ação não pode ser desfeita.</p>
-                <button type="submit">Cadastrar Desfecho</button>
+                <button type="submit">Cadastrar Alocação de Leito no Fastmedic</button>
             </form>
         </>
     );
 };
 
-export default Desfecho;
+export default Fastmedic;

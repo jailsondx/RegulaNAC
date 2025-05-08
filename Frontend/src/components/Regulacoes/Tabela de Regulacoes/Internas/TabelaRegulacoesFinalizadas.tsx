@@ -1,46 +1,38 @@
 import React from 'react';
 import { LuArrowDownWideNarrow, LuArrowUpNarrowWide } from "react-icons/lu";
+import { MdCheckCircle, MdCancel } from "react-icons/md";
+import { FcInfo } from "react-icons/fc";
+
+
+/*IMPORT INTERFACE*/
+import { UserData } from '../../../../interfaces/UserData.ts';
 import { RegulacaoData } from '../../../../interfaces/Regulacao';
 
 interface TabelaRegulacoesProps {
+  UserData: UserData | null;
   currentRegulacoes: RegulacaoData[];
   selectedColumn: keyof RegulacaoData | null;
   sortConfig: { key: keyof RegulacaoData; direction: "asc" | "desc" } | null;
   handleSort: (key: keyof RegulacaoData) => void;
   fetchPDF: (datetime: string, filename: string) => void;
+  handleOpenModalFastmedic: (regulacao: RegulacaoData) => void;
+  handleOpenModalObservacao: (regulacao: RegulacaoData) => void;
 }
 
 const TabelaRegulacoesFinalizadas: React.FC<TabelaRegulacoesProps> = ({
+  UserData,
   currentRegulacoes,
   selectedColumn,
   sortConfig,
   handleSort,
   fetchPDF,
+  handleOpenModalFastmedic,
+  handleOpenModalObservacao
 }) => {
   return (
     <table className='Table-Regulacoes'>
       <thead>
         <tr>
-          <th className={`col-NomeRegNac clicked${selectedColumn === "nome_responsavel_nac" ? " selected" : ""}`} onClick={() => handleSort("nome_responsavel_nac")}>
-            <span>
-              <label>Regulador de Cadastro</label>
-              <label>{sortConfig?.key === "nome_responsavel_nac" ? (sortConfig.direction === "asc" ? <LuArrowUpNarrowWide /> : <LuArrowDownWideNarrow />) : ""}</label>
-            </span>
-          </th>
-
-          <th className={`col-NomeRegNac clicked${selectedColumn === "regulador_final" ? " selected" : ""}`} onClick={() => handleSort("regulador_final")}>
-            <span>
-              <label>Regulador Final</label>
-              <label>{sortConfig?.key === "regulador_final" ? (sortConfig.direction === "asc" ? <LuArrowUpNarrowWide /> : <LuArrowDownWideNarrow />) : ""}</label>
-            </span>
-          </th>
-
-          <th className={`col-NomeRegMedico clicked${selectedColumn === "nome_regulador_medico" ? " selected" : ""}`} onClick={() => handleSort("nome_regulador_medico")}>
-            <span>
-              <label>Médico Regulador</label>
-              <label>{sortConfig?.key === "nome_regulador_medico" ? (sortConfig.direction === "asc" ? <LuArrowUpNarrowWide /> : <LuArrowDownWideNarrow />) : ""}</label>
-            </span>
-          </th>
 
           <th className={`col-NumProntuario clicked${selectedColumn === "num_prontuario" ? " selected" : ""}`} onClick={() => handleSort("num_prontuario")}>
             <span>
@@ -60,6 +52,13 @@ const TabelaRegulacoesFinalizadas: React.FC<TabelaRegulacoesProps> = ({
             <span>
               <label>Num. Regulação</label>
               <label>{sortConfig?.key === "num_regulacao" ? (sortConfig.direction === "asc" ? <LuArrowUpNarrowWide /> : <LuArrowDownWideNarrow />) : ""}</label>
+            </span>
+          </th>
+
+          <th className={`col-NomeRegMedico clicked${selectedColumn === "nome_regulador_medico" ? " selected" : ""}`} onClick={() => handleSort("nome_regulador_medico")}>
+            <span>
+              <label>Médico Regulador</label>
+              <label>{sortConfig?.key === "nome_regulador_medico" ? (sortConfig.direction === "asc" ? <LuArrowUpNarrowWide /> : <LuArrowDownWideNarrow />) : ""}</label>
             </span>
           </th>
 
@@ -84,14 +83,17 @@ const TabelaRegulacoesFinalizadas: React.FC<TabelaRegulacoesProps> = ({
             </span>
           </th>
 
+          <th> Desfecho Forçado? </th>
+
+          <th> Obs. </th>
+
+          <th> Fastmedic </th>
+
         </tr>
       </thead>
       <tbody>
         {currentRegulacoes.map(regulacao => (
           <tr key={regulacao.id_regulacao}>
-            <td>{regulacao.nome_responsavel_nac}</td>
-            <td>{regulacao.regulador_final}</td>
-            <td>{regulacao.nome_regulador_medico}</td>
             <td>{regulacao.num_prontuario}</td>
             <td>
               <a onClick={() => fetchPDF(regulacao.data_hora_solicitacao_02, regulacao.link)}>
@@ -99,9 +101,57 @@ const TabelaRegulacoesFinalizadas: React.FC<TabelaRegulacoesProps> = ({
               </a>
             </td>
             <td>{regulacao.num_regulacao}</td>
+            <td>{regulacao.nome_regulador_medico}</td>
             <td>{regulacao.un_origem}</td>
             <td>{regulacao.un_destino}</td>
             <td>{regulacao.desfecho}</td>
+            <td>{regulacao.forcado ? 'SIM' : 'NÃO'}</td>
+            {UserData?.tipo != 'MEDICO' && (
+              <>
+                <td>
+                  {regulacao.num_regulacao && (
+                    <label
+                      className='td-Icons'
+                      onClick={() => handleOpenModalObservacao(regulacao)}
+                      title={regulacao.observacaoTexto ? regulacao.observacaoTexto : 'Inserir Observação'}
+                    >
+                      {regulacao.observacaoTexto
+                        ? (
+                          <span className="texto-resumo">
+                            {regulacao.observacaoTexto.slice(0, 20)}...
+                          </span>
+                        )
+                        : <FcInfo
+                          className='Icon Icons-Regulacao'
+                        />}
+                    </label>
+                  )}
+                </td>
+
+                <td>
+                  <label
+                    onClick={() => handleOpenModalFastmedic(regulacao)}
+                    className="td-Icons"
+                    title="Fastmedic"
+                  >
+                    {regulacao.fastmedic === "SIM" ? (
+                      <MdCheckCircle 
+                        className='Icon Icons-Regulacao' 
+                        color="green" 
+                        title='Leito Alocado Fastmedic = SIM' 
+                      />
+                    ) : (
+                      <MdCancel 
+                        className='Icon Icons-Regulacao' 
+                        color="red" 
+                        title='Leito Alocado Fastmedic = NÃO' 
+                      />
+                    )}
+                  </label>
+                </td>
+
+              </>
+            )}
           </tr>
         ))}
       </tbody>

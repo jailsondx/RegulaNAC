@@ -6,22 +6,22 @@ import { useNavigate } from 'react-router-dom';
 
 /*IMPORT INTERFACE*/
 import { UserData } from '../../../../interfaces/UserData.ts';
-import { RegulacaoAprovadaData } from '../../../../interfaces/Regulacao';
+import { RegulacaoData } from '../../../../interfaces/Regulacao';
 
 interface TabelaRegulacoesAprovadasProps {
   UserData: UserData | null;
-  currentRegulacoes: RegulacaoAprovadaData[];
-  selectedColumn: keyof RegulacaoAprovadaData | null;
-  sortConfig: { key: keyof RegulacaoAprovadaData; direction: "asc" | "desc" } | null;
-  handleSort: (key: keyof RegulacaoAprovadaData) => void;
+  currentRegulacoes: RegulacaoData[];
+  selectedColumn: keyof RegulacaoData | null;
+  sortConfig: { key: keyof RegulacaoData; direction: "asc" | "desc" } | null;
+  handleSort: (key: keyof RegulacaoData) => void;
   fetchPDF: (datetime: string, filename: string) => void;
   confirmarExclusao?: (id_user: string, id_regulacao: number | null) => void;
-  handleOpenModalOrigem: (regulacao: RegulacaoAprovadaData) => void;
-  handleOpenModalDestino: (regulacao: RegulacaoAprovadaData) => void;
-  handleOpenModalTransporte01: (regulacao: RegulacaoAprovadaData) => void;
-  handleOpenModalTransporte02: (regulacao: RegulacaoAprovadaData) => void;
-  handleOpenModalDesfecho: (regulacao: RegulacaoAprovadaData) => void;
-  handleOpenModalObservacao: (regulacao: RegulacaoAprovadaData) => void;
+  handleOpenModalOrigem: (regulacao: RegulacaoData) => void;
+  handleOpenModalDestino: (regulacao: RegulacaoData) => void;
+  handleOpenModalTransporte01: (regulacao: RegulacaoData) => void;
+  handleOpenModalTransporte02: (regulacao: RegulacaoData) => void;
+  handleOpenModalDesfecho: (regulacao: RegulacaoData) => void;
+  handleOpenModalObservacao: (regulacao: RegulacaoData) => void;
 }
 
 const TabelaRegulacoesAprovadas: React.FC<TabelaRegulacoesAprovadasProps> = ({
@@ -145,7 +145,7 @@ const TabelaRegulacoesAprovadas: React.FC<TabelaRegulacoesAprovadasProps> = ({
             <td>{regulacao.un_destino}</td>
             <td className="col-Prioridade">{regulacao.num_leito}</td>
             <td>{regulacao.nome_regulador_medico}</td>
-            <td>{new Date(regulacao.data_hora_regulacao_medico).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</td>
+            <td>{new Date(regulacao.data_hora_regulacao_medico ?? '').toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</td>
             <td>{regulacao.autorizacao}</td>
 
             {UserData?.tipo !== "MEDICO" && (
@@ -210,7 +210,7 @@ const TabelaRegulacoesAprovadas: React.FC<TabelaRegulacoesAprovadasProps> = ({
               </>
             )}
 
-            {(UserData?.tipo === 'GERENCIA' || UserData?.tipo === 'AUX. ADMINISTRATIVO') && (
+            {UserData?.tipo != 'MEDICO' && (
               <>
                 <td>
                   {regulacao.num_regulacao && (

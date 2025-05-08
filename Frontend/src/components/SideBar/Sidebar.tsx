@@ -133,6 +133,7 @@ const Sidebar: React.FC = () => {
           <MenuLink to="/RegulacoesPreAprovadas" Icon={TiThumbsUp} label="Regulações Pré-Aprovadas" />
           <MenuLink to="/RegulacoesNegadas" Icon={TiThumbsDown} label="Regulações Negadas" />
           <MenuLink to="/Desfechos" Icon={TiHomeOutline} label="Gerar Desfecho" />
+          <MenuLink to="/RegulacoesFinalizadas" Icon={TiClipboard} label="Regulações Finalizadas" />
           <MenuLink to="/ListaRegulacoes24" Icon={TiClipboard} label="Regulações +24hrs" />
           {/* Botão para abrir o menu de relatórios (apenas para gerência) */}
           {tipo === 'GERENCIA' && (
@@ -165,6 +166,7 @@ const Sidebar: React.FC = () => {
       <MenuLink to="/RelatorioGeral" Icon={TiUpload} label="Relatório Geral" />
       <MenuLink to="/RelatorioEfetivacao" Icon={TiUpload} label="Relatório de Efetivação" />
       <MenuLink to="/RelatorioTempoEfetivacao" Icon={TiUpload} label="Relatório de Tempo de Efetivação" />
+      <MenuLink to="/Auditoria" Icon={TiUpload} label="Auditoria" />
     </>
   );
 

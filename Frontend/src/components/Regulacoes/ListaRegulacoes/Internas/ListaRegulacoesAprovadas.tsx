@@ -12,7 +12,7 @@ import {
 
 /*IMPORT INTERFACES*/
 import { UserData } from '../../../../interfaces/UserData.ts';
-import { RegulacaoAprovadaData } from '../../../../interfaces/Regulacao.ts';
+import { RegulacaoData } from '../../../../interfaces/Regulacao.ts';
 import { DadosPacienteData } from "../../../../interfaces/DadosPaciente.ts";
 
 /*IMPORT COMPONENTS*/
@@ -42,9 +42,9 @@ interface Props {
 
 const RegulacoesAprovadas: React.FC<Props> = ({ title }) => {
   const [userData, setUserData] = useState<UserData | null>(null);
-  const [regulacoes, setRegulacoes] = useState<RegulacaoAprovadaData[]>([]); // Tipo do estado
+  const [regulacoes, setRegulacoes] = useState<RegulacaoData[]>([]); // Tipo do estado
   const [dadosPaciente, setDadosPaciente] = useState<DadosPacienteData | null>(null);
-  const [currentRegulacao, setCurrentRegulacao] = useState<RegulacaoAprovadaData | null>(null);
+  const [currentRegulacao, setCurrentRegulacao] = useState<RegulacaoData | null>(null);
 
   /*DIALOG EXCLUIR REGULACAO*/
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
@@ -61,12 +61,12 @@ const RegulacoesAprovadas: React.FC<Props> = ({ title }) => {
   /*FILTROS*/
   const [unidadeOrigem, setUnidadeOrigem] = useState('');
   const [unidadeDestino, setUnidadeDestino] = useState('');
-  const [filteredRegulacoes, setFilteredRegulacoes] = useState<RegulacaoAprovadaData[]>([]);
+  const [filteredRegulacoes, setFilteredRegulacoes] = useState<RegulacaoData[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
 
   /*ORDENAÇÃO*/
-  const [sortConfig, setSortConfig] = useState<{ key: keyof RegulacaoAprovadaData; direction: "asc" | "desc" } | null>(null);
-  const [selectedColumn, setSelectedColumn] = useState<keyof RegulacaoAprovadaData | null>(null);
+  const [sortConfig, setSortConfig] = useState<{ key: keyof RegulacaoData; direction: "asc" | "desc" } | null>(null);
+  const [selectedColumn, setSelectedColumn] = useState<keyof RegulacaoData | null>(null);
 
   /*PAGINAÇÃO*/
   const [currentPage, setCurrentPage] = useState(1);  // Página atual
@@ -138,7 +138,7 @@ const RegulacoesAprovadas: React.FC<Props> = ({ title }) => {
   };
 
   //CONFIGURA A ORDENAÇÃO
-  const handleSort = (key: keyof RegulacaoAprovadaData) => {
+  const handleSort = (key: keyof RegulacaoData) => {
     let direction: "asc" | "desc" = "asc";
     if (sortConfig?.key === key && sortConfig.direction === "asc") {
       direction = "desc";
@@ -174,7 +174,7 @@ const RegulacoesAprovadas: React.FC<Props> = ({ title }) => {
         data: { id_user, id_regulacao }
       });
 
-      if (response.data.success) {
+      if (response.status === 200) {
         showSnackbar('Regulação apagada com sucesso!', 'success');
         setRegulacoes(prev => prev.filter(reg => reg.id_regulacao !== id_regulacao));
         setFilteredRegulacoes(prev => prev.filter(reg => reg.id_regulacao !== id_regulacao));
@@ -198,7 +198,7 @@ const RegulacoesAprovadas: React.FC<Props> = ({ title }) => {
 
   /*MODAIS*/
 
-  const handleOpenModalOrigem = (regulacao: RegulacaoAprovadaData) => {
+  const handleOpenModalOrigem = (regulacao: RegulacaoData) => {
     setCurrentRegulacao(regulacao);
     // Supondo que você já tenha todos os dados necessários na `regulacao` ou possa fazer algum processamento:
     const dados: DadosPacienteData = {
@@ -214,7 +214,7 @@ const RegulacoesAprovadas: React.FC<Props> = ({ title }) => {
     setShowModalOrigem(true);
   };
 
-  const handleOpenModalDestino = (regulacao: RegulacaoAprovadaData) => {
+  const handleOpenModalDestino = (regulacao: RegulacaoData) => {
     setCurrentRegulacao(regulacao);
 
     // Supondo que você já tenha todos os dados necessários na `regulacao` ou possa fazer algum processamento:
@@ -233,7 +233,7 @@ const RegulacoesAprovadas: React.FC<Props> = ({ title }) => {
     setShowModalDestino(true);
   };
 
-  const handleOpenModalTransporte01 = (regulacao: RegulacaoAprovadaData) => {
+  const handleOpenModalTransporte01 = (regulacao: RegulacaoData) => {
     setCurrentRegulacao(regulacao);
 
     // Supondo que você já tenha todos os dados necessários na `regulacao` ou possa fazer algum processamento:
@@ -252,7 +252,7 @@ const RegulacoesAprovadas: React.FC<Props> = ({ title }) => {
     setShowModalTransporte01(true);
   };
 
-  const handleOpenModalTransporte02 = (regulacao: RegulacaoAprovadaData) => {
+  const handleOpenModalTransporte02 = (regulacao: RegulacaoData) => {
     setCurrentRegulacao(regulacao);
 
     // Supondo que você já tenha todos os dados necessários na `regulacao` ou possa fazer algum processamento:
@@ -271,7 +271,7 @@ const RegulacoesAprovadas: React.FC<Props> = ({ title }) => {
     setShowModalTransporte02(true);
   };
 
-  const handleOpenModalDesfecho = (regulacao: RegulacaoAprovadaData) => {
+  const handleOpenModalDesfecho = (regulacao: RegulacaoData) => {
     setCurrentRegulacao(regulacao);
 
     // Supondo que você já tenha todos os dados necessários na `regulacao` ou possa fazer algum processamento:
@@ -290,7 +290,7 @@ const RegulacoesAprovadas: React.FC<Props> = ({ title }) => {
     setShowModalDesfecho(true);
   };
 
-  const handleOpenModalObservacao = (regulacao: RegulacaoAprovadaData) => {
+  const handleOpenModalObservacao = (regulacao: RegulacaoData) => {
     setCurrentRegulacao(regulacao);
 
     // Supondo que você já tenha todos os dados necessários na `regulacao` ou possa fazer algum processamento:

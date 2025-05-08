@@ -2,18 +2,30 @@ import { DBconnection } from "../Controller/connection.js"; // Importa apenas o 
 
 async function PesquisaPaciente(nomePaciente, numProntuario, numRegulacao, statusRegulacao) {
     const DBtable = "regulacao";
-    const DBtable2 = "regulacao_medico";
+    const DBtableRM = "regulacao_medico";
+    const DBtableSO = "setor_origem";
+    const DBtableSD = "setor_destino";
 
     try {
         const connection = await DBconnection.getConnection();
 
         // Iniciar a query básica
-        let query = `SELECT
+        let query = `  SELECT 
                             r.*,
-                            rm.num_leito
-                            FROM ${DBtable} r
-                            LEFT JOIN ${DBtable2} rm ON r.id_regulacao = rm.id_regulacao 
-                            WHERE 1=1`; // "WHERE 1=1" permite adicionar filtros dinamicamente
+                            rm.nome_regulador_medico, 
+                            rm.data_hora_regulacao_medico, 
+                            rm.num_leito, 
+                            rm.autorizacao,
+                            so.preparo_leito,
+                            so.nome_colaborador AS nome_colaborador_origem,
+                            sd.nome_colaborador AS nome_colaborador_destino,
+                            obs.observacaoTexto
+                        FROM regulacao r
+                            LEFT JOIN regulacao_medico rm ON r.id_regulacao = rm.id_regulacao
+                            LEFT JOIN setor_origem so ON r.id_regulacao = so.id_regulacao
+                            LEFT JOIN setor_destino sd ON r.id_regulacao = sd.id_regulacao
+                            LEFT JOIN observacao obs ON r.id_regulacao = obs.id_regulacao
+                        WHERE 1=1`; // "WHERE 1=1" permite adicionar filtros dinamicamente
         let queryParams = []; // Array para os parâmetros da query
 
         // Adicionar filtros condicionais se os parâmetros não forem vazios

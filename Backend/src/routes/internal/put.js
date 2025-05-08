@@ -4,6 +4,7 @@ import AtualizaRegulacao from '../../functions/UpdateSQL/AtualizaRegulacao.js';
 import updateTransporte from '../../functions/UpdateSQL/Transporte.js';
 import EditaRegulacao from '../../functions/UpdateSQL/EditaRegulacao.js';
 import UpdateSenha from '../../functions/UpdateSQL/UpdateSenhaUser.js';
+import updateFastmedic from '../../functions/UpdateSQL/UpdateFastmedic.js';
 
 const routerPut = express.Router();
 
@@ -57,6 +58,20 @@ routerPut.put('/Transporte', async (req, res) => {
   try {
     const formData = convertObjectToUpperCase(req.body); // Converte os dados para maiúsculas
     const result = await updateTransporte(formData);
+    handleResponse(res, result);
+  } catch (error) {
+    console.error('Erro no processamento:', error);
+  res.status(500).json({
+    message: 'Erro interno do servidor',
+    error: 'Erro desconhecido',
+  });
+  }
+});
+
+routerPut.put('/Fastmedic', async (req, res) => {
+  try {
+    const formData = convertObjectToUpperCase(req.body); // Converte os dados para maiúsculas
+    const result = await updateFastmedic(formData);
     handleResponse(res, result);
   } catch (error) {
     console.error('Erro no processamento:', error);

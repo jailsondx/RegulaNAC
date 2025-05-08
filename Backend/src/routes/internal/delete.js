@@ -10,6 +10,7 @@ routerDelete.delete('/Regulacao', async (req, res) => {
   try {
     const { id_user, id_regulacao } = req.body;
     const result = await ApagarRegulacao(id_user, id_regulacao);
+    console.log(result);
     handleResponse(res, result);
   } catch (error) {
     console.error('Erro no processamento:', error);

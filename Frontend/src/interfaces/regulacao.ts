@@ -22,22 +22,17 @@ export interface NovaRegulacaoData {
 
 export interface RegulacaoData extends NovaRegulacaoData {
   id_regulacao: number;
-  desfecho: string;
-  regulador_final?: string;
+  data_hora_regulacao_medico?: string;
   justificativa_neg?: string;
   tempo_espera?: number | null;
   preparo_leito?: string;
+  num_leito?: number;
+  desfecho?: string;
+  forcado?: string;
   observacaoTexto?: string;
-}
-
-export interface RegulacaoAprovadaData extends RegulacaoData{
-  num_leito: number;
-  data_hora_regulacao_medico: string;
-  preparo_leito: string;
+  fastmedic?: string;
   autorizacao?: string;
 }
-
-
 
 
 
