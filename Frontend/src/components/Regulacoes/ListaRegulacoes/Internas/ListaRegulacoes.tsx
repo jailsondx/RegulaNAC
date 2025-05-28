@@ -148,7 +148,7 @@ const ListaRegulacoesInternas: React.FC<Props> = ({ title }) => {
         (r) =>
           r.nome_paciente?.toLowerCase().includes(searchTerm.toLowerCase()) ||
           r.num_prontuario?.toString().includes(searchTerm) ||
-          r.id_regulacao?.toString().includes(searchTerm)
+          r.num_regulacao?.toString().includes(searchTerm)
       );
     }
 

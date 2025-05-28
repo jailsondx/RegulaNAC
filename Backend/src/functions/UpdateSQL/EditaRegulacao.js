@@ -5,8 +5,6 @@ import { DBconnection } from "../Controller/connection.js";
 async function EditaRegulacao(FormData) {
     const DBtable = 'regulacao';
     const DBtableUsuarios = 'usuarios';
-    //const StatusAtual = 'ABERTO - AGUARDANDO AVALIACAO';
-    //const msgError = 'Regulação não pode ser atualizada; Status atual é: ';
 
     const connection = await DBconnection.getConnection();
 
@@ -30,25 +28,6 @@ async function EditaRegulacao(FormData) {
             await connection.rollback();
             return { success: false, message: "Usuário não tem permissão para realizar esta ação." };
         }
-
-
-        
-        /*
-        // Verifica status atual da regulação
-        const statusCheck = await VerificaStatus(FormData.id_regulacao, StatusAtual, msgError);
-        if (!statusCheck.success) {
-            await connection.rollback();
-            return { success: false, message: statusCheck.message };
-        }
-
-        // Verifica se o num_regulacao já está em uso por outro registro
-        const regulacaoCheck = await verificaRegulacao(FormData.num_regulacao, FormData.id_regulacao);
-        if (!regulacaoCheck.success) {
-            await connection.rollback();
-            return { success: false, message: regulacaoCheck.message };
-        }
-        */
-        
         
 
         // Atualiza os dados

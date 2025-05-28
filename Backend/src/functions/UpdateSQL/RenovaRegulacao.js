@@ -2,11 +2,10 @@ import { DBconnection } from "../Controller/connection.js"; // Importa apenas o 
 //import VerificaStatus from "../Checked/VerificaStatus.js";
 import UpdateLinkDOC from "./UpdateLinkTransactSQL.js";
 
-async function AtualizaRegulacao(FormData) {
+async function RenovaRegulacao(FormData) {
     const DBtable = 'regulacao';
     const DBtableUsuarios = 'usuarios';
-
-    console.log('Atualizando regulação com os seguintes dados:', FormData);
+    const NovoStatus = 'ABERTO - AGUARDANDO AVALIACAO';
 
     const connection = await DBconnection.getConnection();
 
@@ -48,6 +47,8 @@ async function AtualizaRegulacao(FormData) {
             return { success: false, message: "Regulação não encontrada." };
         }
 
+        const qtdSolicitacoes = valueRequests[0].qtd_solicitacoes;
+
         // Atualiza os dados da regulação
         await connection.query(`
             UPDATE ${DBtable} 
@@ -55,13 +56,17 @@ async function AtualizaRegulacao(FormData) {
                 id_user = ?,
                 data_hora_solicitacao_02 = ?, 
                 data_hora_acionamento_medico = ?, -- mesmo valor da solicitação
-                nome_responsavel_nac = ?
+                nome_responsavel_nac = ?, 
+                qtd_solicitacoes = ?, 
+                status_regulacao = ?
             WHERE id_regulacao = ?
         `, [
             FormData.id_user,
             FormData.data_hora_solicitacao_02,
             FormData.data_hora_solicitacao_02,
             FormData.nome_responsavel_nac,
+            qtdSolicitacoes + 1,
+            NovoStatus,
             FormData.id_regulacao
         ]);
 
@@ -89,4 +94,4 @@ async function AtualizaRegulacao(FormData) {
     }
 }
 
-export default AtualizaRegulacao;
+export default RenovaRegulacao;

@@ -2,6 +2,7 @@ import React from "react";
 import { DadosPacienteData } from "../../interfaces/DadosPaciente";
 
 import './DadosPaciente.css';
+import { removerText } from "../../functions/RemoveText";
 
 const DadosPaciente: React.FC<{ dadosPaciente: DadosPacienteData }> = ({ dadosPaciente }) => {
   const {
@@ -15,7 +16,10 @@ const DadosPaciente: React.FC<{ dadosPaciente: DadosPacienteData }> = ({ dadosPa
     num_leito,
     preparo_leito,
     nome_regulador_medico,
+    status_regulacao,
   } = dadosPaciente;
+
+  const ajustedStatus = removerText(status_regulacao || '');
 
   return (
     <>
@@ -32,6 +36,11 @@ const DadosPaciente: React.FC<{ dadosPaciente: DadosPacienteData }> = ({ dadosPa
 
         <div className="Div-DadosPaciente">
           <div className="InformacoesPaciente">
+            <span>
+              <label className="statusRegulacao">{ajustedStatus}</label>
+            </span>
+          
+
             <span>
               <label><b>Un. Origem:</b> {un_origem}</label>
               {nome_colaborador_origem && (

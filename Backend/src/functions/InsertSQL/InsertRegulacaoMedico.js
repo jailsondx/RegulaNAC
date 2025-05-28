@@ -1,3 +1,5 @@
+//ESSA FUNÇÃO É CHAMADA DENTRO DA NOVAREGULACAO.JS E É CHAMADA SE A ORIGEM E DESTINO FOREM VALORES ESPECIAIS DEFINIDOS NA FUNÇÃO PAI
+
 async function InsertRegulacaoMedico(id_regulacao, id_user, connection) {
     const DBtable = "regulacao_medico";
 

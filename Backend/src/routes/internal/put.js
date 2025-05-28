@@ -1,6 +1,7 @@
 import express from 'express';
 import { convertObjectToUpperCase } from '../../functions/Manipulation/ObjectUpperCase.js';
 import AtualizaRegulacao from '../../functions/UpdateSQL/AtualizaRegulacao.js';
+import RenovaRegulacao from '../../functions/UpdateSQL/RenovaRegulacao.js';
 import updateTransporte from '../../functions/UpdateSQL/Transporte.js';
 import EditaRegulacao from '../../functions/UpdateSQL/EditaRegulacao.js';
 import UpdateSenha from '../../functions/UpdateSQL/UpdateSenhaUser.js';
@@ -29,7 +30,28 @@ routerPut.put('/UpdateSenha', async (req, res) => {
 routerPut.put('/AtualizaRegulacao', async (req, res) => {
   try {
     const formData = req.body; // Corpo da requisição
-    const result = await AtualizaRegulacao(formData);
+    let result;
+
+    if(formData.status_regulacao.includes('ABERTO - APROVADO')){
+      result = await AtualizaRegulacao(formData);
+    } else {
+      result = await RenovaRegulacao(formData);
+    }
+  
+    handleResponse(res, result);
+  } catch (error) {
+    console.error('Erro no processamento:', error);
+  res.status(500).json({
+    message: 'Erro interno do servidor',
+    error: 'Erro desconhecido',
+  });
+  }
+});
+
+routerPut.put('/RenovaRegulacao', async (req, res) => {
+  try {
+    const formData = req.body; // Corpo da requisição
+    const result = await RenovaRegulacao(formData);
     handleResponse(res, result);
   } catch (error) {
     console.error('Erro no processamento:', error);

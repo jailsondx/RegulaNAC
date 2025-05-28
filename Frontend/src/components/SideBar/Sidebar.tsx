@@ -20,6 +20,9 @@ const Sidebar: React.FC = () => {
   const [showReportMenu, setShowReportMenu] = useState(false);
   // Estado para alternar o menu de solicitações externas
   const [showExternalMenu, setShowExternalMenu] = useState(false);
+  
+  const [selectedUserType, setSelectedUserType] = useState<string>(''); // Novo estado para o tipo de usuário selecionado
+
 
   // Efeito: Aplica o tema no body da página
   useEffect(() => {
@@ -43,6 +46,7 @@ const Sidebar: React.FC = () => {
     };
 
     setIconUser(iconMap[userData.tipo] || '/IconsUser/icon-anonimous.png');
+    setSelectedUserType(userData.tipo); // Define o tipo de usuário selecionado inicialmente
   }, [userData]);
 
   // Função para alternar o tema
@@ -75,9 +79,10 @@ const Sidebar: React.FC = () => {
     if (!userData) return null;
 
     const { tipo, permissao } = userData;
+    const tipoExibido = selectedUserType || tipo;
 
     // Se for médico
-    if (tipo === 'MEDICO-TESTE') {
+    if (tipoExibido === 'MEDICO-TESTE') {
       // Médico comum
       return (
         <>
@@ -96,7 +101,7 @@ const Sidebar: React.FC = () => {
     }
 
     // Se for médico
-    if (tipo === 'MEDICO') {
+    if (tipoExibido === 'MEDICO') {
       // Médico comum
       return (
         <>
@@ -112,7 +117,7 @@ const Sidebar: React.FC = () => {
 
 
     // Se for consulta
-    if (tipo === 'CONSULTA') {
+    if (tipoExibido === 'CONSULTA') {
       // Médico comum
       return (
         <>
@@ -124,7 +129,7 @@ const Sidebar: React.FC = () => {
     }
 
     // Se for administrativo ou gerência
-    if (tipo === 'AUX. ADMINISTRATIVO' || tipo === 'GERENCIA') {
+    if (tipoExibido === 'AUX. ADMINISTRATIVO' || tipoExibido === 'GERENCIA') {
       return (
         <>
           <MenuLink to="/NovaRegulacao" Icon={TiBusinessCard} label="Nova Regulação" />
@@ -136,7 +141,7 @@ const Sidebar: React.FC = () => {
           <MenuLink to="/RegulacoesFinalizadas" Icon={TiClipboard} label="Regulações Finalizadas" />
           <MenuLink to="/ListaRegulacoes24" Icon={TiClipboard} label="Regulações +24hrs" />
           {/* Botão para abrir o menu de relatórios (apenas para gerência) */}
-          {tipo === 'GERENCIA' && (
+          {tipoExibido === 'GERENCIA' && (
             <MenuButton onClick={() => { setShowReportMenu(true); setShowExternalMenu(false); }} Icon={TiUpload} label="Relatórios" />
           )}
           <hr />
@@ -144,12 +149,6 @@ const Sidebar: React.FC = () => {
           {/* Botão para abrir o menu de solicitações externas */}
           <MenuButton onClick={() => { setShowExternalMenu(true); setShowReportMenu(false); }} Icon={TiContacts} label="Solicitações de Origem Externa" />
 
-          {/* Acesso a regulações médicas internas só para gerência */}
-          {tipo === 'GERENCIA' && (
-            <>
-              <MenuLink to="/RegulacaoMedica" Icon={TiHeartHalfOutline} label="Regulação Interna Pendente de Autorização" />
-            </>
-          )}
           <hr />
           <MenuLink to="/Login" Icon={TiExportOutline} label="Sair" />
         </>
@@ -182,6 +181,12 @@ const Sidebar: React.FC = () => {
     </>
   );
 
+
+    // Se os dados do usuário ainda não estiverem carregados, mostra um "Carregando..."
+    if (!userData) {
+      return <div>Carregando...</div>;  // Exibe um indicativo de carregamento enquanto os dados são obtidos
+    }
+
   // Renderização final
   return (
     <div className="sidebar">
@@ -196,8 +201,22 @@ const Sidebar: React.FC = () => {
             <label className="sidebar-Username">{userData?.login}</label>
             <label className="sidebar-Username">{userData?.nome}</label>
           </span>
-
         </div>
+
+         {/* Seleção de tipo de usuário (visível apenas para GERENCIA) */}
+          <div>
+            <label>Escolha o Tipo de Usuário</label>
+            <select
+              value={selectedUserType}
+              onChange={(e) => setSelectedUserType(e.target.value)}
+            >
+              <option value="MEDICO">Médico</option>
+              <option value="AUX. ADMINISTRATIVO">Auxiliar Administrativo</option>
+              <option value="GERENCIA">Gerência</option>
+              <option value="CONSULTA">Consulta</option>
+            </select>
+          </div>
+       
 
         <ul>
           {/* Mostra o menu correto dependendo do estado atual */}

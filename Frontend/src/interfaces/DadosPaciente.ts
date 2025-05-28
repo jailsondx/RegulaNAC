@@ -10,6 +10,7 @@ export interface DadosPacienteData {
     nome_colaborador_destino?: string;
     preparo_leito?: string;
     nome_regulador_medico: string;
+    status_regulacao?: string;
 };
 
 export interface DadosPacienteExternoData {
@@ -21,4 +22,5 @@ export interface DadosPacienteExternoData {
     un_origem: string;
     nome_regulador_medico?: string | null;
     vinculo?: string;
+    status_regulacao?: string;
 };

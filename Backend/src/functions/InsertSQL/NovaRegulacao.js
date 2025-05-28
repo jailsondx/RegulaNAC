@@ -10,8 +10,6 @@ async function NovaRegulacao(FormData) {
 
     let connection;
 
-    console.log("Idempotency key recebida:", FormData.idempotency_key, "Para Nova Regulação:", FormData.num_regulacao);
-
     try {
         // Define valores padrões
         FormData.qtd_solicitacoes = 1;
@@ -37,9 +35,9 @@ async function NovaRegulacao(FormData) {
         if (checkIdempotency.length > 0) {
             await connection.rollback();
             return {
-            success: false,
-            message: "Regulação registrada, verifique as listas.",
-            id_regulacao: checkIdempotency[0].id_regulacao,
+                success: false,
+                message: "Regulação registrada, verifique as listas.",
+                id_regulacao: checkIdempotency[0].id_regulacao,
             };
         }
   
@@ -51,12 +49,18 @@ async function NovaRegulacao(FormData) {
         );
 
         if (rowsUserPrivilege.length === 0) {
+            console.error(`Usuário não encontrado: ID ${FormData.id_user}`);
             throw new Error(`Usuário não encontrado: ID ${FormData.id_user}`);
         }
 
         const userType = rowsUserPrivilege[0].tipo;
         if (userType === "MEDICO") {
-            throw new Error(`Usuário ID ${FormData.id_user} não tem permissão para nova regulação.`);
+            console.error(`Usuário ID: ${FormData.id_user} sem permissão para Nova Regulação`);
+            await connection.rollback();
+            return {
+                success: false,
+                message: "Usuário não tem permissão para realizar esta ação.",
+            };
         }
 
         // Insere os dados
@@ -70,7 +74,11 @@ async function NovaRegulacao(FormData) {
           
 
         if (insertResult.affectedRows === 0) {
-            throw new Error("Erro ao inserir regulação.");
+            await connection.rollback();
+            return {
+                success: false,
+                message: "Erro ao inserir regulação - CODE R01."
+            };
         }
 
         const id_regulacao = insertResult.insertId;
@@ -80,14 +88,22 @@ async function NovaRegulacao(FormData) {
             //const InsertRegulacaoMedico = (await import("../InsertSQL/InsertRegulacaoMedico.js")).default;
             const medicoResult = await InsertRegulacaoMedico(id_regulacao, FormData.id_user, connection);
             if (!medicoResult.success) {
-                throw new Error(medicoResult.message);
+                await connection.rollback();
+                return {
+                    success: false,
+                    message: "Erro ao inserir regulação - CODE R02."
+                };
             }
         }
 
         // Atualiza o link do documento
         const updateLinkResult = await UpdateLinkDOC(FormData.num_regulacao, FormData.link, connection);
         if (!updateLinkResult.success) {
-            throw new Error(updateLinkResult.message || "Erro ao atualizar link.");
+            await connection.rollback();
+            return {
+                success: false,
+                message: updateLinkResult.message || "Erro ao atualizar PDF."
+            };
         }
 
         await connection.commit();
@@ -96,7 +112,11 @@ async function NovaRegulacao(FormData) {
     } catch (error) {
         if (connection) await connection.rollback();
         console.error("Erro no cadastro:", error);
-        return { success: false, message: "Erro ao cadastrar regulação.", error };
+        return { 
+            success: false,
+            message: "Erro ao cadastrar regulação.", 
+            error 
+        };
     } finally {
         if (connection) connection.release();
     }

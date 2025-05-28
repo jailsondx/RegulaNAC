@@ -217,6 +217,7 @@ const AtualizaRegulacao: React.FC = () => {
         num_prontuario: numProntuario, // Número do prontuário
         num_regulacao: dadosPaciente?.num_regulacao, // Número da regulação
         link: uploadedFilename,
+        status_regulacao: dadosPaciente?.status_regulacao, // Status da regulação
       };
 
       const response = await axios.put(`${NODE_URL}/api/internal/put/AtualizaRegulacao`, dataToSubmit);

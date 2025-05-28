@@ -44,8 +44,12 @@
     margin-left: 10px;
   }
 
-  .NomePaciente{
-    font-size: 14px;
+  .statusRegulacao{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    text-align: left;
+    font-weight: bold;
     margin-bottom: 5px;
   }
 
@@ -61,7 +65,7 @@
   .InformacoesPaciente div{
     display: flex;
     flex-direction: row;
-  justify-content: space-between;
+    justify-content: space-between;
     width: 95%;
   }
 
@@ -70,8 +74,11 @@
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
+    text-align: left;
     width: 95%;
   }
+
+
 
   .InformacoesPaciente label, .InformacoesPaciente div, .InformacoesPaciente span{
     margin-bottom: 5px;

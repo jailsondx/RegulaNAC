@@ -10,7 +10,7 @@
   --table-bg: #ecf0f1;
   --table-header-bg: #49798a;
   --table-header-selected: #024059;
-  --table-header-text-color: #b2bec3;
+  --table-header-text-color: whitesmoke;
   --table-hover-bg: #c7ecee;
   --table-border: #49798a;
 
@@ -417,11 +417,20 @@ input:disabled {
 
 .Table-Regulacoes {
   border: 1px solid var(--table-border);
+  border-radius: 8px;
   min-width: 70dvw;
   max-width: 70dvw;
   background-color: var(--table-bg);
   color: var(--text-color);
   text-transform: uppercase;
+}
+
+.Table-Regulacoes th:first-child {
+  border-radius: 8px 0 0 0; /* Cantos: superior-esquerdo, superior-direito, inferior-direito, inferior-esquerdo */
+}
+
+.Table-Regulacoes th:last-child {
+  border-radius: 0 8px 0 0; /* Cantos: superior-esquerdo, superior-direito, inferior-direito, inferior-esquerdo */
 }
 
 .Table-Regulacoes th {
