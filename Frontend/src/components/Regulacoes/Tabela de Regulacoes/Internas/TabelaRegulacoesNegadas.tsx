@@ -1,6 +1,6 @@
 import React from 'react';
 import { LuArrowDownWideNarrow, LuArrowUpNarrowWide } from "react-icons/lu";
-import { FcExpired, FcInfo, FcFullTrash } from "react-icons/fc";
+import { FcFullTrash } from "react-icons/fc";
 import { RegulacaoData } from '../../../../interfaces/Regulacao';
 import { formatDateTimeToPtBr } from '../../../../functions/DateTimes';
 
@@ -120,12 +120,14 @@ const TabelaRegulacoesNegadas: React.FC<TabelaRegulacoesProps> = ({
             {UserData.tipo != 'MEDICO' && (
               <td>
                 <label className="td-Icons">
-                  <FcExpired
-                    className='Icon Icons-Regulacao'
+                  <img
+                    src="/IconsTables/renew.png" 
+                    alt="Atualizar/Renovar Regulação" 
+                    className='Icon Icons-Regulacao Icon-Rotate'
+                    title="Atualizar/Renovar Regulação"
                     onClick={() => handleAtualizarRegulacao && handleAtualizarRegulacao(regulacao)}
-                    title='Atualizar/Renovar Regulação'
                   />
-
+                  
                   {UserData.tipo === 'GERENCIA' && (
                     <FcFullTrash
                       className='Icon Icons-Regulacao'
@@ -152,9 +154,13 @@ const TabelaRegulacoesNegadas: React.FC<TabelaRegulacoesProps> = ({
                             {regulacao.observacaoTexto.slice(0, 20)}...
                           </span>
                         )
-                        : <FcInfo
-                          className='Icon Icons-Regulacao'
-                        />}
+                        : <img
+                            src="/IconsTables/infor.png" 
+                            alt="Observação não inserida" 
+                            className='Icon Icons-Regulacao'
+                            title="Inserir Observação"
+                          />
+                        }
                     </label>
                   )}
                 </td>

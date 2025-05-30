@@ -87,6 +87,7 @@ export async function relatorioGeral(startDate, endDate) {
     const DBtableSetorDestino = 'setor_destino';
     const DBtableTransporte = 'transporte';
     const DBtableDesfecho = 'desfecho';
+    const DBtableObservacao = 'observacao';
 
     try {
         const connection = await DBconnection.getConnection();
@@ -102,6 +103,7 @@ export async function relatorioGeral(startDate, endDate) {
                 so.data_hora_comunicacao AS setorOrigem_data_hora_comunicacao,
                 so.preparo_leito AS setorOrigem_preparo_leito,
                 sd.nome_colaborador AS setorDestino_nome_colaborador,
+                sd.data_hora_comunicacao AS setorDestino_data_hora_comunicacao,
                 t.nome_colaborador AS transporte_nome_colaborador,
                 t.data_hora_acionamento AS transporte_data_hora_acionamento,
                 t.data_hora_chegada_origem AS transporte_data_hora_chegada_origem,
@@ -112,13 +114,17 @@ export async function relatorioGeral(startDate, endDate) {
                 t.justificativa_atraso_leito AS transporte_justificativa_atraso_leito,
                 t.observacao AS transporte_observacao,
                 d.desfecho, 
-                d.forcado
+                d.forcado,
+                d.fastmedic,
+                o.nome AS observacao_nome,
+                o.observacaoTexto
             FROM ${DBtableRegulacao} r
             LEFT JOIN ${DBtableRegulacaoMedico} rm ON r.id_regulacao = rm.id_regulacao
             LEFT JOIN ${DBtableSetorOrigem} so ON r.id_regulacao = so.id_regulacao
             LEFT JOIN ${DBtableSetorDestino} sd ON r.id_regulacao = sd.id_regulacao
             LEFT JOIN ${DBtableTransporte} t ON r.id_regulacao = t.id_regulacao
             LEFT JOIN ${DBtableDesfecho} d ON r.id_regulacao = d.id_regulacao
+            LEFT JOIN ${DBtableObservacao} o ON r.id_regulacao = o.id_regulacao
             WHERE DATE(r.data_hora_solicitacao_02) BETWEEN ? AND ?
         `;
 

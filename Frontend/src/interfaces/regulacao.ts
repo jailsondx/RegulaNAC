@@ -71,6 +71,7 @@ export interface EditaRegulacaoData {
   num_leito?: number | null;
   data_hora_regulacao_medico?: string;
   autorizacao?: string;
+  preparo_leito?: string;
 }
 
 

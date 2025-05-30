@@ -1,6 +1,6 @@
 import React from 'react';
 import { LuArrowDownWideNarrow, LuArrowUpNarrowWide } from "react-icons/lu";
-import { FcFullTrash, FcInspection, FcExpired, FcApproval, FcBadDecision, FcNews, FcInfo } from "react-icons/fc";
+import { FcFullTrash, FcInspection, FcApproval, FcBadDecision, FcNews } from "react-icons/fc";
 import TimeTracker from "../../../TimeTracker/TimeTracker.tsx";
 import { RegulacaoData } from '../../../../interfaces/Regulacao.ts';
 import { useNavigate } from 'react-router-dom';
@@ -224,12 +224,15 @@ const TabelaRegulacoesInternas: React.FC<TabelaRegulacoesProps> = ({
               <>
                 <td>
                   <label className="td-Icons">
-                    <FcExpired
-                      className='Icon Icons-Regulacao'
-                      onClick={() => handleAtualizarRegulacao && handleAtualizarRegulacao(regulacao)}
-                      title='Atualizar/Renovar Regulação'
-                    />
-                  </label></td>
+                  <img
+                    src="/IconsTables/renew.png" 
+                    alt="Atualizar/Renovar Regulação" 
+                    className='Icon Icons-Regulacao Icon-Rotate'
+                    title="Atualizar/Renovar Regulação"
+                    onClick={() => handleAtualizarRegulacao && handleAtualizarRegulacao(regulacao)}
+                  />
+                  </label>
+                </td>
               </>
 
             )}
@@ -276,9 +279,13 @@ const TabelaRegulacoesInternas: React.FC<TabelaRegulacoesProps> = ({
                             {regulacao.observacaoTexto.slice(0, 20)}...
                           </span>
                         )
-                        : <FcInfo
-                          className='Icon Icons-Regulacao'
-                        />}
+                        : <img
+                            src="/IconsTables/infor.png" 
+                            alt="Leito Alocado Fastmedic = NAO" 
+                            className='Icon Icons-Regulacao'
+                            title="Inserir Observação"
+                          />
+                        }
                     </label>
                   )}
                 </td>

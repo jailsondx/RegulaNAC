@@ -6,8 +6,6 @@ async function AtualizaRegulacao(FormData) {
     const DBtable = 'regulacao';
     const DBtableUsuarios = 'usuarios';
 
-    console.log('Atualizando regulação com os seguintes dados:', FormData);
-
     const connection = await DBconnection.getConnection();
 
     try {

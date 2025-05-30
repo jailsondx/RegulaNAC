@@ -1,3 +1,31 @@
+/* Responsividade */
+@media (max-width: 768px) {
+  .search-desfecho-row {
+    flex-direction: column;
+  }
+
+  /* Os inputs e select terão 100% da largura na tela pequena */
+  .search-desfecho-row input,
+  .search-desfecho-row select {
+    width: 100%;
+    min-width: unset;
+  }
+
+  input[type="text"],
+  input[type="number"],
+  select {
+    padding: 8px;
+  }
+
+  .search-button {
+    padding: 10px;
+  }
+}
+
+
+
+
+
 /* Container principal */
 .form-search {
   display: flex;
@@ -15,7 +43,7 @@
 .search-desfecho-line {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  padding: 0px 0px 10px 0px;  /**/
 }
 
 .search-desfecho-line-button {
@@ -63,6 +91,8 @@
 }
 
 
+
+
 /* Botão de pesquisa */
 .search-button {
   background-color: #4CAF50;
@@ -84,29 +114,10 @@
   transform: scale(1);
 }
 
-/* Responsividade */
-@media (max-width: 768px) {
-  .search-desfecho-row {
-    flex-direction: column;
-  }
 
-  /* Os inputs e select terão 100% da largura na tela pequena */
-  .search-desfecho-row input,
-  .search-desfecho-row select {
-    width: 100%;
-    min-width: unset;
-  }
 
-  input[type="text"],
-  input[type="number"],
-  select {
-    padding: 8px;
-  }
 
-  .search-button {
-    padding: 10px;
-  }
-}
+
 
 .div-Desfecho{
   display: flex;
@@ -125,8 +136,6 @@
 .Desfecho-line-2 select{
   width: 100%;
 }
-
-
 
 .Desfecho-line {
   display: flex;

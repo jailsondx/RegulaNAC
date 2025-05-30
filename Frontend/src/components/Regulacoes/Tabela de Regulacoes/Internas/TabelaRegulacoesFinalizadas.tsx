@@ -1,7 +1,5 @@
 import React from 'react';
 import { LuArrowDownWideNarrow, LuArrowUpNarrowWide } from "react-icons/lu";
-import { MdCheckCircle, MdCancel } from "react-icons/md";
-import { FcInfo } from "react-icons/fc";
 
 
 /*IMPORT INTERFACE*/
@@ -121,9 +119,13 @@ const TabelaRegulacoesFinalizadas: React.FC<TabelaRegulacoesProps> = ({
                             {regulacao.observacaoTexto.slice(0, 20)}...
                           </span>
                         )
-                        : <FcInfo
-                          className='Icon Icons-Regulacao'
-                        />}
+                        : <img
+                            src="/IconsTables/infor.png" 
+                            alt="Leito Alocado Fastmedic = NAO" 
+                            className='Icon Icons-Regulacao'
+                            title="Inserir Observação"
+                          />
+                        }
                     </label>
                   )}
                 </td>
@@ -135,16 +137,18 @@ const TabelaRegulacoesFinalizadas: React.FC<TabelaRegulacoesProps> = ({
                     title="Fastmedic"
                   >
                     {regulacao.fastmedic === "SIM" ? (
-                      <MdCheckCircle 
-                        className='Icon Icons-Regulacao' 
-                        color="green" 
+                      <img 
+                        src="/IconsTables/check.png" 
+                        alt="Leito Alocado Fastmedic = SIM" 
+                        className='Icon Icons-Regulacao'
                         title='Leito Alocado Fastmedic = SIM' 
                       />
                     ) : (
-                      <MdCancel 
-                        className='Icon Icons-Regulacao' 
-                        color="red" 
-                        title='Leito Alocado Fastmedic = NÃO' 
+                      <img
+                        src="/IconsTables/deny.png" 
+                        alt="Leito Alocado Fastmedic = NAO" 
+                        className='Icon Icons-Regulacao'
+                        title='Leito Alocado Fastmedic = NAO' 
                       />
                     )}
                   </label>

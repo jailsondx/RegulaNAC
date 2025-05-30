@@ -4,6 +4,7 @@ import { DBconnection } from "../Controller/connection.js";
 
 async function EditaRegulacao(FormData) {
     const DBtable = 'regulacao';
+    const DBtableSetorOrigem = 'setor_origem';
     const DBtableUsuarios = 'usuarios';
 
     const connection = await DBconnection.getConnection();
@@ -28,7 +29,7 @@ async function EditaRegulacao(FormData) {
             await connection.rollback();
             return { success: false, message: "Usuário não tem permissão para realizar esta ação." };
         }
-        
+
 
         // Atualiza os dados
         await connection.query(`
@@ -62,6 +63,19 @@ async function EditaRegulacao(FormData) {
                 FormData.data_hora_acionamento_medico,
                 FormData.id_regulacao
             ]);
+
+        // Atualiza setor_origem.preparo_leito se houver valor válido
+        if (FormData.preparo_leito !== undefined && FormData.preparo_leito !== null && FormData.preparo_leito !== '') {
+            await connection.query(`
+                    UPDATE ${DBtableSetorOrigem}
+                    SET preparo_leito = ?
+                    WHERE id_regulacao = ?
+                `, [
+                FormData.preparo_leito,
+                FormData.id_regulacao
+            ]);
+        }
+
 
         await connection.commit();
 

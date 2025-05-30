@@ -98,6 +98,7 @@ async function exportarRelatorioCSVGeral(dados) {
 
                 // setor destino
                 { id: 'setorDestino_nome_colaborador', title: 'Setor Destino - Responsável' },
+                { id: 'setorDestino_data_hora_comunicacao', title: 'Setor Destino - Comunicação' },
 
                 // transporte
                 { id: 'transporte_nome_colaborador', title: 'Transporte - Responsável' },
@@ -113,6 +114,11 @@ async function exportarRelatorioCSVGeral(dados) {
                 // desfecho
                 { id: 'desfecho', title: 'Desfecho' },
                 { id: 'forcado', title: 'Forçado' },
+                { id: 'fastmedic', title: 'Regulado Fastmedic?' },
+
+                // observacao
+                { id: 'observacao_nome', title: 'Nome do Ultimo Observador' },
+                { id: 'observacaoTexto', title: 'Observações' },
             ]
         });
 
@@ -122,14 +128,31 @@ async function exportarRelatorioCSVGeral(dados) {
             data_hora_acionamento_medico: formatDateTimeToPtBr(item.data_hora_acionamento_medico),
             data_hora_solicitacao_01: formatDateTimeToPtBr(item.data_hora_solicitacao_01),
             data_hora_solicitacao_02: formatDateTimeToPtBr(item.data_hora_solicitacao_02),
-            regulacaoMedico_data_hora_regulacao_medico: formatDateTimeToPtBr(item.regulacaoMedico_data_hora_regulacao_medico),
-            setorOrigem_data_hora_comunicacao: formatDateTimeToPtBr(item.setorOrigem_data_hora_comunicacao),
-            transporte_data_hora_acionamento: formatDateTimeToPtBr(item.transporte_data_hora_acionamento),
-            transporte_data_hora_chegada_origem: formatDateTimeToPtBr(item.transporte_data_hora_chegada_origem),
-            transporte_data_hora_saida_origem: formatDateTimeToPtBr(item.transporte_data_hora_saida_origem),
-            transporte_data_hora_chegada_destino: formatDateTimeToPtBr(item.transporte_data_hora_chegada_destino),
-            transporte_data_hora_liberacao_leito: formatDateTimeToPtBr(item.transporte_data_hora_liberacao_leito),
-            // outras datas que tiver...
+            regulacaoMedico_data_hora_regulacao_medico: item.regulacaoMedico_data_hora_regulacao_medico
+                ? formatDateTimeToPtBr(item.regulacaoMedico_data_hora_regulacao_medico)
+                : '',
+            setorOrigem_data_hora_comunicacao: item.setorOrigem_data_hora_comunicacao
+                ? formatDateTimeToPtBr(item.setorOrigem_data_hora_comunicacao)
+                : '',
+            setorDestino_data_hora_comunicacao: item.setorDestino_data_hora_comunicacao
+                ? formatDateTimeToPtBr(item.setorDestino_data_hora_comunicacao)
+                : '',
+            transporte_data_hora_acionamento: item.transporte_data_hora_acionamento
+                ? formatDateTimeToPtBr(item.transporte_data_hora_acionamento)
+                : '',
+            transporte_data_hora_chegada_origem: item.transporte_data_hora_chegada_origem
+                ? formatDateTimeToPtBr(item.transporte_data_hora_chegada_origem)
+                : '',
+            transporte_data_hora_saida_origem: item.transporte_data_hora_saida_origem
+                ? formatDateTimeToPtBr(item.transporte_data_hora_saida_origem)
+                : '',
+            transporte_data_hora_chegada_destino: item.transporte_data_hora_chegada_destino
+                ? formatDateTimeToPtBr(item.transporte_data_hora_chegada_destino)
+                : '',
+            transporte_data_hora_liberacao_leito: item.transporte_data_hora_liberacao_leito
+                ? formatDateTimeToPtBr(item.transporte_data_hora_liberacao_leito)
+                : '',
+                forcado: item.forcado ? 'SIM' : 'NÃO',
         }));
         
 

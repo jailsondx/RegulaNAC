@@ -105,6 +105,7 @@ const EditaRegulacao: React.FC = () => {
             data_hora_acionamento_medico: data.data_hora_acionamento_medico,
             un_origem: data.un_origem,
             un_destino: data.un_destino,
+            preparo_leito: data.preparo_leito,
             link: data.link,
           });
         }
@@ -143,24 +144,24 @@ const EditaRegulacao: React.FC = () => {
   useEffect(() => {
 
     const fetchMedicos = async () => {
-      try {
-        const response = await axios.get(`${NODE_URL}/api/internal/get/ListaMedicos`);
-        const nomes_medicos_list = response.data.data;
-        setMedicos(nomes_medicos_list || []); // Supondo que o retorno é { medicos: [] }
-      } catch (error: unknown) {
-        if (error instanceof AxiosError) {
-          console.error('Erro ao carregar lista de médicos.', error);
-          showSnackbar(error.response?.data?.message || 'Erro ao carregar lista de médicos.', 'error');
-        } else if (error instanceof Error) {
-          // Se o erro for do tipo genérico `Error`, trate-o também
-          console.error('Erro desconhecido:', error.message);
-          showSnackbar('Erro desconhecido:', 'error');
-        } else {
-          // Caso o erro seja de um tipo inesperado
-          console.error('Erro inesperado:', error);
-          showSnackbar('Erro inesperado:', 'error');
+        try {
+          const response = await axios.get(`${NODE_URL}/api/internal/get/ListaMedicos`);
+          const nomes_medicos_list = response.data.data;
+          setMedicos(nomes_medicos_list || []); // Supondo que o retorno é { medicos: [] }
+        } catch (error: unknown) {
+          if (error instanceof AxiosError) {
+            console.error('Erro ao carregar lista de médicos.', error);
+            showSnackbar(error.response?.data?.message || 'Erro ao carregar lista de médicos.', 'error');
+          } else if (error instanceof Error) {
+            // Se o erro for do tipo genérico `Error`, trate-o também
+            console.error('Erro desconhecido:', error.message);
+            showSnackbar('Erro desconhecido:', 'error');
+          } else {
+            // Caso o erro seja de um tipo inesperado
+            console.error('Erro inesperado:', error);
+            showSnackbar('Erro inesperado:', 'error');
+          }
         }
-      }
     };
 
     fetchMedicos();
@@ -317,22 +318,25 @@ const EditaRegulacao: React.FC = () => {
               </select>
             </div>
 
-            <div className="line-StepContent">
-              <label>Unidade Destino:</label>
-              <select
-                name="un_destino"
-                value={formData.un_destino}
-                onChange={handleChange}
-                required
-              >
-                <option value="">Selecione uma unidade</option>
-                {unidadesDestino.map((unidadeDestino) => (
-                  <option key={unidadeDestino.value} value={unidadeDestino.value}>
-                    {unidadeDestino.label}
-                  </option>
-                ))}
-              </select>
-            </div>
+              {userData?.tipo === 'GERENCIA' && (
+                <div className="line-StepContent">
+                <label>Unidade Destino:</label>
+                <select
+                  name="un_destino"
+                  value={formData.un_destino}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="">Selecione uma unidade</option>
+                  {unidadesDestino.map((unidadeDestino) => (
+                    <option key={unidadeDestino.value} value={unidadeDestino.value}>
+                      {unidadeDestino.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              )}
+
 
             <div className="line-StepContent">
               <label>Nome do Paciente:</label>
@@ -444,6 +448,22 @@ const EditaRegulacao: React.FC = () => {
               </div>
 
             </div>
+
+            <div className="line-StepContent-2">
+              <div className='line-StepContent-sub'>
+                <label>Preparo do Leito:</label>
+                <input
+                  type='text'
+                  name="preparo_leito"
+                  value={formData.preparo_leito ?? ''}
+                  onChange={handleChange}
+                  disabled={!formData.preparo_leito} // desabilita se for vazio, null ou undefined
+                  placeholder='AINDA NÃO PREENCHIDO'
+                >
+                </input>
+              </div>
+            </div>
+
 
           </div>
 

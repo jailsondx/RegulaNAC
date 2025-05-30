@@ -1,6 +1,6 @@
 import React from 'react';
 import { LuArrowDownWideNarrow, LuArrowUpNarrowWide } from "react-icons/lu";
-import { FcHome, FcOrganization, FcOnlineSupport, FcOvertime, FcAbout, FcFullTrash, FcInspection, FcInfo } from "react-icons/fc";
+import { FcHome, FcOrganization, FcOnlineSupport, FcOvertime, FcAbout, FcFullTrash, FcInspection } from "react-icons/fc";
 import { useNavigate } from 'react-router-dom';
 
 
@@ -225,9 +225,13 @@ const TabelaRegulacoesAprovadas: React.FC<TabelaRegulacoesAprovadasProps> = ({
                             {regulacao.observacaoTexto.slice(0, 20)}...
                           </span>
                         )
-                      : <FcInfo 
-                        className='Icon Icons-Regulacao'
-                        />}
+                        : <img
+                            src="/IconsTables/infor.png" 
+                            alt="Leito Alocado Fastmedic = NAO" 
+                            className='Icon Icons-Regulacao'
+                            title="Inserir Observação"
+                          />
+                        }
                   </label>                  
                   )}
                 </td>

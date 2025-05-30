@@ -2,6 +2,7 @@ import { DBconnection } from "../Controller/connection.js"; // Importa apenas o 
 
 async function VerificaID(id_regulacao) {
     const DBtable = 'regulacao';
+    const DBtableSetorOrigem = 'setor_origem';
 
     try {
         // Inicie a conexão com o banco de dados
@@ -9,7 +10,14 @@ async function VerificaID(id_regulacao) {
 
         // Execute a query para verificar o prontuário na tabela com LIMIT 1
         const [rows] = await connection.query(
-            `SELECT * FROM ${DBtable} WHERE id_regulacao = ? AND status_regulacao LIKE 'ABERTO%' LIMIT 1`,
+            `SELECT 
+                r.*,
+                so.preparo_leito
+            FROM ${DBtable} r
+            LEFT JOIN ${DBtableSetorOrigem} so ON r.id_regulacao = so.id_regulacao
+            WHERE r.id_regulacao = ? 
+            AND r.status_regulacao LIKE 'ABERTO%' 
+            LIMIT 1;`,  
             [id_regulacao]
         );
 

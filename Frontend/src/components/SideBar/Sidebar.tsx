@@ -46,7 +46,7 @@ const Sidebar: React.FC = () => {
     };
 
     setIconUser(iconMap[userData.tipo] || '/IconsUser/icon-anonimous.png');
-    setSelectedUserType(userData.tipo); // Define o tipo de usuário selecionado inicialmente
+    setSelectedUserType( sessionStorage.getItem('userViewer') || userData.tipo); // Define o tipo de usuário selecionado inicialmente
   }, [userData]);
 
   // Função para alternar o tema
@@ -187,6 +187,16 @@ const Sidebar: React.FC = () => {
       return <div>Carregando...</div>;  // Exibe um indicativo de carregamento enquanto os dados são obtidos
     }
 
+    // Função de mudança do tipo de usuário
+    const handleUserTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+      const newUserType = e.target.value;
+      setSelectedUserType(newUserType);
+
+      // Salva o tipo de usuário selecionado no sessionStorage
+      sessionStorage.setItem('userViewer', newUserType);
+    };
+
+
   // Renderização final
   return (
     <div className="sidebar">
@@ -204,18 +214,21 @@ const Sidebar: React.FC = () => {
         </div>
 
          {/* Seleção de tipo de usuário (visível apenas para GERENCIA) */}
-          <div>
-            <label>Escolha o Tipo de Usuário</label>
+         {userData.tipo === 'GERENCIA' && (
+            <div className="UserViewerSelect">
+            <label>Visualização de Perfil</label>
             <select
               value={selectedUserType}
-              onChange={(e) => setSelectedUserType(e.target.value)}
+              onChange={handleUserTypeChange}
             >
               <option value="MEDICO">Médico</option>
               <option value="AUX. ADMINISTRATIVO">Auxiliar Administrativo</option>
               <option value="GERENCIA">Gerência</option>
               <option value="CONSULTA">Consulta</option>
             </select>
-          </div>
+            </div>
+         )}
+         
        
 
         <ul>

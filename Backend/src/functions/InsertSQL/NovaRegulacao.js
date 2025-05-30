@@ -1,6 +1,7 @@
 import { DBconnection } from "../Controller/connection.js";
 import UpdateLinkDOC from "../UpdateSQL/UpdateLinkTransactSQL.js";
 import InsertRegulacaoMedico from "../InsertSQL/InsertRegulacaoMedico.js";
+import { limparEspacos } from "../Manipulation/ClearString.js";
 
 async function NovaRegulacao(FormData) {
     const DBtable = "regulacao";
@@ -12,6 +13,7 @@ async function NovaRegulacao(FormData) {
 
     try {
         // Define valores padrões
+        FormData.nome_paciente = limparEspacos(FormData.nome_paciente);
         FormData.qtd_solicitacoes = 1;
         FormData.data_hora_solicitacao_02 = FormData.data_hora_solicitacao_01;
 
