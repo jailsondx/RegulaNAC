@@ -28,10 +28,6 @@ import { useSocket } from '../../../../Utils/useSocket';
 /*IMPORT CSS*/
 import '../NovaRegulacao.css';
 
-/*IMPORT JSON*/
-import un_origem from '../../../../JSON/un_origem.json';
-import un_destino from '../../../../JSON/un_destino.json';
-
 
 /*IMPORT VARIAVEIS DE AMBIENTE*/
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
@@ -87,8 +83,22 @@ const NovaRegulacao: React.FC = () => {
 
   // Carregar os dados do arquivo JSON
   useEffect(() => {
-    setUnidadesOrigem(un_origem);
-    setUnidadesDestino(un_destino);
+    //setUnidadesOrigem(un_origem);
+    axios.get('/JSON/un_origem.json')
+      .then((res) => {
+        setUnidadesOrigem(res.data);  // Atualiza o estado com os dados do JSON
+      })
+      .catch(() => {
+        showSnackbar('Erro ao carregar os dados Setores de Origem','error');  // Se ocorrer erro, atualiza o estado
+      });
+    //setUnidadesDestino(un_destino);
+    axios.get('/JSON/un_destino.json')
+    .then((res) => {
+      setUnidadesDestino(res.data);  // Atualiza o estado com os dados do JSON
+    })
+    .catch(() => {
+      showSnackbar('Erro ao carregar os dados Setores de Origem','error');  // Se ocorrer erro, atualiza o estado
+    });
   }, []);
 
   // Carrega a lista de médicos ao montar o componente

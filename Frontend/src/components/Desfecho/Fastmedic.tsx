@@ -13,9 +13,6 @@ import { DadosPacienteData } from '../../interfaces/DadosPaciente';
 import { DesfechoData, DesfechoOptions } from '../../interfaces/Desfecho';
 import { RegulacaoData } from '../../interfaces/Regulacao';
 
-/*IMPORT JSON*/
-import desfechoCancelado from '../../JSON/desfechoCancelado.json'; // JSON com as opções do segundo select
-
 
 /*IMPORT VARIAVEIS DE AMBIENTE*/
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
@@ -44,7 +41,15 @@ const Fastmedic: React.FC<Props> = ({ dadosPaciente, forcado, onClose, showSnack
 
     useEffect(() => {
         setUserData(getUserData());
-        setOptionsDesfechoCancelado(desfechoCancelado);
+
+        //setOptionsDesfechoCancelado(desfechoCancelado);
+        axios.get('/JSON/desfechoCancelado.json')
+            .then((res) => {
+                setOptionsDesfechoCancelado(res.data);  // Atualiza o estado com os dados do JSON
+            })
+            .catch(() => {
+                showSnackbar('Erro ao carregar os dados dos Cancelamentos', 'error');  // Se ocorrer erro, atualiza o estado
+            });
 
         if (desfechoExistente) {
             setFormData(prev => ({

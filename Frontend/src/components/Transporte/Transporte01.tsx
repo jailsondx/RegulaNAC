@@ -14,8 +14,6 @@ import { DadosPacienteData } from '../../interfaces/DadosPaciente';
 import { TransporteData } from '../../interfaces/Transporte';
 import { CriticidadeOptions } from '../../interfaces/Desfecho';
 
-/*IMPORT JSON*/
-import criticidade from '../../JSON/criticidade.json';
 
 /*IMPORT CSS*/
 import '../Modal/Modal-Inputs.css';
@@ -50,7 +48,14 @@ const Transporte01: React.FC<Props> = ({ dadosPaciente, onClose, showSnackbar, }
     }, []);
 
     useEffect(() => {
-        setOptionsCriticidade(criticidade);
+        //setOptionsCriticidade(criticidade);
+        axios.get('/JSON/criticidade.json')
+            .then((res) => {
+                setOptionsCriticidade(res.data);  // Atualiza o estado com os dados do JSON
+            })
+            .catch(() => {
+                showSnackbar('Erro ao carregar os dados Setores de Origem', 'error');  // Se ocorrer erro, atualiza o estado
+            });
     }, []);
 
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>): void => {
@@ -108,60 +113,60 @@ const Transporte01: React.FC<Props> = ({ dadosPaciente, onClose, showSnackbar, }
 
             <form onSubmit={handleSubmit}>
                 <div className="modal-input">
-                        <div className="modal-input-line">
-                            <label>Nome do Responsável pelo Transporte:</label>
-                            <input
-                                type="text"
-                                name="nome_colaborador"
-                                value={formData.nome_colaborador}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
+                    <div className="modal-input-line">
+                        <label>Nome do Responsável pelo Transporte:</label>
+                        <input
+                            type="text"
+                            name="nome_colaborador"
+                            value={formData.nome_colaborador}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
 
-                        <div className='modal-input-line2'>
-                            <div className='modal-input-line sub'>
-                                <label>Acionamento do Transporte:</label>
-                                <input
-                                    type="datetime-local"
-                                    name="data_hora_acionamento"
-                                    className="data_hora_transporte"
-                                    value={formData.data_hora_acionamento}
-                                    onChange={handleChange}
-                                    required
-                                />
-                            </div>
-
-                            <div className='modal-input-line sub'>
-                                <label>Criticidade:</label>
-                                <select
-                                    name="criticidade"
-                                    value={formData.criticidade}
-                                    onChange={handleChange}
-                                    required
-                                >
-                                    <option value="">Selecione Criticidade</option>
-                                    {optionsCriticidade.map((option) => (
-                                        <option key={option.value} value={option.value}>
-                                            {option.label}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-
-                        </div>
-
-                        <div className="modal-input-line">
-                            <label>Hora da liberação do leito:</label>
+                    <div className='modal-input-line2'>
+                        <div className='modal-input-line sub'>
+                            <label>Acionamento do Transporte:</label>
                             <input
                                 type="datetime-local"
-                                name="data_hora_liberacao_leito"
+                                name="data_hora_acionamento"
                                 className="data_hora_transporte"
-                                value={formData.data_hora_liberacao_leito}
+                                value={formData.data_hora_acionamento}
                                 onChange={handleChange}
                                 required
                             />
                         </div>
+
+                        <div className='modal-input-line sub'>
+                            <label>Criticidade:</label>
+                            <select
+                                name="criticidade"
+                                value={formData.criticidade}
+                                onChange={handleChange}
+                                required
+                            >
+                                <option value="">Selecione Criticidade</option>
+                                {optionsCriticidade.map((option) => (
+                                    <option key={option.value} value={option.value}>
+                                        {option.label}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+
+                    </div>
+
+                    <div className="modal-input-line">
+                        <label>Hora da liberação do leito:</label>
+                        <input
+                            type="datetime-local"
+                            name="data_hora_liberacao_leito"
+                            className="data_hora_transporte"
+                            value={formData.data_hora_liberacao_leito}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
                 </div>
                 <button type="submit">Finalizar</button>
             </form>

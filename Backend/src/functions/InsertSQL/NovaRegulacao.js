@@ -18,12 +18,17 @@ async function NovaRegulacao(FormData) {
         FormData.data_hora_solicitacao_02 = FormData.data_hora_solicitacao_01;
 
         // Lógica para status especial
-        const origemEspecial = FormData.un_origem === 'CENTRO CIRURGICO';
-        const destinoEspecial = ['CLINICA CIRURGICA I', 'CLINICA CIRURGICA II'].includes(FormData.un_destino);
+        const origemDestinoEspecial =
+            (FormData.un_origem === 'CENTRO CIRURGICO' &&
+            ['CLINICA CIRURGICA I', 'CLINICA CIRURGICA II'].includes(FormData.un_destino)) ||
 
-        FormData.status_regulacao = (origemEspecial && destinoEspecial)
+            (FormData.un_origem.startsWith('UTI ADULTO') &&
+            FormData.un_destino === 'CLINICA CIRURGICA III');
+
+        FormData.status_regulacao = origemDestinoEspecial
             ? NovoStatus_Especial
             : NovoStatus_Padrao;
+
 
         connection = await DBconnection.getConnection();
         await connection.beginTransaction();
@@ -87,7 +92,6 @@ async function NovaRegulacao(FormData) {
 
         // Se for um status especial, insere também em regulacao_medico
         if (FormData.status_regulacao === NovoStatus_Especial) {
-            //const InsertRegulacaoMedico = (await import("../InsertSQL/InsertRegulacaoMedico.js")).default;
             const medicoResult = await InsertRegulacaoMedico(id_regulacao, FormData.id_user, connection);
             if (!medicoResult.success) {
                 await connection.rollback();

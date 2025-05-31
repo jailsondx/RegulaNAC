@@ -23,9 +23,6 @@ import { getDay, getMonth, getYear } from '../../functions/DateTimes.ts';
 /*IMPORT CSS*/
 import './Desfecho.css';
 
-/*IMPORT JSON*/
-import status_regulacao from '../../JSON/status_regulacao.json';
-
 /*IMPORT VARIAVEIS DE AMBIENTE*/
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
 
@@ -87,7 +84,14 @@ const ListaDesfechos: React.FC = () => {
 
   //Carrega a lista de STATUS REGULACAO
   useEffect(() => {
-    setStatusRegulacao(status_regulacao);
+    //setStatusRegulacao(status_regulacao);
+    axios.get('/JSON/status_regulacao.json')
+    .then((res) => {
+      setStatusRegulacao(res.data);  // Atualiza o estado com os dados do JSON
+    })
+    .catch(() => {
+      showSnackbar('Erro ao carregar os dados o Status da Regulação','error');  // Se ocorrer erro, atualiza o estado
+    });
   }, []);
 
   // Snackbar vindo de navegação

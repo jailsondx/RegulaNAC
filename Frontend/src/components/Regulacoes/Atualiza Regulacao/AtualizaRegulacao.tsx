@@ -20,10 +20,6 @@ import { getDay, getMonth, getYear } from '../../../functions/DateTimes.ts';
 /*IMPORT CSS*/
 import './AtualizarRegulacao.css';
 
-/*IMPORT JSON*/
-//import un_origem from '../../../JSON/un_origem.json';
-//import un_destino from '../../../JSON/un_destino.json';
-
 /*IMPORT VARIAVEIS DE AMBIENTE*/
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
 

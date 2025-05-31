@@ -17,10 +17,6 @@ import { getUserData } from '../../../../functions/storageUtils';
 /*IMPORT UTILS*/
 import { useSocket } from '../../../../Utils/useSocket';
 
-/*IMPORT JSON*/
-import UTI_adulto from '../../../../JSON/UTI_adulto.json'
-import clinica_medica from '../../../../JSON/clinica_medica.json'
-
 /*IMPORT VARIAVEIS DE AMBIENTE*/
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
 
@@ -61,8 +57,23 @@ const NovaRegulacaoMedicoAprovada: React.FC<Props> = ({ dadosPaciente, tempoEspe
 
   // Carregar os dados do arquivo JSON
   useEffect(() => {
-    setUnidadesUTI(UTI_adulto);
-    setUnidadesClinicaMedica(clinica_medica);
+    //setUnidadesUTI(UTI_adulto);
+    axios.get('/JSON/UTI_adulto.json')
+    .then((res) => {
+      setUnidadesUTI(res.data);  // Atualiza o estado com os dados do JSON
+    })
+    .catch(() => {
+      showSnackbar('Erro ao carregar os dados Setores de Origem','error');  // Se ocorrer erro, atualiza o estado
+    });
+
+    //setUnidadesClinicaMedica(clinica_medica);
+    axios.get('/JSON/clinica_medica.json')
+    .then((res) => {
+      setUnidadesClinicaMedica(res.data);  // Atualiza o estado com os dados do JSON
+    })
+    .catch(() => {
+      showSnackbar('Erro ao carregar os dados Setores de Origem','error');  // Se ocorrer erro, atualiza o estado
+    });
   }, []);
 
   //Função para fazer o envio de mensagem para o socket

@@ -12,9 +12,6 @@ import { UserData } from '../../interfaces/UserData';
 import { DadosPacienteExternoData } from '../../interfaces/DadosPaciente';
 import { DesfechoExternoData, DesfechoOptions } from '../../interfaces/Desfecho';
 
-/*IMPORT JSON*/
-import desfecho from '../../JSON/desfecho.json';
-import desfechoCancelado from '../../JSON/desfechoCancelado.json'; // JSON com as opções do segundo select
 
 /*IMPORT VARIAVEIS DE AMBIENTE*/
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
@@ -40,9 +37,25 @@ const DesfechoExterno: React.FC<Props> = ({ dadosPaciente, onClose, showSnackbar
 
     useEffect(() => {
         setUserData(getUserData());
-        setOptionsDesfecho(desfecho);
-        setOptionsDesfechoCancelado(desfechoCancelado);
-        console.log(dadosPaciente);
+
+        //setOptionsDesfecho(desfecho);
+        axios.get('/JSON/desfecho.json')
+        .then((res) => {
+            setOptionsDesfecho(res.data);  // Atualiza o estado com os dados do JSON
+        })
+        .catch(() => {
+          showSnackbar('Erro ao carregar os dados do Desfecho','error');  // Se ocorrer erro, atualiza o estado
+        });
+
+        //setOptionsDesfechoCancelado(desfechoCancelado);
+        axios.get('/JSON/desfechoCancelado.json')
+        .then((res) => {
+            setOptionsDesfechoCancelado(res.data);  // Atualiza o estado com os dados do JSON
+        })
+        .catch(() => {
+          showSnackbar('Erro ao carregar os dados dos Cancelamentos','error');  // Se ocorrer erro, atualiza o estado
+        });
+        
     }, [dadosPaciente]);
 
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>): void => {

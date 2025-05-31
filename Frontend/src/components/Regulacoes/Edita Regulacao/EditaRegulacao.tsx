@@ -17,9 +17,6 @@ import { UnidadeData } from '../../../interfaces/Unidade.ts';
 import { getUserData } from '../../../functions/storageUtils.ts';
 import { calcularIdade } from '../../../functions/CalcularIdade.ts';
 
-/*IMPORT JSON*/
-import un_origem from '../../../JSON/un_origem.json';
-import un_destino_completo from '../../../JSON/un_destino_completo.json';
 
 /*IMPORT CSS*/
 import './EditaRegulacao.css';
@@ -65,8 +62,23 @@ const EditaRegulacao: React.FC = () => {
 
   //Carrega o JSON
   useEffect(() => {
-    setUnidadesOrigem(un_origem);
-    setUnidadesDestino(un_destino_completo);
+    //setUnidadesOrigem(un_origem);
+    axios.get('/JSON/un_origem.json')
+    .then((res) => {
+      setUnidadesOrigem(res.data);  // Atualiza o estado com os dados do JSON
+    })
+    .catch(() => {
+      showSnackbar('Erro ao carregar os dados Setores de Origem','error');  // Se ocorrer erro, atualiza o estado
+    });
+
+    //setUnidadesDestino(un_destino_completo);
+    axios.get('/JSON/un_destino_completo.json')
+    .then((res) => {
+      setUnidadesDestino(res.data);  // Atualiza o estado com os dados do JSON
+    })
+    .catch(() => {
+      showSnackbar('Erro ao carregar os dados Setores de Origem','error');  // Se ocorrer erro, atualiza o estado
+    });
   }, []);
 
   // Captura o número do id regulação ao montar o componente
@@ -303,19 +315,19 @@ const EditaRegulacao: React.FC = () => {
 
             <div className="line-StepContent">
               <label>Unidade Origem:</label>
-              <select
-                name="un_origem"
-                value={formData.un_origem}
-                onChange={handleChange}
-                required
-              >
-                <option value="">Selecione uma unidade</option>
-                {unidadesOrigem.map((unidadeOrigem) => (
-                  <option key={unidadeOrigem.value} value={unidadeOrigem.value}>
-                    {unidadeOrigem.label}
-                  </option>
-                ))}
-              </select>
+                <select
+                  name="un_origem"
+                  value={formData.un_origem}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="">Selecione uma unidade</option>
+                  {unidadesOrigem.map((unidadeOrigem) => (
+                    <option key={unidadeOrigem.value} value={unidadeOrigem.value}>
+                      {unidadeOrigem.label}
+                    </option>
+                  ))}
+                </select>
             </div>
 
               {userData?.tipo === 'GERENCIA' && (
@@ -457,7 +469,7 @@ const EditaRegulacao: React.FC = () => {
                   name="preparo_leito"
                   value={formData.preparo_leito ?? ''}
                   onChange={handleChange}
-                  disabled={!formData.preparo_leito} // desabilita se for vazio, null ou undefined
+                  //disabled={!formData.preparo_leito} // desabilita se for vazio, null ou undefined
                   placeholder='AINDA NÃO PREENCHIDO'
                 >
                 </input>

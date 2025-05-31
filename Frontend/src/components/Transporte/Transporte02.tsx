@@ -16,9 +16,6 @@ import { DadosPacienteData } from '../../interfaces/DadosPaciente';
 import { TransporteDatesData } from '../../interfaces/Transporte';
 import { AtrasoLeitoOptions } from '../../interfaces/Transporte';
 
-/*IMPORT JSON*/
-import atrasoleito from '../../JSON/atraso.json';
-
 /*IMPORT CSS*/
 import '../Modal/Modal-Inputs.css';
 
@@ -86,7 +83,14 @@ const Transporte02: React.FC<Props> = ({ dadosPaciente, onClose, showSnackbar })
 
     // CARREGA OS DADOS JSON
     useEffect(() => {
-        setOptionsAtrasoLeito(atrasoleito);
+        //setOptionsAtrasoLeito(atrasoleito);
+        axios.get('/JSON/atrasoleito.json')
+            .then((res) => {
+                setOptionsAtrasoLeito(res.data);  // Atualiza o estado com os dados do JSON
+            })
+            .catch(() => {
+                showSnackbar('Erro ao carregar os dados Setores de Origem', 'error');  // Se ocorrer erro, atualiza o estado
+            });
     }, []);
 
     // Calcula a diferença entre os horários
