@@ -26,4 +26,6 @@ export function clearSessionStorage() {
   sessionStorage.removeItem("nome");
   sessionStorage.removeItem("tipo");
   sessionStorage.removeItem("permissao");
+  sessionStorage.removeItem("pageReloaded");
+  sessionStorage.removeItem("userViewer");
 }

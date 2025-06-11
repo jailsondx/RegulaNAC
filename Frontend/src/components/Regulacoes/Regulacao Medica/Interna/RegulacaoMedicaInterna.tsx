@@ -12,6 +12,7 @@ import { DadosPacienteData } from "../../../../interfaces/DadosPaciente.ts";
 import HeaderFiltroInterno from "../../../Header/Header_Lista_Interna.tsx";
 import NovaRegulacaoMedicoAprovada from "./RegulacaoMedicaAprovada.tsx";
 import NovaRegulacaoMedicoNegada from "./RegulacaoMedicaNegada.tsx";
+import ObservacoesNAC from '../../../Obsevacoes/ObervacoesNAC.tsx';
 
 import TabelaRegulacoesInternas from '../../Tabela de Regulacoes/Internas/TabelaRegulacoesInternas.tsx';
 import Modal from "../../../Modal/Modal.tsx";
@@ -36,11 +37,15 @@ const RegulacaoMedicaInterna: React.FC<Props> = ({ title }) => {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [serverTime, setServerTime] = useState("");
   const [regulacoes, setRegulacoes] = useState<RegulacaoData[]>([]);
-  const [showModalApproved, setShowModalApproved] = useState(false);
-  const [showModalDeny, setShowModalDeny] = useState(false);
   const [currentRegulacao, setCurrentRegulacao] = useState<RegulacaoData | null>(null);
   const [dadosPaciente, setDadosPaciente] = useState<DadosPacienteData | null>(null);
   const [elapsedTime, setElapsedTime] = useState<string>(''); // Armazena o tempo decorrido
+
+
+  /*MODAL*/
+  const [showModalApproved, setShowModalApproved] = useState(false);
+  const [showModalDeny, setShowModalDeny] = useState(false);
+  const [ShowModalObservacao, setShowModalObservacao] = useState(false);
 
   /*FILTROS*/
   const [filteredRegulacoes, setFilteredRegulacoes] = useState<RegulacaoData[]>([]);
@@ -109,7 +114,7 @@ const RegulacaoMedicaInterna: React.FC<Props> = ({ title }) => {
       fetchRegulacoes();
     }
   }, [snackbarOpen]);
-  
+
 
   //INICIALIZAÇÃO DOS FILTROS
   useEffect(() => {
@@ -184,19 +189,19 @@ const RegulacaoMedicaInterna: React.FC<Props> = ({ title }) => {
     const inicioDate = new Date(inicio);
     const fimDate = new Date(fim);
     const diffMs = fimDate.getTime() - inicioDate.getTime();
-  
+
     if (isNaN(diffMs) || diffMs < 0) return "0min";
-  
+
     const diffMinutes = Math.floor(diffMs / 60000);
     const horas = Math.floor(diffMinutes / 60);
     const minutos = diffMinutes % 60;
-  
+
     if (horas > 0) {
       return `${horas}h ${minutos}min`;
     }
     return `${minutos}min`;
   };
-  
+
 
   //MODAL
   const handleOpenModalApproved = (regulacao: RegulacaoData) => {
@@ -240,9 +245,29 @@ const RegulacaoMedicaInterna: React.FC<Props> = ({ title }) => {
     setShowModalDeny(true);
   };
 
+  const handleOpenModalObservacao = (regulacao: RegulacaoData) => {
+    setCurrentRegulacao(regulacao);
+
+    // Supondo que você já tenha todos os dados necessários na `regulacao` ou possa fazer algum processamento:
+    const dados: DadosPacienteData = {
+      nome_paciente: regulacao.nome_paciente,
+      num_prontuario: regulacao.num_prontuario,
+      num_regulacao: regulacao.num_regulacao,
+      un_origem: regulacao.un_origem,
+      un_destino: regulacao.un_destino,
+      preparo_leito: regulacao.preparo_leito,
+      id_regulacao: regulacao.id_regulacao,
+      nome_regulador_medico: regulacao.nome_regulador_medico, // Certifique-se de que este campo possui um valor válido
+    };
+
+    setDadosPaciente(dados);
+    setShowModalObservacao(true);
+  };
+
   const handleCloseModal = () => {
     setShowModalApproved(false);
     setShowModalDeny(false);
+    setShowModalObservacao(false);
     fetchRegulacoes();
     //window.location.reload(); // Recarregar a página ao fechar o modal
   };
@@ -314,6 +339,7 @@ const RegulacaoMedicaInterna: React.FC<Props> = ({ title }) => {
                 handleOpenModalDeny={handleOpenModalDeny}
                 IconOpcoes="medico"
                 UserData={userData}
+                handleOpenModalObservacao={handleOpenModalObservacao}
               />
             )}
           </div>
@@ -357,6 +383,17 @@ const RegulacaoMedicaInterna: React.FC<Props> = ({ title }) => {
         </div>
 
       </div>
+
+      {ShowModalObservacao && currentRegulacao && dadosPaciente && (
+        <Modal show={ShowModalObservacao} onClose={handleCloseModal} title='Observação'>
+          <ObservacoesNAC
+            dadosPaciente={currentRegulacao}
+            observacaoTexto={currentRegulacao.observacaoTexto ?? ''}
+            onClose={handleCloseModal} // Fecha o modal
+            showSnackbar={showSnackbar} // Passa o controle do Snackbar
+          />
+        </Modal>
+      )}
 
 
       <Snackbar

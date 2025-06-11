@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { LuArrowDownWideNarrow, LuArrowUpNarrowWide } from "react-icons/lu";
 import { FcHome, FcOrganization, FcOnlineSupport, FcOvertime, FcAbout, FcFullTrash, FcInspection } from "react-icons/fc";
 import { useNavigate } from 'react-router-dom';
@@ -41,6 +41,7 @@ const TabelaRegulacoesAprovadas: React.FC<TabelaRegulacoesAprovadasProps> = ({
 }) => {
 
   const navigate = useNavigate();
+  const [selectedUserViewer, setSelectedUserViewer] = useState<string>(''); // Novo estado para o tipo de usuário selecionado
 
   const handleEditarRegulacao = (id_regulacao: number): void => {
     if (!id_regulacao) {
@@ -53,7 +54,10 @@ const TabelaRegulacoesAprovadas: React.FC<TabelaRegulacoesAprovadasProps> = ({
     });
   };
 
-
+  //Define a vizualização de usuário selecionado com base no sessionStorage
+  useEffect(() => {
+    setSelectedUserViewer(sessionStorage.getItem('userViewer') || 'null'); // Define o tipo de usuário selecionado inicialmente
+  }, [UserData]);
 
   return (
     <table className='Table-Regulacoes'>
@@ -117,17 +121,15 @@ const TabelaRegulacoesAprovadas: React.FC<TabelaRegulacoesAprovadasProps> = ({
 
           <th>Tipo Autorização</th>
 
-          {UserData?.tipo !== "MEDICO" && (
+          {UserData?.tipo !== "MEDICO" || selectedUserViewer !== "MEDICO" && (
             <th>Fase</th>
           )}
 
-          {UserData?.tipo === "GERENCIA" && (
+          {UserData?.tipo === "GERENCIA" && selectedUserViewer === 'GERENCIA' && (
             <th>Apagar</th>
           )}
 
-          {(UserData?.tipo === 'GERENCIA' || UserData?.tipo === 'AUX. ADMINISTRATIVO') && (
-            <th>Obs.</th>
-          )}
+          <th>Obs.</th>
 
         </tr>
       </thead>
@@ -148,7 +150,7 @@ const TabelaRegulacoesAprovadas: React.FC<TabelaRegulacoesAprovadasProps> = ({
             <td>{new Date(regulacao.data_hora_regulacao_medico ?? '').toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</td>
             <td>{regulacao.autorizacao}</td>
 
-            {UserData?.tipo !== "MEDICO" && (
+            {UserData?.tipo !== "MEDICO" || selectedUserViewer !== 'MEDICO' && (
               <td>
                 <label className="td-Icons">
                   {regulacao.status_regulacao === "ABERTO - APROVADO - AGUARDANDO ORIGEM" && (
@@ -190,7 +192,7 @@ const TabelaRegulacoesAprovadas: React.FC<TabelaRegulacoesAprovadasProps> = ({
               </td>
             )}
 
-            {UserData?.tipo === 'GERENCIA' && (
+            {UserData?.tipo === 'GERENCIA' && selectedUserViewer === 'GERENCIA' && (
               <>
                 <td>
                   {regulacao.num_regulacao && (
@@ -210,33 +212,30 @@ const TabelaRegulacoesAprovadas: React.FC<TabelaRegulacoesAprovadasProps> = ({
               </>
             )}
 
-            {UserData?.tipo != 'MEDICO' && (
-              <>
-                <td>
-                  {regulacao.num_regulacao && (
-                    <label
-                    className='td-Icons'
-                    onClick={() => handleOpenModalObservacao(regulacao)}
-                    title={regulacao.observacaoTexto ? regulacao.observacaoTexto : 'Inserir Observação'}
-                  >
-                    {regulacao.observacaoTexto
-                      ? (
-                          <span className="texto-resumo">
-                            {regulacao.observacaoTexto.slice(0, 20)}...
-                          </span>
-                        )
-                        : <img
-                            src="/IconsTables/infor.png" 
-                            alt="Leito Alocado Fastmedic = NAO" 
-                            className='Icon Icons-Regulacao'
-                            title="Inserir Observação"
-                          />
-                        }
-                  </label>                  
-                  )}
-                </td>
-              </>
-            )}
+            <td>
+              {regulacao.num_regulacao && (
+                <label
+                  className='td-Icons'
+                  onClick={() => handleOpenModalObservacao(regulacao)}
+                  title={regulacao.observacaoTexto ? regulacao.observacaoTexto : 'Inserir Observação'}
+                >
+                  {regulacao.observacaoTexto
+                    ? (
+                      <span className="texto-resumo">
+                        {regulacao.observacaoTexto.slice(0, 20)}...
+                      </span>
+                    )
+                    : <img
+                      src="/IconsTables/infor.png"
+                      alt="Inserir Observação"
+                      className='Icon Icons-Regulacao'
+                      title="Inserir Observação"
+                    />
+                  }
+                </label>
+              )}
+            </td>
+
           </tr>
         ))}
       </tbody>

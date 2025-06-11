@@ -72,7 +72,7 @@ const ObservacoesNAC: React.FC<Props> = ({ dadosPaciente, onClose, observacaoTex
         }
         return true;
     };
-    
+
 
     const handleSubmit = async (e: FormEvent): Promise<void> => {
         e.preventDefault();
@@ -121,6 +121,13 @@ const ObservacoesNAC: React.FC<Props> = ({ dadosPaciente, onClose, observacaoTex
         }
     };
 
+    // Verificar o tipo de usuário
+    const selectedUserViewer = sessionStorage.getItem('userViewer'); // Obter o userViewer
+    const isVisibleButton = (userData?.tipo === 'GERENCIA' || userData?.tipo === 'AUX. ADMINISTRATIVO') && 
+    (selectedUserViewer === 'GERENCIA' || selectedUserViewer === 'AUX. ADMINISTRATIVO');
+
+    
+
     return (
         <>
             <div>
@@ -137,10 +144,16 @@ const ObservacoesNAC: React.FC<Props> = ({ dadosPaciente, onClose, observacaoTex
                             value={formData.observacaoTexto}
                             onChange={handleChange}
                             required
+                            // Torna o campo editável ou não com base nas condições
+                            readOnly={!(isVisibleButton)}  // Torna o campo somente leitura se a condição não for atendida
                         />
                     </div>
                 </div>
-                <button type="submit">Cadastrar Observação</button>
+
+                {/* Renderiza o botão apenas se a condição for atendida */}
+                {isVisibleButton && (
+                    <button type="submit">Cadastrar Observação</button>
+                )}
             </form>
         </>
     );

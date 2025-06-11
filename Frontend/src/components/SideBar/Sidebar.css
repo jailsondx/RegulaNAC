@@ -256,5 +256,5 @@
 }
 
 .UserViewerSelect{
-  display: none;;
+  margin: 20px 0px 20px 0px;/* Topo, direita, inferior, esquerda */
 }

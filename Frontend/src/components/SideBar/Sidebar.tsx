@@ -21,7 +21,7 @@ const Sidebar: React.FC = () => {
   // Estado para alternar o menu de solicitações externas
   const [showExternalMenu, setShowExternalMenu] = useState(false);
   
-  const [selectedUserType, setSelectedUserType] = useState<string>(''); // Novo estado para o tipo de usuário selecionado
+  const [selectedUserViewer, setSelectedUserViewer] = useState<string>(''); // Novo estado para o tipo de usuário selecionado
 
 
   // Efeito: Aplica o tema no body da página
@@ -46,7 +46,10 @@ const Sidebar: React.FC = () => {
     };
 
     setIconUser(iconMap[userData.tipo] || '/IconsUser/icon-anonimous.png');
-    setSelectedUserType( sessionStorage.getItem('userViewer') || userData.tipo); // Define o tipo de usuário selecionado inicialmente
+
+    // Define o tipo de usuário selecionado inicialmente
+    sessionStorage.setItem('userViewer', userData.tipo);
+    setSelectedUserViewer(sessionStorage.getItem('userViewer') || userData.tipo);
   }, [userData]);
 
   // Função para alternar o tema
@@ -79,7 +82,7 @@ const Sidebar: React.FC = () => {
     if (!userData) return null;
 
     const { tipo, permissao } = userData;
-    const tipoExibido = selectedUserType || tipo;
+    const tipoExibido = selectedUserViewer || tipo;
 
     // Se for médico
     if (tipoExibido === 'MEDICO-TESTE') {
@@ -190,7 +193,7 @@ const Sidebar: React.FC = () => {
     // Função de mudança do tipo de usuário
     const handleUserTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
       const newUserType = e.target.value;
-      setSelectedUserType(newUserType);
+      setSelectedUserViewer(newUserType);
 
       // Salva o tipo de usuário selecionado no sessionStorage
       sessionStorage.setItem('userViewer', newUserType);
@@ -218,7 +221,7 @@ const Sidebar: React.FC = () => {
             <div className="UserViewerSelect">
             <label>Visualização de Perfil</label>
             <select
-              value={selectedUserType}
+              value={selectedUserViewer}
               onChange={handleUserTypeChange}
             >
               <option value="MEDICO">Médico</option>
