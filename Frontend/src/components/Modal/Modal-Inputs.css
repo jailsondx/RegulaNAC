@@ -38,6 +38,12 @@ input[type='datetime-local']{
     margin-bottom: 20px;
 }
 
+.modal-input-line label{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
 .modal-input-line2 .sub{
     margin-bottom: 0px;
 }

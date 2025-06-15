@@ -23,7 +23,13 @@ async function NovaRegulacao(FormData) {
             ['CLINICA CIRURGICA I', 'CLINICA CIRURGICA II'].includes(FormData.un_destino)) ||
 
             (FormData.un_origem.startsWith('UTI ADULTO') &&
-            FormData.un_destino === 'CLINICA CIRURGICA III');
+            FormData.un_destino === 'CLINICA CIRURGICA III') ||
+
+            ( ['UTI NEONATAL', 'UCINCA'].includes(FormData.un_origem) &&
+            FormData.un_destino === 'UCINCO') ||
+
+            (FormData.un_origem === 'UCINCO' &&
+            ['UTI NEONATAL', 'UCINCA'].includes(FormData.un_destino));
 
         FormData.status_regulacao = origemDestinoEspecial
             ? NovoStatus_Especial

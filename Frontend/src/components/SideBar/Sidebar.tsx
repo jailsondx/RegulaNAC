@@ -109,9 +109,9 @@ const Sidebar: React.FC = () => {
       return (
         <>
           <MenuLink to="/RegulacaoMedica" Icon={TiHeartHalfOutline} label="Regulação Interna Pendente de Autorização" />
-          <MenuLink to="/RegulacoesAprovadas" Icon={TiThumbsUp} label="Regulações Internas Aprovadas" />
-          <MenuLink to="/RegulacoesPreAprovadas" Icon={TiThumbsUp} label="Regulações Pré-Aprovadas" />
-          <MenuLink to="/RegulacoesNegadas" Icon={TiThumbsDown} label="Regulações Negadas" />
+          <MenuLink to="/RegulacoesAprovadas" Icon={TiThumbsUp} label="Regulações Internas Autorizadas" />
+          <MenuLink to="/RegulacoesPreAprovadas" Icon={TiThumbsUp} label="Regulações Internas Pré-Autorizadas" />
+          <MenuLink to="/RegulacoesNegadas" Icon={TiThumbsDown} label="Regulações Internas Negadas" />
           <hr />
           <MenuLink to="/Login" Icon={TiExportOutline} label="Sair" />
         </>
@@ -135,14 +135,14 @@ const Sidebar: React.FC = () => {
     if (tipoExibido === 'AUX. ADMINISTRATIVO' || tipoExibido === 'GERENCIA') {
       return (
         <>
-          <MenuLink to="/NovaRegulacao" Icon={TiBusinessCard} label="Nova Regulação" />
-          <MenuLink to="/ListaRegulacoes" Icon={TiClipboard} label="Lista de Regulações" />
-          <MenuLink to="/RegulacoesAprovadas" Icon={TiThumbsUp} label="Regulações Aprovadas" />
-          <MenuLink to="/RegulacoesPreAprovadas" Icon={TiThumbsUp} label="Regulações Pré-Aprovadas" />
-          <MenuLink to="/RegulacoesNegadas" Icon={TiThumbsDown} label="Regulações Negadas" />
-          <MenuLink to="/Desfechos" Icon={TiHomeOutline} label="Gerar Desfecho" />
-          <MenuLink to="/RegulacoesFinalizadas" Icon={TiClipboard} label="Regulações Finalizadas" />
-          <MenuLink to="/ListaRegulacoes24" Icon={TiClipboard} label="Regulações +24hrs" />
+          <MenuLink to="/NovaRegulacao" Icon={TiBusinessCard} label="Nova Regulação Interna" />
+          <MenuLink to="/ListaRegulacoes" Icon={TiClipboard} label="Regulação Interna Pendente de Autorização" />
+          <MenuLink to="/RegulacoesAprovadas" Icon={TiThumbsUp} label="Regulações Internas Autorizadas" />
+          <MenuLink to="/RegulacoesPreAprovadas" Icon={TiThumbsUp} label="Regulações Internas Pré-Autorizadas" />
+          <MenuLink to="/RegulacoesNegadas" Icon={TiThumbsDown} label="Regulações Internas Negadas" />
+          <MenuLink to="/Desfechos" Icon={TiHomeOutline} label="Gerar Desfecho - Regulações Internas" />
+          <MenuLink to="/RegulacoesFinalizadas" Icon={TiClipboard} label="Regulações Internas Finalizadas" />
+          <MenuLink to="/ListaRegulacoes24" Icon={TiClipboard} label="Regulações Internas +24hrs" />
           {/* Botão para abrir o menu de relatórios (apenas para gerência) */}
           {tipoExibido === 'GERENCIA' && (
             <MenuButton onClick={() => { setShowReportMenu(true); setShowExternalMenu(false); }} Icon={TiUpload} label="Relatórios" />

@@ -288,7 +288,7 @@ const NovaRegulacaoMedicoAprovada: React.FC<Props> = ({ dadosPaciente, tempoEspe
           </div>
 
           <div className="modal-input-line">
-            <label>Justificativa de Tempo +30min: <i>{tempoEspera}</i></label>
+            <label>Justificativa de Tempo +30min: <i>Tempo Decorrido: {tempoEspera}</i></label>
             <textarea
               className="modal-input-textarea"
               name="justificativa_tempo30"

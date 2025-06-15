@@ -9,7 +9,7 @@ import { UserData } from '../../../../interfaces/UserData.ts';
 import { RegulacaoData } from '../../../../interfaces/Regulacao';
 
 interface TabelaRegulacoesAprovadasProps {
-  UserData: UserData | null;
+  UserData: UserData;
   currentRegulacoes: RegulacaoData[];
   selectedColumn: keyof RegulacaoData | null;
   sortConfig: { key: keyof RegulacaoData; direction: "asc" | "desc" } | null;
@@ -121,12 +121,12 @@ const TabelaRegulacoesAprovadas: React.FC<TabelaRegulacoesAprovadasProps> = ({
 
           <th>Tipo Autorização</th>
 
-          {UserData?.tipo !== "MEDICO" || selectedUserViewer !== "MEDICO" && (
+          {(["GERENCIA", "AUX. ADMINISTRATIVO"].includes(UserData?.tipo) && ["GERENCIA", "AUX. ADMINISTRATIVO"].includes(selectedUserViewer)) && (
             <th>Fase</th>
           )}
 
           {UserData?.tipo === "GERENCIA" && selectedUserViewer === 'GERENCIA' && (
-            <th>Apagar</th>
+            <th>Editar</th>
           )}
 
           <th>Obs.</th>
@@ -150,7 +150,7 @@ const TabelaRegulacoesAprovadas: React.FC<TabelaRegulacoesAprovadasProps> = ({
             <td>{new Date(regulacao.data_hora_regulacao_medico ?? '').toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</td>
             <td>{regulacao.autorizacao}</td>
 
-            {UserData?.tipo !== "MEDICO" || selectedUserViewer !== 'MEDICO' && (
+            {(["GERENCIA", "AUX. ADMINISTRATIVO"].includes(UserData?.tipo) && ["GERENCIA", "AUX. ADMINISTRATIVO"].includes(selectedUserViewer)) && (
               <td>
                 <label className="td-Icons">
                   {regulacao.status_regulacao === "ABERTO - APROVADO - AGUARDANDO ORIGEM" && (
