@@ -1,5 +1,5 @@
 export interface OrigemData {
-  id_user: string;
+  id_user: number;
   un_origem: string;
   nome_colaborador: string;
   data_hora_comunicacao: string;
@@ -7,14 +7,14 @@ export interface OrigemData {
 }
 
 export interface DestinoData {
-  id_user: string;
+  id_user: number;
   un_destino: string;
   nome_colaborador: string;
   data_hora_comunicacao: string;
 }
 
 export interface TransporteData {
-  id_user: string;
+  id_user: number;
   nome_colaborador: string;
   data_hora_acionamento: string;
   data_hora_liberacao_leito: string;

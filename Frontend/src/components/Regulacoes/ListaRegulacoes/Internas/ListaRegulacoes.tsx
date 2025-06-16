@@ -54,7 +54,7 @@ const ListaRegulacoesInternas: React.FC<Props> = ({ title }) => {
 
   /*DIALOG EXCLUIR REGULACAO*/
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
-  const [regulacaoParaExcluir, setRegulacaoParaExcluir] = useState<{ id_user: string, id_regulacao: number | null } | null>(null);
+  const [regulacaoParaExcluir, setRegulacaoParaExcluir] = useState<{ id_user: number, id_regulacao: number | null } | null>(null);
 
 
   /*FILTROS*/
@@ -190,7 +190,7 @@ const ListaRegulacoesInternas: React.FC<Props> = ({ title }) => {
 
 
   //EXCLUSÃO DE REGULAÇÃO
-  const confirmarExclusao = (id_user: string, id_regulacao: number | null) => {
+  const confirmarExclusao = (id_user: number, id_regulacao: number | null) => {
     setRegulacaoParaExcluir({ id_user, id_regulacao });
     setConfirmDialogOpen(true);
   };

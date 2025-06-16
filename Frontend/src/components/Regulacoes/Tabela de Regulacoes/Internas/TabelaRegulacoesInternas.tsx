@@ -16,7 +16,7 @@ interface TabelaRegulacoesProps {
   sortConfig: { key: keyof RegulacaoData; direction: "asc" | "desc" } | null;
   handleSort: (key: keyof RegulacaoData) => void;
   fetchPDF: (datetime: string, filename: string) => void;
-  confirmarExclusao?: (id_user: string, id_regulacao: number | null, num_regulacao: number | null) => void;
+  confirmarExclusao?: (id_user: number, id_regulacao: number | null, num_regulacao: number | null) => void;
   serverTime: string;
   handleAtualizarRegulacao?: (regulacao: RegulacaoData) => void;
   handleOpenModalApproved?: (regulacao: RegulacaoData) => void;
@@ -137,7 +137,7 @@ const TabelaRegulacoesInternas: React.FC<TabelaRegulacoesProps> = ({
 
           {IconOpcoes === 'normais' && (
             <>
-              <th>Editar</th>
+              <th>Gerenciar</th>
             </>
           )}
 

@@ -9,10 +9,12 @@ import Desfecho from '../../functions/InsertSQL/Desfecho.js';
 import LoginUser from '../../functions/SelectSQL/LoginUser.js';
 import Transporte from '../../functions/InsertSQL/Transporte.js';
 import Observacao from '../../functions/InsertSQL/Observacao.js';
+import RetornaFase from '../../functions/UpdateSQL/RetornaFase.js';
 import ListaRegulacoesFinalizadas from '../../functions/SelectSQL/ListaRegulacoesFinalizadas.js';
 
 import { Externa_NovaRegulacao_Obstetrica } from '../../functions/InsertSQL/Externas/Externa_NovaRegulacao.js';
 import Externa_RegulacaoMedica_01 from '../../functions/InsertSQL/Externas/Externa_RegulacaoMedica.js';
+
 
 
 
@@ -171,6 +173,21 @@ routerPost.post('/Observacao', async (req, res) => {
     const formData = convertObjectToUpperCase(req.body);
     const result = await Observacao(formData);
     handleResponse(res, result);
+  } catch (error) {
+    console.error('Erro no processamento:', error);
+  res.status(500).json({
+    message: 'Erro interno do servidor',
+    error: 'Erro desconhecido',
+  });
+  }
+});
+
+routerPost.post('/RetornarFase', async (req, res) => {
+  try {
+    const formData = convertObjectToUpperCase(req.body);
+    const result = await RetornaFase(formData);
+    handleResponse(res, result);
+    //console.log(formData);
   } catch (error) {
     console.error('Erro no processamento:', error);
   res.status(500).json({

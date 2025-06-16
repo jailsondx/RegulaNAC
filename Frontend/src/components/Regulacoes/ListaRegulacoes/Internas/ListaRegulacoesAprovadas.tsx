@@ -31,6 +31,7 @@ import { getUserData } from '../../../../functions/storageUtils.ts';
 
 /*IMPORT UTILS*/
 import { fetchPDF } from '../../../../Utils/fetchPDF.ts';
+import RetornarFase from '../../../Fases/RetornarFase.tsx';
 
 
 /*IMPORT VARIAVEIS DE AMBIENTE*/
@@ -48,7 +49,7 @@ const RegulacoesAprovadas: React.FC<Props> = ({ title }) => {
 
   /*DIALOG EXCLUIR REGULACAO*/
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
-  const [regulacaoParaExcluir, setRegulacaoParaExcluir] = useState<{ id_user: string, id_regulacao: number | null } | null>(null);
+  const [regulacaoParaExcluir, setRegulacaoParaExcluir] = useState<{ id_user: number, id_regulacao: number | null } | null>(null);
 
   /*MODAL*/
   const [showModalOrigem, setShowModalOrigem] = useState(false);
@@ -57,6 +58,7 @@ const RegulacoesAprovadas: React.FC<Props> = ({ title }) => {
   const [ShowModalTransporte02, setShowModalTransporte02] = useState(false);
   const [ShowModalDesfecho, setShowModalDesfecho] = useState(false);
   const [ShowModalObservacao, setShowModalObservacao] = useState(false);
+  const [ShowModalFase, setShowModalFase] = useState(false);
 
   /*FILTROS*/
   const [unidadeOrigem, setUnidadeOrigem] = useState('');
@@ -159,7 +161,7 @@ const RegulacoesAprovadas: React.FC<Props> = ({ title }) => {
 
 
   //EXCLUSÃO DE REGULAÇÃO
-  const confirmarExclusao = (id_user: string, id_regulacao: number | null) => {
+  const confirmarExclusao = (id_user: number, id_regulacao: number | null) => {
     setRegulacaoParaExcluir({ id_user, id_regulacao });
     setConfirmDialogOpen(true);
   };
@@ -309,6 +311,25 @@ const RegulacoesAprovadas: React.FC<Props> = ({ title }) => {
     setShowModalObservacao(true);
   };
 
+  const handleOpenModalFase = (regulacao: RegulacaoData) => {
+    setCurrentRegulacao(regulacao);
+
+    // Supondo que você já tenha todos os dados necessários na `regulacao` ou possa fazer algum processamento:
+    const dados: DadosPacienteData = {
+      nome_paciente: regulacao.nome_paciente,
+      num_prontuario: regulacao.num_prontuario,
+      num_regulacao: regulacao.num_regulacao,
+      un_origem: regulacao.un_origem,
+      un_destino: regulacao.un_destino,
+      preparo_leito: regulacao.preparo_leito,
+      id_regulacao: regulacao.id_regulacao,
+      nome_regulador_medico: regulacao.nome_regulador_medico, // Certifique-se de que este campo possui um valor válido
+    };
+
+    setDadosPaciente(dados);
+    setShowModalFase(true);
+  };
+
   const handleCloseModal = () => {
     setShowModalOrigem(false);
     setShowModalDestino(false);
@@ -316,6 +337,7 @@ const RegulacoesAprovadas: React.FC<Props> = ({ title }) => {
     setShowModalTransporte02(false);
     setShowModalDesfecho(false);
     setShowModalObservacao(false);
+    setShowModalFase(false);
     fetchRegulacoes();
     //window.location.reload(); // Recarregar a página ao fechar o modal
   };
@@ -354,7 +376,7 @@ const RegulacoesAprovadas: React.FC<Props> = ({ title }) => {
 
           <div>
             <TabelaRegulacoesAprovadas
-              UserData={userData}
+              UserData={userData!}
               currentRegulacoes={currentRegulacoes}
               selectedColumn={selectedColumn}
               sortConfig={sortConfig}
@@ -367,6 +389,7 @@ const RegulacoesAprovadas: React.FC<Props> = ({ title }) => {
               handleOpenModalTransporte02={handleOpenModalTransporte02}
               handleOpenModalDesfecho={handleOpenModalDesfecho}
               handleOpenModalObservacao={handleOpenModalObservacao}
+              handleOpenModalFase={handleOpenModalFase}
             />
           </div>
         </div>
@@ -434,6 +457,16 @@ const RegulacoesAprovadas: React.FC<Props> = ({ title }) => {
           <ObservacoesNAC
             dadosPaciente={currentRegulacao}
             observacaoTexto={currentRegulacao.observacaoTexto ?? ''}
+            onClose={handleCloseModal} // Fecha o modal
+            showSnackbar={showSnackbar} // Passa o controle do Snackbar
+          />
+        </Modal>
+      )}
+
+      {ShowModalFase && currentRegulacao && dadosPaciente && (
+        <Modal show={ShowModalFase} onClose={handleCloseModal} title='Retornar Fase'>
+          <RetornarFase
+            dadosPaciente={currentRegulacao}
             onClose={handleCloseModal} // Fecha o modal
             showSnackbar={showSnackbar} // Passa o controle do Snackbar
           />

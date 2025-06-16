@@ -1,0 +1,8 @@
+[
+    { "value": 1, "label": "1. AGUARDANDO AVALIACAO" },
+    { "value": 2, "label": "2. AGUARDANDO ORIGEM" },
+    { "value": 3, "label": "3. AGUARDANDO DESTINO" },
+    { "value": 4, "label": "4. AGUARDANDO ACIONAMENTO TRANSPORTE" },
+    { "value": 4, "label": "5. AGUARDANDO FINALIZACAO TRANSPORTE" },
+    { "value": 6, "label": "6. AGUARDANDO DESFECHO" }
+  ]

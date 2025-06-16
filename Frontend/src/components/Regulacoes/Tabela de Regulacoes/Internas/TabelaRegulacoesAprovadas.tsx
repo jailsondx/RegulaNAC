@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { LuArrowDownWideNarrow, LuArrowUpNarrowWide } from "react-icons/lu";
-import { FcHome, FcOrganization, FcOnlineSupport, FcOvertime, FcAbout, FcFullTrash, FcInspection } from "react-icons/fc";
+import { LuArrowDownWideNarrow, LuArrowUpNarrowWide  } from "react-icons/lu";
+import { FcHome, FcOrganization, FcOnlineSupport, FcOvertime, FcAbout, FcFullTrash, FcInspection, FcDoughnutChart } from "react-icons/fc";
 import { useNavigate } from 'react-router-dom';
 
 
@@ -15,13 +15,14 @@ interface TabelaRegulacoesAprovadasProps {
   sortConfig: { key: keyof RegulacaoData; direction: "asc" | "desc" } | null;
   handleSort: (key: keyof RegulacaoData) => void;
   fetchPDF: (datetime: string, filename: string) => void;
-  confirmarExclusao?: (id_user: string, id_regulacao: number | null) => void;
+  confirmarExclusao?: (id_user: number, id_regulacao: number | null) => void;
   handleOpenModalOrigem: (regulacao: RegulacaoData) => void;
   handleOpenModalDestino: (regulacao: RegulacaoData) => void;
   handleOpenModalTransporte01: (regulacao: RegulacaoData) => void;
   handleOpenModalTransporte02: (regulacao: RegulacaoData) => void;
   handleOpenModalDesfecho: (regulacao: RegulacaoData) => void;
   handleOpenModalObservacao: (regulacao: RegulacaoData) => void;
+  handleOpenModalFase: (regulacao: RegulacaoData) => void;
 }
 
 const TabelaRegulacoesAprovadas: React.FC<TabelaRegulacoesAprovadasProps> = ({
@@ -37,7 +38,8 @@ const TabelaRegulacoesAprovadas: React.FC<TabelaRegulacoesAprovadasProps> = ({
   handleOpenModalTransporte01,
   handleOpenModalTransporte02,
   handleOpenModalDesfecho,
-  handleOpenModalObservacao
+  handleOpenModalObservacao,
+  handleOpenModalFase
 }) => {
 
   const navigate = useNavigate();
@@ -53,6 +55,9 @@ const TabelaRegulacoesAprovadas: React.FC<TabelaRegulacoesAprovadasProps> = ({
       state: { id_regulacao },
     });
   };
+
+
+  
 
   //Define a vizualização de usuário selecionado com base no sessionStorage
   useEffect(() => {
@@ -126,7 +131,7 @@ const TabelaRegulacoesAprovadas: React.FC<TabelaRegulacoesAprovadasProps> = ({
           )}
 
           {UserData?.tipo === "GERENCIA" && selectedUserViewer === 'GERENCIA' && (
-            <th>Editar</th>
+            <th>Gerenciar</th>
           )}
 
           <th>Obs.</th>
@@ -206,6 +211,11 @@ const TabelaRegulacoesAprovadas: React.FC<TabelaRegulacoesAprovadasProps> = ({
                         className='Icon Icons-Regulacao'
                         onClick={() => confirmarExclusao && confirmarExclusao(UserData.id_user, regulacao.id_regulacao)}
                         title='Apagar Regulação' />
+
+                      <FcDoughnutChart
+                        className='Icon Icons-Regulacao'
+                        onClick={() => handleOpenModalFase(regulacao)}
+                        title='Retornar Fase de Regulação' />
                     </label>
                   )}
                 </td>

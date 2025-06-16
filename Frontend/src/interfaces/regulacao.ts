@@ -1,7 +1,7 @@
 /*DADOS DE REGULAÇÃO*/
 
 export interface NovaRegulacaoData {
-  id_user: string;
+  id_user: number;
   num_prontuario: number | null;
   nome_paciente: string;
   data_nascimento: string;
@@ -38,7 +38,7 @@ export interface RegulacaoData extends NovaRegulacaoData {
 
 /*UPDATE REGULAÇÃO*/
 export interface UpdateRegulacaoData {
-  id_user: string;
+  id_user: number;
   num_prontuario: number | null;
   num_regulacao: number | null;
   data_hora_solicitacao_02: string;
@@ -46,7 +46,7 @@ export interface UpdateRegulacaoData {
 }
 
 export interface EditaRegulacaoData {
-  id_user: string;
+  id_user: number;
   num_prontuario: number | null;
   nome_paciente?: string;
   data_nascimento: string;
@@ -78,7 +78,7 @@ export interface EditaRegulacaoData {
 
 /*REGULAÇÃO MÉDICA*/
 export interface RegulacaoMedicoData {
-  id_user: string;
+  id_user: number;
   vaga_autorizada?: boolean;
   num_leito?: string;
   extra?: boolean;

@@ -47,7 +47,7 @@ const RegulacoesPreAprovadas: React.FC<Props> = ({ title }) => {
 
   /*DIALOG EXCLUIR REGULACAO*/
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
-  const [regulacaoParaExcluir, setRegulacaoParaExcluir] = useState<{ id_user: string, id_regulacao: number | null } | null>(null);
+  const [regulacaoParaExcluir, setRegulacaoParaExcluir] = useState<{ id_user: number, id_regulacao: number | null } | null>(null);
 
   /*MODAL*/
   const [showModalOrigem, setShowModalOrigem] = useState(false);
@@ -158,7 +158,7 @@ const RegulacoesPreAprovadas: React.FC<Props> = ({ title }) => {
 
 
   //EXCLUSÃO DE REGULAÇÃO
-  const confirmarExclusao = (id_user: string, id_regulacao: number | null) => {
+  const confirmarExclusao = (id_user: number, id_regulacao: number | null) => {
     setRegulacaoParaExcluir({ id_user, id_regulacao });
     setConfirmDialogOpen(true);
   };
@@ -353,7 +353,7 @@ const RegulacoesPreAprovadas: React.FC<Props> = ({ title }) => {
 
           <div>
             <TabelaRegulacoesAprovadas
-              UserData={userData}
+              UserData={userData!}
               currentRegulacoes={currentRegulacoes}
               selectedColumn={selectedColumn}
               sortConfig={sortConfig}

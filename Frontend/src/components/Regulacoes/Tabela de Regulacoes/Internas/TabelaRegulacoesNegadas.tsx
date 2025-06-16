@@ -15,7 +15,7 @@ interface TabelaRegulacoesProps {
   sortConfig: { key: keyof RegulacaoData; direction: "asc" | "desc" } | null;
   handleSort: (key: keyof RegulacaoData) => void;
   fetchPDF: (datetime: string, filename: string) => void;
-  confirmarExclusao?: (id_user: string, id_regulacao: number | null) => void;
+  confirmarExclusao?: (id_user: number, id_regulacao: number | null) => void;
   handleAtualizarRegulacao?: (regulacao: RegulacaoData) => void;
   handleOpenModalObservacao: (regulacao: RegulacaoData) => void;
 }

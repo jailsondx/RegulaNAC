@@ -34,7 +34,7 @@ export interface RegulacaoExternaAprovadaData extends RegulacaoExternaData{
 
 /*REGULAÇÃO MÉDICA*/
 export interface RegulacaoExternoMedicoData {
-  id_user: string;
+  id_user: number;
   vaga_autorizada?: boolean;
   num_leito?: string;
   extra?: boolean;
