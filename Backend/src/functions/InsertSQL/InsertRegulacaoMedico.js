@@ -8,7 +8,7 @@ async function InsertRegulacaoMedico(id_regulacao, id_user, connection) {
         id_user: id_user,
         id_regulacao: id_regulacao,
         vaga_autorizada: true, // aprovado por padrão nas especiais
-        autorizacao: "AUTORIZADO",
+        autorizacao: "AUTO-AUTORIZADO",
         data_hora_regulacao_medico: new Date(), // agora
     };
 

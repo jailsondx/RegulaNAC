@@ -17,13 +17,14 @@ import { DadosPacienteData } from "../../../../interfaces/DadosPaciente.ts";
 
 /*IMPORT COMPONENTS*/
 import Modal from '../../../Modal/Modal.tsx';
-import HeaderFiltroInterno from '../../../Header/Header_Lista_Interna';
+import HeaderFiltroInterno from '../../../Header/Header_Lista_Interna.tsx';
 import SetorOrigem from '../../../Setor Origem e Destino/SetorOrigem.tsx';
 import SetorDestino from '../../../Setor Origem e Destino/SetorDestino.tsx';
 import Transporte01 from '../../../Transporte/Transporte01.tsx';
 import Transporte02 from '../../../Transporte/Transporte02.tsx';
 import Desfecho from '../../../Desfecho/Desfecho.tsx';
 import ObservacoesNAC from '../../../Obsevacoes/ObervacoesNAC.tsx';
+import RetornarFase from '../../../Fases/RetornarFase.tsx';
 import TabelaRegulacoesAprovadas from '../../Tabela de Regulacoes/Internas/TabelaRegulacoesAprovadas.tsx';
 
 /*IMPORT FUNCTIONS*/
@@ -47,7 +48,7 @@ const RegulacoesPreAprovadas: React.FC<Props> = ({ title }) => {
 
   /*DIALOG EXCLUIR REGULACAO*/
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
-  const [regulacaoParaExcluir, setRegulacaoParaExcluir] = useState<{ id_user: number, id_regulacao: number | null } | null>(null);
+  const [regulacaoParaExcluir, setRegulacaoParaExcluir] = useState<{ id_user: number | null, id_regulacao: number | null } | null>(null);
 
   /*MODAL*/
   const [showModalOrigem, setShowModalOrigem] = useState(false);
@@ -56,6 +57,7 @@ const RegulacoesPreAprovadas: React.FC<Props> = ({ title }) => {
   const [ShowModalTransporte02, setShowModalTransporte02] = useState(false);
   const [ShowModalDesfecho, setShowModalDesfecho] = useState(false);
   const [ShowModalObservacao, setShowModalObservacao] = useState(false);
+  const [ShowModalFase, setShowModalFase] = useState(false);
 
   /*FILTROS*/
   const [unidadeOrigem, setUnidadeOrigem] = useState('');
@@ -158,7 +160,7 @@ const RegulacoesPreAprovadas: React.FC<Props> = ({ title }) => {
 
 
   //EXCLUSÃO DE REGULAÇÃO
-  const confirmarExclusao = (id_user: number, id_regulacao: number | null) => {
+  const confirmarExclusao = (id_user: number | null, id_regulacao: number | null) => {
     setRegulacaoParaExcluir({ id_user, id_regulacao });
     setConfirmDialogOpen(true);
   };
@@ -308,6 +310,25 @@ const RegulacoesPreAprovadas: React.FC<Props> = ({ title }) => {
     setShowModalObservacao(true);
   };
 
+  const handleOpenModalFase = (regulacao: RegulacaoData) => {
+    setCurrentRegulacao(regulacao);
+
+    // Supondo que você já tenha todos os dados necessários na `regulacao` ou possa fazer algum processamento:
+    const dados: DadosPacienteData = {
+      nome_paciente: regulacao.nome_paciente,
+      num_prontuario: regulacao.num_prontuario,
+      num_regulacao: regulacao.num_regulacao,
+      un_origem: regulacao.un_origem,
+      un_destino: regulacao.un_destino,
+      preparo_leito: regulacao.preparo_leito,
+      id_regulacao: regulacao.id_regulacao,
+      nome_regulador_medico: regulacao.nome_regulador_medico, // Certifique-se de que este campo possui um valor válido
+    };
+
+    setDadosPaciente(dados);
+    setShowModalFase(true);
+  };
+
   const handleCloseModal = () => {
     setShowModalOrigem(false);
     setShowModalDestino(false);
@@ -315,6 +336,7 @@ const RegulacoesPreAprovadas: React.FC<Props> = ({ title }) => {
     setShowModalTransporte02(false);
     setShowModalDesfecho(false);
     setShowModalObservacao(false);
+    setShowModalFase(false);
     fetchRegulacoes();
     //window.location.reload(); // Recarregar a página ao fechar o modal
   };
@@ -366,6 +388,7 @@ const RegulacoesPreAprovadas: React.FC<Props> = ({ title }) => {
               handleOpenModalTransporte02={handleOpenModalTransporte02}
               handleOpenModalDesfecho={handleOpenModalDesfecho}
               handleOpenModalObservacao={handleOpenModalObservacao}
+              handleOpenModalFase={handleOpenModalFase}
             />
           </div>
         </div>
@@ -439,6 +462,15 @@ const RegulacoesPreAprovadas: React.FC<Props> = ({ title }) => {
         </Modal>
       )}
 
+      {ShowModalFase && currentRegulacao && dadosPaciente && (
+        <Modal show={ShowModalFase} onClose={handleCloseModal} title='Retornar Fase'>
+          <RetornarFase
+            dadosPaciente={currentRegulacao}
+            onClose={handleCloseModal} // Fecha o modal
+            showSnackbar={showSnackbar} // Passa o controle do Snackbar
+          />
+        </Modal>
+      )}
 
       <Dialog
         open={confirmDialogOpen}

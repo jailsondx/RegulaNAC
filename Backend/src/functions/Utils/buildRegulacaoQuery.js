@@ -27,10 +27,17 @@ export function buildRegulacaoQuery(origem, customParams = {}) {
                 LEFT JOIN setor_destino sd ON r.id_regulacao = sd.id_regulacao
                 LEFT JOIN observacao obs ON r.id_regulacao = obs.id_regulacao
                 WHERE r.status_regulacao LIKE ? 
-                AND rm.vaga_autorizada LIKE ? 
-                AND rm.autorizacao LIKE ?
+                AND rm.vaga_autorizada LIKE ?
             `;
-            queryParams = [status, vagaAutorizada, autorizacao];
+            
+            queryParams = [status, vagaAutorizada];
+
+            // Só adiciona filtro por autorizacao se o valor for válido
+            if (autorizacao !== undefined && autorizacao !== null && autorizacao !== '') {
+                query += ` AND rm.autorizacao LIKE ?`;
+                queryParams.push(autorizacao);
+            }
+
             break;
 
         case "Externa":

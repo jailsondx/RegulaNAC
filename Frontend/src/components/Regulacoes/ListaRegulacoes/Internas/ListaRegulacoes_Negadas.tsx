@@ -19,7 +19,7 @@ import { DadosPacienteData } from "../../../../interfaces/DadosPaciente.ts";
 
 /*IMPORT COMPONENTS*/
 import Modal from '../../../Modal/Modal.tsx';
-import HeaderFiltroInterno from '../../../Header/Header_Lista_Interna';
+import HeaderFiltroInterno from '../../../Header/Header_Lista_Interna.tsx';
 import TabelaRegulacoesNegadas from '../../Tabela de Regulacoes/Internas/TabelaRegulacoesNegadas.tsx';
 import ObservacoesNAC from '../../../Obsevacoes/ObervacoesNAC.tsx';
 
@@ -52,7 +52,7 @@ const ListaRegulacoesNegadas: React.FC<Props> = ({ title }) => {
 
   /*DIALOG EXCLUIR REGULACAO*/
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
-  const [regulacaoParaExcluir, setRegulacaoParaExcluir] = useState<{ id_user: number, id_regulacao: number | null } | null>(null);
+  const [regulacaoParaExcluir, setRegulacaoParaExcluir] = useState<{ id_user: number | null, id_regulacao: number | null } | null>(null);
 
   /*MODAL*/
   const [ShowModalObservacao, setShowModalObservacao] = useState(false);
@@ -190,7 +190,7 @@ const ListaRegulacoesNegadas: React.FC<Props> = ({ title }) => {
 
 
   //EXCLUSÃO DE REGULAÇÃO
-  const confirmarExclusao = (id_user: number, id_regulacao: number | null) => {
+  const confirmarExclusao = (id_user: number | null, id_regulacao: number | null) => {
     setRegulacaoParaExcluir({ id_user, id_regulacao });
     setConfirmDialogOpen(true);
   };

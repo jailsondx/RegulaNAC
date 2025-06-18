@@ -4,7 +4,7 @@ import { LuArrowDownWideNarrow, LuArrowUpNarrowWide } from "react-icons/lu";
 
 /*IMPORT INTERFACE*/
 import { UserData } from '../../../../interfaces/UserData.ts';
-import { RegulacaoData } from '../../../../interfaces/Regulacao';
+import { RegulacaoData } from '../../../../interfaces/Regulacao.ts';
 
 interface TabelaRegulacoesProps {
   UserData: UserData | null;

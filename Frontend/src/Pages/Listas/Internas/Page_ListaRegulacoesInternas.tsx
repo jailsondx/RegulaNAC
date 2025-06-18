@@ -5,7 +5,7 @@ import ListaRegulacoesInternas from '../../../components/Regulacoes/ListaRegulac
 const Page_ListaRegulacoesInternas: React.FC = () => {
     return (
         <>
-            <ListaRegulacoesInternas title='Regulações Pendentes'/>
+            <ListaRegulacoesInternas title='Regulações Pendentes de Parecer Médico: Internas'/>
         </>
     );
 };

@@ -26,9 +26,6 @@
     display: flex;
     width: 12dvw;
   }
-  .textMenu-Item{
-    font-size: 10px;
-  }
   .inf-user{
     flex-direction: column;
   }
@@ -41,7 +38,7 @@
 }
 
 /* Responsividade para telas de até 550px (smartphones) */
-@media screen and (max-width: 550px) {
+@media screen and (max-width: 900px) {
   .sidebar {
     display: flex;
     width: 5dvw;
@@ -55,6 +52,20 @@
     height: 20%;
     min-width: 20px;
     min-height: 20px;
+  }
+}
+
+/* Responsividade para telas altura de no minimo 781px (smartphones) */
+@media screen and (min-height: 751px) {
+  .inf-user{
+    display: flex;
+  }
+}
+
+/* Responsividade para telas altura de até 780px (smartphones) */
+@media screen and (max-height: 750px) {
+  .inf-user{
+    display: none;
   }
 }
 
@@ -82,13 +93,6 @@
   margin: 20px 0px 20px 0px; /*top, direita, bottom, esquerda*/
 }
 
-.sidebar h2 {
-  font-size: 20px;
-  margin-bottom: 20px;
-  text-align: center;
-  color: #ecf0f1;
-}
-
 .sidebar ul {
   list-style: none;
   padding: 0;
@@ -98,16 +102,16 @@
   margin: 10px 0;
 }
 
-.sidebar ul li a {
+.sidebar ul li a{
   display: flex;
   justify-content: space-between;
   align-items: center;
   text-align: flex-start;
-  height: 30px;
+  height: 5dvh;
+  max-height: 40px;
   width: 100%;
   color: white;
   text-decoration: none;
-  font-size: 14px;
   transition: color 0.3s ease;
 }
 
@@ -118,6 +122,9 @@
 }
 
 
+.sidebar ul li a, ul li button {
+  font-size: 0.8dvw;
+}
 
 
 .sidebar ul li button {
@@ -125,13 +132,13 @@
   justify-content: space-between;
   align-items: center;
   text-align: flex-start;
-  height: 30px;
+  height: 5dvh;
+  max-height: 40px;
   width: 100%;
   padding: 0;
   color: white;
   background: none;
   border: none;
-  font-size: 14px;
   cursor: pointer;
   transition: color 0.3s ease;
 }
@@ -156,9 +163,24 @@
 }
 
 
+.sidebar-Logo-Container{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+  width: 100%;
+}
+
+.sidebar-Logo-Container .Logo{
+  height: auto;
+  width: 100%;
+  max-width: 100px;
+  min-width: 60px;
+}
+
+
 /*USER SECTION*/
 .inf-user{
-  display: flex;
   align-items: center;
   padding: 15px;
   background-color: rgba(255, 255, 255, 0.1);
@@ -198,7 +220,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 15px;
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: rgba(255, 255, 255, 0.1);
   border-radius: 10px;
 }
 
@@ -257,4 +279,16 @@
 
 .UserViewerSelect{
   margin: 20px 0px 20px 0px;/* Topo, direita, inferior, esquerda */
+}
+
+.UserViewerSelect select{
+  padding: 10px;
+  border-radius: 7px;
+  border: 0px solid #ccc;
+  background-color: var(--sidebar-selected);
+  color: whitesmoke;
+}
+
+.UserViewerSelect select:focus{
+
 }

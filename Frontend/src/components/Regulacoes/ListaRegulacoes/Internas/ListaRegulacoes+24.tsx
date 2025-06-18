@@ -6,7 +6,7 @@ import { Snackbar, Alert } from '@mui/material';
 
 /*IMPORT INTERFACES*/
 import { UserData } from '../../../../interfaces/UserData';
-import { RegulacaoData } from '../../../../interfaces/Regulacao';
+import { RegulacaoData } from '../../../../interfaces/Regulacao.ts';
 import { DadosPacienteData } from "../../../../interfaces/DadosPaciente.ts";
 
 /*IMPORT COMPONENTS*/

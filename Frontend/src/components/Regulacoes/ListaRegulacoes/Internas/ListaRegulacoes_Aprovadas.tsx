@@ -24,6 +24,7 @@ import Transporte01 from '../../../Transporte/Transporte01.tsx';
 import Transporte02 from '../../../Transporte/Transporte02.tsx';
 import Desfecho from '../../../Desfecho/Desfecho.tsx';
 import ObservacoesNAC from '../../../Obsevacoes/ObervacoesNAC.tsx';
+import RetornarFase from '../../../Fases/RetornarFase.tsx';
 import TabelaRegulacoesAprovadas from '../../Tabela de Regulacoes/Internas/TabelaRegulacoesAprovadas.tsx';
 
 /*IMPORT FUNCTIONS*/
@@ -31,7 +32,7 @@ import { getUserData } from '../../../../functions/storageUtils.ts';
 
 /*IMPORT UTILS*/
 import { fetchPDF } from '../../../../Utils/fetchPDF.ts';
-import RetornarFase from '../../../Fases/RetornarFase.tsx';
+
 
 
 /*IMPORT VARIAVEIS DE AMBIENTE*/
@@ -49,7 +50,7 @@ const RegulacoesAprovadas: React.FC<Props> = ({ title }) => {
 
   /*DIALOG EXCLUIR REGULACAO*/
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
-  const [regulacaoParaExcluir, setRegulacaoParaExcluir] = useState<{ id_user: number, id_regulacao: number | null } | null>(null);
+  const [regulacaoParaExcluir, setRegulacaoParaExcluir] = useState<{ id_user: number | null, id_regulacao: number | null } | null>(null);
 
   /*MODAL*/
   const [showModalOrigem, setShowModalOrigem] = useState(false);
@@ -161,7 +162,7 @@ const RegulacoesAprovadas: React.FC<Props> = ({ title }) => {
 
 
   //EXCLUSÃO DE REGULAÇÃO
-  const confirmarExclusao = (id_user: number, id_regulacao: number | null) => {
+  const confirmarExclusao = (id_user: number | null, id_regulacao: number | null) => {
     setRegulacaoParaExcluir({ id_user, id_regulacao });
     setConfirmDialogOpen(true);
   };

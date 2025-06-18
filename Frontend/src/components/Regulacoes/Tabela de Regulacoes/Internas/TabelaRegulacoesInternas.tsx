@@ -16,7 +16,7 @@ interface TabelaRegulacoesProps {
   sortConfig: { key: keyof RegulacaoData; direction: "asc" | "desc" } | null;
   handleSort: (key: keyof RegulacaoData) => void;
   fetchPDF: (datetime: string, filename: string) => void;
-  confirmarExclusao?: (id_user: number, id_regulacao: number | null, num_regulacao: number | null) => void;
+  confirmarExclusao?: (id_user: number | null, id_regulacao: number | null, num_regulacao: number | null) => void;
   serverTime: string;
   handleAtualizarRegulacao?: (regulacao: RegulacaoData) => void;
   handleOpenModalApproved?: (regulacao: RegulacaoData) => void;
@@ -116,6 +116,13 @@ const TabelaRegulacoesInternas: React.FC<TabelaRegulacoesProps> = ({
             </span>
           </th>
 
+          <th className={`col-DataSolicitacao clicked${selectedColumn === "data_hora_solicitacao_01" ? " selected" : ""}`} onClick={() => handleSort("data_hora_solicitacao_01")}>
+            <span>
+              <label>1ª Solicitação</label>
+              <label>{sortConfig?.key === "data_hora_solicitacao_01" ? (sortConfig.direction === "asc" ? <LuArrowUpNarrowWide /> : <LuArrowDownWideNarrow />) : ""}</label>
+            </span>
+          </th>
+
           <th className={`col-DataSolicitacao clicked${selectedColumn === "data_hora_solicitacao_02" ? " selected" : ""}`} onClick={() => handleSort("data_hora_solicitacao_02")}>
             <span>
               <label>Solicitação Recente</label>
@@ -131,9 +138,12 @@ const TabelaRegulacoesInternas: React.FC<TabelaRegulacoesProps> = ({
           </th>
 
           <th>
-            Tempo de Espera
+            Tempo de Espera da 1ª Sol.
           </th>
 
+          <th>
+            Tempo de Espera Ac. Med.
+          </th>
 
           {IconOpcoes === 'normais' && (
             <>
@@ -143,7 +153,7 @@ const TabelaRegulacoesInternas: React.FC<TabelaRegulacoesProps> = ({
 
           {IconOpcoes === 'expiradas' && (
             <>
-              <th>Renovar</th>
+              <th>Gerenciar</th>
             </>
           )}
 
@@ -177,18 +187,28 @@ const TabelaRegulacoesInternas: React.FC<TabelaRegulacoesProps> = ({
             <td>{regulacao.un_origem}</td>
             <td>{regulacao.un_destino}</td>
             <td className="col-Prioridade">{regulacao.prioridade}</td>
+            <td>{new Date(regulacao.data_hora_solicitacao_01).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</td>
             <td>{new Date(regulacao.data_hora_solicitacao_02).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</td>
             <td>{new Date(regulacao.data_hora_acionamento_medico).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</td>
+            
+            <td className='td-TempoEspera' title='Tempo de Espera calculado com base na 1ª solicitação'>
+              <TimeTracker startTime={regulacao.data_hora_solicitacao_01} serverTime={serverTime} />
+            </td>
+
             <td className='td-TempoEspera' title='Tempo de Espera calculado com base no tempo do acionamento médico'>
               <TimeTracker startTime={regulacao.data_hora_acionamento_medico} serverTime={serverTime} />
             </td>
+
+
+
+
             {IconOpcoes === 'desfecho' && (
               <>
                 <td>{removerText(regulacao.status_regulacao)}</td>
               </>
             )}
 
-            {IconOpcoes === 'normais' && UserData.tipo === 'GERENCIA' && (
+            {IconOpcoes === 'normais' && (UserData.tipo === 'GERENCIA' || 'AUX. ADMINISTRATIVO') && (
               <>
                 <td>
                   <label className="td-Icons">
@@ -197,26 +217,13 @@ const TabelaRegulacoesInternas: React.FC<TabelaRegulacoesProps> = ({
                       onClick={() => handleEditarRegulacao && handleEditarRegulacao(regulacao.id_regulacao)}
                       title='Editar Regulação' />
 
-                    {regulacao.id_regulacao && (
+                    {regulacao.id_regulacao && selectedUserViewer === 'GERENCIA' && (
                       <FcFullTrash
                         className='Icon Icons-Regulacao'
                         onClick={() => confirmarExclusao && confirmarExclusao(UserData.id_user, regulacao.id_regulacao, regulacao.num_regulacao)}
                         title='Apagar Regulação' />
                     )}
 
-                  </label>
-                </td>
-              </>
-            )}
-
-            {IconOpcoes === 'normais' && UserData.tipo === 'AUX. ADMINISTRATIVO' && (
-              <>
-                <td>
-                  <label className="td-Icons">
-                    <FcInspection
-                      className='Icon Icons-Regulacao'
-                      onClick={() => handleEditarRegulacao && handleEditarRegulacao(regulacao.id_regulacao)}
-                      title='Editar Regulação' />
                   </label>
                 </td>
               </>

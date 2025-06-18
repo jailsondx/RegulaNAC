@@ -26,7 +26,7 @@ import './EditaRegulacao.css';
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
 
 const initialFormData: EditaRegulacaoData = {
-  id_user: '',
+  id_user: null,
   num_prontuario: null,
   nome_paciente: '',
   data_nascimento: '',
@@ -47,6 +47,7 @@ const EditaRegulacao: React.FC = () => {
   const [idRegulacao, setidRegulacao] = useState<number | ''>(''); // Número do prontuário recebido
   const [dadosPaciente, setDadosPaciente] = useState<DadosPacienteData>();
   const [formData, setFormData] = useState<EditaRegulacaoData>(initialFormData);
+  const [selectedUserViewer, setSelectedUserViewer] = useState<string>(''); // Novo estado para o tipo de usuário selecionado
 
   const [unidadesOrigem, setUnidadesOrigem] = useState<UnidadeData[]>([]);
   const [unidadesDestino, setUnidadesDestino] = useState<UnidadeData[]>([]);
@@ -64,21 +65,21 @@ const EditaRegulacao: React.FC = () => {
   useEffect(() => {
     //setUnidadesOrigem(un_origem);
     axios.get('/JSON/un_origem.json')
-    .then((res) => {
-      setUnidadesOrigem(res.data);  // Atualiza o estado com os dados do JSON
-    })
-    .catch(() => {
-      showSnackbar('Erro ao carregar os dados Setores de Origem','error');  // Se ocorrer erro, atualiza o estado
-    });
+      .then((res) => {
+        setUnidadesOrigem(res.data);  // Atualiza o estado com os dados do JSON
+      })
+      .catch(() => {
+        showSnackbar('Erro ao carregar os dados Setores de Origem', 'error');  // Se ocorrer erro, atualiza o estado
+      });
 
     //setUnidadesDestino(un_destino_completo);
     axios.get('/JSON/un_destino_completo.json')
-    .then((res) => {
-      setUnidadesDestino(res.data);  // Atualiza o estado com os dados do JSON
-    })
-    .catch(() => {
-      showSnackbar('Erro ao carregar os dados Setores de Origem','error');  // Se ocorrer erro, atualiza o estado
-    });
+      .then((res) => {
+        setUnidadesDestino(res.data);  // Atualiza o estado com os dados do JSON
+      })
+      .catch(() => {
+        showSnackbar('Erro ao carregar os dados Setores de Origem', 'error');  // Se ocorrer erro, atualiza o estado
+      });
   }, []);
 
   // Captura o número do id regulação ao montar o componente
@@ -156,24 +157,24 @@ const EditaRegulacao: React.FC = () => {
   useEffect(() => {
 
     const fetchMedicos = async () => {
-        try {
-          const response = await axios.get(`${NODE_URL}/api/internal/get/ListaMedicos`);
-          const nomes_medicos_list = response.data.data;
-          setMedicos(nomes_medicos_list || []); // Supondo que o retorno é { medicos: [] }
-        } catch (error: unknown) {
-          if (error instanceof AxiosError) {
-            console.error('Erro ao carregar lista de médicos.', error);
-            showSnackbar(error.response?.data?.message || 'Erro ao carregar lista de médicos.', 'error');
-          } else if (error instanceof Error) {
-            // Se o erro for do tipo genérico `Error`, trate-o também
-            console.error('Erro desconhecido:', error.message);
-            showSnackbar('Erro desconhecido:', 'error');
-          } else {
-            // Caso o erro seja de um tipo inesperado
-            console.error('Erro inesperado:', error);
-            showSnackbar('Erro inesperado:', 'error');
-          }
+      try {
+        const response = await axios.get(`${NODE_URL}/api/internal/get/ListaMedicos`);
+        const nomes_medicos_list = response.data.data;
+        setMedicos(nomes_medicos_list || []); // Supondo que o retorno é { medicos: [] }
+      } catch (error: unknown) {
+        if (error instanceof AxiosError) {
+          console.error('Erro ao carregar lista de médicos.', error);
+          showSnackbar(error.response?.data?.message || 'Erro ao carregar lista de médicos.', 'error');
+        } else if (error instanceof Error) {
+          // Se o erro for do tipo genérico `Error`, trate-o também
+          console.error('Erro desconhecido:', error.message);
+          showSnackbar('Erro desconhecido:', 'error');
+        } else {
+          // Caso o erro seja de um tipo inesperado
+          console.error('Erro inesperado:', error);
+          showSnackbar('Erro inesperado:', 'error');
         }
+      }
     };
 
     fetchMedicos();
@@ -183,6 +184,11 @@ const EditaRegulacao: React.FC = () => {
   useEffect(() => {
     const data = getUserData();
     setUserData(data);
+  }, []);
+
+  //Define a vizualização de usuário selecionado com base no sessionStorage
+  useEffect(() => {
+    setSelectedUserViewer(sessionStorage.getItem('userViewer') || 'null'); // Define o tipo de usuário selecionado inicialmente
   }, []);
 
   const showSnackbar = (
@@ -228,31 +234,31 @@ const EditaRegulacao: React.FC = () => {
 
   function formatDateForMySQL(datetimeLocal: string): string {
     if (!datetimeLocal) return '';
-  
+
     // Remove o sufixo ":00" se estiver depois do "Z"
     const cleanDate = datetimeLocal.replace(/Z:00$/, 'Z');
-  
+
     // Se for um datetime-local do input (sem "Z"), apenas adapta
     if (!cleanDate.includes('T')) return datetimeLocal;
-  
+
     // Converte para formato MySQL
     const date = new Date(cleanDate);
     if (isNaN(date.getTime())) {
       console.error('Data inválida:', datetimeLocal);
       return '';
     }
-  
+
     const yyyy = date.getFullYear();
     const mm = String(date.getMonth() + 1).padStart(2, '0');
     const dd = String(date.getDate()).padStart(2, '0');
     const hh = String(date.getHours()).padStart(2, '0');
     const min = String(date.getMinutes()).padStart(2, '0');
     const ss = String(date.getSeconds()).padStart(2, '0');
-  
+
     return `${yyyy}-${mm}-${dd} ${hh}:${min}:${ss}`;
   }
-  
-  
+
+
 
 
   // Submete os dados atualizados para o backend
@@ -315,23 +321,23 @@ const EditaRegulacao: React.FC = () => {
 
             <div className="line-StepContent">
               <label>Unidade Origem:</label>
-                <select
-                  name="un_origem"
-                  value={formData.un_origem}
-                  onChange={handleChange}
-                  required
-                >
-                  <option value="">Selecione uma unidade</option>
-                  {unidadesOrigem.map((unidadeOrigem) => (
-                    <option key={unidadeOrigem.value} value={unidadeOrigem.value}>
-                      {unidadeOrigem.label}
-                    </option>
-                  ))}
-                </select>
+              <select
+                name="un_origem"
+                value={formData.un_origem}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Selecione uma unidade</option>
+                {unidadesOrigem.map((unidadeOrigem) => (
+                  <option key={unidadeOrigem.value} value={unidadeOrigem.value}>
+                    {unidadeOrigem.label}
+                  </option>
+                ))}
+              </select>
             </div>
 
-              {userData?.tipo === 'GERENCIA' && (
-                <div className="line-StepContent">
+            {(userData?.tipo === 'GERENCIA' && selectedUserViewer === 'GERENCIA') && (
+              <div className="line-StepContent">
                 <label>Unidade Destino:</label>
                 <select
                   name="un_destino"
@@ -347,7 +353,7 @@ const EditaRegulacao: React.FC = () => {
                   ))}
                 </select>
               </div>
-              )}
+            )}
 
 
             <div className="line-StepContent">

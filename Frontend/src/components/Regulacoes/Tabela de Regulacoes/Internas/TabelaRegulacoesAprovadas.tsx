@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 
 /*IMPORT INTERFACE*/
 import { UserData } from '../../../../interfaces/UserData.ts';
-import { RegulacaoData } from '../../../../interfaces/Regulacao';
+import { RegulacaoData } from '../../../../interfaces/Regulacao.ts';
 
 interface TabelaRegulacoesAprovadasProps {
   UserData: UserData;
@@ -15,7 +15,7 @@ interface TabelaRegulacoesAprovadasProps {
   sortConfig: { key: keyof RegulacaoData; direction: "asc" | "desc" } | null;
   handleSort: (key: keyof RegulacaoData) => void;
   fetchPDF: (datetime: string, filename: string) => void;
-  confirmarExclusao?: (id_user: number, id_regulacao: number | null) => void;
+  confirmarExclusao?: (id_user: number | null, id_regulacao: number | null) => void;
   handleOpenModalOrigem: (regulacao: RegulacaoData) => void;
   handleOpenModalDestino: (regulacao: RegulacaoData) => void;
   handleOpenModalTransporte01: (regulacao: RegulacaoData) => void;
@@ -124,7 +124,12 @@ const TabelaRegulacoesAprovadas: React.FC<TabelaRegulacoesAprovadasProps> = ({
             </span>
           </th>
 
-          <th>Tipo Autorização</th>
+          <th className={`col-TipoAuto clicked${selectedColumn === "autorizacao" ? " selected" : ""}`} onClick={() => handleSort("autorizacao")}>
+            <span>
+              <label>Tipo Autorização</label>
+              <label>{sortConfig?.key === "autorizacao" ? (sortConfig.direction === "asc" ? <LuArrowUpNarrowWide /> : <LuArrowDownWideNarrow />) : ""}</label>
+            </span>
+          </th>
 
           {(["GERENCIA", "AUX. ADMINISTRATIVO"].includes(UserData?.tipo) && ["GERENCIA", "AUX. ADMINISTRATIVO"].includes(selectedUserViewer)) && (
             <th>Fase</th>

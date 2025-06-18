@@ -26,7 +26,7 @@ interface Props {
 }
 
 const initialFormData: DestinoData = {
-    id_user: '',
+    id_user: null,
     un_destino: '', // Use o valor de un_destino recebido nas Props
     nome_colaborador: '',
     data_hora_comunicacao: '',

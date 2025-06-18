@@ -26,7 +26,7 @@ interface Props {
 };
 
 const initialFormData: OrigemData = {
-    id_user: '',
+    id_user: null,
     nome_colaborador: '',
     un_origem: '',
     data_hora_comunicacao: '',

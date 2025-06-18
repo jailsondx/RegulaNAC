@@ -32,6 +32,8 @@
 
   --step: #b2bec3;
   --step-active: #024059;
+
+  --sidebar-selected: #5C8796;
 }
 
 .dark-theme {
@@ -66,6 +68,8 @@
 
   --step: #49798a;
   --step-active: whitesmoke;
+
+  --sidebar-selected: #1C536A;
 }
 
 

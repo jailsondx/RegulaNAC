@@ -1,5 +1,5 @@
 import React from 'react';
-import ListaRegulacoesFinalizadas from '../../../components/Regulacoes/ListaRegulacoes/Internas/ListaRegulacoesFinalizadas';
+import ListaRegulacoesFinalizadas from '../../../components/Regulacoes/ListaRegulacoes/Internas/ListaRegulacoes_Finalizadas';
 
 
 const Page_ListaRegulacoesInternasFinalizadas: React.FC = () => {

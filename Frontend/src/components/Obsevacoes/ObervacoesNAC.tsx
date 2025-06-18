@@ -28,7 +28,7 @@ interface Props {
 }
 
 const initialFormData: ObservacaoData = {
-    id_user: '',
+    id_user: null,
     id_regulacao: null,
     nome: '',
     observacaoTexto: ''

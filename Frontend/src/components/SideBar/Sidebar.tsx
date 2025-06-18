@@ -109,8 +109,7 @@ const Sidebar: React.FC = () => {
       return (
         <>
           <MenuLink to="/RegulacaoMedica" Icon={TiHeartHalfOutline} label="Regulação Interna Pendente de Autorização" />
-          <MenuLink to="/RegulacoesAprovadas" Icon={TiThumbsUp} label="Regulações Internas Autorizadas" />
-          <MenuLink to="/RegulacoesPreAprovadas" Icon={TiThumbsUp} label="Regulações Internas Pré-Autorizadas" />
+          <MenuLink to="/TodasRegulacoesAprovadas" Icon={TiThumbsUp} label="Regulações Internas Autorizadas e Pre-Autorizadas" />
           <MenuLink to="/RegulacoesNegadas" Icon={TiThumbsDown} label="Regulações Internas Negadas" />
           <hr />
           <MenuLink to="/Login" Icon={TiExportOutline} label="Sair" />
@@ -137,8 +136,13 @@ const Sidebar: React.FC = () => {
         <>
           <MenuLink to="/NovaRegulacao" Icon={TiBusinessCard} label="Nova Regulação Interna" />
           <MenuLink to="/ListaRegulacoes" Icon={TiClipboard} label="Regulação Interna Pendente de Autorização" />
-          <MenuLink to="/RegulacoesAprovadas" Icon={TiThumbsUp} label="Regulações Internas Autorizadas" />
-          <MenuLink to="/RegulacoesPreAprovadas" Icon={TiThumbsUp} label="Regulações Internas Pré-Autorizadas" />
+          <MenuLink to="/TodasRegulacoesAprovadas" Icon={TiThumbsUp} label="Regulações Internas Autorizadas e Pre-Autorizadas" />
+
+          {/*
+            <MenuLink to="/RegulacoesAprovadas" Icon={TiThumbsUp} label="Regulações Internas Autorizadas" />
+            <MenuLink to="/RegulacoesPreAprovadas" Icon={TiThumbsUp} label="Regulações Internas Pré-Autorizadas" />
+          */}
+
           <MenuLink to="/RegulacoesNegadas" Icon={TiThumbsDown} label="Regulações Internas Negadas" />
           <MenuLink to="/Desfechos" Icon={TiHomeOutline} label="Gerar Desfecho - Regulações Internas" />
           <MenuLink to="/RegulacoesFinalizadas" Icon={TiClipboard} label="Regulações Internas Finalizadas" />
@@ -147,10 +151,12 @@ const Sidebar: React.FC = () => {
           {tipoExibido === 'GERENCIA' && (
             <MenuButton onClick={() => { setShowReportMenu(true); setShowExternalMenu(false); }} Icon={TiUpload} label="Relatórios" />
           )}
-          <hr />
+
 
           {/* Botão para abrir o menu de solicitações externas */}
-          <MenuButton onClick={() => { setShowExternalMenu(true); setShowReportMenu(false); }} Icon={TiContacts} label="Solicitações de Origem Externa" />
+          <hr />
+          <MenuButton onClick={() => { setShowExternalMenu(true); setShowReportMenu(false); }} Icon={TiContacts} label="Solicitações de Origem Externa (Em Desenvolvimento)" />
+
 
           <hr />
           <MenuLink to="/Login" Icon={TiExportOutline} label="Sair" />
@@ -205,7 +211,9 @@ const Sidebar: React.FC = () => {
     <div className="sidebar">
       {/* Parte de cima da sidebar */}
       <div className="sidebar-sup">
-        <label className="sidebar-Title">RegulaNAC</label>
+          <div className='sidebar-Logo-Container'>
+            <img className='Logo' src='/Logo/RegulaNAC-IA-WHITE.png'></img>
+          </div>
         <div className="inf-user">
           <span className="icon-user">
             <img className="IconUser" src={iconUser} alt="User Icon" />
@@ -219,16 +227,16 @@ const Sidebar: React.FC = () => {
          {/* Seleção de tipo de usuário (visível apenas para GERENCIA) */}
          {userData.tipo === 'GERENCIA' && (
             <div className="UserViewerSelect">
-            <label>Visualização de Perfil</label>
-            <select
-              value={selectedUserViewer}
-              onChange={handleUserTypeChange}
-            >
-              <option value="MEDICO">Médico</option>
-              <option value="AUX. ADMINISTRATIVO">Auxiliar Administrativo</option>
-              <option value="GERENCIA">Gerência</option>
-              <option value="CONSULTA">Consulta</option>
-            </select>
+              <label>Visualização de Perfil</label>
+              <select
+                value={selectedUserViewer}
+                onChange={handleUserTypeChange}
+              >
+                <option value="GERENCIA">Gerência</option>
+                <option value="AUX. ADMINISTRATIVO">Auxiliar Administrativo</option>
+                <option value="MEDICO">Médico</option>
+                <option value="CONSULTA">Consulta</option>
+              </select>
             </div>
          )}
          

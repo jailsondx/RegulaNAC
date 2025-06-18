@@ -1,5 +1,5 @@
 export interface DesfechoData {
-  id_user: number;
+  id_user: number | null;
   id_regulacao: number | null;
   desfecho: string;
   forcado: boolean;
@@ -7,7 +7,7 @@ export interface DesfechoData {
 }
 
 export interface DesfechoExternoData {
-  id_user: number;
+  id_user: number | null;
   id_regulacao: number | null;
   desfecho: string;
 }

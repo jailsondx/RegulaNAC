@@ -28,7 +28,7 @@ interface Props {
 };
 
 const initialFormData: TransporteData = {
-    id_user: '',
+    id_user: null,
     nome_colaborador: '',
     data_hora_acionamento: '',
     data_hora_liberacao_leito: '',

@@ -23,7 +23,7 @@ interface Props {
 }
 
 const initialFormData: DesfechoExternoData = {
-    id_user: '',
+    id_user: null,
     id_regulacao: null,
     desfecho: ''
 };

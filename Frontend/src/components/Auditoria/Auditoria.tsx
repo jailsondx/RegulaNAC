@@ -21,7 +21,7 @@ interface ReportData {
 interface AuditoriaRecord {
     id_auditoria: number;
     DT_insert: string;
-    id_user: number;
+    id_user: number | null;
     nome_responsavel_nac: string;
     tabela_afetada: string;
     acao: string;

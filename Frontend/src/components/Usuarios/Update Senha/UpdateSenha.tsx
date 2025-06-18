@@ -20,7 +20,7 @@ const UpdateSenha: React.FC = () => {
         login: location.state?.login ?? '',
         senha: '',
     });
-    
+
 
     /*SNACKBAR*/
     const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -85,6 +85,9 @@ const UpdateSenha: React.FC = () => {
 
                     <div className='div-direita'>
                         <div className="login-container">
+                            <div className='Mobile'>
+                                <img className='Logo' src='/Logo/RegulaNAC-IA-WHITE.png'></img>
+                            </div>
                             <h1>Nova Senha</h1>
                             <form onSubmit={handleSubmit}>
                                 <div>
@@ -119,9 +122,7 @@ const UpdateSenha: React.FC = () => {
                     </div>
 
                     <div className='div-esquerda BG'>
-                        <div className='Circulo'>
-                            <img className='Logo' src='/Logo/RegulaNAC.png' alt="Logo" />
-                        </div>
+                        <img className='Logo' src='/Logo/RegulaNAC-IA.png'></img>
                     </div>
 
                 </div>

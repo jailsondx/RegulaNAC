@@ -96,16 +96,14 @@ const Login: React.FC = () => {
         <div className='Component-Login'>
 
           <div className='div-esquerda BG'>
-            <div className='Circulo'>
-              <img className='Logo' src='/Logo/RegulaNAC-IA.png'></img>
-            </div>
+            <img className='Logo' src='/Logo/RegulaNAC-IA.png'></img>
           </div>
 
           <div className='div-direita'>
 
             <div className="login-container">
               <div className='Mobile'>
-                <img className='Logo' src='/Logo/RegulaNAC-Logo2.png'></img>
+                <img className='Logo' src='/Logo/RegulaNAC-IA-WHITE.png'></img>
               </div>
               <h1>Login</h1>
               {error && <p className="error-message">{error}</p>}

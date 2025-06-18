@@ -33,7 +33,7 @@ import '../NovaRegulacao.css';
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
 
 const initialFormData: NovaRegulacaoData = {
-  id_user: '',
+  id_user: null,
   num_prontuario: null,
   nome_paciente: '',
   data_nascimento: '',

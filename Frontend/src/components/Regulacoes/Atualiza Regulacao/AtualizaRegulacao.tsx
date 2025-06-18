@@ -24,7 +24,7 @@ import './AtualizarRegulacao.css';
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
 
 const initialFormData: UpdateRegulacaoData = {
-  id_user: '',
+  id_user: null,
   num_prontuario: null,
   num_regulacao: null,
   data_hora_solicitacao_02: '',

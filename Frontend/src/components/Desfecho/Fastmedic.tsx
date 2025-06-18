@@ -26,7 +26,7 @@ interface Props {
 }
 
 const initialFormData: DesfechoData = {
-    id_user: '',
+    id_user: null,
     id_regulacao: null,
     desfecho: '',
     forcado: false,

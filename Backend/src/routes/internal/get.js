@@ -10,6 +10,7 @@ import ListaRegulacoesNegadas from '../../functions/SelectSQL/ListaRegulacoesNeg
 import VerificaID from '../../functions/SelectSQL/VerificaID.js';
 import RecebeHoraLeito from '../../functions/SelectSQL/RecebeHoraLeito.js';
 import ListaRegulacoesPreAprovadas from '../../functions/SelectSQL/ListaRegulacoesPreAprovadas.js';
+import ListaRegulacoesAprovadas_Todas from '../../functions/SelectSQL/ListaRegulacoesAprovadas_Todas.js';
 
 
 
@@ -81,6 +82,15 @@ routerGet.get('/ListaRegulacoesAprovadas', async (req, res) => {
 routerGet.get('/ListaRegulacoesPreAprovadas', async (req, res) => {
   try {
     const result = await ListaRegulacoesPreAprovadas('Interna');
+    handleResponse(res, result);
+  } catch (error) {
+    handleError(res, error);
+  }
+});
+
+routerGet.get('/ListaRegulacoesAprovadas_Todas', async (req, res) => {
+  try {
+    const result = await ListaRegulacoesAprovadas_Todas('Interna');
     handleResponse(res, result);
   } catch (error) {
     handleError(res, error);

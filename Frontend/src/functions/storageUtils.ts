@@ -3,7 +3,7 @@ import { UserData } from "../interfaces/UserData";
 
 export function getUserData(): UserData | null {
   try {
-    const id_user = sessionStorage.getItem('id_user');
+    const id_user = Number(sessionStorage.getItem('id_user'));
     const login = sessionStorage.getItem('login');
     const nome = sessionStorage.getItem('nome');
     const tipo = sessionStorage.getItem('tipo');

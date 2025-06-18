@@ -52,7 +52,7 @@ async function RetornaFase(FormData) {
 
         const userType = rowsUserPrivilege[0].tipo;
 
-        if (userType === "MEDICO") {
+        if (userType !== "GERENCIA") {
             console.error(`Usuário ID: ${FormData.id_user} sem permissão para Retornar a Fase.`);
             await connection.rollback();
             return {
