@@ -2,8 +2,9 @@
   { "value": "RECUSA DO PACIENTE", "label": "RECUSA DO PACIENTE" },
   { "value": "INSTABILIDADE CLINICA", "label": "INSTABILIDADE CLÍNICA" },
   { "value": "PERMUTA DE PACIENTE", "label": "PERMUTA DE PACIENTE" },
-  { "value": "ERRO NA SOLICITACAO", "label": "ERRO NA SOLICITACAO" },
+  { "value": "ERRO NA SOLICITACAO", "label": "ERRO NA SOLICITAÇÃO" },
   { "value": "NAO ATENDE CRITERIOS DA UNIDADE", "label": "NÃO ATENDE CRITÉRIOS DA UNIDADE" },
   { "value": "DECISAO MEDICA", "label": "DECISÃO MÉDICA" },
-  { "value": "MUDANCA NO SETOR DE ORIGEM/DESTINO", "label": "MUDANÇA NO SETOR DE ORIGEM/DESTINO" }
+  { "value": "MUDANCA NO SETOR DE ORIGEM/DESTINO", "label": "MUDANÇA NO SETOR DE ORIGEM/DESTINO" },
+  { "value": "UTI EMERGENCIA", "label": "UTI EMERGÊNCIA" }
 ]

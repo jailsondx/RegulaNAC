@@ -230,8 +230,6 @@ const RegulacaoExObstetrica: React.FC = () => {
           );
       
           showSnackbar(response.data.message || 'Regulação inserida com sucesso.', 'success');
-          
-          //enviarMensagem(`Nova Regulação Solicitada: ${formData.num_regulacao}`);
       
           // Limpar dados após sucesso
           setFormData(initialFormData);

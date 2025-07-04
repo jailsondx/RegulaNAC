@@ -15,7 +15,6 @@ import { UnidadeData } from '../../../../interfaces/Unidade';
 import { getUserData } from '../../../../functions/storageUtils';
 
 /*IMPORT UTILS*/
-import { useSocket } from '../../../../Utils/useSocket';
 
 /*IMPORT VARIAVEIS DE AMBIENTE*/
 const NODE_URL = import.meta.env.VITE_NODE_SERVER_URL;
@@ -42,8 +41,6 @@ const initialFormData: RegulacaoMedicoData = {
 
 const NovaRegulacaoMedicoAprovada: React.FC<Props> = ({ dadosPaciente, tempoEspera, onClose, showSnackbar }) => {
   const [userData, setUserData] = useState<UserData | null>(null);
-  const userUsername = userData?.login || ''; // Nome do usuário
-  const userTipo = userData?.tipo || ''; // Tipo de usuário
   const [unidadesUTI, setUnidadesUTI] = useState<UnidadeData[]>([]);
   const [unidadesClinicaMedica, setUnidadesClinicaMedica] = useState<UnidadeData[]>([]);
   const [formData, setFormData] = useState<RegulacaoMedicoData>(initialFormData);
@@ -75,12 +72,6 @@ const NovaRegulacaoMedicoAprovada: React.FC<Props> = ({ dadosPaciente, tempoEspe
       showSnackbar('Erro ao carregar os dados Setores de Origem','error');  // Se ocorrer erro, atualiza o estado
     });
   }, []);
-
-  //Função para fazer o envio de mensagem para o socket
-  const { enviarMensagem } = useSocket(userUsername, userTipo, (mensagem) => {
-    showSnackbar(mensagem, 'warning');
-  });
-
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>): void => {
     const { name, value, type } = e.target;
@@ -150,7 +141,6 @@ const NovaRegulacaoMedicoAprovada: React.FC<Props> = ({ dadosPaciente, tempoEspe
           response.data?.message || 'Regulação Médica - Aprovada com Sucesso!',
           'success'
         );
-        enviarMensagem('Regulação Nº' + dadosPaciente.id_regulacao + ' Aprovada');
         onClose(); // Fecha o modal
       } else {
         // Mensagem com base na resposta da API

@@ -2,7 +2,6 @@ import express from 'express';
 import http from 'http';
 import cors from 'cors';
 import bodyParser from 'body-parser';
-import socketHandler from './src/socket/socketHandler.js';
 import routePost from './src/routes/internal/post.js';
 import routeGet from './src/routes/internal/get.js';
 import routePut from './src/routes/internal/put.js';
@@ -52,9 +51,6 @@ import('events').then((events) => {
 
 // Configura o pool de conexões HTTP
 http.globalAgent.maxSockets = Infinity;
-
-// Configura o WebSocket passando o servidor HTTP
-socketHandler(server);
 
 // Use as rotas no seu aplicativo
 app.use('/api/internal/post', routePost);

@@ -34,7 +34,7 @@ const Login: React.FC = () => {
   /*ESVAZIA A SEASSONSTORAGE QUANDO O COMPONENTE É CARREGADO*/
   useEffect(() => {
     clearSessionStorage();
-    console.log('Sessão Vazia');
+    console.log('Sessão Esvaziada');
   })
 
   /*REQUISIÇÃO DE LOGIN*/
